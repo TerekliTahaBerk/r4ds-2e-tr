@@ -42,3 +42,4 @@ Günümüz veri analisti için bir diğer büyük eşitleyici unsur ise R gibi �
 Artık karmaşık analizler gerçekleştirmek isteyen bir araştırmacının tek ihtiyacı bir bilgisayar, internet bağlantısı ve doğru rehberlere ulaşma isteğidir.
 
 ### Bir Geleneğin Devamı: 2. Baskı (2e)
+test
