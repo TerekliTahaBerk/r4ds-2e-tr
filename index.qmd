@@ -42,4 +42,12 @@ Günümüz veri analisti için bir diğer büyük eşitleyici unsur ise R gibi �
 Artık karmaşık analizler gerçekleştirmek isteyen bir araştırmacının tek ihtiyacı bir bilgisayar, internet bağlantısı ve doğru rehberlere ulaşma isteğidir.
 
 ### Bir Geleneğin Devamı: 2. Baskı (2e)
-test
+
+Elinizdeki bu çalışma, kolektif bir emeğin ve sürekliliğin ürünüdür. 
+Kitabın **1. Baskısı,** COVID-19 pandemisinin zorlu koşulları altında, **İsmail Bekar, Nurbahar Usta ve Bilgecan Şen**’in editörlüğünde büyük bir özveriyle Türkçeye kazandırılmıştı.
+
+Bugün bizler, bu kıymetli mirası devralarak; veriyi işleme, görselleştirme ve modern programlama pratiklerinin tamamen yenilendiği "2. Baskı"yı (2e) Türkçeye kazandırmış olmanın heyecanını yaşıyoruz. 
+Bu yeni edisyonun çeviri süreci **Taha Berk Terekli** ve **Zeynep Köse** tarafından yürütülmüştür. 
+Amacımız, sadece metni Türkçeleştirmek değil; R ekosistemindeki köklü değişimleri ve güncel "en iyi uygulama" (best practices) standartlarını ana dilimizde sunarak bu kıymetli kaynağı güncel tutmaktır.
+
+Bu çeviri bütünüyle gönüllü bir çabanın ürünüdür. Titizliğimize rağmen gözden kaçmış hatalar olabilir; bu hataları bize bildirerek bu güncel kaynağın gelişimine katkıda bulunursanız çok mutlu oluruz. (Düzelti ve çeviri önerileri için: https://bit.ly/r4ds-oneri)
