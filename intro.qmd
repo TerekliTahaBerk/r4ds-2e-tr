@@ -1,63 +1,60 @@
-# Introduction {#sec-intro .unnumbered}
+# Giriş {#sec-intro .unnumbered}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-Data science is an exciting discipline that allows you to transform raw data into understanding, insight, and knowledge.
-The goal of "R for Data Science" is to help you learn the most important tools in R that will allow you to do data science efficiently and reproducibly, and to have some fun along the way 😃.
-After reading this book, you'll have the tools to tackle a wide variety of data science challenges using the best parts of R.
+Veri bilimi, ham veriyi anlayışa, içgörüye ve bilgiye dönüştürmenize olanak tanıyan heyecan verici bir disiplindir. 
+“R for Data Science” kitabının amacı, veri bilimini verimli ve yeniden üretilebilir bir şekilde yapmanızı sağlayacak R içindeki en önemli araçları öğrenmenize yardımcı olmak ve bu süreçte biraz eğlenmenizi sağlamaktır 😃. 
+Bu kitabı okuduktan sonra, R'ın en iyi parçalarını kullanarak çok çeşitli veri bilimi zorluklarının üstesinden gelecek araçlara sahip olacaksınız.
 
-## What you will learn
+## Neler öğreneceksiniz
 
-Data science is a vast field, and there's no way you can master it all by reading a single book.
-This book aims to give you a solid foundation in the most important tools and enough knowledge to find the resources to learn more when necessary.
-Our model of the steps of a typical data science project looks something like @fig-ds-diagram.
+Veri bilimi uçsuz bucaksız bir alandır ve tek bir kitap okuyarak her şeyde uzmanlaşmanızın imkanı yoktur. 
+Bu kitap, size en önemli araçlarda sağlam bir temel oluşturmayı ve gerektiğinde daha fazlasını öğrenmek için kaynakları bulabilecek yeterli bilgiyi vermeyi amaçlamaktadır. 
+Tipik bir veri bilimi projesinin adımlarına dair modelimiz @fig-ds-diagram üzerindeki gibi görünmektedir.
 
 ```{r}
 #| label: fig-ds-diagram
 #| echo: false
 #| fig-cap: |
-#|   In our model of the data science process, you start with data import
-#|   and tidying. Next, you understand your data with an iterative cycle of
-#|   transforming, visualizing, and modeling. You finish the process 
-#|   by communicating your results to other humans.
+#|   Veri bilimi süreci modelimizde işe veriyi içe aktarma ve düzenleme ile başlarsınız. 
+#|   Ardından; dönüştürme, görselleştirme ve modellemeden oluşan yinelemeli bir döngüyle 
+#|   verinizi anlamlandırırsınız. Süreci, sonuçlarınızı diğer insanlara aktararak tamamlarsınız.
 #| fig-alt: |
-#|   A diagram displaying the data science cycle: Import -> Tidy -> Understand 
-#|   (which has the phases Transform -> Visualize -> Model in a cycle) -> 
-#|   Communicate. Surrounding all of these is Program.
+#|   Veri bilimi döngüsünü gösteren bir diyagram: İçe Aktar (Import) -> Düzenle (Tidy) -> 
+#|   Anla (Anla aşaması kendi içinde Dönüştür -> Görselleştir -> Modelle şeklinde bir 
+#|   döngüye sahiptir) -> İletişim Kur (Communicate). Tüm bu süreci Programlama (Program) çevreler.
 #| out.width: NULL
 knitr::include_graphics("diagrams/data-science/base.png", dpi = 270)
 ```
 
-First, you must **import** your data into R.
-This typically means that you take data stored in a file, database, or web application programming interface (API) and load it into a data frame in R.
-If you can't get your data into R, you can't do data science on it!
+Öncelikle, verilerinizi R içine **aktarmalısınız** (import). 
+Bu işlem genellikle bir dosyada, veri tabanında veya bir web uygulama programlama arayüzünde (API) tutulan verilerin alınarak R içindeki bir **veri çerçevesine** (data frame) yüklenmesi anlamına gelir. 
+Eğer verinizi R’ın içine aktaramıyorsanız, üzerinde veri bilimi yapmanız da mümkün değildir!
 
-Once you've imported your data, it is a good idea to **tidy** it.
-Tidying your data means storing it in a consistent form that matches the semantics of the dataset with how it is stored.
-In brief, when your data is tidy, each column is a variable and each row is an observation.
-Tidy data is important because the consistent structure lets you focus your efforts on answering questions about the data, not fighting to get the data into the right form for different functions.
+Verinizi içe aktardıktan sonra, onu **düzenlemek** (tidy) iyi bir fikirdir. Veriyi düzenlemek; verinin anlam yapısı (semantiği) ile saklanma biçiminin birbiriyle örtüştüğü, tutarlı bir formda depolanması anlamına gelir. 
+Özetle, veriniz "düzenli" olduğunda her sütun bir değişkeni, her satır ise bir gözlemi temsil eder.
+Düzenli veri önemlidir; çünkü bu tutarlı yapı, enerjinizi farklı fonksiyonlar için veriyi doğru forma sokmaya harcamak yerine, doğrudan veriye dair soruları yanıtlamaya odaklamanıza olanak tanır.
 
-Once you have tidy data, a common next step is to **transform** it.
-Transformation includes narrowing in on observations of interest (like all people in one city or all data from the last year), creating new variables that are functions of existing variables (like computing speed from distance and time), and calculating a set of summary statistics (like counts or means).
-Together, tidying and transforming are called **wrangling** because getting your data in a form that's natural to work with often feels like a fight!
+Düzenli bir veriye sahip olduğunuzda, bir sonraki yaygın adım onu **dönüştürmektir** (transform). 
+Dönüştürme işlemi; ilgilendiğiniz gözlemlere odaklanmayı (belirli bir şehirdeki tüm insanlar veya geçen yıla ait tüm veriler gibi), mevcut değişkenlerden yeni değişkenler türetmeyi (mesafe ve süreden hız hesaplamak gibi) ve bir dizi özet istatistik hesaplamayı (sayımlar veya ortalamalar gibi) kapsar.
+Düzenleme ve dönüştürme işlemleri birlikte **veri düzenleme** (wrangling) olarak adlandırılır; çünkü veriyi üzerinde çalışmaya uygun, doğal bir forma getirmek genellikle çetin bir mücadele gibi hissettirir!
 
-Once you have tidy data with the variables you need, there are two main engines of knowledge generation: visualization and modeling.
-These have complementary strengths and weaknesses, so any real data analysis will iterate between them many times.
+İhtiyacınız olan değişkenleri içeren düzenli bir veriye ulaştığınızda, bilgi üretmenin iki ana motoru devreye girer: görselleştirme ve modelleme. 
+Bunların birbirini tamamlayan güçlü ve zayıf yönleri vardır; bu nedenle gerçek bir veri analizi süreci, bu iki aşama arasında defalarca gidip gelen bir döngüden oluşur.
 
-**Visualization** is a fundamentally human activity.
-A good visualization will show you things you did not expect or raise new questions about the data.
-A good visualization might also hint that you're asking the wrong question or that you need to collect different data.
-Visualizations can surprise you, but they don't scale particularly well because they require a human to interpret them.
+**Görselleştirme** (visualization), temelde insana özgü bir aktivitedir. 
+İyi bir görselleştirme, size beklemediğiniz şeyler gösterir veya veriye dair yeni sorular uyandırır. Hatta iyi bir görselleştirme, yanlış soruyu sorduğunuza veya farklı veriler toplamanız gerektiğine dair ipuçları bile verebilir. 
+Görselleştirmeler sizi şaşırtabilir; ancak yorumlanmaları için bir insana ihtiyaç duyduklarından, özellikle ölçeklendirme konusunda çok başarılı değillerdir.
 
-**Models** are complementary tools to visualization.
-Once you have made your questions sufficiently precise, you can use a model to answer them.
-Models are fundamentally mathematical or computational tools, so they generally scale well.
-Even when they don't, it's usually cheaper to buy more computers than it is to buy more brains!
-But every model makes assumptions, and by its very nature, a model cannot question its own assumptions.
-That means a model cannot fundamentally surprise you.
+**Modeller** (models), görselleştirmenin tamamlayıcı araçlarıdır. 
+Sorularınızı yeterince netleştirdiğinizde, onları yanıtlamak için bir model kullanabilirsiniz. 
+Modeller temelde matematiksel veya hesaplamalı araçlar olduklarından genellikle iyi ölçeklenirler. 
+Ölçeklenmedikleri durumlarda bile, daha fazla bilgisayar satın almak, daha fazla insan beyni satın almaktan genellikle daha ucuzdur! 
+Ancak her model belirli varsayımlara dayanır ve doğası gereği bir model kendi varsayımlarını sorgulayamaz. 
+Bu da bir modelin sizi temelde şaşırtamayacağı anlamına gelir.
 
 The last step of data science is **communication**, an absolutely critical part of any data analysis project.
 It doesn't matter how well your models and visualization have led you to understand the data unless you can also communicate your results to others.
