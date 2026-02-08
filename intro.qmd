@@ -9,7 +9,7 @@ Veri bilimi, ham veriyi anlayışa, içgörüye ve bilgiye dönüştürmenize ol
 “R for Data Science” kitabının amacı, veri bilimini verimli ve yeniden üretilebilir bir şekilde yapmanızı sağlayacak R içindeki en önemli araçları öğrenmenize yardımcı olmak ve bu süreçte biraz eğlenmenizi sağlamaktır 😃. 
 Bu kitabı okuduktan sonra, R'ın en iyi parçalarını kullanarak çok çeşitli veri bilimi zorluklarının üstesinden gelecek araçlara sahip olacaksınız.
 
-## Neler öğreneceksiniz
+## Neler Öğreneceksiniz?
 
 Veri bilimi uçsuz bucaksız bir alandır ve tek bir kitap okuyarak her şeyde uzmanlaşmanızın imkanı yoktur. 
 Bu kitap, size en önemli araçlarda sağlam bir temel oluşturmayı ve gerektiğinde daha fazlasını öğrenmek için kaynakları bulabilecek yeterli bilgiyi vermeyi amaçlamaktadır. 
@@ -56,101 +56,92 @@ Modeller temelde matematiksel veya hesaplamalı araçlar olduklarından genellik
 Ancak her model belirli varsayımlara dayanır ve doğası gereği bir model kendi varsayımlarını sorgulayamaz. 
 Bu da bir modelin sizi temelde şaşırtamayacağı anlamına gelir.
 
-The last step of data science is **communication**, an absolutely critical part of any data analysis project.
-It doesn't matter how well your models and visualization have led you to understand the data unless you can also communicate your results to others.
+Veri biliminin son adımı **iletişimdir** (communication) ve bu, herhangi bir veri analizi projesinin mutlak surette kritik bir parçasıdır. 
+Modellerinizin ve görselleştirmelerinizin veriyi anlamanızı ne kadar iyi sağladığının, sonuçlarınızı başkalarına aktaramadığınız sürece hiçbir önemi yoktur.
 
-Surrounding all these tools is **programming**.
-Programming is a cross-cutting tool that you use in nearly every part of a data science project.
-You don't need to be an expert programmer to be a successful data scientist, but learning more about programming pays off because becoming a better programmer allows you to automate common tasks and solve new problems with greater ease.
+Tüm bu araçları çevreleyen temel unsur **programlamadır** (programming). 
+Programlama, bir veri bilimi projesinin hemen her aşamasında kullandığınız, süreçlerin tamamını kesen bir araçtır. 
+Başarılı bir veri bilimci olmak için uzman bir programcı olmanıza gerek yoktur; ancak programlama konusunda kendinizi geliştirmeniz buna kesinlikle değer. 
+Çünkü daha iyi bir programcı olmak, rutin görevleri otomatikleştirmenize ve yeni sorunları çok daha kolay bir şekilde çözmenize olanak tanır.
 
-You'll use these tools in every data science project, but they're not enough for most projects.
-There's a rough 80/20 rule at play: you can tackle about 80% of every project using the tools you'll learn in this book, but you'll need other tools to tackle the remaining 20%.
-Throughout this book, we'll point you to resources where you can learn more.
+Bu araçları her veri bilimi projesinde kullanacaksınız; ancak çoğu proje için bunlar tek başına yeterli olmayacaktır. 
+Burada kabaca bir "80/20 kuralı" işler: Her projenin yaklaşık %80'ini bu kitapta öğreneceğiniz araçlarla tamamlayabilirsiniz, fakat geri kalan %20'lik kısmı çözmek için başka araçlara ihtiyaç duyacaksınız. 
+Kitap boyunca, daha fazlasını öğrenebileceğiniz kaynaklara sizi yönlendireceğiz.
 
-## How this book is organized
+## Bu Kitap Nasıl Düzenlendi?
 
-The previous description of the tools of data science is organized roughly according to the order in which you use them in an analysis (although, of course, you'll iterate through them multiple times).
-In our experience, however, learning data importing and tidying first is suboptimal because, 80% of the time, it's routine and boring, and the other 20% of the time, it's weird and frustrating.
-That's a bad place to start learning a new subject!
-Instead, we'll start with visualization and transformation of data that's already been imported and tidied.
-That way, when you ingest and tidy your own data, your motivation will stay high because you know the pain is worth the effort.
+Veri bilimi araçlarına dair yukarıdaki açıklama, kabaca bir analiz sırasında onları kullanma sıranıza göre düzenlenmiştir (elbette bu adımlar arasında defalarca döngüsel olarak gidip geleceksiniz). 
+Ancak tecrübelerimize göre, işe ilk olarak veriyi içe aktarma ve düzenlemeyi öğrenerek başlamak pek ideal değildir; çünkü bu süreç zamanın %80'inde rutin ve sıkıcıyken, geri kalan %20'sinde ise tuhaf ve moral bozucudur. 
+Yeni bir konuyu öğrenmeye başlamak için burası pek de iyi bir nokta değil!
 
-Within each chapter, we try to adhere to a consistent pattern: start with some motivating examples so you can see the bigger picture, and then dive into the details.
-Each section of the book is paired with exercises to help you practice what you've learned.
-Although it can be tempting to skip the exercises, there's no better way to learn than by practicing on real problems.
+Bunun yerine, halihazırda içe aktarılmış ve düzenlenmiş verilerin görselleştirilmesi ve dönüştürülmesiyle başlayacağız. 
+Bu sayede, kendi verilerinizi sisteme alıp düzenleme aşamasına geldiğinizde, çekeceğiniz zahmetin karşılığını alacağınızı bildiğiniz için motivasyonunuz yüksek kalacaktır.
 
-## What you won't learn
+## Neler Öğrenmeyeceksiniz?
 
-There are several important topics that this book doesn't cover.
-We believe it's important to stay ruthlessly focused on the essentials so you can get up and running as quickly as possible.
-That means this book can't cover every important topic.
+Bu kitabın kapsamadığı birkaç önemli konu bulunuyor. 
+En temel konulara amansızca odaklanmanın, sizin mümkün olduğunca hızlı bir şekilde işe koyulabilmeniz için kritik olduğuna inanıyoruz. 
+Bu da kitabın her önemli konuyu ele alamayacağı anlamına geliyor.
 
-### Modeling
+### Modelleme
 
-Modeling is super important for data science, but it's a big topic, and unfortunately, we just don't have the space to give it the coverage it deserves here.
-To learn more about modeling, we highly recommend [Tidy Modeling with R](https://www.tmwr.org) by our colleagues Max Kuhn and Julia Silge.
-This book will teach you the tidymodels family of packages, which, as you might guess from the name, share many conventions with the tidyverse packages we use in this book.
+Modelleme veri bilimi için son derece önemlidir; ancak bu konu o kadar geniştir ki, maalesef burada ona hak ettiği yeri ayıracak alanımız yok. 
+Modelleme hakkında daha fazla bilgi edinmek için meslektaşlarımız Max Kuhn ve Julia Silge tarafından kaleme alınan [Tidy Modeling with R](https://www.tmwr.org) kitabını şiddetle tavsiye ederiz. 
+Bu kitap size, isminden de tahmin edebileceğiniz gibi, bu kitapta kullandığımız tidyverse paketleriyle benzer prensipleri paylaşan tidymodels paket ailesini öğretecektir.
 
-### Big data
+### Büyük Veri
 
-This book proudly and primarily focuses on small, in-memory datasets.
-This is the right place to start because you can't tackle big data unless you have experience with small data.
-The tools you'll learn throughout the majority of this book will easily handle hundreds of megabytes of data, and with a bit of care, you can typically use them to work with a few gigabytes of data.
-We'll also show you how to get data out of databases and parquet files, both of which are often used to store big data.
-You won't necessarily be able to work with the entire dataset, but that's not a problem because you only need a subset or subsample to answer the question that you're interested in.
+Bu kitap, gururla ve öncelikle bellek içi (in-memory) küçük veri kümelerine odaklanmaktadır. 
+Bu, başlamak için en doğru noktadır; çünkü küçük verilerle deneyim kazanmadan büyük verilerin üstesinden gelemezsiniz. 
+Kitabın büyük bir bölümünde öğreneceğiniz araçlar, yüzlerce megabaytlık veriyi kolayca işleyebilir ve biraz dikkatle, genellikle birkaç gigabaytlık verilerle çalışmak için de kullanılabilirler. 
+Ayrıca, büyük verileri depolamak için sıklıkla kullanılan veri tabanlarından ve parquet dosyalarından nasıl veri çekeceğinizi de göstereceğiz. 
+Tüm veri kümesiyle çalışmanız her zaman mümkün olmayabilir, ancak bu bir sorun teşkil etmez; çünkü ilgilendiğiniz soruyu yanıtlamak için genellikle verinin bir alt kümesine veya alt örneklemine ihtiyacınız vardır.
 
-If you're routinely working with larger data (10--100 GB, say), we recommend learning more about [data.table](https://github.com/Rdatatable/data.table).
-We don't teach it here because it uses a different interface than the tidyverse and requires you to learn some different conventions.
-However, it is incredibly fast, and the performance payoff is worth investing some time in learning it if you're working with large data.
+Eğer rutin olarak daha büyük verilerle (örneğin 10--100 GB) çalışıyorsanız, [data.table](https://github.com/Rdatatable/data.table).
+hakkında daha fazla bilgi edinmenizi öneririz. Burada bu paketi öğretmiyoruz çünkü **tidyverse**'den farklı bir arayüz kullanıyor ve bazı farklı kuralları öğrenmenizi gerektiriyor. 
+Bununla birlikte, inanılmaz derecede hızlıdır ve büyük verilerle uğraşıyorsanız, onu öğrenmek için zaman ayırmanıza değecek bir performans artışı sağlar.
 
-### Python, Julia, and friends
+### Python, Julia ve Arkadaşları
 
-In this book, you won't learn anything about Python, Julia, or any other programming language useful for data science.
-This isn't because we think these tools are bad.
-They're not!
-And in practice, most data science teams use a mix of languages, often at least R and Python.
-But we strongly believe that it's best to master one tool at a time, and R is a great place to start.
+Bu kitapta Python, Julia veya veri bilimi için yararlı olan diğer programlama dilleri hakkında hiçbir şey öğrenmeyeceksiniz. 
+Bunun sebebi, bu araçların kötü olduğunu düşünmemiz değil. Kesinlikle değiller! Uygulamada, çoğu veri bilimi ekibi dillerin bir karışımını, genellikle de en azından R ve Python'ı bir arada kullanır. 
+Ancak, her seferinde tek bir araçta uzmanlaşmanın en iyisi olduğuna ve R'ın başlamak için harika bir yer olduğuna yürekten inanıyoruz.
 
-## Prerequisites
+## Ön Koşullar
 
-We've made a few assumptions about what you already know to get the most out of this book.
-You should be generally numerically literate, and it's helpful if you have some basic programming experience already.
-If you've never programmed before, you might find [Hands on Programming with R](https://rstudio-education.github.io/hopr/) by Garrett to be a valuable adjunct to this book.
+Bu kitaptan en iyi şekilde yararlanabilmeniz için neler bildiğinize dair birkaç varsayımda bulunduk. 
+Genel olarak sayısal okuryazarlığa sahip olmanız gerekir; ayrıca temel düzeyde programlama deneyiminizin olması da size yardımcı olacaktır. 
+Eğer daha önce hiç programlama yapmadıysanız, Garrett tarafından kaleme alınan [Hands on Programming with R](https://rstudio-education.github.io/hopr/) kitabını bu kitap için değerli bir yardımcı kaynak olarak görebilirsiniz.
 
-You need four things to run the code in this book: R, RStudio, a collection of R packages called the **tidyverse**, and a handful of other packages.
-Packages are the fundamental units of reproducible R code.
-They include reusable functions, documentation that describes how to use them, and sample data.
+Bu kitaptaki kodları çalıştırmak için dört şeye ihtiyacınız var: R, RStudio, **tidyverse** adı verilen bir R paketleri koleksiyonu ve birkaç ek paket. 
+Paketler, yeniden üretilebilir R kodunun temel birimleridir. Bu paketler; yeniden kullanılabilir fonksiyonlar, bu fonksiyonların nasıl kullanılacağını açıklayan dokümantasyonlar ve örnek veriler içerir.
 
 ### R
 
-To download R, go to CRAN, the **c**omprehensive **R** **a**rchive **n**etwork, <https://cloud.r-project.org>.
-A new major version of R comes out once a year, and there are 2-3 minor releases each year.
-It's a good idea to update regularly.
-Upgrading can be a bit of a hassle, especially for major versions that require you to re-install all your packages, but putting it off only makes it worse.
-We recommend R 4.2.0 or later for this book.
+R'ı indirmek için **CRAN** (comprehensive R archive network) adresine gidin: <https://cloud.r-project.org>.
+R'ın her yıl yeni bir ana sürümü, yıl içinde ise 2-3 adet ara sürümü yayınlanır. Düzenli olarak güncelleme yapmak iyi bir fikirdir. 
+Güncelleme yapmak, özellikle tüm paketlerinizi yeniden kurmanızı gerektiren ana sürümlerde biraz zahmetli olabilir; ancak bunu ertelemek işleri sadece daha da zorlaştırır. 
+Bu kitap için R 4.2.0 veya daha yeni bir sürümünü kullanmanızı öneriyoruz.
 
 ### RStudio
 
-RStudio is an integrated development environment, or IDE, for R programming, which you can download from <https://posit.co/download/rstudio-desktop/>.
-RStudio is updated a couple of times a year, and it will automatically let you know when a new version is out, so there's no need to check back.
-It's a good idea to upgrade regularly to take advantage of the latest and greatest features.
-For this book, make sure you have at least RStudio 2022.02.0.
+RStudio, R programlama için bir tümleşik geliştirme ortamıdır (IDE) ve <https://posit.co/download/rstudio-desktop/> adresinden indirilebilir. 
+RStudio yılda birkaç kez güncellenir ve yeni bir sürüm çıktığında sizi otomatik olarak bilgilendirir; bu yüzden sürekli kontrol etmenize gerek yoktur. 
+En yeni ve en iyi özelliklerden yararlanmak için düzenli olarak güncelleme yapmak iyi bir fikirdir. Bu kitap için en az RStudio 2022.02.0 sürümüne sahip olduğunuzdan emin olun.
 
-When you start RStudio, @fig-rstudio-console, you'll see two key regions in the interface: the console pane and the output pane.
-For now, all you need to know is that you type the R code in the console pane and press enter to run it.
-You'll learn more as we go along![^intro-1]
+RStudio'yu başlattığınızda (@fig-rstudio-console), arayüzde iki temel bölge göreceksiniz: konsol paneli ve çıktı paneli. 
+Şimdilik bilmeniz gereken tek şey, R kodunu konsol paneline yazıp çalıştırmak için enter tuşuna basacağınızdır. İlerledikçe daha fazlasını öğreneceksiniz![^intro-1]
 
-[^intro-1]: If you'd like a comprehensive overview of all of RStudio's features, see the RStudio User Guide at <https://docs.posit.co/ide/user>.
+[^intro-1]: RStudio'nun tüm özelliklerine dair kapsamlı bir genel bakış isterseniz, <https://docs.posit.co/ide/user> adresindeki RStudio Kullanıcı Kılavuzu'na bakabilirsiniz.
 
 ```{r}
 #| label: fig-rstudio-console
 #| echo: false
 #| out-width: ~
 #| fig-cap: |
-#|   The RStudio IDE has two key regions: type R code in the console pane
-#|   on the left, and look for plots in the output pane on the right.
+#|   RStudio IDE'si iki temel bölgeye sahiptir: R kodunu soldaki konsol paneline (console pane) yazarsınız ve grafikler için sağdaki çıktı paneline (output pane) bakarsınız.
 #| fig-alt: |
-#|   The RStudio IDE with the panes Console and Output highlighted.
+#|   Konsol ve Çıktı panellerinin vurgulandığı RStudio IDE'si.
 knitr::include_graphics("diagrams/rstudio/console.png", dpi = 270)
 ```
 
