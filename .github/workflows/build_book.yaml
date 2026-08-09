@@ -36,11 +36,27 @@ jobs:
         with:
           packages: |
             any::tidyverse
-            any::palmerpenguins
-            any::ggrepel
-            any::gapminder
             any::knitr
             any::rmarkdown
+            any::arrow
+            any::babynames
+            any::curl
+            any::duckdb
+            any::gapminder
+            any::ggrepel
+            any::ggridges
+            any::ggthemes
+            any::hexbin
+            any::janitor
+            any::Lahman
+            any::leaflet
+            any::maps
+            any::nycflights13
+            any::openxlsx
+            any::palmerpenguins
+            any::repurrrsive
+            any::tidymodels
+            any::writexl
 
       - name: Render Quarto Project
         run: |
