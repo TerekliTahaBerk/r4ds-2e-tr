@@ -1,30 +1,30 @@
-# Data tidying {#sec-data-tidy}
+# Veri Düzenleme {#sec-data-tidy}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## Giriş
 
-> "Happy families are all alike; every unhappy family is unhappy in its own way."\
+> "Bütün mutlu aileler birbirine benzer, her mutsuz aile kendine özgü bir şekilde mutsuzdur."\
 > --- Leo Tolstoy
 
-> "Tidy datasets are all alike, but every messy dataset is messy in its own way."\
+> "Düzenli veri kümeleri birbirine benzer, ama her dağınık veri kümesi kendine özgü bir şekilde dağınıktır."\
 > --- Hadley Wickham
 
-In this chapter, you will learn a consistent way to organize your data in R using a system called **tidy data**.
-Getting your data into this format requires some work up front, but that work pays off in the long term.
-Once you have tidy data and the tidy tools provided by packages in the tidyverse, you will spend much less time munging data from one representation to another, allowing you to spend more time on the data questions you care about.
+Bu bölümde, R'daki verinizi **düzenli veri** (tidy data) adı verilen bir sistemle tutarlı bir şekilde organize etmeyi öğreneceksiniz.
+Verinizi bu formata getirmek başlangıçta biraz emek gerektirir; ama bu emek uzun vadede karşılığını verir.
+Düzenli veriye ve tidyverse'deki paketlerin sağladığı düzenli araçlara sahip olduğunuzda, veriyi bir temsilden diğerine dönüştürmek için çok daha az zaman harcayacak, böylece önemsediğiniz veri sorularına daha fazla zaman ayırabileceksiniz.
 
-In this chapter, you'll first learn the definition of tidy data and see it applied to a simple toy dataset.
-Then we'll dive into the primary tool you'll use for tidying data: pivoting.
-Pivoting allows you to change the form of your data without changing any of the values.
+Bu bölümde, önce düzenli verinin tanımını öğrenecek ve bunun basit bir oyuncak veri kümesine nasıl uygulandığını göreceksiniz.
+Ardından, veriyi düzenlemek için kullanacağınız temel araca, pivot işlemine, dalacağız.
+Pivot işlemi, değerlerin hiçbirini değiştirmeden verinizin biçimini değiştirmenizi sağlar.
 
-### Prerequisites
+### Ön Koşullar
 
-In this chapter, we'll focus on tidyr, a package that provides a bunch of tools to help tidy up your messy datasets.
-tidyr is a member of the core tidyverse.
+Bu bölümde, dağınık veri kümelerinizi düzenlemenize yardımcı olacak bir dizi araç sağlayan tidyr paketine odaklanacağız.
+tidyr, çekirdek tidyverse'in bir üyesidir.
 
 ```{r}
 #| label: setup
@@ -32,13 +32,13 @@ tidyr is a member of the core tidyverse.
 library(tidyverse)
 ```
 
-From this chapter on, we'll suppress the loading message from `library(tidyverse)`.
+Bu bölümden itibaren, `library(tidyverse)`'ün yükleme mesajını bastıracağız.
 
-## Tidy data {#sec-tidy-data}
+## Düzenli Veri {#sec-tidy-data}
 
-You can represent the same underlying data in multiple ways.
-The example below shows the same data organized in three different ways.
-Each dataset shows the same values of four variables: *country*, *year*, *population*, and number of documented *cases* of TB (tuberculosis), but each dataset organizes the values in a different way.
+Aynı temel veriyi birden fazla şekilde temsil edebilirsiniz.
+Aşağıdaki örnek, aynı verinin üç farklı şekilde organize edilmiş halini gösterir.
+Her veri kümesi, dört değişkenin aynı değerlerini gösterir: *country* (ülke), *year* (yıl), *population* (nüfus) ve belgelenmiş TB (tüberküloz) *cases* (vaka) sayısı; ama her veri kümesi değerleri farklı bir şekilde organize eder.
 
 ```{r}
 table1
@@ -48,209 +48,211 @@ table2
 table3
 ```
 
-These are all representations of the same underlying data, but they are not equally easy to use.
-One of them, `table1`, will be much easier to work with inside the tidyverse because it's **tidy**.
+Bunların hepsi aynı temel verinin temsilleridir; ama kullanımları eşit derecede kolay değildir.
+Bunlardan biri, `table1`, tidyverse içinde çalışması çok daha kolay olacaktır; çünkü **düzenlidir** (tidy).
 
-There are three interrelated rules that make a dataset tidy:
+Bir veri kümesini düzenli yapan, birbiriyle ilişkili üç kural vardır:
 
-1.  Each variable is a column; each column is a variable.
-2.  Each observation is a row; each row is an observation.
-3.  Each value is a cell; each cell is a single value.
+1.  Her değişken bir sütundur; her sütun bir değişkendir.
+2.  Her gözlem bir satırdır; her satır bir gözlemdir.
+3.  Her değer bir hücredir; her hücre tek bir değerdir.
 
-@fig-tidy-structure shows the rules visually.
+@fig-tidy-structure bu kuralları görsel olarak gösterir.
 
 ```{r}
 #| label: fig-tidy-structure
 #| echo: false
-#| fig-cap: | 
-#|   The following three rules make a dataset tidy: variables are columns,
-#|   observations are rows, and values are cells.
-#| fig-alt: | 
-#|   Three panels, each representing a tidy data frame. The first panel
-#|   shows that each variable is a column. The second panel shows that each
-#|   observation is a row. The third panel shows that each value is
-#|   a cell.
+#| fig-cap: |
+#|   Aşağıdaki üç kural bir veri kümesini düzenli yapar: değişkenler
+#|   sütunlardır, gözlemler satırlardır ve değerler hücrelerdir.
+#| fig-alt: |
+#|   Her biri düzenli bir veri çerçevesini temsil eden üç panel. İlk
+#|   panel, her değişkenin bir sütun olduğunu gösterir. İkinci panel,
+#|   her gözlemin bir satır olduğunu gösterir. Üçüncü panel, her
+#|   değerin bir hücre olduğunu gösterir.
 knitr::include_graphics("images/tidy-1.png", dpi = 270)
 ```
 
-Why ensure that your data is tidy?
-There are two main advantages:
+Verinizin düzenli olmasını neden sağlamalısınız?
+İki temel avantajı vardır:
 
-1.  There's a general advantage to picking one consistent way of storing data.
-    If you have a consistent data structure, it's easier to learn the tools that work with it because they have an underlying uniformity.
+1.  Veriyi saklamak için tutarlı bir yol seçmenin genel bir avantajı vardır.
+    Tutarlı bir veri yapınız varsa, onunla çalışan araçları öğrenmek daha kolaydır; çünkü bu araçların altında yatan bir örüntü birliği vardır.
 
-2.  There's a specific advantage to placing variables in columns because it allows R's vectorized nature to shine.
-    As you learned in @sec-mutate and @sec-summarize, most built-in R functions work with vectors of values.
-    That makes transforming tidy data feel particularly natural.
+2.  Değişkenleri sütunlara yerleştirmenin özel bir avantajı vardır; çünkü bu, R'ın vektörleştirilmiş doğasının parlamasını sağlar.
+    @sec-mutate ve @sec-summarize bölümlerinde öğrendiğiniz gibi, çoğu yerleşik R fonksiyonu değer vektörleriyle çalışır.
+    Bu, düzenli veriyi dönüştürmeyi özellikle doğal hissettirir.
 
-dplyr, ggplot2, and all the other packages in the tidyverse are designed to work with tidy data.
-Here are a few small examples showing how you might work with `table1`.
+dplyr, ggplot2 ve tidyverse'deki diğer tüm paketler, düzenli veriyle çalışacak şekilde tasarlanmıştır.
+İşte `table1` ile nasıl çalışabileceğinizi gösteren birkaç küçük örnek.
 
 ```{r}
 #| fig-width: 5
 #| fig-alt: |
-#|   This figure shows the number of cases in 1999 and 2000 for 
-#|   Afghanistan, Brazil, and China, with year on the x-axis and number 
-#|   of cases on the y-axis. Each point on the plot represents the number 
-#|   of cases in a given country in a given year. The points for each
-#|   country are differentiated from others by color and shape and connected
-#|   with a line, resulting in three, non-parallel, non-intersecting lines.
-#|   The numbers of cases in China are highest for both 1999 and 2000, with
-#|   values above 200,000 for both years. The number of cases in Brazil is
-#|   approximately 40,000 in 1999 and approximately 75,000 in 2000. The
-#|   numbers of cases in Afghanistan are lowest for both 1999 and 2000, with
-#|   values that appear to be very close to 0 on this scale.
-# Compute rate per 10,000
+#|   Bu şekil, Afganistan, Brezilya ve Çin için 1999 ve 2000
+#|   yıllarındaki vaka sayısını gösterir; x ekseninde yıl, y ekseninde
+#|   vaka sayısı vardır. Grafikteki her nokta, belirli bir ülkedeki
+#|   belirli bir yıla ait vaka sayısını temsil eder. Her ülkenin
+#|   noktaları, diğerlerinden renk ve şekille ayırt edilir ve bir
+#|   çizgiyle birbirine bağlanır; bu da paralel olmayan, kesişmeyen üç
+#|   çizgiyle sonuçlanır. Çin'deki vaka sayıları hem 1999 hem 2000 için
+#|   en yüksektir ve her iki yıl için de 200.000'in üzerinde değerlere
+#|   sahiptir. Brezilya'daki vaka sayısı 1999'da yaklaşık 40.000,
+#|   2000'de ise yaklaşık 75.000'dir. Afganistan'daki vaka sayıları hem
+#|   1999 hem 2000 için en düşüktür ve bu ölçekte 0'a çok yakın görünen
+#|   değerlere sahiptir.
+# 10.000 kişi başına oranı hesapla
 table1 |>
   mutate(rate = cases / population * 10000)
 
-# Compute total cases per year
-table1 |> 
-  group_by(year) |> 
+# Yıl başına toplam vaka sayısını hesapla
+table1 |>
+  group_by(year) |>
   summarize(total_cases = sum(cases))
 
-# Visualize changes over time
+# Zaman içindeki değişimi görselleştir
 ggplot(table1, aes(x = year, y = cases)) +
   geom_line(aes(group = country), color = "grey50") +
   geom_point(aes(color = country, shape = country)) +
-  scale_x_continuous(breaks = c(1999, 2000)) # x-axis breaks at 1999 and 2000
+  scale_x_continuous(breaks = c(1999, 2000)) # x ekseni işaretleri 1999 ve 2000'de
 ```
 
-### Exercises
+### Alıştırmalar
 
-1.  For each of the sample tables, describe what each observation and each column represents.
+1.  Örnek tablolardan her biri için, her gözlemin ve her sütunun neyi temsil ettiğini açıklayın.
 
-2.  Sketch out the process you'd use to calculate the `rate` for `table2` and `table3`.
-    You will need to perform four operations:
+2.  `table2` ve `table3` için `rate`'i hesaplamak amacıyla kullanacağınız süreci taslak olarak çizin.
+    Dört işlem gerçekleştirmeniz gerekecek:
 
-    a.  Extract the number of TB cases per country per year.
-    b.  Extract the matching population per country per year.
-    c.  Divide cases by population, and multiply by 10000.
-    d.  Store back in the appropriate place.
+    a.  Ülke başına, yıl başına TB vaka sayısını çıkarın.
+    b.  Ülke başına, yıl başına karşılık gelen nüfusu çıkarın.
+    c.  Vaka sayısını nüfusa bölün ve 10000 ile çarpın.
+    d.  Uygun yere geri saklayın.
 
-    You haven't yet learned all the functions you'd need to actually perform these operations, but you should still be able to think through the transformations you'd need.
+    Bu işlemleri gerçekten gerçekleştirmek için ihtiyaç duyacağınız fonksiyonların hepsini henüz öğrenmediniz; ama yine de ihtiyaç duyacağınız dönüşümleri düşünebilmelisiniz.
 
-## Lengthening data {#sec-pivoting}
+## Veriyi Uzatma {#sec-pivoting}
 
-The principles of tidy data might seem so obvious that you wonder if you'll ever encounter a dataset that isn't tidy.
-Unfortunately, however, most real data is untidy.
-There are two main reasons:
+Düzenli veri ilkeleri o kadar bariz görünebilir ki, hiç düzenli olmayan bir veri kümesiyle karşılaşıp karşılaşmayacağınızı merak edebilirsiniz.
+Ama ne yazık ki gerçek verilerin çoğu düzenli değildir.
+Bunun iki temel nedeni vardır:
 
-1.  Data is often organized to facilitate some goal other than analysis.
-    For example, it's common for data to be structured to make data entry, not analysis, easy.
+1.  Veri genellikle analiz dışında bir hedefi kolaylaştırmak için organize edilir.
+    Örneğin, verinin analiz değil, veri girişi kolay olsun diye yapılandırılması yaygındır.
 
-2.  Most people aren't familiar with the principles of tidy data, and it's hard to derive them yourself unless you spend a lot of time working with data.
+2.  Çoğu insan düzenli veri ilkelerine aşina değildir ve veriyle çalışarak çok fazla zaman geçirmediğiniz sürece bunları kendi kendinize türetmek zordur.
 
-This means that most real analyses will require at least a little tidying.
-You'll begin by figuring out what the underlying variables and observations are.
-Sometimes this is easy; other times you'll need to consult with the people who originally generated the data.
-Next, you'll **pivot** your data into a tidy form, with variables in the columns and observations in the rows.
+Bu, gerçek analizlerin çoğunun en azından biraz düzenleme gerektireceği anlamına gelir.
+İşe, temeldeki değişkenlerin ve gözlemlerin ne olduğunu anlayarak başlayacaksınız.
+Bazen bu kolaydır; diğer zamanlarda veriyi ilk oluşturan kişilere danışmanız gerekecektir.
+Ardından, verinizi; değişkenlerin sütunlarda, gözlemlerin satırlarda olduğu düzenli bir forma **pivot** edeceksiniz.
 
-tidyr provides two functions for pivoting data: `pivot_longer()` and `pivot_wider()`.
-We'll first start with `pivot_longer()` because it's the most common case.
-Let's dive into some examples.
+tidyr, veriyi pivotlamak için iki fonksiyon sağlar: `pivot_longer()` ve `pivot_wider()`.
+En yaygın durum olduğu için önce `pivot_longer()` ile başlayacağız.
+Birkaç örneğe dalalım.
 
-### Data in column names {#sec-billboard}
+### Sütun Adlarındaki Veri {#sec-billboard}
 
-The `billboard` dataset records the billboard rank of songs in the year 2000:
+`billboard` veri kümesi, 2000 yılındaki şarkıların billboard sıralamasını kaydeder:
 
 ```{r}
 billboard
 ```
 
-In this dataset, each observation is a song.
-The first three columns (`artist`, `track` and `date.entered`) are variables that describe the song.
-Then we have 76 columns (`wk1`-`wk76`) that describe the rank of the song in each week[^data-tidy-1].
-Here, the column names are one variable (the `week`) and the cell values are another (the `rank`).
+Bu veri kümesinde, her gözlem bir şarkıdır.
+İlk üç sütun (`artist`, `track` ve `date.entered`) şarkıyı tanımlayan değişkenlerdir.
+Ardından, şarkının her haftaki sıralamasını tanımlayan 76 sütunumuz (`wk1`-`wk76`) var[^data-tidy-1].
+Burada, sütun adları bir değişken (`week`), hücre değerleri ise bir başka değişkendir (`rank`).
 
-[^data-tidy-1]: The song will be included as long as it was in the top 100 at some point in 2000, and is tracked for up to 72 weeks after it appears.
+[^data-tidy-1]: Şarkı, 2000 yılında herhangi bir noktada ilk 100'de olduğu sürece dahil edilir ve ortaya çıktıktan sonra en fazla 72 hafta boyunca takip edilir.
 
-To tidy this data, we'll use `pivot_longer()`:
+Bu veriyi düzenlemek için `pivot_longer()`'ı kullanacağız:
 
 ```{r, R.options=list(pillar.print_min = 10)}
-billboard |> 
+billboard |>
   pivot_longer(
-    cols = starts_with("wk"), 
-    names_to = "week", 
+    cols = starts_with("wk"),
+    names_to = "week",
     values_to = "rank"
   )
 ```
 
-After the data, there are three key arguments:
+Veriden sonra, üç temel argüman vardır:
 
--   `cols` specifies which columns need to be pivoted, i.e. which columns aren't variables. This argument uses the same syntax as `select()` so here we could use `!c(artist, track, date.entered)` or `starts_with("wk")`.
--   `names_to` names the variable stored in the column names, we named that variable `week`.
--   `values_to` names the variable stored in the cell values, we named that variable `rank`.
+-   `cols`, hangi sütunların pivotlanması gerektiğini, yani hangi sütunların değişken olmadığını belirtir. Bu argüman `select()` ile aynı sözdizimini kullanır, bu yüzden burada `!c(artist, track, date.entered)` veya `starts_with("wk")` kullanabiliriz.
+-   `names_to`, sütun adlarında saklanan değişkeni adlandırır; biz bu değişkeni `week` olarak adlandırdık.
+-   `values_to`, hücre değerlerinde saklanan değişkeni adlandırır; biz bu değişkeni `rank` olarak adlandırdık.
 
-Note that in the code `"week"` and `"rank"` are quoted because those are new variables we're creating, they don't yet exist in the data when we run the `pivot_longer()` call.
+Koddaki `"week"` ve `"rank"`'ın tırnak içinde olduğuna dikkat edin; çünkü bunlar oluşturduğumuz yeni değişkenlerdir, `pivot_longer()` çağrısını çalıştırdığımızda henüz veride mevcut değildirler.
 
-Now let's turn our attention to the resulting, longer data frame.
-What happens if a song is in the top 100 for less than 76 weeks?
-Take 2 Pac's "Baby Don't Cry", for example.
-The above output suggests that it was only in the top 100 for 7 weeks, and all the remaining weeks are filled in with missing values.
-These `NA`s don't really represent unknown observations; they were forced to exist by the structure of the dataset[^data-tidy-2], so we can ask `pivot_longer()` to get rid of them by setting `values_drop_na = TRUE`:
+Şimdi dikkatimizi ortaya çıkan, daha uzun veri çerçevesine çevirelim.
+Bir şarkı 76 haftadan daha az bir süre ilk 100'de kalırsa ne olur?
+Örneğin 2 Pac'in "Baby Don't Cry" şarkısını ele alalım.
+Yukarıdaki çıktı, şarkının yalnızca 7 hafta boyunca ilk 100'de olduğunu ve kalan tüm haftaların eksik değerlerle doldurulduğunu gösteriyor.
+Bu `NA`'lar aslında bilinmeyen gözlemleri temsil etmez; veri kümesinin yapısı tarafından var olmaya zorlanmışlardır[^data-tidy-2], bu yüzden `values_drop_na = TRUE` ayarlayarak `pivot_longer()`'dan onlardan kurtulmasını isteyebiliriz:
 
-[^data-tidy-2]: We'll come back to this idea in @sec-missing-values.
+[^data-tidy-2]: Bu fikre @sec-missing-values bölümünde geri döneceğiz.
 
 ```{r}
-billboard |> 
+billboard |>
   pivot_longer(
-    cols = starts_with("wk"), 
-    names_to = "week", 
+    cols = starts_with("wk"),
+    names_to = "week",
     values_to = "rank",
     values_drop_na = TRUE
   )
 ```
 
-The number of rows is now much lower, indicating that many rows with `NA`s were dropped.
+Satır sayısı artık çok daha düşük; bu da `NA` içeren pek çok satırın atıldığını gösteriyor.
 
-You might also wonder what happens if a song is in the top 100 for more than 76 weeks?
-We can't tell from this data, but you might guess that additional columns `wk77`, `wk78`, ...
-would be added to the dataset.
+Bir şarkı 76 haftadan daha uzun süre ilk 100'de kalırsa ne olacağını da merak edebilirsiniz.
+Bu veriden anlayamayız; ama veri kümesine `wk77`, `wk78`, ... gibi ek sütunlar eklenebileceğini tahmin edebilirsiniz.
 
-This data is now tidy, but we could make future computation a bit easier by converting values of `week` from character strings to numbers using `mutate()` and `readr::parse_number()`.
-`parse_number()` is a handy function that will extract the first number from a string, ignoring all other text.
+Bu veri artık düzenli; ama `mutate()` ve `readr::parse_number()` kullanarak `week`'in değerlerini karakter dizilerinden sayılara dönüştürerek gelecekteki hesaplamaları biraz kolaylaştırabiliriz.
+`parse_number()`, diğer tüm metni yok sayarak bir karakter dizisinden ilk sayıyı çıkaran kullanışlı bir fonksiyondur.
 
 ```{r}
-billboard_longer <- billboard |> 
+billboard_longer <- billboard |>
   pivot_longer(
-    cols = starts_with("wk"), 
-    names_to = "week", 
+    cols = starts_with("wk"),
+    names_to = "week",
     values_to = "rank",
     values_drop_na = TRUE
-  ) |> 
+  ) |>
   mutate(
     week = parse_number(week)
   )
 billboard_longer
 ```
 
-Now that we have all the week numbers in one variable and all the rank values in another, we're in a good position to visualize how song ranks vary over time.
-The code is shown below and the result is in @fig-billboard-ranks.
-We can see that very few songs stay in the top 100 for more than 20 weeks.
+Artık tüm hafta numaralarını bir değişkende ve tüm sıralama değerlerini başka bir değişkende topladığımıza göre, şarkı sıralamalarının zaman içinde nasıl değiştiğini görselleştirmek için iyi bir konumdayız.
+Kod aşağıda gösterilmiştir ve sonuç @fig-billboard-ranks'te yer almaktadır.
+Çok az sayıda şarkının 20 haftadan fazla ilk 100'de kaldığını görebiliriz.
 
 ```{r}
 #| label: fig-billboard-ranks
 #| fig-cap: |
-#|   A line plot showing how the rank of a song changes over time.
+#|   Bir şarkının sıralamasının zaman içinde nasıl değiştiğini gösteren
+#|   bir çizgi grafiği.
 #| fig-alt: |
-#|   A line plot with week on the x-axis and rank on the y-axis, where
-#|   each line represents a song. Most songs appear to start at a high rank,
-#|   rapidly accelerate to a low rank, and then decay again. There are
-#|   surprisingly few tracks in the region when week is >20 and rank is
-#|   >50.
-billboard_longer |> 
-  ggplot(aes(x = week, y = rank, group = track)) + 
-  geom_line(alpha = 0.25) + 
+#|   X ekseninde hafta, y ekseninde sıralama olan ve her çizginin bir
+#|   şarkıyı temsil ettiği bir çizgi grafiği. Çoğu şarkı yüksek bir
+#|   sıralamada başlıyor, hızla düşük bir sıralamaya hızlanıyor ve
+#|   ardından tekrar geriliyor gibi görünmektedir. Hafta >20 ve
+#|   sıralama >50 olan bölgede şaşırtıcı derecede az sayıda parça
+#|   bulunmaktadır.
+billboard_longer |>
+  ggplot(aes(x = week, y = rank, group = track)) +
+  geom_line(alpha = 0.25) +
   scale_y_reverse()
 ```
 
-### How does pivoting work?
+### Pivot İşlemi Nasıl Çalışır?
 
-Now that you've seen how we can use pivoting to reshape our data, let's take a little time to gain some intuition about what pivoting does to the data.
-Let's start with a very simple dataset to make it easier to see what's happening.
-Suppose we have three patients with `id`s A, B, and C, and we take two blood pressure measurements on each patient.
-We'll create the data with `tribble()`, a handy function for constructing small tibbles by hand:
+Verimizi yeniden şekillendirmek için pivot işlemini nasıl kullanabileceğimizi gördüğümüze göre, pivot işleminin veriye ne yaptığına dair biraz sezgi kazanmak için biraz zaman ayıralım.
+Neler olduğunu görmeyi kolaylaştırmak için çok basit bir veri kümesiyle başlayalım.
+`id`'leri A, B ve C olan üç hastamız olduğunu ve her hastadan iki kan basıncı ölçümü aldığımızı varsayalım.
+Veriyi, küçük tibble'ları elle oluşturmak için kullanışlı bir fonksiyon olan `tribble()` ile oluşturacağız:
 
 ```{r}
 df <- tribble(
@@ -261,11 +263,11 @@ df <- tribble(
 )
 ```
 
-We want our new dataset to have three variables: `id` (already exists), `measurement` (the column names), and `value` (the cell values).
-To achieve this, we need to pivot `df` longer:
+Yeni veri kümemizin üç değişkene sahip olmasını istiyoruz: `id` (zaten mevcut), `measurement` (sütun adları) ve `value` (hücre değerleri).
+Bunu başarmak için, `df`'yi daha uzun bir şekilde pivotlamamız gerekir:
 
 ```{r}
-df |> 
+df |>
   pivot_longer(
     cols = bp1:bp2,
     names_to = "measurement",
@@ -273,195 +275,199 @@ df |>
   )
 ```
 
-How does the reshaping work?
-It's easier to see if we think about it column by column.
-As shown in @fig-pivot-variables, the values in a column that was already a variable in the original dataset (`id`) need to be repeated, once for each column that is pivoted.
+Yeniden şekillendirme nasıl çalışır?
+Sütun sütun düşünürsek görmek daha kolaydır.
+@fig-pivot-variables'te gösterildiği gibi, orijinal veri kümesinde zaten bir değişken olan bir sütundaki (`id`) değerlerin, pivotlanan her sütun için bir kez tekrarlanması gerekir.
 
 ```{r}
 #| label: fig-pivot-variables
 #| echo: false
-#| fig-cap: | 
-#|   Columns that are already variables need to be repeated, once for
-#|   each column that is pivoted.
-#| fig-alt: | 
-#|   A diagram showing how `pivot_longer()` transforms a simple
-#|   dataset, using color to highlight how the values in the `id` column
-#|   ("A", "B", "C") are each repeated twice in the output because there are
-#|   two columns being pivoted ("bp1" and "bp2").
+#| fig-cap: |
+#|   Zaten değişken olan sütunların, pivotlanan her sütun için bir kez
+#|   tekrarlanması gerekir.
+#| fig-alt: |
+#|   `pivot_longer()`'ın basit bir veri kümesini nasıl dönüştürdüğünü
+#|   gösteren bir diyagram; `id` sütunundaki değerlerin ("A", "B", "C")
+#|   çıktıda neden ikişer kez tekrarlandığını (pivotlanan iki sütun
+#|   ("bp1" ve "bp2") olduğu için) vurgulamak amacıyla renk
+#|   kullanılmıştır.
 knitr::include_graphics("diagrams/tidy-data/variables.png", dpi = 270)
 ```
 
-The column names become values in a new variable, whose name is defined by `names_to`, as shown in @fig-pivot-names.
-They need to be repeated once for each row in the original dataset.
+@fig-pivot-names'te gösterildiği gibi, sütun adları, adı `names_to` tarafından tanımlanan yeni bir değişkendeki değerler haline gelir.
+Bunların, orijinal veri kümesindeki her satır için bir kez tekrarlanması gerekir.
 
 ```{r}
 #| label: fig-pivot-names
 #| echo: false
 #| fig-cap: |
-#|   The column names of pivoted columns become values in a new column. The 
-#|   values need to be repeated once for each row of the original dataset.
-#| fig-alt: | 
-#|   A diagram showing how `pivot_longer()` transforms a simple
-#|   data set, using color to highlight how column names ("bp1" and 
-#|   "bp2") become the values in a new `measurement` column. They are repeated
-#|   three times because there were three rows in the input.
+#|   Pivotlanan sütunların sütun adları, yeni bir sütundaki değerler
+#|   haline gelir. Bu değerlerin, orijinal veri kümesinin her satırı
+#|   için bir kez tekrarlanması gerekir.
+#| fig-alt: |
+#|   `pivot_longer()`'ın basit bir veri kümesini nasıl dönüştürdüğünü
+#|   gösteren bir diyagram; sütun adlarının ("bp1" ve "bp2") yeni bir
+#|   `measurement` sütunundaki değerler haline nasıl geldiğini
+#|   vurgulamak amacıyla renk kullanılmıştır. Girdide üç satır olduğu
+#|   için üç kez tekrarlanırlar.
 knitr::include_graphics("diagrams/tidy-data/column-names.png", dpi = 270)
 ```
 
-The cell values also become values in a new variable, with a name defined by `values_to`.
-They are unwound row by row.
-@fig-pivot-values illustrates the process.
+Hücre değerleri de, adı `values_to` tarafından tanımlanan yeni bir değişkendeki değerler haline gelir.
+Satır satır çözülürler.
+@fig-pivot-values bu süreci gösterir.
 
 ```{r}
 #| label: fig-pivot-values
 #| echo: false
 #| fig-cap: |
-#|   The number of values is preserved (not repeated), but unwound
-#|   row-by-row.
-#| fig-alt: | 
-#|   A diagram showing how `pivot_longer()` transforms data,
-#|   using color to highlight how the cell values (blood pressure measurements)
-#|   become the values in a new `value` column. They are unwound row-by-row,
-#|   so the original rows (100,120), then (140,115), then (120,125), become 
-#|   a column running from 100 to 125.
+#|   Değerlerin sayısı korunur (tekrarlanmaz), ama satır satır çözülür.
+#| fig-alt: |
+#|   `pivot_longer()`'ın veriyi nasıl dönüştürdüğünü gösteren bir
+#|   diyagram; hücre değerlerinin (kan basıncı ölçümleri) yeni bir
+#|   `value` sütunundaki değerler haline nasıl geldiğini vurgulamak
+#|   amacıyla renk kullanılmıştır. Satır satır çözülürler, böylece
+#|   orijinal satırlar olan (100,120), sonra (140,115), sonra
+#|   (120,125), 100'den 125'e uzanan bir sütun haline gelir.
 knitr::include_graphics("diagrams/tidy-data/cell-values.png", dpi = 270)
 ```
 
-### Many variables in column names
+### Sütun Adlarında Birden Fazla Değişken
 
-A more challenging situation occurs when you have multiple pieces of information crammed into the column names, and you would like to store these in separate new variables.
-For example, take the `who2` dataset, the source of `table1` and friends that you saw above:
+Sütun adlarına sıkıştırılmış birden fazla bilgi parçasına sahip olduğunuzda ve bunları ayrı yeni değişkenlerde saklamak istediğinizde daha zorlu bir durum ortaya çıkar.
+Örneğin, yukarıda gördüğünüz `table1` ve benzerlerinin kaynağı olan `who2` veri kümesini ele alalım:
 
 ```{r}
 who2
 ```
 
-This dataset, collected by the World Health Organisation, records information about tuberculosis diagnoses.
-There are two columns that are already variables and are easy to interpret: `country` and `year`.
-They are followed by 56 columns like `sp_m_014`, `ep_m_4554`, and `rel_m_3544`.
-If you stare at these columns for long enough, you'll notice there's a pattern.
-Each column name is made up of three pieces separated by `_`.
-The first piece, `sp`/`rel`/`ep`, describes the method used for the diagnosis, the second piece, `m`/`f` is the `gender` (coded as a binary variable in this dataset), and the third piece, `014`/`1524`/`2534`/`3544`/`4554`/`5564`/`65` is the `age` range (`014` represents 0-14, for example).
+Dünya Sağlık Örgütü tarafından toplanan bu veri kümesi, tüberküloz teşhisleri hakkında bilgi kaydeder.
+Zaten değişken olan ve yorumlanması kolay iki sütun vardır: `country` ve `year`.
+Bunları, `sp_m_014`, `ep_m_4554` ve `rel_m_3544` gibi 56 sütun izler.
+Bu sütunlara yeterince uzun bakarsanız, bir örüntü olduğunu fark edersiniz.
+Her sütun adı, `_` ile ayrılmış üç parçadan oluşur.
+İlk parça, `sp`/`rel`/`ep`, teşhis için kullanılan yöntemi tanımlar; ikinci parça, `m`/`f`, `gender`'dır (bu veri kümesinde ikili bir değişken olarak kodlanmıştır); üçüncü parça, `014`/`1524`/`2534`/`3544`/`4554`/`5564`/`65`, `age` aralığıdır (örneğin `014`, 0-14'ü temsil eder).
 
-So in this case we have six pieces of information recorded in `who2`: the country and the year (already columns); the method of diagnosis, the gender category, and the age range category (contained in the other column names); and the count of patients in that category (cell values).
-To organize these six pieces of information in six separate columns, we use `pivot_longer()` with a vector of column names for `names_to` and instructors for splitting the original variable names into pieces for `names_sep` as well as a column name for `values_to`:
+Yani bu durumda, `who2`'de kaydedilmiş altı bilgi parçası vardır: ülke ve yıl (zaten sütun); teşhis yöntemi, cinsiyet kategorisi ve yaş aralığı kategorisi (diğer sütun adlarında bulunur); ve o kategorideki hasta sayısı (hücre değerleri).
+Bu altı bilgi parçasını altı ayrı sütunda organize etmek için, `names_to` için bir sütun adları vektörüyle, orijinal değişken adlarını parçalara ayırmak için `names_sep` yönergeleriyle ve `values_to` için bir sütun adıyla birlikte `pivot_longer()`'ı kullanırız:
 
 ```{r}
-who2 |> 
+who2 |>
   pivot_longer(
     cols = !(country:year),
-    names_to = c("diagnosis", "gender", "age"), 
+    names_to = c("diagnosis", "gender", "age"),
     names_sep = "_",
     values_to = "count"
   )
 ```
 
-An alternative to `names_sep` is `names_pattern`, which you can use to extract variables from more complicated naming scenarios, once you've learned about regular expressions in @sec-regular-expressions.
+`names_sep`'e bir alternatif, @sec-regular-expressions bölümünde düzenli ifadeler hakkında bilgi edindikten sonra daha karmaşık adlandırma senaryolarından değişken çıkarmak için kullanabileceğiniz `names_pattern`'dır.
 
-Conceptually, this is only a minor variation on the simpler case you've already seen.
-@fig-pivot-multiple-names shows the basic idea: now, instead of the column names pivoting into a single column, they pivot into multiple columns.
-You can imagine this happening in two steps (first pivoting and then separating) but under the hood it happens in a single step because that's faster.
+Kavramsal olarak, bu daha önce gördüğünüz daha basit durumun yalnızca küçük bir varyasyonudur.
+@fig-pivot-multiple-names temel fikri gösterir: şimdi sütun adları tek bir sütuna pivotlanmak yerine, birden fazla sütuna pivotlanır.
+Bunun iki adımda (önce pivotlama, sonra ayırma) gerçekleştiğini hayal edebilirsiniz; ama arka planda, daha hızlı olduğu için tek bir adımda gerçekleşir.
 
 ```{r}
 #| label: fig-pivot-multiple-names
 #| echo: false
 #| fig-cap: |
-#|   Pivoting columns with multiple pieces of information in the names 
-#|   means that each column name now fills in values in multiple output 
-#|   columns.
+#|   Adlarında birden fazla bilgi parçası olan sütunları pivotlamak,
+#|   artık her sütun adının birden fazla çıktı sütununda değer
+#|   doldurduğu anlamına gelir.
 #| fig-alt: |
-#|   A diagram that uses color to illustrate how supplying `names_sep` 
-#|   and multiple `names_to` creates multiple variables in the output.
-#|   The input has variable names "x_1" and "y_2" which are split up
-#|   by "_" to create name and number columns in the output. This is
-#|   is similar case with a single `names_to`, but what would have been a
-#|   single output variable is now separated into multiple variables.
+#|   `names_sep` sağlamanın ve birden fazla `names_to`'nun çıktıda
+#|   birden fazla değişken nasıl oluşturduğunu göstermek için renk
+#|   kullanan bir diyagram. Girdide, çıktıda ad ve numara sütunları
+#|   oluşturmak için "_" ile ayrılan "x_1" ve "y_2" değişken adları
+#|   vardır. Bu, tek bir `names_to` ile benzer bir durumdur; ama tek
+#|   bir çıktı değişkeni olacak şey artık birden fazla değişkene
+#|   ayrılmıştır.
 knitr::include_graphics("diagrams/tidy-data/multiple-names.png", dpi = 270)
 ```
 
-### Data and variable names in the column headers
+### Sütun Başlıklarında Hem Veri Hem Değişken Adları
 
-The next step up in complexity is when the column names include a mix of variable values and variable names.
-For example, take the `household` dataset:
+Karmaşıklıktaki bir sonraki adım, sütun adlarının değişken değerleri ile değişken adlarının bir karışımını içerdiği durumdur.
+Örneğin, `household` veri kümesini ele alalım:
 
 ```{r}
 household
 ```
 
-This dataset contains data about five families, with the names and dates of birth of up to two children.
-The new challenge in this dataset is that the column names contain the names of two variables (`dob`, `name`) and the values of another (`child`, with values 1 or 2).
-To solve this problem we again need to supply a vector to `names_to` but this time we use the special `".value"` sentinel; this isn't the name of a variable but a unique value that tells `pivot_longer()` to do something different.
-This overrides the usual `values_to` argument to use the first component of the pivoted column name as a variable name in the output.
+Bu veri kümesi, en fazla iki çocuğun adları ve doğum tarihleriyle birlikte beş aile hakkında veri içerir.
+Bu veri kümesindeki yeni zorluk, sütun adlarının iki değişkenin adlarını (`dob`, `name`) ve bir başkasının değerlerini (`child`, 1 veya 2 değerleriyle) içermesidir.
+Bu sorunu çözmek için yine `names_to`'ya bir vektör sağlamamız gerekir; ama bu sefer özel `".value"` sentinel'ini kullanırız; bu bir değişkenin adı değil, `pivot_longer()`'a farklı bir şey yapmasını söyleyen benzersiz bir değerdir.
+Bu, pivotlanan sütun adının ilk bileşenini çıktıda bir değişken adı olarak kullanmak için olağan `values_to` argümanının üzerine yazar.
 
 ```{r}
-household |> 
+household |>
   pivot_longer(
-    cols = !family, 
-    names_to = c(".value", "child"), 
-    names_sep = "_", 
+    cols = !family,
+    names_to = c(".value", "child"),
+    names_sep = "_",
     values_drop_na = TRUE
   )
 ```
 
-We again use `values_drop_na = TRUE`, since the shape of the input forces the creation of explicit missing variables (e.g., for families with only one child).
+Girdinin şekli, açık eksik değişkenlerin oluşturulmasını zorladığından (örneğin, yalnızca bir çocuğu olan aileler için), yine `values_drop_na = TRUE` kullanırız.
 
-@fig-pivot-names-and-values illustrates the basic idea with a simpler example.
-When you use `".value"` in `names_to`, the column names in the input contribute to both values and variable names in the output.
+@fig-pivot-names-and-values temel fikri daha basit bir örnekle gösterir.
+`names_to` içinde `".value"` kullandığınızda, girdideki sütun adları çıktıda hem değerlere hem değişken adlarına katkıda bulunur.
 
 ```{r}
 #| label: fig-pivot-names-and-values
 #| echo: false
 #| fig-cap: |
-#|   Pivoting with `names_to = c(".value", "num")` splits the column names
-#|   into two components: the first part determines the output column
-#|   name (`x` or `y`), and the second part determines the value of the
-#|   `num` column.
+#|   `names_to = c(".value", "num")` ile pivotlamak, sütun adlarını iki
+#|   bileşene ayırır: ilk kısım çıktı sütun adını (`x` veya `y`)
+#|   belirler, ikinci kısım ise `num` sütununun değerini belirler.
 #| fig-alt: |
-#|   A diagram that uses color to illustrate how the special ".value"
-#|   sentinel works. The input has names "x_1", "x_2", "y_1", and "y_2",
-#|   and we want to use the first component ("x", "y") as a variable name
-#|   and the second ("1", "2") as the value for a new "num" column.
+#|   Özel ".value" sentinel'inin nasıl çalıştığını göstermek için renk
+#|   kullanan bir diyagram. Girdide "x_1", "x_2", "y_1" ve "y_2" adları
+#|   vardır ve ilk bileşeni ("x", "y") bir değişken adı olarak,
+#|   ikincisini ("1", "2") ise yeni bir "num" sütununun değeri olarak
+#|   kullanmak isteriz.
 knitr::include_graphics("diagrams/tidy-data/names-and-values.png", dpi = 270)
 ```
 
-## Widening data
+## Veriyi Genişletme
 
-So far we've used `pivot_longer()` to solve the common class of problems where values have ended up in column names.
-Next we'll pivot (HA HA) to `pivot_wider()`, which makes datasets **wider** by increasing columns and reducing rows and helps when one observation is spread across multiple rows.
-This seems to arise less commonly in the wild, but it does seem to crop up a lot when dealing with governmental data.
+Şimdiye kadar, değerlerin sütun adlarında sona erdiği yaygın problem sınıfını çözmek için `pivot_longer()`'ı kullandık.
+Şimdi, veri kümelerini sütunları artırıp satırları azaltarak **daha geniş** (wider) hale getiren ve bir gözlem birden fazla satıra yayıldığında yardımcı olan `pivot_wider()`'a pivotluyoruz (HA HA).
+Bu, gerçek hayattaki verilerde daha az sıklıkla ortaya çıkıyor gibi görünüyor; ama hükümet verileriyle uğraşırken çok fazla karşımıza çıkıyor gibi görünüyor.
 
-We'll start by looking at `cms_patient_experience`, a dataset from the Centers of Medicare and Medicaid services that collects data about patient experiences:
+Hasta deneyimleri hakkında veri toplayan, Medicare ve Medicaid Hizmetleri Merkezleri'nden bir veri kümesi olan `cms_patient_experience`'a bakarak başlayacağız:
 
 ```{r}
 cms_patient_experience
 ```
 
-The core unit being studied is an organization, but each organization is spread across six rows, with one row for each measurement taken in the survey organization.
-We can see the complete set of values for `measure_cd` and `measure_title` by using `distinct()`:
+İncelenen temel birim bir organizasyondur; ama her organizasyon altı satıra yayılmıştır, anket organizasyonunda alınan her ölçüm için bir satır vardır.
+`distinct()`'i kullanarak `measure_cd` ve `measure_title` için değerlerin tam kümesini görebiliriz:
 
 ```{r}
-cms_patient_experience |> 
+cms_patient_experience |>
   distinct(measure_cd, measure_title)
 ```
 
-Neither of these columns will make particularly great variable names: `measure_cd` doesn't hint at the meaning of the variable and `measure_title` is a long sentence containing spaces.
-We'll use `measure_cd` as the source for our new column names for now, but in a real analysis you might want to create your own variable names that are both short and meaningful.
+Bu sütunların hiçbiri özellikle harika değişken adları olmayacak: `measure_cd`, değişkenin anlamına dair ipucu vermez ve `measure_title` boşluklar içeren uzun bir cümledir.
+Şimdilik yeni sütun adlarımız için kaynak olarak `measure_cd`'yi kullanacağız; ama gerçek bir analizde hem kısa hem anlamlı kendi değişken adlarınızı oluşturmak isteyebilirsiniz.
 
-`pivot_wider()` has the opposite interface to `pivot_longer()`: instead of choosing new column names, we need to provide the existing columns that define the values (`values_from`) and the column name (`names_from`):
+`pivot_wider()`, `pivot_longer()`'ın tersi bir arayüze sahiptir: yeni sütun adları seçmek yerine, değerleri (`values_from`) ve sütun adını (`names_from`) tanımlayan mevcut sütunları sağlamamız gerekir:
 
 ```{r}
-cms_patient_experience |> 
+cms_patient_experience |>
   pivot_wider(
     names_from = measure_cd,
     values_from = prf_rate
   )
 ```
 
-The output doesn't look quite right; we still seem to have multiple rows for each organization.
-That's because, we also need to tell `pivot_wider()` which column or columns have values that uniquely identify each row; in this case those are the variables starting with `"org"`:
+Çıktı tam olarak doğru görünmüyor; hâlâ her organizasyon için birden fazla satırımız var gibi görünüyor.
+Bunun nedeni, `pivot_wider()`'a hangi sütunun veya sütunların her satırı benzersiz şekilde tanımlayan değerlere sahip olduğunu da söylememiz gerekmesidir; bu durumda bunlar `"org"` ile başlayan değişkenlerdir:
 
 ```{r}
-cms_patient_experience |> 
+cms_patient_experience |>
   pivot_wider(
     id_cols = starts_with("org"),
     names_from = measure_cd,
@@ -469,81 +475,25 @@ cms_patient_experience |>
   )
 ```
 
-This gives us the output that we're looking for.
+Bu, aradığımız çıktıyı bize verir.
 
-### How does `pivot_wider()` work?
+### `pivot_wider()` Nasıl Çalışır?
 
-To understand how `pivot_wider()` works, let's again start with a very simple dataset.
-This time we have two patients with `id`s A and B, we have three blood pressure measurements on patient A and two on patient B:
+`pivot_wider()`'ın nasıl çalıştığını anlamak için, yine çok basit bir veri kümesiyle başlayalım.
+Bu sefer `id`'leri A ve B olan iki hastamız var; hasta A üzerinde üç, hasta B üzerinde iki kan basıncı ölçümümüz var:
 
 ```{r}
 df <- tribble(
   ~id, ~measurement, ~value,
   "A",        "bp1",    100,
   "B",        "bp1",    140,
-  "B",        "bp2",    115, 
+  "B",        "bp2",    115,
   "A",        "bp2",    120,
   "A",        "bp3",    105
 )
 ```
 
-We'll take the values from the `value` column and the names from the `measurement` column:
-
-```{r}
-df |> 
-  pivot_wider(
-    names_from = measurement,
-    values_from = value
-  )
-```
-
-To begin the process `pivot_wider()` needs to first figure out what will go in the rows and columns.
-The new column names will be the unique values of `measurement`.
-
-```{r}
-df |> 
-  distinct(measurement) |> 
-  pull()
-```
-
-By default, the rows in the output are determined by all the variables that aren't going into the new names or values.
-These are called the `id_cols`.
-Here there is only one column, but in general there can be any number.
-
-```{r}
-df |> 
-  select(!measurement & !value) |> 
-  distinct()
-```
-
-`pivot_wider()` then combines these results to generate an empty data frame:
-
-```{r}
-df |> 
-  select(!measurement & !value) |> 
-  distinct() |> 
-  mutate(x = NA, y = NA, z = NA)
-```
-
-It then fills in all the missing values using the data in the input.
-In this case, not every cell in the output has a corresponding value in the input as there's no third blood pressure measurement for patient B, so that cell remains missing.
-We'll come back to this idea that `pivot_wider()` can "make" missing values in @sec-missing-values.
-
-You might also wonder what happens if there are multiple rows in the input that correspond to one cell in the output.
-The example below has two rows that correspond to `id` "A" and `measurement` "bp1":
-
-```{r}
-df <- tribble(
-  ~id, ~measurement, ~value,
-  "A",        "bp1",    100,
-  "A",        "bp1",    102,
-  "A",        "bp2",    120,
-  "B",        "bp1",    140, 
-  "B",        "bp2",    115
-)
-```
-
-If we attempt to pivot this we get an output that contains list-columns, which you'll learn more about in @sec-rectangling:
+Değerleri `value` sütunundan, adları ise `measurement` sütunundan alacağız:
 
 ```{r}
 df |>
@@ -553,30 +503,86 @@ df |>
   )
 ```
 
-Since you don't know how to work with this sort of data yet, you'll want to follow the hint in the warning to figure out where the problem is:
+Süreci başlatmak için `pivot_wider()`'ın önce satırlara ve sütunlara ne gideceğini bulması gerekir.
+Yeni sütun adları, `measurement`'ın benzersiz değerleri olacaktır.
 
 ```{r}
-df |> 
-  group_by(id, measurement) |> 
-  summarize(n = n(), .groups = "drop") |> 
+df |>
+  distinct(measurement) |>
+  pull()
+```
+
+Varsayılan olarak, çıktıdaki satırlar, yeni adlara veya değerlere gitmeyen tüm değişkenler tarafından belirlenir.
+Bunlara `id_cols` denir.
+Burada yalnızca bir sütun var; ama genel olarak herhangi bir sayıda olabilir.
+
+```{r}
+df |>
+  select(!measurement & !value) |>
+  distinct()
+```
+
+`pivot_wider()` daha sonra boş bir veri çerçevesi oluşturmak için bu sonuçları birleştirir:
+
+```{r}
+df |>
+  select(!measurement & !value) |>
+  distinct() |>
+  mutate(x = NA, y = NA, z = NA)
+```
+
+Ardından, girdideki veriyi kullanarak tüm eksik değerleri doldurur.
+Bu durumda, hasta B için üçüncü bir kan basıncı ölçümü olmadığından, çıktıdaki her hücrenin girdide karşılık gelen bir değeri yoktur, bu yüzden o hücre eksik kalır.
+`pivot_wider()`'ın eksik değerler "yaratabileceği" bu fikre @sec-missing-values bölümünde geri döneceğiz.
+
+Girdide, çıktıdaki bir hücreye karşılık gelen birden fazla satır varsa ne olacağını da merak edebilirsiniz.
+Aşağıdaki örnekte, `id` "A" ve `measurement` "bp1"e karşılık gelen iki satır vardır:
+
+```{r}
+df <- tribble(
+  ~id, ~measurement, ~value,
+  "A",        "bp1",    100,
+  "A",        "bp1",    102,
+  "A",        "bp2",    120,
+  "B",        "bp1",    140,
+  "B",        "bp2",    115
+)
+```
+
+Bunu pivotlamaya çalışırsak, @sec-rectangling bölümünde daha fazla bilgi edineceğiniz liste sütunları (list-columns) içeren bir çıktı elde ederiz:
+
+```{r}
+df |>
+  pivot_wider(
+    names_from = measurement,
+    values_from = value
+  )
+```
+
+Bu tür verilerle nasıl çalışılacağını henüz bilmediğinizden, sorunun nerede olduğunu anlamak için uyarıdaki ipucunu takip etmek isteyeceksiniz:
+
+```{r}
+df |>
+  group_by(id, measurement) |>
+  summarize(n = n(), .groups = "drop") |>
   filter(n > 1)
 ```
 
-It's then up to you to figure out what's gone wrong with your data and either repair the underlying damage or use your grouping and summarizing skills to ensure that each combination of row and column values only has a single row.
+Ardından, verinizde neyin yanlış gittiğini anlamak ve altta yatan hasarı onarmak ya da her satır ve sütun değeri kombinasyonunun yalnızca tek bir satıra sahip olmasını sağlamak için gruplama ve özetleme becerilerinizi kullanmak size kalmıştır.
 
-## Summary
+## Özet
 
-In this chapter you learned about tidy data: data that has variables in columns and observations in rows.
-Tidy data makes working in the tidyverse easier, because it's a consistent structure understood by most functions, the main challenge is transforming the data from whatever structure you receive it in to a tidy format.
-To that end, you learned about `pivot_longer()` and `pivot_wider()` which allow you to tidy up many untidy datasets.
-The examples we presented here are a selection of those from `vignette("pivot", package = "tidyr")`, so if you encounter a problem that this chapter doesn't help you with, that vignette is a good place to try next.
+Bu bölümde düzenli veri hakkında bilgi edindiniz: değişkenleri sütunlarda, gözlemleri satırlarda olan veri.
+Düzenli veri, tidyverse'de çalışmayı kolaylaştırır; çünkü çoğu fonksiyon tarafından anlaşılan tutarlı bir yapıdır; ana zorluk, veriyi hangi yapıda alırsanız alın, onu düzenli bir formata dönüştürmektir.
+Bu amaçla, size pek çok düzensiz veri kümesini düzenlemenizi sağlayan `pivot_longer()` ve `pivot_wider()` hakkında bilgi edindiniz.
+Burada sunduğumuz örnekler, `vignette("pivot", package = "tidyr")`'dan seçilmiştir, bu yüzden bu bölümün size yardımcı olmadığı bir sorunla karşılaşırsanız, bir sonraki denemek için o vignette iyi bir yerdir.
 
-Another challenge is that, for a given dataset, it can be impossible to label the longer or the wider version as the "tidy" one.
-This is partly a reflection of our definition of tidy data, where we said tidy data has one variable in each column, but we didn't actually define what a variable is (and it's surprisingly hard to do so).
-It's totally fine to be pragmatic and to say a variable is whatever makes your analysis easiest.
-So if you're stuck figuring out how to do some computation, consider switching up the organisation of your data; don't be afraid to untidy, transform, and re-tidy as needed!
+Bir başka zorluk da, belirli bir veri kümesi için, daha uzun mu yoksa daha geniş versiyonun mu "düzenli" olduğunu etiketlemenin imkansız olabilmesidir.
+Bu, kısmen düzenli verinin tanımımızın bir yansımasıdır; düzenli verinin her sütunda bir değişkene sahip olduğunu söyledik, ama bir değişkenin ne olduğunu gerçekte tanımlamadık (ve bunu yapmak şaşırtıcı derecede zordur).
+Pragmatik olmak ve bir değişkenin analizinizi en kolay yapan şey olduğunu söylemek tamamen sorun değildir.
+Bu yüzden bir hesaplamayı nasıl yapacağınızı bulmakta takılırsanız, verinizin organizasyonunu değiştirmeyi düşünün; gerektiğinde düzensizleştirmekten, dönüştürmekten ve yeniden düzenlemekten korkmayın!
 
-If you enjoyed this chapter and want to learn more about the underlying theory, you can learn more about the history and theoretical underpinnings in the [Tidy Data](https://www.jstatsoft.org/article/view/v059i10) paper published in the Journal of Statistical Software.
+Bu bölümden keyif aldıysanız ve altta yatan teori hakkında daha fazla bilgi edinmek istiyorsanız, Journal of Statistical Software'de yayınlanan [Tidy Data](https://www.jstatsoft.org/article/view/v059i10) makalesinde tarih ve teorik temeller hakkında daha fazla bilgi edinebilirsiniz.
 
-Now that you're writing a substantial amount of R code, it's time to learn more about organizing your code into files and directories.
-In the next chapter, you'll learn all about the advantages of scripts and projects, and some of the many tools that they provide to make your life easier.
+Artık önemli miktarda R kodu yazdığınıza göre, kodunuzu dosyalara ve dizinlere organize etme konusunda daha fazla bilgi edinme zamanı geldi.
+Bir sonraki bölümde, betiklerin ve projelerin avantajları ve hayatınızı kolaylaştırmak için sağladıkları pek çok araçtan bazıları hakkında her şeyi öğreneceksiniz.

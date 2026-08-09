@@ -1,41 +1,40 @@
-# Workflow: scripts and projects {#sec-workflow-scripts-projects}
+# İş Akışı: Scriptler {#sec-workflow-scripts-projects}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-This chapter will introduce you to two essential tools for organizing your code: scripts and projects.
+Bu bölüm, kodunuzu organize etmek için iki temel araçla sizi tanıştıracaktır: scriptler ve projeler.
 
-## Scripts
+## Scriptler
 
-So far, you have used the console to run code.
-That's a great place to start, but you'll find it gets cramped pretty quickly as you create more complex ggplot2 graphics and longer dplyr pipelines.
-To give yourself more room to work, use the script editor.
-Open it up by clicking the File menu, selecting New File, then R script, or using the keyboard shortcut Cmd/Ctrl + Shift + N.
-Now you'll see four panes, as in @fig-rstudio-script.
-The script editor is a great place to experiment with your code.
-When you want to change something, you don't have to re-type the whole thing, you can just edit the script and re-run it.
-And once you have written code that works and does what you want, you can save it as a script file to easily return to later.
+Şimdiye kadar kod çalıştırmak için konsolu kullandınız.
+Bu, başlamak için harika bir yer; ama daha karmaşık ggplot2 grafikleri ve daha uzun dplyr pipeline'ları oluşturdukça oldukça sıkışık hale geldiğini fark edeceksiniz.
+Kendinize çalışmak için daha fazla alan sağlamak için script editörünü kullanın.
+File menüsüne tıklayıp New File'ı, ardından R script'i seçerek veya Cmd/Ctrl + Shift + N klavye kısayolunu kullanarak açın.
+Şimdi @fig-rstudio-script'teki gibi dört panel göreceksiniz.
+Script editörü, kodunuzla denemeler yapmak için harika bir yerdir.
+Bir şeyi değiştirmek istediğinizde, tüm kodu yeniden yazmanız gerekmez; scripti düzenleyip yeniden çalıştırabilirsiniz.
+Ve işe yarayan ve istediğinizi yapan bir kod yazdığınızda, daha sonra kolayca geri dönmek için onu bir script dosyası olarak kaydedebilirsiniz.
 
 ```{r}
 #| label: fig-rstudio-script
 #| echo: false
 #| out-width: ~
 #| fig-cap: |
-#|   Opening the script editor adds a new pane at the top-left of the
-#|   IDE.
+#|   Script editörünü açmak, IDE'nin sol üstüne yeni bir panel ekler.
 #| fig-alt: |
-#|   RStudio IDE with Editor, Console, and Output highlighted.
+#|   Editör, Konsol ve Çıktı'nın vurgulandığı RStudio IDE'si.
 knitr::include_graphics("diagrams/rstudio/script.png", dpi = 270)
 ```
 
-### Running code
+### Kod Çalıştırma
 
-The script editor is an excellent place for building complex ggplot2 plots or long sequences of dplyr manipulations.
-The key to using the script editor effectively is to memorize one of the most important keyboard shortcuts: Cmd/Ctrl + Enter.
-This executes the current R expression in the console.
-For example, take the code below.
+Script editörü, karmaşık ggplot2 grafikleri veya uzun dplyr manipülasyon dizileri oluşturmak için mükemmel bir yerdir.
+Script editörünü etkili bir şekilde kullanmanın anahtarı, en önemli klavye kısayollarından birini ezberlemektir: Cmd/Ctrl + Enter.
+Bu, konsoldaki mevcut R ifadesini çalıştırır.
+Örneğin, aşağıdaki kodu ele alalım.
 
 ```{r}
 #| eval: false
@@ -50,73 +49,75 @@ not_cancelled |>
   summarize(mean = mean(dep_delay))
 ```
 
-If your cursor is at █, pressing Cmd/Ctrl + Enter will run the complete command that generates `not_cancelled`.
-It will also move the cursor to the following statement (beginning with `not_cancelled |>`).
-That makes it easy to step through your complete script by repeatedly pressing Cmd/Ctrl + Enter.
+İmleciniz █'de ise, Cmd/Ctrl + Enter'a basmak `not_cancelled`'ı üreten komutun tamamını çalıştırır.
+Ayrıca imleci bir sonraki ifadeye (`not_cancelled |>` ile başlayan) taşır.
+Bu, Cmd/Ctrl + Enter'a tekrar tekrar basarak tüm scriptinizde adım adım ilerlemeyi kolaylaştırır.
 
-Instead of running your code expression-by-expression, you can also execute the complete script in one step with Cmd/Ctrl + Shift + S.
-Doing this regularly is a great way to ensure that you've captured all the important parts of your code in the script.
+Kodunuzu ifade ifade çalıştırmak yerine, tüm scripti Cmd/Ctrl + Shift + S ile tek adımda da çalıştırabilirsiniz.
+Bunu düzenli olarak yapmak, kodunuzun tüm önemli kısımlarını scriptte yakaladığınızdan emin olmanın harika bir yoludur.
 
-We recommend you always start your script with the packages you need.
-That way, if you share your code with others, they can easily see which packages they need to install.
-Note, however, that you should never include `install.packages()` in a script you share.
-It's inconsiderate to hand off a script that will change something on their computer if they're not being careful!
+Scriptinize her zaman ihtiyaç duyduğunuz paketlerle başlamanızı öneririz.
+Bu şekilde, kodunuzu başkalarıyla paylaşırsanız, hangi paketleri kurmaları gerektiğini kolayca görebilirler.
+Ancak, paylaştığınız bir scriptte asla `install.packages()`'ı dahil etmemeniz gerektiğini unutmayın.
+Dikkatli olmazlarsa bilgisayarlarında bir şeyi değiştirecek bir script devretmek düşüncesizliktir!
 
-When working through future chapters, we highly recommend starting in the script editor and practicing your keyboard shortcuts.
-Over time, sending code to the console in this way will become so natural that you won't even think about it.
+Sonraki bölümlerde çalışırken, script editöründe başlamanızı ve klavye kısayollarınızı pratik etmenizi şiddetle öneririz.
+Zamanla, kodu bu şekilde konsola göndermek o kadar doğal hale gelecek ki, bunu düşünmeyeceksiniz bile.
 
-### RStudio diagnostics
+### RStudio Tanılamaları
 
-In the script editor, RStudio will highlight syntax errors with a red squiggly line and a cross in the sidebar:
+Script editöründe, RStudio sözdizimi hatalarını kırmızı dalgalı bir çizgi ve kenar çubuğunda bir çarpı işaretiyle vurgular:
 
 ```{r}
 #| echo: false
 #| out-width: ~
 #| fig-alt: |
-#|   Script editor with the script x y <- 10. A red X indicates that there is 
-#|   syntax error. The syntax error is also highlighted with a red squiggly line.
+#|   İçinde `x y <- 10` scripti olan script editörü. Kırmızı bir X, bir
+#|   sözdizimi hatası olduğunu gösterir. Sözdizimi hatası ayrıca
+#|   kırmızı dalgalı bir çizgiyle de vurgulanmıştır.
 knitr::include_graphics("screenshots/rstudio-diagnostic.png")
 ```
 
-Hover over the cross to see what the problem is:
+Sorunun ne olduğunu görmek için çarpı işaretinin üzerine gelin:
 
 ```{r}
 #| echo: false
 #| out-width: ~
 #| fig-alt: |
-#|   Script editor with the script x y <- 10. A red X indicates that there is 
-#|   syntax error. The syntax error is also highlighted with a red squiggly line.
-#|   Hovering over the X shows a text box with the text unexpected token y and 
-#|   unexpected token <-.
+#|   İçinde `x y <- 10` scripti olan script editörü. Kırmızı bir X, bir
+#|   sözdizimi hatası olduğunu gösterir. Sözdizimi hatası ayrıca
+#|   kırmızı dalgalı bir çizgiyle de vurgulanmıştır. X'in üzerine
+#|   gelmek, "unexpected token y" ve "unexpected token <-" metnini
+#|   içeren bir metin kutusu gösterir.
 knitr::include_graphics("screenshots/rstudio-diagnostic-tip.png")
 ```
 
-RStudio will also let you know about potential problems:
+RStudio ayrıca olası sorunlar hakkında da sizi bilgilendirecektir:
 
 ```{r}
 #| echo: false
 #| out-width: ~
 #| fig-alt: |
-#|   Script editor with the script 3 == NA. A yellow exclamation mark 
-#|   indicates that there may be a potential problem. Hovering over the 
-#|   exclamation mark shows a text box with the text use is.na to check 
-#|   whether expression evaluates to NA.
+#|   İçinde `3 == NA` scripti olan script editörü. Sarı bir ünlem
+#|   işareti, olası bir sorun olabileceğini gösterir. Ünlem işaretinin
+#|   üzerine gelmek, "use is.na to check whether expression evaluates
+#|   to NA" metnini içeren bir metin kutusu gösterir.
 knitr::include_graphics("screenshots/rstudio-diagnostic-warn.png")
 ```
 
-### Saving and naming
+### Kaydetme ve Adlandırma
 
-RStudio automatically saves the contents of the script editor when you quit, and automatically reloads it when you re-open.
-Nevertheless, it's a good idea to avoid Untitled1, Untitled2, Untitled3, and so on and instead save your scripts and give them informative names.
+RStudio, çıktığınızda script editörünün içeriğini otomatik olarak kaydeder ve yeniden açtığınızda otomatik olarak yeniden yükler.
+Yine de, Untitled1, Untitled2, Untitled3 ve benzerlerinden kaçınmak ve bunun yerine scriptlerinizi kaydedip onlara bilgilendirici isimler vermek iyi bir fikirdir.
 
-It might be tempting to name your files `code.R` or `myscript.R`, but you should think a bit harder before choosing a name for your file.
-Three important principles for file naming are as follows:
+Dosyalarınızı `code.R` veya `myscript.R` olarak adlandırmak cazip gelebilir; ama dosyanız için bir isim seçmeden önce biraz daha derin düşünmelisiniz.
+Dosya adlandırma için üç önemli ilke şöyledir:
 
-1.  File names should be **machine** readable: avoid spaces, symbols, and special characters. Don't rely on case sensitivity to distinguish files.
-2.  File names should be **human** readable: use file names to describe what's in the file.
-3.  File names should play well with default ordering: start file names with numbers so that alphabetical sorting puts them in the order they get used.
+1.  Dosya adları **makine** tarafından okunabilir olmalıdır: boşluklardan, sembollerden ve özel karakterlerden kaçının. Dosyaları ayırt etmek için büyük/küçük harf duyarlılığına güvenmeyin.
+2.  Dosya adları **insan** tarafından okunabilir olmalıdır: dosyanın içinde ne olduğunu açıklamak için dosya adlarını kullanın.
+3.  Dosya adları varsayılan sıralamayla iyi çalışmalıdır: dosya adlarını sayılarla başlatın, böylece alfabetik sıralama onları kullanılma sırasına koyar.
 
-For example, suppose you have the following files in a project folder.
+Örneğin, bir proje klasöründe aşağıdaki dosyalara sahip olduğunuzu varsayalım.
 
 ```         
 alternative model.R
@@ -130,11 +131,11 @@ run-first.r
 temp.txt
 ```
 
-There are a variety of problems here: it's hard to find which file to run first, file names contain spaces, there are two files with the same name but different capitalization (`finalreport` vs. `FinalReport`[^workflow-scripts-1]), and some names don't describe their contents (`run-first` and `temp`).
+Burada çeşitli sorunlar var: önce hangi dosyanın çalıştırılacağını bulmak zor, dosya adları boşluk içeriyor, aynı isme ama farklı büyük/küçük harfe sahip iki dosya var (`finalreport` ile `FinalReport`[^workflow-scripts-1]) ve bazı isimler içeriklerini tanımlamıyor (`run-first` ve `temp`).
 
-[^workflow-scripts-1]: Not to mention that you're tempting fate by using "final" in the name 😆 The comic Piled Higher and Deeper has a [fun strip on this](https://phdcomics.com/comics/archive.php?comicid=1531).
+[^workflow-scripts-1]: İsimde "final" kullanarak kaderi zorladığınızdan bahsetmiyorum bile 😆 Piled Higher and Deeper çizgi romanının [bununla ilgili eğlenceli bir şeridi](https://phdcomics.com/comics/archive.php?comicid=1531) var.
 
-Here's a better way of naming and organizing the same set of files:
+Aynı dosya kümesini adlandırmanın ve organize etmenin daha iyi bir yolu:
 
 ```         
 01-load-data.R
@@ -148,85 +149,86 @@ report-2022-04-02.qmd
 report-draft-notes.txt
 ```
 
-Numbering the key scripts makes it obvious in which order to run them and a consistent naming scheme makes it easier to see what varies.
-Additionally, the figures are labelled similarly, the reports are distinguished by dates included in the file names, and `temp` is renamed to `report-draft-notes` to better describe its contents.
-If you have a lot of files in a directory, taking organization one step further and placing different types of files (scripts, figures, etc.) in different directories is recommended.
+Anahtar scriptleri numaralandırmak, onları hangi sırayla çalıştıracağınızı açık hale getirir ve tutarlı bir adlandırma şeması, neyin değiştiğini görmeyi kolaylaştırır.
+Ayrıca, şekiller benzer şekilde etiketlenmiştir, raporlar dosya adlarına dahil edilen tarihlerle ayırt edilir ve `temp`, içeriğini daha iyi tanımlamak için `report-draft-notes` olarak yeniden adlandırılmıştır.
+Bir dizinde çok sayıda dosyanız varsa, organizasyonu bir adım daha ileri götürüp farklı dosya türlerini (scriptler, şekiller vb.) farklı dizinlere yerleştirmeniz önerilir.
 
-## Projects
+## Projeler
 
-One day, you will need to quit R, go do something else, and return to your analysis later.
-One day, you will be working on multiple analyses simultaneously and you want to keep them separate.
-One day, you will need to bring data from the outside world into R and send numerical results and figures from R back out into the world.
+Bir gün R'dan çıkmanız, başka bir şey yapmanız ve daha sonra analizinize geri dönmeniz gerekecek.
+Bir gün, aynı anda birden fazla analiz üzerinde çalışacak ve bunları ayrı tutmak isteyeceksiniz.
+Bir gün, dış dünyadan veriyi R'a getirmeniz ve sayısal sonuçları ile şekilleri R'dan tekrar dünyaya göndermeniz gerekecek.
 
-To handle these real life situations, you need to make two decisions:
+Bu gerçek hayat durumlarıyla başa çıkmak için iki karar vermeniz gerekir:
 
-1.  What is the source of truth?
-    What will you save as your lasting record of what happened?
+1.  Doğruluğun kaynağı nedir?
+    Neler olduğuna dair kalıcı kaydınız olarak neyi saklayacaksınız?
 
-2.  Where does your analysis live?
+2.  Analiziniz nerede yaşıyor?
 
-### What is the source of truth?
+### Doğruluğun Kaynağı Nedir?
 
-As a beginner, it's okay to rely on your current Environment to contain all the objects you have created throughout your analysis.
-However, to make it easier to work on larger projects or collaborate with others, your source of truth should be the R scripts.
-With your R scripts (and your data files), you can recreate the environment.
-With only your environment, it's much harder to recreate your R scripts: you'll either have to retype a lot of code from memory (inevitably making mistakes along the way) or you'll have to carefully mine your R history.
+Yeni başlayan biri olarak, analiziniz boyunca oluşturduğunuz tüm nesneleri içermesi için mevcut Environment'ınıza güvenmeniz sorun değildir.
+Ancak, daha büyük projeler üzerinde çalışmayı veya başkalarıyla iş birliği yapmayı kolaylaştırmak için doğruluğun kaynağınız R scriptleri olmalıdır.
+R scriptlerinizle (ve veri dosyalarınızla), ortamı yeniden oluşturabilirsiniz.
+Yalnızca ortamınızla, R scriptlerinizi yeniden oluşturmak çok daha zordur: ya hafızanızdan çok fazla kod yeniden yazmak zorunda kalırsınız (bu süreçte kaçınılmaz olarak hatalar yaparsınız) ya da R geçmişinizi dikkatlice kazmanız gerekir.
 
-To help keep your R scripts as the source of truth for your analysis, we highly recommend that you instruct RStudio not to preserve your workspace between sessions.
-You can do this either by running `usethis::use_blank_slate()`[^workflow-scripts-2] or by mimicking the options shown in @fig-blank-slate. This will cause you some short-term pain, because now when you restart RStudio, it will no longer remember the code that you ran last time nor will the objects you created or the datasets you read be available to use.
-But this short-term pain saves you long-term agony because it forces you to capture all important procedures in your code.
-There's nothing worse than discovering three months after the fact that you've only stored the results of an important calculation in your environment, not the calculation itself in your code.
+R scriptlerinizi analiziniz için doğruluğun kaynağı olarak tutmaya yardımcı olmak için, RStudio'ya oturumlar arasında çalışma alanınızı korumamasını söylemenizi şiddetle öneririz.
+Bunu, `usethis::use_blank_slate()`'i çalıştırarak[^workflow-scripts-2] veya @fig-blank-slate'te gösterilen seçenekleri taklit ederek yapabilirsiniz. Bu, size kısa vadede biraz acı verecektir; çünkü artık RStudio'yu yeniden başlattığınızda, geçen sefer çalıştırdığınız kodu hatırlamayacak, ne oluşturduğunuz nesneler ne de okuduğunuz veri kümeleri kullanıma hazır olmayacaktır.
+Ama bu kısa vadeli acı, sizi uzun vadeli ıstıraptan kurtarır; çünkü tüm önemli prosedürleri kodunuzda yakalamaya zorlar.
+Önemli bir hesaplamanın yalnızca sonuçlarını ortamınızda sakladığınızı, hesaplamanın kendisini kodunuzda saklamadığınızı üç ay sonra keşfetmekten daha kötü bir şey yoktur.
 
-[^workflow-scripts-2]: If you don't have usethis installed, you can install it with `install.packages("usethis")`.
+[^workflow-scripts-2]: usethis kurulu değilse, `install.packages("usethis")` ile kurabilirsiniz.
 
 ```{r}
 #| label: fig-blank-slate
 #| echo: false
 #| fig-cap: |
-#|   Copy these options in your RStudio options to always start your 
-#|   RStudio session with a clean slate.
+#|   RStudio oturumunuza her zaman temiz bir sayfayla başlamak için bu
+#|   seçenekleri RStudio seçeneklerinizde kopyalayın.
 #| fig-alt: |
-#|   RStudio Global Options window where the option Restore .RData into workspace 
-#|   at startup is not checked. Also, the option Save workspace to .RData 
-#|   on exit is set to Never.
+#|   "Restore .RData into workspace at startup" seçeneğinin
+#|   işaretlenmediği RStudio Global Options penceresi. Ayrıca, "Save
+#|   workspace to .RData on exit" seçeneği "Never" olarak
+#|   ayarlanmıştır.
 #| out-width: ~
 knitr::include_graphics("diagrams/rstudio/clean-slate.png", dpi = 270)
 ```
 
-There is a great pair of keyboard shortcuts that will work together to make sure you've captured the important parts of your code in the editor:
+Editördeki kodunuzun önemli kısımlarını yakaladığınızdan emin olmak için birlikte çalışan harika bir klavye kısayolu çifti vardır:
 
-1.  Press Cmd/Ctrl + Shift + 0/F10 to restart R.
-2.  Press Cmd/Ctrl + Shift + S to re-run the current script.
+1.  R'ı yeniden başlatmak için Cmd/Ctrl + Shift + 0/F10'a basın.
+2.  Mevcut scripti yeniden çalıştırmak için Cmd/Ctrl + Shift + S'ye basın.
 
-We collectively use this pattern hundreds of times a week.
+Bu örüntüyü kolektif olarak haftada yüzlerce kez kullanıyoruz.
 
-Alternatively, if you don't use keyboard shortcuts, you can go to Session \> Restart R and then highlight and re-run your current script.
+Alternatif olarak, klavye kısayollarını kullanmıyorsanız, Session \> Restart R'a gidip ardından mevcut scriptinizi vurgulayıp yeniden çalıştırabilirsiniz.
 
 ::: callout-note
-## RStudio server
+## RStudio Server
 
-If you're using RStudio server, your R session is never restarted by default.
-When you close your RStudio server tab, it might feel like you're closing R, but the server actually keeps it running in the background.
-The next time you return, you'll be in exactly the same place you left.
-This makes it even more important to regularly restart R so that you're starting with a clean slate.
+RStudio Server kullanıyorsanız, R oturumunuz varsayılan olarak asla yeniden başlatılmaz.
+RStudio Server sekmenizi kapattığınızda, R'ı kapatıyormuşsunuz gibi hissedebilirsiniz; ama sunucu aslında onu arka planda çalışır durumda tutar.
+Bir sonraki dönüşünüzde, tam olarak bıraktığınız yerde olacaksınız.
+Bu, temiz bir sayfayla başlamak için R'ı düzenli olarak yeniden başlatmayı daha da önemli hale getirir.
 :::
 
-### Where does your analysis live?
+### Analiziniz Nerede Yaşıyor?
 
-R has a powerful notion of the **working directory**.
-This is where R looks for files that you ask it to load, and where it will put any files that you ask it to save.
-RStudio shows your current working directory at the top of the console:
+R'ın **çalışma dizini** (working directory) diye güçlü bir kavramı vardır.
+R, yüklemesini istediğiniz dosyaları burada arar ve kaydetmesini istediğiniz dosyaları buraya koyar.
+RStudio, mevcut çalışma dizininizi konsolun üstünde gösterir:
 
 ```{r}
 #| echo: false
 #| fig-alt: |
-#|   The Console tab shows the current working directory as 
-#|   ~/Documents/r4ds.
+#|   Console sekmesi mevcut çalışma dizinini ~/Documents/r4ds olarak
+#|   gösterir.
 #| out-width: ~
 knitr::include_graphics("screenshots/rstudio-wd.png")
 ```
 
-And you can print this out in R code by running `getwd()`:
+Bunu, `getwd()`'i çalıştırarak R kodunda da yazdırabilirsiniz:
 
 ```{r}
 #| eval: false
@@ -234,52 +236,54 @@ getwd()
 #> [1] "/Users/hadley/Documents/r4ds"
 ```
 
-In this R session, the current working directory (think of it as "home") is in hadley's Documents folder, in a subfolder called r4ds.
-This code will return a different result when you run it, because your computer has a different directory structure than Hadley's!
+Bu R oturumunda, mevcut çalışma dizini ("ev" olarak düşünün), hadley'nin Documents klasöründe, r4ds adlı bir alt klasördedir.
+Bu kodu çalıştırdığınızda farklı bir sonuç döndürecektir; çünkü bilgisayarınızın dizin yapısı Hadley'ninkinden farklıdır!
 
-As a beginning R user, it's OK to let your working directory be your home directory, documents directory, or any other weird directory on your computer.
-But you're more than a handful of chapters into this book, and you're no longer a beginner.
-Very soon now you should evolve to organizing your projects into directories and, when working on a project, set R's working directory to the associated directory.
+Yeni başlayan bir R kullanıcısı olarak, çalışma dizininizin ev dizininiz, belgeler dizininiz veya bilgisayarınızdaki başka herhangi bir garip dizin olmasına izin vermeniz sorun değildir.
+Ama kitapta bir avuçtan fazla bölümü geride bıraktınız ve artık yeni başlayan biri değilsiniz.
+Çok yakında, projelerinizi dizinlere organize etme ve bir proje üzerinde çalışırken R'ın çalışma dizinini ilgili dizine ayarlama konusunda gelişmelisiniz.
 
-You can set the working directory from within R but **we** **do not recommend it**:
+Çalışma dizinini R içinden ayarlayabilirsiniz; ama **bunu** **önermiyoruz**:
 
 ```{r}
 #| eval: false
 setwd("/path/to/my/CoolProject")
 ```
 
-There's a better way; a way that also puts you on the path to managing your R work like an expert.
-That way is the **RStudio** **project**.
+Daha iyi bir yol var; sizi ayrıca R çalışmanızı bir uzman gibi yönetme yoluna da sokan bir yol.
+Bu yol, **RStudio** **projesi**dir.
 
-### RStudio projects
+### RStudio Projeleri
 
-Keeping all the files associated with a given project (input data, R scripts, analytical results, and figures) together in one directory is such a wise and common practice that RStudio has built-in support for this via **projects**.
-Let's make a project for you to use while you're working through the rest of this book.
-Click File \> New Project, then follow the steps shown in @fig-new-project.
+Belirli bir projeyle ilişkili tüm dosyaları (girdi verisi, R scriptleri, analitik sonuçlar ve şekiller) tek bir dizinde bir arada tutmak, o kadar akıllıca ve yaygın bir uygulamadır ki, RStudio bunun için **projeler** aracılığıyla yerleşik destek sunar.
+Kitabın geri kalanında çalışırken kullanmanız için bir proje oluşturalım.
+File \> New Project'e tıklayın, ardından @fig-new-project'te gösterilen adımları izleyin.
 
 ```{r}
 #| label: fig-new-project
 #| echo: false
-#| fig-cap: | 
-#|   To create new project: (top) first click New Directory, then (middle)
-#|   click New Project, then (bottom) fill in the directory (project) name,
-#|   choose a good subdirectory for its home and click Create Project.
+#| fig-cap: |
+#|   Yeni proje oluşturmak için: (üstte) önce New Directory'ye
+#|   tıklayın, sonra (ortada) New Project'e tıklayın, sonra (altta)
+#|   dizin (proje) adını doldurun, evi için iyi bir alt dizin seçin ve
+#|   Create Project'e tıklayın.
 #| fig-alt: |
-#|   Three screenshots of the New Project menu. In the first screenshot, 
-#|   the Create Project window is shown and New Directory is selected. 
-#|   In the second screenshot, the Project Type window is shown and 
-#|   Empty Project is selected. In the third screenshot, the Create New
-#|   Project  window is shown and the directory name is given as r4ds and
-#|   the project is being created as subdirectory of the Desktop.
+#|   New Project menüsünün üç ekran görüntüsü. İlk ekran görüntüsünde,
+#|   Create Project penceresi gösterilir ve New Directory seçilidir.
+#|   İkinci ekran görüntüsünde, Project Type penceresi gösterilir ve
+#|   Empty Project seçilidir. Üçüncü ekran görüntüsünde, Create New
+#|   Project penceresi gösterilir ve dizin adı r4ds olarak
+#|   verilmiştir; proje, Desktop'ın bir alt dizini olarak
+#|   oluşturulmaktadır.
 #| out-width: ~
 knitr::include_graphics("diagrams/new-project.png")
 ```
 
-Call your project `r4ds` and think carefully about which subdirectory you put the project in.
-If you don't store it somewhere sensible, it will be hard to find it in the future!
+Projenizi `r4ds` olarak adlandırın ve projeyi hangi alt dizine koyacağınızı dikkatlice düşünün.
+Onu mantıklı bir yerde saklamazsanız, gelecekte bulmak zor olacaktır!
 
-Once this process is complete, you'll get a new RStudio project just for this book.
-Check that the "home" of your project is the current working directory:
+Bu süreç tamamlandığında, yalnızca bu kitap için yeni bir RStudio projeniz olacak.
+Projenizin "evi"nin mevcut çalışma dizini olduğunu kontrol edin:
 
 ```{r}
 #| eval: false
@@ -287,11 +291,11 @@ getwd()
 #> [1] /Users/hadley/Documents/r4ds
 ```
 
-Now enter the following commands in the script editor, and save the file, calling it "diamonds.R".
-Then, create a new folder called "data".
-You can do this by clicking on the "New Folder" button in the Files pane in RStudio.
-Finally, run the complete script which will save a PNG and CSV file into your project directory.
-Don't worry about the details, you'll learn them later in the book.
+Şimdi aşağıdaki komutları script editörüne girin ve dosyayı "diamonds.R" adıyla kaydedin.
+Ardından, "data" adında yeni bir klasör oluşturun.
+Bunu, RStudio'daki Files panelindeki "New Folder" düğmesine tıklayarak yapabilirsiniz.
+Son olarak, proje dizininize bir PNG ve CSV dosyası kaydedecek olan tüm scripti çalıştırın.
+Ayrıntılar konusunda endişelenmeyin, bunları kitabın ilerleyen kısımlarında öğreneceksiniz.
 
 ```{r}
 #| label: toy-line
@@ -305,58 +309,58 @@ ggsave("diamonds.png")
 write_csv(diamonds, "data/diamonds.csv")
 ```
 
-Quit RStudio.
-Inspect the folder associated with your project --- notice the `.Rproj` file.
-Double-click that file to re-open the project.
-Notice you get back to where you left off: it's the same working directory and command history, and all the files you were working on are still open.
-Because you followed our instructions above, you will, however, have a completely fresh environment, guaranteeing that you're starting with a clean slate.
+RStudio'dan çıkın.
+Projenizle ilişkili klasörü inceleyin --- `.Rproj` dosyasına dikkat edin.
+Projeyi yeniden açmak için o dosyaya çift tıklayın.
+Bıraktığınız yere geri döndüğünüze dikkat edin: aynı çalışma dizini ve komut geçmişi, ve üzerinde çalıştığınız tüm dosyalar hâlâ açık.
+Ancak yukarıdaki talimatlarımızı izlediğiniz için, temiz bir sayfayla başladığınızı garanti eden tamamen taze bir ortamınız olacak.
 
-In your favorite OS-specific way, search your computer for `diamonds.png` and you will find the PNG (no surprise) but *also the script that created it* (`diamonds.R`).
-This is a huge win!
-One day, you will want to remake a figure or just understand where it came from.
-If you rigorously save figures to files **with R code** and never with the mouse or the clipboard, you will be able to reproduce old work with ease!
+Favori işletim-sistemine-özgü yönteminizle, bilgisayarınızda `diamonds.png`'yi arayın ve PNG'yi bulacaksınız (şaşırtıcı değil), ama *onu oluşturan scripti de* (`diamonds.R`).
+Bu muazzam bir kazanç!
+Bir gün, bir şekli yeniden oluşturmak veya sadece nereden geldiğini anlamak isteyeceksiniz.
+Şekilleri titizlikle **R koduyla** dosyalara kaydeder ve asla fareyle veya panoyla kaydetmezseniz, eski çalışmaları kolayca yeniden üretebileceksiniz!
 
-### Relative and absolute paths
+### Göreceli ve Mutlak Yollar
 
-Once you're inside a project, you should only ever use relative paths not absolute paths.
-What's the difference?
-A relative path is relative to the working directory, i.e. the project's home.
-When Hadley wrote `data/diamonds.csv` above it was a shortcut for `/Users/hadley/Documents/r4ds/data/diamonds.csv`.
-But importantly, if Mine ran this code on her computer, it would point to `/Users/Mine/Documents/r4ds/data/diamonds.csv`.
-This is why relative paths are important: they'll work regardless of where the R project folder ends up.
+Bir projenin içindeyken, her zaman yalnızca göreceli yolları kullanmalı, mutlak yolları kullanmamalısınız.
+Aradaki fark nedir?
+Göreceli bir yol, çalışma dizinine, yani projenin evine görecelidir.
+Hadley yukarıda `data/diamonds.csv` yazdığında, bu `/Users/hadley/Documents/r4ds/data/diamonds.csv` için bir kısayoldu.
+Ama önemli olan şu ki, Mine bu kodu kendi bilgisayarında çalıştırsaydı, `/Users/Mine/Documents/r4ds/data/diamonds.csv`'ye işaret ederdi.
+Göreceli yolların önemli olmasının nedeni budur: R proje klasörü nerede son bulursa bulsun çalışırlar.
 
-Absolute paths point to the same place regardless of your working directory.
-They look a little different depending on your operating system.
-On Windows they start with a drive letter (e.g., `C:`) or two backslashes (e.g., `\\servername`) and on Mac/Linux they start with a slash "/" (e.g., `/users/hadley`).
-You should **never** use absolute paths in your scripts, because they hinder sharing: no one else will have exactly the same directory configuration as you.
+Mutlak yollar, çalışma dizininizden bağımsız olarak aynı yere işaret eder.
+İşletim sisteminize bağlı olarak biraz farklı görünürler.
+Windows'ta bir sürücü harfiyle (örneğin, `C:`) veya iki ters eğik çizgiyle (örneğin, `\\servername`) başlarlar; Mac/Linux'ta ise bir eğik çizgiyle "/" (örneğin, `/users/hadley`) başlarlar.
+Scriptlerinizde mutlak yolları **asla** kullanmamalısınız; çünkü paylaşmayı engellerler: sizinle tam olarak aynı dizin yapılandırmasına sahip başka kimse olmayacaktır.
 
-There's another important difference between operating systems: how you separate the components of the path.
-Mac and Linux uses slashes (e.g., `data/diamonds.csv`) and Windows uses backslashes (e.g., `data\diamonds.csv`).
-R can work with either type (no matter what platform you're currently using), but unfortunately, backslashes mean something special to R, and to get a single backslash in the path, you need to type two backslashes!
-That makes life frustrating, so we recommend always using the Linux/Mac style with forward slashes.
+İşletim sistemleri arasında bir başka önemli fark daha var: yolun bileşenlerini nasıl ayırdığınız.
+Mac ve Linux eğik çizgi kullanır (örneğin, `data/diamonds.csv`), Windows ise ters eğik çizgi kullanır (örneğin, `data\diamonds.csv`).
+R her iki türle de çalışabilir (şu anda hangi platformu kullandığınız fark etmeksizin); ama ne yazık ki ters eğik çizgiler R için özel bir anlam taşır ve yolda tek bir ters eğik çizgi elde etmek için iki ters eğik çizgi yazmanız gerekir!
+Bu hayatı sinir bozucu hale getirir, bu yüzden her zaman ileri eğik çizgilerle Linux/Mac stilini kullanmanızı öneririz.
 
-## Exercises
+## Alıştırmalar
 
-1.  Go to the RStudio Tips Twitter account, <https://twitter.com/rstudiotips> and find one tip that looks interesting.
-    Practice using it!
+1.  RStudio Tips Twitter hesabına, <https://twitter.com/rstudiotips>, gidin ve ilginç görünen bir ipucu bulun.
+    Onu kullanmayı pratik edin!
 
-2.  What other common mistakes will RStudio diagnostics report?
-    Read <https://support.posit.co/hc/en-us/articles/205753617-Code-Diagnostics> to find out.
+2.  RStudio tanılamaları başka hangi yaygın hataları raporlayacak?
+    Öğrenmek için <https://support.posit.co/hc/en-us/articles/205753617-Code-Diagnostics> adresini okuyun.
 
-## Summary
+## Özet
 
-In this chapter, you've learned how to organize your R code in scripts (files) and projects (directories).
-Much like code style, this may feel like busywork at first.
-But as you accumulate more code across multiple projects, you'll learn to appreciate how a little up front organisation can save you a bunch of time down the road.
+Bu bölümde, R kodunuzu scriptlerde (dosyalarda) ve projelerde (dizinlerde) nasıl organize edeceğinizi öğrendiniz.
+Kod stili gibi, bu da başlangıçta angarya gibi hissettirebilir.
+Ama birden fazla proje boyunca daha fazla kod biriktirdikçe, önceden yapılan biraz organizasyonun ileride size ne kadar zaman kazandırabileceğini takdir etmeyi öğreneceksiniz.
 
-In summary, scripts and projects give you a solid workflow that will serve you well in the future:
+Özetle, scriptler ve projeler size gelecekte işinize yarayacak sağlam bir iş akışı sağlar:
 
--   Create one RStudio project for each data analysis project.
--   Save your scripts (with informative names) in the project, edit them, run them in bits or as a whole. Restart R frequently to make sure you've captured everything in your scripts.
--   Only ever use relative paths, not absolute paths.
+-   Her veri analizi projesi için bir RStudio projesi oluşturun.
+-   Scriptlerinizi (bilgilendirici isimlerle) projede kaydedin, düzenleyin, parça parça veya bütün olarak çalıştırın. Scriptlerinizde her şeyi yakaladığınızdan emin olmak için R'ı sık sık yeniden başlatın.
+-   Yalnızca göreceli yolları kullanın, mutlak yolları değil.
 
-Then everything you need is in one place and cleanly separated from all the other projects that you are working on.
+Böylece ihtiyacınız olan her şey tek bir yerde ve üzerinde çalıştığınız diğer tüm projelerden düzgünce ayrılmış olur.
 
-So far, we've worked with datasets bundled inside of R packages.
-This makes it easier to get some practice on pre-prepared data, but obviously your data won't be available in this way.
-So in the next chapter, you're going to learn how to load data from disk into your R session using the readr package.
+Şimdiye kadar, R paketlerinin içine paketlenmiş veri kümeleriyle çalıştık.
+Bu, önceden hazırlanmış veri üzerinde biraz pratik yapmayı kolaylaştırır; ama açıkçası veriniz bu şekilde mevcut olmayacaktır.
+Bu yüzden bir sonraki bölümde, readr paketini kullanarak diskten R oturumunuza veri yüklemeyi öğreneceksiniz.

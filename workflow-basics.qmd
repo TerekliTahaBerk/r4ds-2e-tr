@@ -1,21 +1,21 @@
-# Workflow: basics {#sec-workflow-basics}
+# İş Akışı: Temeller {#sec-workflow-basics}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-You now have some experience running R code.
-We didn't give you many details, but you've obviously figured out the basics, or you would've thrown this book away in frustration!
-Frustration is natural when you start programming in R because it is such a stickler for punctuation, and even one character out of place can cause it to complain.
-But while you should expect to be a little frustrated, take comfort in that this experience is typical and temporary: it happens to everyone, and the only way to get over it is to keep trying.
+Artık R kodu çalıştırma konusunda biraz deneyiminiz var.
+Size çok fazla ayrıntı vermedik; ama açıkça temelleri çözdünüz, yoksa bu kitabı hayal kırıklığıyla bir kenara atardınız!
+R'da programlamaya başlarken hayal kırıklığı yaşamak doğaldır; çünkü R noktalama işaretleri konusunda o kadar titizdir ki, yanlış yerde tek bir karakter bile şikayet etmesine yol açabilir.
+Ama biraz hayal kırıklığı yaşamayı beklemeniz gerekse de, bu deneyimin tipik ve geçici olduğuna dair rahatlayın: bu herkesin başına gelir ve bunu aşmanın tek yolu denemeye devam etmektir.
 
-Before we go any further, let's ensure you've got a solid foundation in running R code and that you know some of the most helpful RStudio features.
+Devam etmeden önce, R kodu çalıştırma konusunda sağlam bir temele sahip olduğunuzdan ve RStudio'nun en yararlı özelliklerinden bazılarını bildiğinizden emin olalım.
 
-## Coding basics
+## Kodlama Temelleri
 
-Let's review some basics we've omitted so far in the interest of getting you plotting as quickly as possible.
-You can use R to do basic math calculations:
+Sizi bir an önce grafik çizmeye başlatmak adına şimdiye kadar atladığımız bazı temelleri gözden geçirelim.
+R'ı temel matematik hesaplamaları yapmak için kullanabilirsiniz:
 
 ```{r}
 1 / 200 * 30
@@ -23,77 +23,77 @@ You can use R to do basic math calculations:
 sin(pi / 2)
 ```
 
-You can create new objects with the assignment operator `<-`:
+Atama operatörü `<-` ile yeni nesneler oluşturabilirsiniz:
 
 ```{r}
 x <- 3 * 4
 ```
 
-Note that the value of `x` is not printed, it's just stored.
-If you want to view the value, type `x` in the console.
+`x`'in değerinin yazdırılmadığına, yalnızca saklandığına dikkat edin.
+Değeri görmek isterseniz, konsola `x` yazın.
 
-You can **c**ombine multiple elements into a vector with `c()`:
+`c()` fonksiyonuyla (İngilizce "combine", yani birleştirmek kelimesinden gelir) birden fazla elemanı bir vektörde birleştirebilirsiniz:
 
 ```{r}
 primes <- c(2, 3, 5, 7, 11, 13)
 ```
 
-And basic arithmetic on vectors is applied to every element of the vector:
+Ve vektörler üzerindeki temel aritmetik işlemler, vektörün her elemanına uygulanır:
 
 ```{r}
 primes * 2
 primes - 1
 ```
 
-All R statements where you create objects, **assignment** statements, have the same form:
+Nesne oluşturduğunuz tüm R ifadeleri, yani **atama** (assignment) ifadeleri, aynı forma sahiptir:
 
 ```{r}
 #| eval: false
 object_name <- value
 ```
 
-When reading that code, say "object name gets value" in your head.
+Bu kodu okurken, kafanızda "nesne adı değeri alır" deyin.
 
-You will make lots of assignments, and `<-` is a pain to type.
-You can save time with RStudio's keyboard shortcut: Alt + - (the minus sign).
-Notice that RStudio automatically surrounds `<-` with spaces, which is a good code formatting practice.
-Code can be miserable to read on a good day, so giveyoureyesabreak and use spaces.
+Pek çok atama yapacaksınız ve `<-` yazmak can sıkıcıdır.
+RStudio'nun klavye kısayoluyla zaman kazanabilirsiniz: Alt + - (eksi işareti).
+RStudio'nun `<-`'yi otomatik olarak boşluklarla çevrelediğine dikkat edin; bu iyi bir kod biçimlendirme pratiğidir.
+Kod, en iyi günde bile okunması sıkıcı olabilir; bu yüzden gözlerinizebirmolaverinve boşluk kullanın.
 
-## Comments
+## Yorumlar
 
-R will ignore any text after `#` for that line.
-This allows you to write **comments**, text that is ignored by R but read by other humans.
-We'll sometimes include comments in examples explaining what's happening with the code.
+R, bir satırda `#`'den sonraki her metni yok sayar.
+Bu, R tarafından yok sayılan ama diğer insanlar tarafından okunan metinler olan **yorumlar**ı (comments) yazmanıza olanak tanır.
+Örneklerde bazen kodda neler olduğunu açıklayan yorumlar da bulunduracağız.
 
-Comments can be helpful for briefly describing what the following code does.
+Yorumlar, aşağıdaki kodun ne yaptığını kısaca açıklamak için faydalı olabilir.
 
 ```{r}
-# create vector of primes
+# asal sayılardan oluşan bir vektör oluştur
 primes <- c(2, 3, 5, 7, 11, 13)
 
-# multiply primes by 2
+# asal sayıları 2 ile çarp
 primes * 2
 ```
 
-With short pieces of code like this, leaving a comment for every single line of code might not be necessary.
-But as the code you're writing gets more complex, comments can save you (and your collaborators) a lot of time figuring out what was done in the code.
+Bunun gibi kısa kod parçalarında, her tek satır kod için bir yorum bırakmak gerekli olmayabilir.
+Ancak yazdığınız kod karmaşıklaştıkça, yorumlar sizin (ve iş birliği yaptığınız kişilerin) kodda ne yapıldığını anlamak için harcayacağı çok fazla zamandan tasarruf etmenizi sağlayabilir.
 
-Use comments to explain the *why* of your code, not the *how* or the *what*.
-The *what* and *how* of your code are always possible to figure out, even if it might be tedious, by carefully reading it.
-If you describe every step in the comments, and then change the code, you will have to remember to update the comments as well or it will be confusing when you return to your code in the future.
+Yorumları, kodunuzun *nasıl*ını veya *ne*sini değil, *neden*ini açıklamak için kullanın.
+Kodunuzun *ne*si ve *nasıl*ı, sıkıcı olsa bile, onu dikkatlice okuyarak her zaman anlaşılabilir.
+Her adımı yorumlarda açıklar ve sonra kodu değiştirirseniz, yorumları da güncellemeniz gerektiğini hatırlamanız gerekir; aksi halde kodunuza ileride geri döndüğünüzde kafa karıştırıcı olacaktır.
 
-Figuring out *why* something was done is much more difficult, if not impossible.
-For example, `geom_smooth()` has an argument called `span`, which controls the smoothness of the curve, with larger values yielding a smoother curve.
-Suppose you decide to change the value of `span` from its default of 0.75 to 0.9: it's easy for a future reader to understand *what* is happening, but unless you note your thinking in a comment, no one will understand *why* you changed the default.
+Bir şeyin *neden* yapıldığını anlamak, imkansız olmasa da çok daha zordur.
+Örneğin, `geom_smooth()`'un, eğrinin düzgünlüğünü kontrol eden ve daha büyük değerlerin daha düzgün bir eğri verdiği `span` adında bir argümanı vardır.
+`span`'in değerini varsayılan 0,75'ten 0,9'a değiştirmeye karar verdiğinizi varsayalım: gelecekteki bir okuyucunun *ne* olduğunu anlaması kolaydır, ama düşüncenizi bir yorumda not etmediğiniz sürece, kimse varsayılanı *neden* değiştirdiğinizi anlamayacaktır.
 
-For data analysis code, use comments to explain your overall plan of attack and record important insights as you encounter them.
-There's no way to re-capture this knowledge from the code itself.
+Veri analizi kodu için, yorumları genel yaklaşımınızı açıklamak ve karşılaştıkça önemli içgörüleri kaydetmek için kullanın.
+Bu bilgiyi kodun kendisinden yeniden elde etmenin bir yolu yoktur.
 
-## What's in a name? {#sec-whats-in-a-name}
+## Bir İsimde Ne Var? {#sec-whats-in-a-name}
 
-Object names must start with a letter and can only contain letters, numbers, `_`, and `.`.
-You want your object names to be descriptive, so you'll need to adopt a convention for multiple words.
-We recommend **snake_case**, where you separate lowercase words with `_`.
+Nesne adları bir harfle başlamalı ve yalnızca harfler, sayılar, `_` ve `.` içerebilir.
+Nesne adlarınızın açıklayıcı olmasını istersiniz, bu yüzden birden fazla kelime için bir kural benimsemeniz gerekir.
+Küçük harfli kelimeleri `_` ile ayırdığınız **snake_case**'i öneriyoruz.
 
 ```{r}
 #| eval: false
@@ -103,36 +103,36 @@ some.people.use.periods
 And_aFew.People_RENOUNCEconvention
 ```
 
-We'll return to names again when we discuss code style in @sec-workflow-style.
+İsimlere, @sec-workflow-style bölümünde kod stilini tartışırken tekrar döneceğiz.
 
-You can inspect an object by typing its name:
+Bir nesnenin adını yazarak onu inceleyebilirsiniz:
 
 ```{r}
 x
 ```
 
-Make another assignment:
+Başka bir atama yapın:
 
 ```{r}
 this_is_a_really_long_name <- 2.5
 ```
 
-To inspect this object, try out RStudio's completion facility: type "this", press TAB, add characters until you have a unique prefix, then press return.
+Bu nesneyi incelemek için RStudio'nun tamamlama özelliğini deneyin: "this" yazın, TAB'a basın, benzersiz bir önek elde edene kadar karakter ekleyin, ardından enter'a basın.
 
-Let's assume you made a mistake, and that the value of `this_is_a_really_long_name` should be 3.5, not 2.5.
-You can use another keyboard shortcut to help you fix it.
-For example, you can press ↑ to bring the last command you typed and edit it.
-Or, type "this" then press Cmd/Ctrl + ↑ to list all the commands you've typed that start with those letters.
-Use the arrow keys to navigate, then press enter to retype the command.
-Change 2.5 to 3.5 and rerun.
+Bir hata yaptığınızı ve `this_is_a_really_long_name`'in değerinin 2,5 değil 3,5 olması gerektiğini varsayalım.
+Bunu düzeltmenize yardımcı olacak başka bir klavye kısayolu kullanabilirsiniz.
+Örneğin, yazdığınız son komutu getirip düzenlemek için ↑'a basabilirsiniz.
+Ya da "this" yazıp ardından bu harflerle başlayan yazdığınız tüm komutları listelemek için Cmd/Ctrl + ↑'a basabilirsiniz.
+Gezinmek için ok tuşlarını kullanın, ardından komutu yeniden yazmak için enter'a basın.
+2,5'i 3,5 olarak değiştirin ve yeniden çalıştırın.
 
-Make yet another assignment:
+Bir atama daha yapın:
 
 ```{r}
 r_rocks <- 2^3
 ```
 
-Let's try to inspect it:
+Onu incelemeyi deneyelim:
 
 ```{r}
 #| eval: false
@@ -142,74 +142,74 @@ R_rocks
 #> Error: object 'R_rocks' not found
 ```
 
-This illustrates the implied contract between you and R: R will do the tedious computations for you, but in exchange, you must be completely precise in your instructions.
-If not, you're likely to get an error that says the object you're looking for was not found.
-Typos matter; R can't read your mind and say, "oh, they probably meant `r_rocks` when they typed `r_rock`".
-Case matters; similarly, R can't read your mind and say, "oh, they probably meant `r_rocks` when they typed `R_rocks`".
+Bu, sizinle R arasındaki örtük sözleşmeyi gösterir: R sıkıcı hesaplamaları sizin için yapacaktır, ama karşılığında, talimatlarınızda tamamen kesin olmanız gerekir.
+Aksi halde, aradığınız nesnenin bulunamadığını söyleyen bir hata alma olasılığınız yüksektir.
+Yazım hataları önemlidir; R aklınızı okuyup "ah, `r_rock` yazdıklarında muhtemelen `r_rocks`'ı kastetmişlerdir" diyemez.
+Büyük/küçük harf önemlidir; benzer şekilde, R aklınızı okuyup "ah, `R_rocks` yazdıklarında muhtemelen `r_rocks`'ı kastetmişlerdir" diyemez.
 
-## Calling functions
+## Fonksiyon Çağırma
 
-R has a large collection of built-in functions that are called like this:
+R'ın şu şekilde çağrılan geniş bir yerleşik fonksiyon koleksiyonu vardır:
 
 ```{r}
 #| eval: false
 function_name(argument1 = value1, argument2 = value2, ...)
 ```
 
-Let's try using `seq()`, which makes regular **seq**uences of numbers, and while we're at it, learn more helpful features of RStudio.
-Type `se` and hit TAB.
-A popup shows you possible completions.
-Specify `seq()` by typing more (a `q`) to disambiguate or by using ↑/↓ arrows to select.
-Notice the floating tooltip that pops up, reminding you of the function's arguments and purpose.
-If you want more help, press F1 to get all the details in the help tab in the lower right pane.
+Düzenli sayı **diz**ilimleri (**seq**uences) oluşturan `seq()`'i kullanmayı deneyelim ve bu arada RStudio'nun daha yararlı özelliklerini de öğrenelim.
+`se` yazıp TAB'a basın.
+Bir açılır pencere size olası tamamlamaları gösterir.
+Belirsizliği gidermek için daha fazla karakter (bir `q`) yazarak veya ↑/↓ oklarını kullanarak seçim yaparak `seq()`'i belirtin.
+Beliren, fonksiyonun argümanlarını ve amacını hatırlatan kayan araç ipucuna dikkat edin.
+Daha fazla yardım isterseniz, sağ alt paneldeki yardım sekmesinde tüm ayrıntıları görmek için F1'e basın.
 
-When you've selected the function you want, press TAB again.
-RStudio will add matching opening (`(`) and closing (`)`) parentheses for you.
-Type the name of the first argument, `from`, and set it equal to `1`.
-Then, type the name of the second argument, `to`, and set it equal to `10`.
-Finally, hit return.
+İstediğiniz fonksiyonu seçtikten sonra, tekrar TAB'a basın.
+RStudio sizin için eşleşen açma (`(`) ve kapama (`)`) parantezlerini ekleyecektir.
+İlk argümanın adını, `from`'u yazın ve `1`'e eşitleyin.
+Ardından, ikinci argümanın adını, `to`'yu yazın ve `10`'a eşitleyin.
+Son olarak enter'a basın.
 
 ```{r}
 seq(from = 1, to = 10)
 ```
 
-We often omit the names of the first several arguments in function calls, so we can rewrite this as follows:
+Fonksiyon çağrılarında ilk birkaç argümanın adlarını genellikle atlarız, bu yüzden bunu şu şekilde yeniden yazabiliriz:
 
 ```{r}
 seq(1, 10)
 ```
 
-Type the following code and notice that RStudio provides similar assistance with the paired quotation marks:
+Aşağıdaki kodu yazın ve RStudio'nun eşleşen tırnak işaretleri konusunda da benzer bir yardım sunduğuna dikkat edin:
 
 ```{r}
 x <- "hello world"
 ```
 
-Quotation marks and parentheses must always come in a pair.
-RStudio does its best to help you, but it's still possible to mess up and end up with a mismatch.
-If this happens, R will show you the continuation character "+":
+Tırnak işaretleri ve parantezler her zaman çift halinde gelmelidir.
+RStudio size yardımcı olmak için elinden geleni yapar; ama yine de bir şeyleri karıştırıp bir uyuşmazlıkla karşılaşmanız mümkündür.
+Bu olursa, R size devam karakteri olan "+"ı gösterecektir:
 
 ```         
 > x <- "hello
 +
 ```
 
-The `+` tells you that R is waiting for more input; it doesn't think you're done yet.
-Usually, this means you've forgotten either a `"` or a `)`. Either add the missing pair, or press ESCAPE to abort the expression and try again.
+`+`, R'ın daha fazla girdi beklediğini, henüz bitirdiğinizi düşünmediğini gösterir.
+Genellikle bu, bir `"` veya `)`'i unuttuğunuz anlamına gelir. Ya eksik eşi ekleyin ya da ifadeyi iptal edip yeniden denemek için ESCAPE'e basın.
 
-Note that the environment tab in the upper right pane displays all of the objects that you've created:
+Sağ üst paneldeki ortam (environment) sekmesinin, oluşturduğunuz tüm nesneleri gösterdiğine dikkat edin:
 
 ```{r}
 #| echo: false
 #| fig-alt: |
-#|   Environment tab of RStudio which shows r_rocks, this_is_a_really_long_name, 
-#|   x, and y in the Global Environment.
+#|   RStudio'nun, Global Environment içinde r_rocks,
+#|   this_is_a_really_long_name, x ve y'yi gösteren ortam sekmesi.
 knitr::include_graphics("screenshots/rstudio-env.png")
 ```
 
-## Exercises
+## Alıştırmalar
 
-1.  Why does this code not work?
+1.  Bu kod neden çalışmıyor?
 
     ```{r}
     #| error: true
@@ -217,10 +217,10 @@ knitr::include_graphics("screenshots/rstudio-env.png")
     my_varıable
     ```
 
-    Look carefully!
-    (This may seem like an exercise in pointlessness, but training your brain to notice even the tiniest difference will pay off when programming.)
+    Dikkatlice bakın!
+    (Bu, anlamsız bir alıştırma gibi görünebilir; ama beyninizi en ufak farkı bile fark edecek şekilde eğitmek, programlama yaparken karşılığını verecektir.)
 
-2.  Tweak each of the following R commands so that they run correctly:
+2.  Aşağıdaki R komutlarının her birini doğru çalışacak şekilde düzeltin:
 
     ```{r}
     #| eval: false
@@ -231,14 +231,14 @@ knitr::include_graphics("screenshots/rstudio-env.png")
       geom_smooth(method = "lm)
     ```
 
-3.  Press Option + Shift + K / Alt + Shift + K.
-    What happens?
-    How can you get to the same place using the menus?
+3.  Option + Shift + K / Alt + Shift + K'ya basın.
+    Ne oluyor?
+    Menüleri kullanarak aynı yere nasıl ulaşabilirsiniz?
 
-4.  Let's revisit an exercise from the @sec-ggsave.
-    Run the following lines of code.
-    Which of the two plots is saved as `mpg-plot.png`?
-    Why?
+4.  @sec-ggsave bölümündeki bir alıştırmayı tekrar ele alalım.
+    Aşağıdaki kod satırlarını çalıştırın.
+    İki grafikten hangisi `mpg-plot.png` olarak kaydedilir?
+    Neden?
 
     ```{r}
     #| eval: false
@@ -249,7 +249,7 @@ knitr::include_graphics("screenshots/rstudio-env.png")
     ggsave(filename = "mpg-plot.png", plot = my_bar_plot)
     ```
 
-## Summary
+## Özet
 
-Now that you've learned a little more about how R code works, and some tips to help you understand your code when you come back to it in the future.
-In the next chapter, we'll continue your data science journey by teaching you about dplyr, the tidyverse package that helps you transform data, whether it's selecting important variables, filtering down to rows of interest, or computing summary statistics.
+Artık R kodunun nasıl çalıştığı hakkında biraz daha fazla şey ve kodunuza ileride geri döndüğünüzde onu anlamanıza yardımcı olacak bazı ipuçları öğrendiniz.
+Bir sonraki bölümde, önemli değişkenleri seçmek, ilgilenilen satırlara filtrelemek veya özet istatistikler hesaplamak olsun, veriyi dönüştürmenize yardımcı olan tidyverse paketi dplyr'i size öğreterek veri bilimi yolculuğunuza devam edeceğiz.

@@ -1,26 +1,26 @@
-# Data transformation {#sec-data-transform}
+# Veri Dönüştürme {#sec-data-transform}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## Giriş
 
-Visualization is an important tool for generating insight, but it's rare that you get the data in exactly the right form you need to make the graph you want.
-Often you'll need to create some new variables or summaries to answer your questions with your data, or maybe you just want to rename the variables or reorder the observations to make the data a little easier to work with.
-You'll learn how to do all that (and more!) in this chapter, which will introduce you to data transformation using the **dplyr** package and a new dataset on flights that departed from New York City in 2013.
+Görselleştirme, içgörü üretmek için önemli bir araçtır; ama verinin, yapmak istediğiniz grafiği oluşturmak için tam olarak ihtiyacınız olan formda gelmesi nadirdir.
+Genellikle, sorularınızı verinizle yanıtlamak için bazı yeni değişkenler veya özetler oluşturmanız gerekir; ya da belki de yalnızca değişkenleri yeniden adlandırmak veya veriyle çalışmayı biraz daha kolaylaştırmak için gözlemleri yeniden sıralamak istersiniz.
+Bunların tümünü (ve daha fazlasını!) bu bölümde nasıl yapacağınızı öğreneceksiniz; bu bölüm sizi **dplyr** paketini ve 2013 yılında New York City'den kalkan uçuşlara dair yeni bir veri kümesini kullanarak veri dönüştürmeyle tanıştıracaktır.
 
-The goal of this chapter is to give you an overview of all the key tools for transforming a data frame.
-We'll start with functions that operate on rows and then columns of a data frame, then circle back to talk more about the pipe, an important tool that you use to combine verbs.
-We will then introduce the ability to work with groups.
-We will end the chapter with a case study that showcases these functions in action.
-In later chapters, we'll return to the functions in more detail as we start to dig into specific types of data (e.g., numbers, strings, dates).
+Bu bölümün amacı, bir veri çerçevesini dönüştürmek için gereken tüm temel araçlara dair size bir genel bakış sunmaktır.
+Bir veri çerçevesinin önce satırları, sonra sütunları üzerinde çalışan fonksiyonlarla başlayacak, ardından fiilleri (verbs) birleştirmek için kullandığınız önemli bir araç olan pipe hakkında daha fazla konuşmak için geri döneceğiz.
+Ardından, gruplarla çalışma yeteneğini tanıtacağız.
+Bölümü, bu fonksiyonları eylem halinde gösteren bir örnek olayla bitireceğiz.
+Sonraki bölümlerde, belirli veri türlerini (örneğin sayılar, karakter dizileri, tarihler) incelemeye başladıkça bu fonksiyonlara daha ayrıntılı olarak geri döneceğiz.
 
-### Prerequisites
+### Ön Koşullar
 
-In this chapter, we'll focus on the dplyr package, another core member of the tidyverse.
-We'll illustrate the key ideas using data from the nycflights13 package and use ggplot2 to help us understand the data.
+Bu bölümde, tidyverse'in bir diğer çekirdek üyesi olan dplyr paketine odaklanacağız.
+Temel fikirleri nycflights13 paketindeki veriyi kullanarak açıklayacak ve veriyi anlamamıza yardımcı olması için ggplot2 kullanacağız.
 
 ```{r}
 #| label: setup
@@ -28,249 +28,249 @@ library(nycflights13)
 library(tidyverse)
 ```
 
-Take careful note of the conflicts message that's printed when you load the tidyverse.
-It tells you that dplyr overwrites some functions in base R.
-If you want to use the base version of these functions after loading dplyr, you'll need to use their full names: `stats::filter()` and `stats::lag()`.
-So far, we've mostly ignored which package a function comes from because it doesn't usually matter.
-However, knowing the package can help you find help and find related functions, so when we need to be precise about which package a function comes from, we'll use the same syntax as R: `packagename::functionname()`.
+Tidyverse'i yüklediğinizde yazdırılan çakışma mesajına dikkatlice bakın.
+Bu mesaj, dplyr'in temel R'daki (base R) bazı fonksiyonların üzerine yazdığını size bildirir.
+dplyr'i yükledikten sonra bu fonksiyonların temel R sürümünü kullanmak isterseniz, tam adlarını kullanmanız gerekir: `stats::filter()` ve `stats::lag()`.
+Şimdiye kadar, bir fonksiyonun hangi paketten geldiğini büyük ölçüde göz ardı ettik; çünkü bu genellikle önemli değildir.
+Ancak paketi bilmek, yardım bulmanıza ve ilgili fonksiyonları bulmanıza yardımcı olabilir; bu yüzden bir fonksiyonun hangi paketten geldiği konusunda kesin olmamız gerektiğinde, R ile aynı sözdizimini kullanacağız: `packagename::functionname()`.
 
 ### nycflights13
 
-To explore the basic dplyr verbs, we will use `nycflights13::flights`.
-This dataset contains all `r format(nrow(nycflights13::flights), big.mark = ",")` flights that departed from New York City in 2013.
-The data comes from the US [Bureau of Transportation Statistics](https://www.transtats.bts.gov/DL_SelectFields.aspx?gnoyr_VQ=FGJ&QO_fu146_anzr=b0-gvzr) and is documented in `?flights`.
+Temel dplyr fiillerini keşfetmek için `nycflights13::flights`'ı kullanacağız.
+Bu veri kümesi, 2013 yılında New York City'den kalkan `r format(nrow(nycflights13::flights), big.mark = ",")` uçuşun tamamını içerir.
+Veri, ABD [Ulaştırma İstatistikleri Bürosu'ndan](https://www.transtats.bts.gov/DL_SelectFields.aspx?gnoyr_VQ=FGJ&QO_fu146_anzr=b0-gvzr) gelmektedir ve `?flights` içinde belgelenmiştir.
 
 ```{r}
 flights
 ```
 
-`flights` is a tibble, a special type of data frame used by the tidyverse to avoid some common gotchas.
-The most important difference between tibbles and data frames is the way tibbles print; they are designed for large datasets, so they only show the first few rows and only the columns that fit on one screen.
-There are a few options to see everything.
-If you're using RStudio, the most convenient is probably `View(flights)`, which opens an interactive, scrollable, and filterable view.
-Otherwise you can use `print(flights, width = Inf)` to show all columns, or use `glimpse()`:
+`flights`, tidyverse tarafından bazı yaygın tuzaklardan kaçınmak için kullanılan özel bir veri çerçevesi türü olan bir tibble'dır.
+Tibble'lar ile veri çerçeveleri arasındaki en önemli fark, tibble'ların yazdırılma şeklidir; büyük veri kümeleri için tasarlandıklarından, yalnızca ilk birkaç satırı ve yalnızca bir ekrana sığan sütunları gösterirler.
+Her şeyi görmek için birkaç seçenek vardır.
+RStudio kullanıyorsanız, en uygunu muhtemelen etkileşimli, kaydırılabilir ve filtrelenebilir bir görünüm açan `View(flights)`'tır.
+Aksi takdirde, tüm sütunları göstermek için `print(flights, width = Inf)` kullanabilir veya `glimpse()`'i kullanabilirsiniz:
 
 ```{r}
 glimpse(flights)
 ```
 
-In both views, the variable names are followed by abbreviations that tell you the type of each variable: `<int>` is short for integer, `<dbl>` is short for double (aka real numbers), `<chr>` for character (aka strings), and `<dttm>` for date-time.
-These are important because the operations you can perform on a column depend heavily on its "type."
+Her iki görünümde de değişken adlarının ardından, her değişkenin türünü belirten kısaltmalar gelir: `<int>` tam sayı (integer), `<dbl>` çift duyarlıklı sayı (double, yani gerçek sayılar), `<chr>` karakter (character, yani karakter dizileri) ve `<dttm>` tarih-saat (date-time) için kısaltmadır.
+Bunlar önemlidir; çünkü bir sütun üzerinde gerçekleştirebileceğiniz işlemler büyük ölçüde onun "türüne" bağlıdır.
 
-### dplyr basics
+### dplyr Temelleri
 
-You're about to learn the primary dplyr verbs (functions), which will allow you to solve the vast majority of your data manipulation challenges.
-But before we discuss their individual differences, it's worth stating what they have in common:
+Veri manipülasyonu zorluklarınızın büyük çoğunluğunu çözmenizi sağlayacak temel dplyr fiillerini (fonksiyonlarını) öğrenmek üzeresiniz.
+Ama bireysel farklılıklarını tartışmadan önce, ortak yönlerini belirtmekte fayda var:
 
-1.  The first argument is always a data frame.
+1.  İlk argüman her zaman bir veri çerçevesidir.
 
-2.  The subsequent arguments typically describe which columns to operate on using the variable names (without quotes).
+2.  Sonraki argümanlar genellikle hangi sütunlar üzerinde işlem yapılacağını değişken adlarını (tırnaksız) kullanarak tanımlar.
 
-3.  The output is always a new data frame.
+3.  Çıktı her zaman yeni bir veri çerçevesidir.
 
-Because each verb does one thing well, solving complex problems will usually require combining multiple verbs, and we'll do so with the pipe, `|>`.
-We'll discuss the pipe more in @sec-the-pipe, but in brief, the pipe takes the thing on its left and passes it along to the function on its right so that `x |> f(y)` is equivalent to `f(x, y)`, and `x |> f(y) |> g(z)` is equivalent to `g(f(x, y), z)`.
-The easiest way to pronounce the pipe is "then".
-That makes it possible to get a sense of the following code even though you haven't yet learned the details:
+Her fiil tek bir şeyi iyi yaptığından, karmaşık problemleri çözmek genellikle birden fazla fiili birleştirmeyi gerektirir ve bunu pipe, `|>`, ile yapacağız.
+Pipe'ı @sec-the-pipe bölümünde daha ayrıntılı tartışacağız; ama kısaca, pipe solundaki şeyi alır ve sağındaki fonksiyona iletir; böylece `x |> f(y)`, `f(x, y)`'ye eşdeğerdir ve `x |> f(y) |> g(z)`, `g(f(x, y), z)`'ye eşdeğerdir.
+Pipe'ı telaffuz etmenin en kolay yolu "sonra"dır (then).
+Bu, ayrıntılarını henüz öğrenmemiş olsanız bile aşağıdaki kodun ne yaptığına dair bir fikir edinmenizi mümkün kılar:
 
 ```{r}
 #| eval: false
 flights |>
-  filter(dest == "IAH") |> 
-  group_by(year, month, day) |> 
+  filter(dest == "IAH") |>
+  group_by(year, month, day) |>
   summarize(
     arr_delay = mean(arr_delay, na.rm = TRUE)
   )
 ```
 
-dplyr's verbs are organized into four groups based on what they operate on: **rows**, **columns**, **groups**, or **tables**.
-In the following sections, you'll learn the most important verbs for rows, columns, and groups.
-Then, we'll return to the join verbs that work on tables in @sec-joins.
-Let's dive in!
+dplyr'in fiilleri, ne üzerinde işlem yaptıklarına göre dört gruba ayrılır: **satırlar**, **sütunlar**, **gruplar** veya **tablolar**.
+Aşağıdaki bölümlerde, satırlar, sütunlar ve gruplar için en önemli fiilleri öğreneceksiniz.
+Ardından, @sec-joins bölümünde tablolar üzerinde çalışan birleştirme (join) fiillerine geri döneceğiz.
+Hadi başlayalım!
 
-## Rows
+## Satırlar
 
-The most important verbs that operate on rows of a dataset are `filter()`, which changes which rows are present without changing their order, and `arrange()`, which changes the order of the rows without changing which are present.
-Both functions only affect the rows, and the columns are left unchanged.
-We'll also discuss `distinct()` which finds rows with unique values.
-Unlike `arrange()` and `filter()` it can also optionally modify the columns.
+Bir veri kümesinin satırları üzerinde işlem yapan en önemli fiiller; hangi satırların bulunduğunu sıralarını değiştirmeden değiştiren `filter()` ve satırların sırasını hangilerinin bulunduğunu değiştirmeden değiştiren `arrange()`'dir.
+Her iki fonksiyon da yalnızca satırları etkiler; sütunlar değişmeden kalır.
+Benzersiz değerlere sahip satırları bulan `distinct()`'i de tartışacağız.
+`arrange()` ve `filter()`'ın aksine, isteğe bağlı olarak sütunları da değiştirebilir.
 
 ### `filter()`
 
-`filter()` allows you to keep rows based on the values of the columns[^data-transform-1].
-The first argument is the data frame.
-The second and subsequent arguments are the conditions that must be true to keep the row.
-For example, we could find all flights that departed more than 120 minutes (two hours) late:
+`filter()`, sütunların değerlerine dayanarak satırları tutmanızı sağlar[^data-transform-1].
+İlk argüman veri çerçevesidir.
+İkinci ve sonraki argümanlar, satırın tutulması için doğru olması gereken koşullardır.
+Örneğin, 120 dakikadan (iki saatten) daha fazla geciken tüm uçuşları bulabiliriz:
 
-[^data-transform-1]: Later, you'll learn about the `slice_*()` family, which allows you to choose rows based on their positions.
+[^data-transform-1]: İleride, satırları konumlarına göre seçmenizi sağlayan `slice_*()` ailesi hakkında bilgi edineceksiniz.
 
 ```{r}
-flights |> 
+flights |>
   filter(dep_delay > 120)
 ```
 
-As well as `>` (greater than), you can use `>=` (greater than or equal to), `<` (less than), `<=` (less than or equal to), `==` (equal to), and `!=` (not equal to).
-You can also combine conditions with `&` or `,` to indicate "and" (check for both conditions) or with `|` to indicate "or" (check for either condition):
+`>` (büyüktür) yanı sıra `>=` (büyüktür veya eşittir), `<` (küçüktür), `<=` (küçüktür veya eşittir), `==` (eşittir) ve `!=` (eşit değildir) kullanabilirsiniz.
+Ayrıca, "ve" (her iki koşulu da kontrol et) anlamına gelmesi için `&` veya `,` ile, "veya" (iki koşuldan herhangi birini kontrol et) anlamına gelmesi için ise `|` ile koşulları birleştirebilirsiniz:
 
 ```{r}
-# Flights that departed on January 1
-flights |> 
+# 1 Ocak'ta kalkan uçuşlar
+flights |>
   filter(month == 1 & day == 1)
 
-# Flights that departed in January or February
-flights |> 
+# Ocak veya Şubat'ta kalkan uçuşlar
+flights |>
   filter(month == 1 | month == 2)
 ```
 
-There's a useful shortcut when you're combining `|` and `==`: `%in%`.
-It keeps rows where the variable equals one of the values on the right:
+`|` ve `==`'i birleştirdiğinizde kullanışlı bir kısayol vardır: `%in%`.
+Bu, değişkenin sağdaki değerlerden birine eşit olduğu satırları tutar:
 
 ```{r}
-# A shorter way to select flights that departed in January or February
-flights |> 
+# Ocak veya Şubat'ta kalkan uçuşları seçmenin daha kısa bir yolu
+flights |>
   filter(month %in% c(1, 2))
 ```
 
-We'll come back to these comparisons and logical operators in more detail in @sec-logicals.
+Bu karşılaştırmalara ve mantıksal operatörlere @sec-logicals bölümünde daha ayrıntılı olarak geri döneceğiz.
 
-When you run `filter()` dplyr executes the filtering operation, creating a new data frame, and then prints it.
-It doesn't modify the existing `flights` dataset because dplyr functions never modify their inputs.
-To save the result, you need to use the assignment operator, `<-`:
+`filter()`'ı çalıştırdığınızda dplyr filtreleme işlemini gerçekleştirir, yeni bir veri çerçevesi oluşturur ve ardından onu yazdırır.
+Mevcut `flights` veri kümesini değiştirmez; çünkü dplyr fonksiyonları girdilerini asla değiştirmez.
+Sonucu kaydetmek için atama operatörünü, `<-`'yi kullanmanız gerekir:
 
 ```{r}
-jan1 <- flights |> 
+jan1 <- flights |>
   filter(month == 1 & day == 1)
 ```
 
-### Common mistakes
+### Yaygın Hatalar
 
-When you're starting out with R, the easiest mistake to make is to use `=` instead of `==` when testing for equality.
-`filter()` will let you know when this happens:
+R'a yeni başladığınızda yapılması en kolay hata, eşitlik testi yaparken `==` yerine `=` kullanmaktır.
+Bu olduğunda `filter()` size haber verecektir:
 
 ```{r}
 #| error: true
-flights |> 
+flights |>
   filter(month = 1)
 ```
 
-Another mistake is you write "or" statements like you would in English:
+Bir başka hata da, "veya" ifadelerini İngilizcede yazacağınız gibi yazmaktır:
 
 ```{r}
 #| eval: false
-flights |> 
+flights |>
   filter(month == 1 | 2)
 ```
 
-This "works", in the sense that it doesn't throw an error, but it doesn't do what you want because `|` first checks the condition `month == 1` and then checks the condition `2`, which is not a sensible condition to check.
-We'll learn more about what's happening here and why in @sec-order-operations-boolean.
+Bu, hata vermemesi anlamında "çalışır"; ama istediğinizi yapmaz, çünkü `|` önce `month == 1` koşulunu, ardından da anlamlı bir koşul olmayan `2` koşulunu kontrol eder.
+Burada neler olduğu ve nedenini @sec-order-operations-boolean bölümünde daha ayrıntılı öğreneceğiz.
 
 ### `arrange()`
 
-`arrange()` changes the order of the rows based on the value of the columns.
-It takes a data frame and a set of column names (or more complicated expressions) to order by.
-If you provide more than one column name, each additional column will be used to break ties in the values of the preceding columns.
-For example, the following code sorts by the departure time, which is spread over four columns.
-We get the earliest years first, then within a year, the earliest months, etc.
+`arrange()`, satırların sırasını sütunların değerine göre değiştirir.
+Bir veri çerçevesi ve sıralanacak bir sütun adları kümesi (veya daha karmaşık ifadeler) alır.
+Birden fazla sütun adı verirseniz, her ek sütun, önceki sütunların değerlerindeki eşitlikleri kırmak için kullanılır.
+Örneğin, aşağıdaki kod, dört sütuna yayılmış olan kalkış zamanına göre sıralar.
+Önce en erken yılları, sonra bir yıl içinde en erken ayları vb. elde ederiz.
 
 ```{r}
-flights |> 
+flights |>
   arrange(year, month, day, dep_time)
 ```
 
-You can use `desc()` on a column inside of `arrange()` to re-order the data frame based on that column in descending (big-to-small) order.
-For example, this code orders flights from most to least delayed:
+Bir veri çerçevesini bir sütuna göre azalan (büyükten küçüğe) sırada yeniden sıralamak için `arrange()` içinde o sütun üzerinde `desc()` kullanabilirsiniz.
+Örneğin, bu kod uçuşları en çok gecikenden en az gecikene doğru sıralar:
 
 ```{r}
-flights |> 
+flights |>
   arrange(desc(dep_delay))
 ```
 
-Note that the number of rows has not changed -- we're only arranging the data, we're not filtering it.
+Satır sayısının değişmediğine dikkat edin -- yalnızca veriyi sıralıyoruz, filtrelemiyoruz.
 
 ### `distinct()`
 
-`distinct()` finds all the unique rows in a dataset, so technically, it primarily operates on the rows.
-Most of the time, however, you'll want the distinct combination of some variables, so you can also optionally supply column names:
+`distinct()`, bir veri kümesindeki tüm benzersiz satırları bulur, dolayısıyla teknik olarak öncelikle satırlar üzerinde işlem yapar.
+Ancak çoğu zaman bazı değişkenlerin benzersiz kombinasyonunu isteyeceksiniz, bu yüzden isteğe bağlı olarak sütun adları da sağlayabilirsiniz:
 
 ```{r}
-# Remove duplicate rows, if any
-flights |> 
+# Varsa yinelenen satırları kaldır
+flights |>
   distinct()
 
-# Find all unique origin and destination pairs
-flights |> 
+# Tüm benzersiz kalkış-varış çiftlerini bul
+flights |>
   distinct(origin, dest)
 ```
 
-Alternatively, if you want to keep the other columns when filtering for unique rows, you can use the `.keep_all = TRUE` option.
+Alternatif olarak, benzersiz satırları filtrelerken diğer sütunları da tutmak isterseniz, `.keep_all = TRUE` seçeneğini kullanabilirsiniz.
 
 ```{r}
-flights |> 
+flights |>
   distinct(origin, dest, .keep_all = TRUE)
 ```
 
-It's not a coincidence that all of these distinct flights are on January 1: `distinct()` will find the first occurrence of a unique row in the dataset and discard the rest.
+Bu benzersiz uçuşların tümünün 1 Ocak'ta olması tesadüf değildir: `distinct()`, veri kümesindeki benzersiz bir satırın ilk oluşumunu bulur ve geri kalanını atar.
 
-If you want to find the number of occurrences instead, you're better off swapping `distinct()` for `count()`.
-With the `sort = TRUE` argument, you can arrange them in descending order of the number of occurrences.
-You'll learn more about count in @sec-counts.
+Bunun yerine oluşum sayısını bulmak isterseniz, `distinct()`'i `count()` ile değiştirmeniz daha iyi olur.
+`sort = TRUE` argümanıyla, bunları oluşum sayısına göre azalan sırada düzenleyebilirsiniz.
+count hakkında daha fazlasını @sec-counts bölümünde öğreneceksiniz.
 
 ```{r}
 flights |>
   count(origin, dest, sort = TRUE)
 ```
 
-### Exercises
+### Alıştırmalar
 
-1.  In a single pipeline for each condition, find all flights that meet the condition:
+1.  Her koşul için tek bir pipeline'da, koşulu sağlayan tüm uçuşları bulun:
 
-    -   Had an arrival delay of two or more hours
-    -   Flew to Houston (`IAH` or `HOU`)
-    -   Were operated by United, American, or Delta
-    -   Departed in summer (July, August, and September)
-    -   Arrived more than two hours late but didn't leave late
-    -   Were delayed by at least an hour, but made up over 30 minutes in flight
+    -   İki saat veya daha fazla varış gecikmesi yaşayanlar
+    -   Houston'a uçanlar (`IAH` veya `HOU`)
+    -   United, American veya Delta tarafından işletilenler
+    -   Yazın (Temmuz, Ağustos ve Eylül) kalkanlar
+    -   İki saatten fazla geç varan ama geç kalkmayanlar
+    -   En az bir saat gecikip uçuşta 30 dakikadan fazla telafi edenler
 
-2.  Sort `flights` to find the flights with the longest departure delays.
-    Find the flights that left earliest in the morning.
+2.  En uzun kalkış gecikmelerine sahip uçuşları bulmak için `flights`'ı sıralayın.
+    Sabah en erken kalkan uçuşları bulun.
 
-3.  Sort `flights` to find the fastest flights.
-    (Hint: Try including a math calculation inside of your function.)
+3.  En hızlı uçuşları bulmak için `flights`'ı sıralayın.
+    (İpucu: Fonksiyonunuzun içine bir matematik hesaplaması eklemeyi deneyin.)
 
-4.  Was there a flight on every day of 2013?
+4.  2013'ün her gününde bir uçuş var mıydı?
 
-5.  Which flights traveled the farthest distance?
-    Which traveled the least distance?
+5.  Hangi uçuşlar en uzun mesafeyi kat etti?
+    Hangileri en kısa mesafeyi kat etti?
 
-6.  Does it matter what order you used `filter()` and `arrange()` if you're using both?
-    Why/why not?
-    Think about the results and how much work the functions would have to do.
+6.  Hem `filter()` hem de `arrange()` kullanıyorsanız, bunları kullanma sırası önemli mi?
+    Neden / neden değil?
+    Sonuçları ve fonksiyonların ne kadar iş yapması gerekeceğini düşünün.
 
-## Columns
+## Sütunlar
 
-There are four important verbs that affect the columns without changing the rows: `mutate()` creates new columns that are derived from the existing columns, `select()` changes which columns are present, `rename()` changes the names of the columns, and `relocate()` changes the positions of the columns.
+Satırları değiştirmeden sütunları etkileyen dört önemli fiil vardır: `mutate()` mevcut sütunlardan türetilen yeni sütunlar oluşturur, `select()` hangi sütunların bulunduğunu değiştirir, `rename()` sütunların adlarını değiştirir ve `relocate()` sütunların konumlarını değiştirir.
 
 ### `mutate()` {#sec-mutate}
 
-The job of `mutate()` is to add new columns that are calculated from the existing columns.
-In the transform chapters, you'll learn a large set of functions that you can use to manipulate different types of variables.
-For now, we'll stick with basic algebra, which allows us to compute the `gain`, how much time a delayed flight made up in the air, and the `speed` in miles per hour:
+`mutate()`'in işi, mevcut sütunlardan hesaplanan yeni sütunlar eklemektir.
+Dönüştürme bölümlerinde, farklı türdeki değişkenleri manipüle etmek için kullanabileceğiniz geniş bir fonksiyon kümesini öğreneceksiniz.
+Şimdilik, geciken bir uçuşun havada ne kadar zaman telafi ettiğini gösteren `gain`'i ve mil/saat cinsinden `speed`'i hesaplamamızı sağlayan temel cebirle yetineceğiz:
 
 ```{r}
-flights |> 
+flights |>
   mutate(
     gain = dep_delay - arr_delay,
     speed = distance / air_time * 60
   )
 ```
 
-By default, `mutate()` adds new columns on the right-hand side of your dataset, which makes it difficult to see what's happening here.
-We can use the `.before` argument to instead add the variables to the left-hand side[^data-transform-2]:
+Varsayılan olarak, `mutate()` yeni sütunları veri kümenizin sağ tarafına ekler; bu da burada neler olduğunu görmeyi zorlaştırır.
+Bunun yerine değişkenleri sol tarafa eklemek için `.before` argümanını kullanabiliriz[^data-transform-2]:
 
-[^data-transform-2]: Remember that in RStudio, the easiest way to see a dataset with many columns is `View()`.
+[^data-transform-2]: RStudio'da çok sayıda sütunu olan bir veri kümesini görmenin en kolay yolunun `View()` olduğunu unutmayın.
 
 ```{r}
-flights |> 
+flights |>
   mutate(
     gain = dep_delay - arr_delay,
     speed = distance / air_time * 60,
@@ -278,13 +278,13 @@ flights |>
   )
 ```
 
-The `.` indicates that `.before` is an argument to the function, not the name of a third new variable we are creating.
-You can also use `.after` to add after a variable, and in both `.before` and `.after` you can use the variable name instead of a position.
-For example, we could add the new variables after `day`:
+`.`, `.before`'un oluşturduğumuz üçüncü yeni bir değişkenin adı değil, fonksiyona ait bir argüman olduğunu gösterir.
+Bir değişkenden sonra eklemek için `.after`'ı da kullanabilirsiniz; hem `.before` hem de `.after`'da bir konum yerine değişken adını kullanabilirsiniz.
+Örneğin, yeni değişkenleri `day`'den sonra ekleyebiliriz:
 
 ```{r}
 #| results: false
-flights |> 
+flights |>
   mutate(
     gain = dep_delay - arr_delay,
     speed = distance / air_time * 60,
@@ -292,13 +292,13 @@ flights |>
   )
 ```
 
-Alternatively, you can control which variables are kept with the `.keep` argument.
-A particularly useful argument is `"used"` which specifies that we only keep the columns that were involved or created in the `mutate()` step.
-For example, the following output will contain only the variables `dep_delay`, `arr_delay`, `air_time`, `gain`, `hours`, and `gain_per_hour`.
+Alternatif olarak, hangi değişkenlerin tutulacağını `.keep` argümanıyla kontrol edebilirsiniz.
+Özellikle kullanışlı bir argüman, `mutate()` adımında yer alan veya oluşturulan sütunları tutmamızı belirten `"used"`'dır.
+Örneğin, aşağıdaki çıktı yalnızca `dep_delay`, `arr_delay`, `air_time`, `gain`, `hours` ve `gain_per_hour` değişkenlerini içerecektir.
 
 ```{r}
 #| results: false
-flights |> 
+flights |>
   mutate(
     gain = dep_delay - arr_delay,
     hours = air_time / 60,
@@ -307,103 +307,103 @@ flights |>
   )
 ```
 
-Note that since we haven't assigned the result of the above computation back to `flights`, the new variables `gain`, `hours`, and `gain_per_hour` will only be printed but will not be stored in a data frame.
-And if we want them to be available in a data frame for future use, we should think carefully about whether we want the result to be assigned back to `flights`, overwriting the original data frame with many more variables, or to a new object.
-Often, the right answer is a new object that is named informatively to indicate its contents, e.g., `delay_gain`, but you might also have good reasons for overwriting `flights`.
+Yukarıdaki hesaplamanın sonucunu `flights`'a geri atamadığımız için, yeni değişkenler olan `gain`, `hours` ve `gain_per_hour`'ın yalnızca yazdırılacağını, bir veri çerçevesinde saklanmayacağını unutmayın.
+Ve bunların ileride kullanım için bir veri çerçevesinde erişilebilir olmasını istiyorsak, sonucu `flights`'a geri atayıp orijinal veri çerçevesinin üzerine çok daha fazla değişkenle mi yazmak istediğimizi, yoksa yeni bir nesneye mi atamak istediğimizi dikkatlice düşünmeliyiz.
+Genellikle doğru cevap, içeriğini belirtecek şekilde bilgilendirici bir ad verilen yeni bir nesnedir, örneğin `delay_gain`; ama `flights`'ın üzerine yazmak için de iyi nedenleriniz olabilir.
 
 ### `select()` {#sec-select}
 
-It's not uncommon to get datasets with hundreds or even thousands of variables.
-In this situation, the first challenge is often just focusing on the variables you're interested in.
-`select()` allows you to rapidly zoom in on a useful subset using operations based on the names of the variables:
+Yüzlerce, hatta binlerce değişkene sahip veri kümeleri elde etmek pek de nadir değildir.
+Bu durumda, ilk zorluk genellikle yalnızca ilgilendiğiniz değişkenlere odaklanmaktır.
+`select()`, değişkenlerin adlarına dayalı işlemler kullanarak yararlı bir alt kümeye hızlıca odaklanmanızı sağlar:
 
--   Select columns by name:
+-   Sütunları ada göre seçin:
 
     ```{r}
     #| results: false
-    flights |> 
+    flights |>
       select(year, month, day)
     ```
 
--   Select all columns between year and day (inclusive):
+-   year ile day arasındaki (dahil) tüm sütunları seçin:
 
     ```{r}
     #| results: false
-    flights |> 
+    flights |>
       select(year:day)
     ```
 
--   Select all columns except those from year to day (inclusive):
+-   year'dan day'e kadar olanlar (dahil) hariç tüm sütunları seçin:
 
     ```{r}
     #| results: false
-    flights |> 
+    flights |>
       select(!year:day)
     ```
 
-    Historically this operation was done with `-` instead of `!`, so you're likely to see that in the wild.
-    These two operators serve the same purpose but with subtle differences in behavior.
-    We recommend using `!` because it reads as "not" and combines well with `&` and `|`.
+    Tarihsel olarak bu işlem `!` yerine `-` ile yapılırdı, bu yüzden bunu gerçek hayattaki kodlarda görme olasılığınız yüksektir.
+    Bu iki operatör aynı amaca hizmet eder, ama davranışlarında ince farklılıklar vardır.
+    `!` kullanmanızı öneririz; çünkü "değil" olarak okunur ve `&` ile `|` ile iyi birleşir.
 
--   Select all columns that are characters:
+-   Karakter türünde olan tüm sütunları seçin:
 
     ```{r}
     #| results: false
-    flights |> 
+    flights |>
       select(where(is.character))
     ```
 
-There are a number of helper functions you can use within `select()`:
+`select()` içinde kullanabileceğiniz bir dizi yardımcı fonksiyon vardır:
 
--   `starts_with("abc")`: matches names that begin with "abc".
--   `ends_with("xyz")`: matches names that end with "xyz".
--   `contains("ijk")`: matches names that contain "ijk".
--   `num_range("x", 1:3)`: matches `x1`, `x2` and `x3`.
+-   `starts_with("abc")`: "abc" ile başlayan adlarla eşleşir.
+-   `ends_with("xyz")`: "xyz" ile biten adlarla eşleşir.
+-   `contains("ijk")`: "ijk" içeren adlarla eşleşir.
+-   `num_range("x", 1:3)`: `x1`, `x2` ve `x3` ile eşleşir.
 
-See `?select` for more details.
-Once you know regular expressions (the topic of @sec-regular-expressions) you'll also be able to use `matches()` to select variables that match a pattern.
+Daha fazla ayrıntı için `?select`'e bakın.
+Düzenli ifadeleri (@sec-regular-expressions bölümünün konusu) öğrendiğinizde, bir kalıpla eşleşen değişkenleri seçmek için `matches()`'i de kullanabileceksiniz.
 
-You can rename variables as you `select()` them by using `=`.
-The new name appears on the left-hand side of the `=`, and the old variable appears on the right-hand side:
+Değişkenleri `select()` ederken `=` kullanarak yeniden adlandırabilirsiniz.
+Yeni ad `=`'in sol tarafında, eski değişken ise sağ tarafında görünür:
 
 ```{r}
-flights |> 
+flights |>
   select(tail_num = tailnum)
 ```
 
 ### `rename()`
 
-If you want to keep all the existing variables and just want to rename a few, you can use `rename()` instead of `select()`:
+Mevcut tüm değişkenleri tutmak ve yalnızca birkaçını yeniden adlandırmak istiyorsanız, `select()` yerine `rename()` kullanabilirsiniz:
 
 ```{r}
-flights |> 
+flights |>
   rename(tail_num = tailnum)
 ```
 
-If you have a bunch of inconsistently named columns and it would be painful to fix them all by hand, check out `janitor::clean_names()` which provides some useful automated cleaning.
+Tutarsız adlandırılmış bir sürü sütununuz varsa ve bunların hepsini elle düzeltmek can sıkıcı olacaksa, faydalı bazı otomatik temizleme işlemleri sunan `janitor::clean_names()`'e göz atın.
 
 ### `relocate()`
 
-Use `relocate()` to move variables around.
-You might want to collect related variables together or move important variables to the front.
-By default `relocate()` moves variables to the front:
+Değişkenleri taşımak için `relocate()`'i kullanın.
+İlişkili değişkenleri bir araya toplamak veya önemli değişkenleri öne taşımak isteyebilirsiniz.
+Varsayılan olarak `relocate()` değişkenleri öne taşır:
 
 ```{r}
-flights |> 
+flights |>
   relocate(time_hour, air_time)
 ```
 
-You can also specify where to put them using the `.before` and `.after` arguments, just like in `mutate()`:
+Tıpkı `mutate()`'te olduğu gibi, `.before` ve `.after` argümanlarını kullanarak onları nereye koyacağınızı da belirtebilirsiniz:
 
 ```{r}
 #| results: false
-flights |> 
+flights |>
   relocate(year:dep_time, .after = time_hour)
-flights |> 
+flights |>
   relocate(starts_with("arr"), .before = dep_time)
 ```
 
-### Exercises
+### Alıştırmalar
 
 ```{r}
 #| eval: false
@@ -421,57 +421,57 @@ ggplot(flights, aes(x = dep_sched %% 60)) + geom_histogram(binwidth = 1)
 ggplot(flights, aes(x = air_time - airtime2)) + geom_histogram()
 ```
 
-1.  Compare `dep_time`, `sched_dep_time`, and `dep_delay`.
-    How would you expect those three numbers to be related?
+1.  `dep_time`, `sched_dep_time` ve `dep_delay`'i karşılaştırın.
+    Bu üç sayının nasıl ilişkili olmasını beklersiniz?
 
-2.  Brainstorm as many ways as possible to select `dep_time`, `dep_delay`, `arr_time`, and `arr_delay` from `flights`.
+2.  `flights`'tan `dep_time`, `dep_delay`, `arr_time` ve `arr_delay`'i seçmenin mümkün olduğunca çok yolu üzerine beyin fırtınası yapın.
 
-3.  What happens if you specify the name of the same variable multiple times in a `select()` call?
+3.  Bir `select()` çağrısında aynı değişkenin adını birden fazla kez belirtirseniz ne olur?
 
-4.  What does the `any_of()` function do?
-    Why might it be helpful in conjunction with this vector?
+4.  `any_of()` fonksiyonu ne işe yarar?
+    Bu vektörle birlikte neden yararlı olabilir?
 
     ```{r}
     variables <- c("year", "month", "day", "dep_delay", "arr_delay")
     ```
 
-5.  Does the result of running the following code surprise you?
-    How do the select helpers deal with upper and lower case by default?
-    How can you change that default?
+5.  Aşağıdaki kodu çalıştırmanın sonucu sizi şaşırtıyor mu?
+    select yardımcıları varsayılan olarak büyük ve küçük harfle nasıl başa çıkar?
+    Bu varsayılanı nasıl değiştirebilirsiniz?
 
     ```{r}
     #| eval: false
     flights |> select(contains("TIME"))
     ```
 
-6.  Rename `air_time` to `air_time_min` to indicate units of measurement and move it to the beginning of the data frame.
+6.  Ölçü birimini belirtmek için `air_time`'ı `air_time_min` olarak yeniden adlandırın ve veri çerçevesinin başına taşıyın.
 
-7.  Why doesn't the following work, and what does the error mean?
+7.  Aşağıdaki kod neden çalışmıyor ve hata ne anlama geliyor?
 
     ```{r}
     #| error: true
-    flights |> 
-      select(tailnum) |> 
+    flights |>
+      select(tailnum) |>
       arrange(arr_delay)
     ```
 
-## The pipe {#sec-the-pipe}
+## Pipe {#sec-the-pipe}
 
-We've shown you simple examples of the pipe above, but its real power arises when you start to combine multiple verbs.
-For example, imagine that you wanted to find the fastest flights to Houston's IAH airport: you need to combine `filter()`, `mutate()`, `select()`, and `arrange()`:
+Yukarıda size pipe'ın basit örneklerini gösterdik; ama gerçek gücü, birden fazla fiili birleştirmeye başladığınızda ortaya çıkar.
+Örneğin, Houston'ın IAH havalimanına giden en hızlı uçuşları bulmak istediğinizi hayal edin: `filter()`, `mutate()`, `select()` ve `arrange()`'i birleştirmeniz gerekir:
 
 ```{r}
-flights |> 
-  filter(dest == "IAH") |> 
-  mutate(speed = distance / air_time * 60) |> 
-  select(year:day, dep_time, carrier, flight, speed) |> 
+flights |>
+  filter(dest == "IAH") |>
+  mutate(speed = distance / air_time * 60) |>
+  select(year:day, dep_time, carrier, flight, speed) |>
   arrange(desc(speed))
 ```
 
-Even though this pipeline has four steps, it's easy to skim because the verbs come at the start of each line: start with the `flights` data, then filter, then mutate, then select, then arrange.
+Bu pipeline'ın dört adımı olsa da, fiiller her satırın başında geldiği için göz gezdirmesi kolaydır: `flights` verisiyle başla, sonra filtrele, sonra mutate et, sonra seç, sonra sırala.
 
-What would happen if we didn't have the pipe?
-We could nest each function call inside the previous call:
+Pipe olmasaydı ne olurdu?
+Her fonksiyon çağrısını bir önceki çağrının içine yerleştirebilirdik:
 
 ```{r}
 #| results: false
@@ -479,7 +479,7 @@ arrange(
   select(
     mutate(
       filter(
-        flights, 
+        flights,
         dest == "IAH"
       ),
       speed = distance / air_time * 60
@@ -490,7 +490,7 @@ arrange(
 )
 ```
 
-Or we could use a bunch of intermediate objects:
+Ya da bir sürü ara nesne kullanabilirdik:
 
 ```{r}
 #| results: false
@@ -500,240 +500,241 @@ flights3 <- select(flights2, year:day, dep_time, carrier, flight, speed)
 arrange(flights3, desc(speed))
 ```
 
-While both forms have their time and place, the pipe generally produces data analysis code that is easier to write and read.
+Her iki formun da kendine göre bir yeri ve zamanı olsa da, pipe genellikle yazması ve okuması daha kolay veri analizi kodu üretir.
 
-To add the pipe to your code, we recommend using the built-in keyboard shortcut Ctrl/Cmd + Shift + M.
-You'll need to make one change to your RStudio options to use `|>` instead of `%>%` as shown in @fig-pipe-options; more on `%>%` shortly.
+Kodunuza pipe eklemek için, yerleşik klavye kısayolu Ctrl/Cmd + Shift + M'yi kullanmanızı öneririz.
+@fig-pipe-options'ta gösterildiği gibi, `%>%` yerine `|>` kullanmak için RStudio seçeneklerinizde bir değişiklik yapmanız gerekecek; `%>%` hakkında birazdan daha fazlası.
 
 ```{r}
 #| label: fig-pipe-options
 #| echo: false
 #| fig-cap: |
-#|   To insert `|>`, make sure the "Use native pipe operator" option is checked.
-#| fig-alt: | 
-#|   Screenshot showing the "Use native pipe operator" option which can
-#|   be found on the "Editing" panel of the "Code" options.
+#|   `|>` eklemek için "Use native pipe operator" seçeneğinin işaretli
+#|   olduğundan emin olun.
+#| fig-alt: |
+#|   "Code" seçeneklerinin "Editing" panelinde bulunabilen "Use native
+#|   pipe operator" seçeneğini gösteren ekran görüntüsü.
 knitr::include_graphics("screenshots/rstudio-pipe-options.png")
 ```
 
 ::: callout-note
 ## magrittr
 
-If you've been using the tidyverse for a while, you might be familiar with the `%>%` pipe provided by the **magrittr** package.
-The magrittr package is included in the core tidyverse, so you can use `%>%` whenever you load the tidyverse:
+Bir süredir tidyverse kullanıyorsanız, **magrittr** paketi tarafından sağlanan `%>%` pipe'ına aşina olabilirsiniz.
+magrittr paketi çekirdek tidyverse'e dahildir, bu yüzden tidyverse'i her yüklediğinizde `%>%`'i kullanabilirsiniz:
 
 ```{r}
 #| eval: false
 library(tidyverse)
 
-mtcars %>% 
+mtcars %>%
   group_by(cyl) %>%
   summarize(n = n())
 ```
 
-For simple cases, `|>` and `%>%` behave identically.
-So why do we recommend the base pipe?
-Firstly, because it's part of base R, it's always available for you to use, even when you're not using the tidyverse.
-Secondly, `|>` is quite a bit simpler than `%>%`: in the time between the invention of `%>%` in 2014 and the inclusion of `|>` in R 4.1.0 in 2021, we gained a better understanding of the pipe.
-This allowed the base implementation to jettison infrequently used and less important features.
+Basit durumlar için, `|>` ve `%>%` aynı şekilde davranır.
+Peki neden temel pipe'ı öneriyoruz?
+İlk olarak, temel R'ın (base R) bir parçası olduğu için, tidyverse'i kullanmadığınızda bile kullanımınıza her zaman açıktır.
+İkinci olarak, `|>`, `%>%`'den oldukça daha basittir: `%>%`'nin 2014'te icat edilmesi ile `|>`'nin 2021'de R 4.1.0'a dahil edilmesi arasındaki sürede, pipe'ı daha iyi anlamaya başladık.
+Bu, temel uygulamanın nadiren kullanılan ve daha az önemli özellikleri bir kenara bırakmasına olanak tanıdı.
 :::
 
-## Groups
+## Gruplar
 
-So far you've learned about functions that work with rows and columns.
-dplyr gets even more powerful when you add in the ability to work with groups.
-In this section, we'll focus on the most important functions: `group_by()`, `summarize()`, and the slice family of functions.
+Şimdiye kadar satırlar ve sütunlarla çalışan fonksiyonlar hakkında bilgi edindiniz.
+Gruplarla çalışma yeteneğini eklediğinizde dplyr daha da güçlü hale gelir.
+Bu bölümde, en önemli fonksiyonlara odaklanacağız: `group_by()`, `summarize()` ve slice fonksiyon ailesi.
 
 ### `group_by()`
 
-Use `group_by()` to divide your dataset into groups meaningful for your analysis:
+Veri kümenizi analiziniz için anlamlı gruplara ayırmak için `group_by()`'ı kullanın:
 
 ```{r}
-flights |> 
+flights |>
   group_by(month)
 ```
 
-`group_by()` doesn't change the data but, if you look closely at the output, you'll notice that the output indicates that it is "grouped by" month (`Groups: month [12]`).
-This means subsequent operations will now work "by month".
-`group_by()` adds this grouped feature (referred to as class) to the data frame, which changes the behavior of the subsequent verbs applied to the data.
+`group_by()` veriyi değiştirmez; ama çıktıya yakından bakarsanız, çıktının month'a göre "gruplandığını" (`Groups: month [12]`) belirttiğini fark edeceksiniz.
+Bu, sonraki işlemlerin artık "month'a göre" çalışacağı anlamına gelir.
+`group_by()`, veriye uygulanan sonraki fiillerin davranışını değiştiren bu gruplu özelliği (class olarak adlandırılır) veri çerçevesine ekler.
 
 ### `summarize()` {#sec-summarize}
 
-The most important grouped operation is a summary, which, if being used to calculate a single summary statistic, reduces the data frame to have a single row for each group.
-In dplyr, this operation is performed by `summarize()`[^data-transform-3], as shown by the following example, which computes the average departure delay by month:
+En önemli gruplu işlem, tek bir özet istatistik hesaplamak için kullanıldığında veri çerçevesini her grup için tek bir satıra indirgeyen bir özettir.
+dplyr'de bu işlem, month'a göre ortalama kalkış gecikmesini hesaplayan aşağıdaki örnekte gösterildiği gibi `summarize()`[^data-transform-3] tarafından gerçekleştirilir:
 
-[^data-transform-3]: Or `summarise()`, if you prefer British English.
+[^data-transform-3]: Ya da İngiliz İngilizcesini tercih ediyorsanız `summarise()`.
 
 ```{r}
-flights |> 
-  group_by(month) |> 
+flights |>
+  group_by(month) |>
   summarize(
     avg_delay = mean(dep_delay)
   )
 ```
 
-Uh-oh!
-Something has gone wrong, and all of our results are `NA`s (pronounced "N-A"), R's symbol for missing value.
-This happened because some of the observed flights had missing data in the delay column, and so when we calculated the mean including those values, we got an `NA` result.
-We'll come back to discuss missing values in detail in @sec-missing-values, but for now, we'll tell the `mean()` function to ignore all missing values by setting the argument `na.rm` to `TRUE`:
+Eyvah!
+Bir şeyler ters gitti ve tüm sonuçlarımız, R'ın eksik değer sembolü olan ("N-A" diye telaffuz edilen) `NA`.
+Bu, gözlemlenen uçuşlardan bazılarının gecikme sütununda eksik verisi olması nedeniyle oldu; bu yüzden ortalamayı bu değerleri de dahil ederek hesapladığımızda bir `NA` sonucu elde ettik.
+Eksik değerleri @sec-missing-values bölümünde ayrıntılı olarak tartışmak üzere geri döneceğiz; ama şimdilik, `na.rm` argümanını `TRUE` olarak ayarlayarak `mean()` fonksiyonuna tüm eksik değerleri yok saymasını söyleyeceğiz:
 
 ```{r}
-flights |> 
-  group_by(month) |> 
+flights |>
+  group_by(month) |>
   summarize(
     avg_delay = mean(dep_delay, na.rm = TRUE)
   )
 ```
 
-You can create any number of summaries in a single call to `summarize()`.
-You'll learn various useful summaries in the upcoming chapters, but one very useful summary is `n()`, which returns the number of rows in each group:
+Tek bir `summarize()` çağrısında istediğiniz sayıda özet oluşturabilirsiniz.
+Sonraki bölümlerde çeşitli yararlı özetler öğreneceksiniz; ama çok yararlı bir özet, her gruptaki satır sayısını döndüren `n()`'dir:
 
 ```{r}
-flights |> 
-  group_by(month) |> 
+flights |>
+  group_by(month) |>
   summarize(
-    avg_delay = mean(dep_delay, na.rm = TRUE), 
+    avg_delay = mean(dep_delay, na.rm = TRUE),
     n = n()
   )
 ```
 
-Means and counts can get you a surprisingly long way in data science!
+Ortalamalar ve sayımlar, veri biliminde sizi şaşırtıcı derecede ileriye götürebilir!
 
-### The `slice_` functions
+### `slice_` Fonksiyonları
 
-There are five handy functions that allow you to extract specific rows within each group:
+Her grup içindeki belirli satırları çıkarmanızı sağlayan beş kullanışlı fonksiyon vardır:
 
--   `df |> slice_head(n = 1)` takes the first row from each group.
--   `df |> slice_tail(n = 1)` takes the last row in each group.
--   `df |> slice_min(x, n = 1)` takes the row with the smallest value of column `x`.
--   `df |> slice_max(x, n = 1)` takes the row with the largest value of column `x`.
--   `df |> slice_sample(n = 1)` takes one random row.
+-   `df |> slice_head(n = 1)`, her gruptan ilk satırı alır.
+-   `df |> slice_tail(n = 1)`, her gruptaki son satırı alır.
+-   `df |> slice_min(x, n = 1)`, `x` sütununun en küçük değerine sahip satırı alır.
+-   `df |> slice_max(x, n = 1)`, `x` sütununun en büyük değerine sahip satırı alır.
+-   `df |> slice_sample(n = 1)`, rastgele bir satır alır.
 
-You can vary `n` to select more than one row, or instead of `n =`, you can use `prop = 0.1` to select (e.g.) 10% of the rows in each group.
-For example, the following code finds the flights that are most delayed upon arrival at each destination:
+Birden fazla satır seçmek için `n`'i değiştirebilir veya `n =` yerine, her gruptaki satırların (örneğin) %10'unu seçmek için `prop = 0.1` kullanabilirsiniz.
+Örneğin, aşağıdaki kod her varış noktasında varışta en çok geciken uçuşları bulur:
 
 ```{r}
-flights |> 
-  group_by(dest) |> 
+flights |>
+  group_by(dest) |>
   slice_max(arr_delay, n = 1) |>
   relocate(dest)
 ```
 
-Note that there are 105 destinations but we get 108 rows here.
-What's up?
-`slice_min()` and `slice_max()` keep tied values so `n = 1` means give us all rows with the highest value.
-If you want exactly one row per group you can set `with_ties = FALSE`.
+105 varış noktası olmasına rağmen burada 108 satır aldığımıza dikkat edin.
+Neler oluyor?
+`slice_min()` ve `slice_max()` eşit değerleri korur, bu yüzden `n = 1` bize en yüksek değere sahip tüm satırları ver demektir.
+Grup başına tam olarak bir satır istiyorsanız `with_ties = FALSE` ayarlayabilirsiniz.
 
-This is similar to computing the max delay with `summarize()`, but you get the whole corresponding row (or rows if there's a tie) instead of the single summary statistic.
+Bu, `summarize()` ile maksimum gecikmeyi hesaplamaya benzer; ama tek bir özet istatistik yerine karşılık gelen satırın tamamını (veya eşitlik varsa satırları) elde edersiniz.
 
-### Grouping by multiple variables
+### Birden Fazla Değişkene Göre Gruplama
 
-You can create groups using more than one variable.
-For example, we could make a group for each date.
+Birden fazla değişken kullanarak gruplar oluşturabilirsiniz.
+Örneğin, her tarih için bir grup oluşturabiliriz.
 
 ```{r}
-daily <- flights |>  
+daily <- flights |>
   group_by(year, month, day)
 daily
 ```
 
-When you summarize a tibble grouped by more than one variable, each summary peels off the last group.
-In hindsight, this wasn't a great way to make this function work, but it's difficult to change without breaking existing code.
-To make it obvious what's happening, dplyr displays a message that tells you how you can change this behavior:
+Birden fazla değişkene göre gruplanmış bir tibble'ı özetlediğinizde, her özet son grubu soyar.
+Geriye dönüp bakınca, bu fonksiyonu çalıştırmanın harika bir yolu değildi; ama mevcut kodu bozmadan değiştirmek zor.
+Neler olduğunu açık hale getirmek için dplyr, bu davranışı nasıl değiştirebileceğinizi söyleyen bir mesaj gösterir:
 
 ```{r}
-daily_flights <- daily |> 
+daily_flights <- daily |>
   summarize(n = n())
 ```
 
-If you're happy with this behavior, you can explicitly request it in order to suppress the message:
+Bu davranıştan memnunsanız, mesajı bastırmak için bunu açıkça talep edebilirsiniz:
 
 ```{r}
 #| results: false
 
-daily_flights <- daily |> 
+daily_flights <- daily |>
   summarize(
-    n = n(), 
+    n = n(),
     .groups = "drop_last"
   )
 ```
 
-Alternatively, change the default behavior by setting a different value, e.g., `"drop"` to drop all grouping or `"keep"` to preserve the same groups.
+Alternatif olarak, farklı bir değer ayarlayarak varsayılan davranışı değiştirin; örneğin, tüm gruplamayı kaldırmak için `"drop"` veya aynı grupları korumak için `"keep"`.
 
-### Ungrouping
+### Gruplamayı Kaldırma
 
-You might also want to remove grouping from a data frame without using `summarize()`.
-You can do this with `ungroup()`.
+`summarize()` kullanmadan bir veri çerçevesinden gruplamayı da kaldırmak isteyebilirsiniz.
+Bunu `ungroup()` ile yapabilirsiniz.
 
 ```{r}
-daily |> 
+daily |>
   ungroup()
 ```
 
-Now let's see what happens when you summarize an ungrouped data frame.
+Şimdi gruplanmamış bir veri çerçevesini özetlediğinizde ne olduğuna bakalım.
 
 ```{r}
-daily |> 
+daily |>
   ungroup() |>
   summarize(
-    avg_delay = mean(dep_delay, na.rm = TRUE), 
+    avg_delay = mean(dep_delay, na.rm = TRUE),
     flights = n()
   )
 ```
 
-You get a single row back because dplyr treats all the rows in an ungrouped data frame as belonging to one group.
+Tek bir satır elde edersiniz; çünkü dplyr, gruplanmamış bir veri çerçevesindeki tüm satırları tek bir gruba ait olarak ele alır.
 
 ### `.by`
 
-dplyr 1.1.0 includes a new, experimental, syntax for per-operation grouping, the `.by` argument.
-`group_by()` and `ungroup()` aren't going away, but you can now also use the `.by` argument to group within a single operation:
+dplyr 1.1.0, işlem başına gruplama için yeni, deneysel bir sözdizimi olan `.by` argümanını içerir.
+`group_by()` ve `ungroup()` kalkmıyor; ama artık tek bir işlem içinde gruplamak için `.by` argümanını da kullanabilirsiniz:
 
 ```{r}
 #| results: false
-flights |> 
+flights |>
   summarize(
-    delay = mean(dep_delay, na.rm = TRUE), 
+    delay = mean(dep_delay, na.rm = TRUE),
     n = n(),
     .by = month
   )
 ```
 
-Or if you want to group by multiple variables:
+Ya da birden fazla değişkene göre gruplamak isterseniz:
 
 ```{r}
 #| results: false
-flights |> 
+flights |>
   summarize(
-    delay = mean(dep_delay, na.rm = TRUE), 
+    delay = mean(dep_delay, na.rm = TRUE),
     n = n(),
     .by = c(origin, dest)
   )
 ```
 
-`.by` works with all verbs and has the advantage that you don't need to use the `.groups` argument to suppress the grouping message or `ungroup()` when you're done.
+`.by`, tüm fiillerle çalışır ve gruplama mesajını bastırmak için `.groups` argümanını kullanmanıza veya işiniz bittiğinde `ungroup()` kullanmanıza gerek olmaması gibi bir avantaja sahiptir.
 
-We didn't focus on this syntax in this chapter because it was very new when we wrote the book.
-We did want to mention it because we think it has a lot of promise and it's likely to be quite popular.
-You can learn more about it in the [dplyr 1.1.0 blog post](https://www.tidyverse.org/blog/2023/02/dplyr-1-1-0-per-operation-grouping/).
+Bu bölümde bu sözdizimine odaklanmadık; çünkü kitabı yazdığımızda çok yeniydi.
+Yine de belirtmek istedik; çünkü çok gelecek vaat ettiğini ve oldukça popüler olması muhtemel olduğunu düşünüyoruz.
+Bu konuda daha fazlasını [dplyr 1.1.0 blog yazısında](https://www.tidyverse.org/blog/2023/02/dplyr-1-1-0-per-operation-grouping/) öğrenebilirsiniz.
 
-### Exercises
+### Alıştırmalar
 
-1.  Which carrier has the worst average delays?
-    Challenge: can you disentangle the effects of bad airports vs. bad carriers?
-    Why/why not?
-    (Hint: think about `flights |> group_by(carrier, dest) |> summarize(n())`)
+1.  Hangi taşıyıcının ortalama gecikmeleri en kötü?
+    Meydan okuma: kötü havalimanlarının etkilerini kötü taşıyıcıların etkilerinden ayırt edebilir misiniz?
+    Neden / neden değil?
+    (İpucu: `flights |> group_by(carrier, dest) |> summarize(n())` üzerine düşünün)
 
-2.  Find the flights that are most delayed upon departure to each destination.
+2.  Her varış noktasına kalkışta en çok geciken uçuşları bulun.
 
-3.  How do delays vary over the course of the day?
-    Illustrate your answer with a plot.
+3.  Gecikmeler gün boyunca nasıl değişiyor?
+    Cevabınızı bir grafikle gösterin.
 
-4.  What happens if you supply a negative `n` to `slice_min()` and friends?
+4.  `slice_min()` ve benzerlerine negatif bir `n` verirseniz ne olur?
 
-5.  Explain what `count()` does in terms of the dplyr verbs you just learned.
-    What does the `sort` argument to `count()` do?
+5.  `count()`'un yeni öğrendiğiniz dplyr fiilleri açısından ne yaptığını açıklayın.
+    `count()`'un `sort` argümanı ne işe yarar?
 
-6.  Suppose we have the following tiny data frame:
+6.  Aşağıdaki küçük veri çerçevesine sahip olduğumuzu varsayalım:
 
     ```{r}
     df <- tibble(
@@ -743,16 +744,16 @@ You can learn more about it in the [dplyr 1.1.0 blog post](https://www.tidyverse
     )
     ```
 
-    a.  Write down what you think the output will look like, then check if you were correct, and describe what `group_by()` does.
+    a.  Çıktının neye benzeyeceğini yazın, sonra doğru olup olmadığınızı kontrol edin ve `group_by()`'ın ne yaptığını açıklayın.
 
         ```{r}
-        #| eval: false 
+        #| eval: false
         df |>
           group_by(y)
         ```
 
-    b.  Write down what you think the output will look like, then check if you were correct, and describe what `arrange()` does.
-        Also, comment on how it's different from the `group_by()` in part (a).
+    b.  Çıktının neye benzeyeceğini yazın, sonra doğru olup olmadığınızı kontrol edin ve `arrange()`'in ne yaptığını açıklayın.
+        Ayrıca, bunun (a) şıkkındaki `group_by()`'dan nasıl farklı olduğuna dair yorum yapın.
 
         ```{r}
         #| eval: false
@@ -760,7 +761,7 @@ You can learn more about it in the [dplyr 1.1.0 blog post](https://www.tidyverse
           arrange(y)
         ```
 
-    c.  Write down what you think the output will look like, then check if you were correct, and describe what the pipeline does.
+    c.  Çıktının neye benzeyeceğini yazın, sonra doğru olup olmadığınızı kontrol edin ve pipeline'ın ne yaptığını açıklayın.
 
         ```{r}
         #| eval: false
@@ -769,18 +770,18 @@ You can learn more about it in the [dplyr 1.1.0 blog post](https://www.tidyverse
           summarize(mean_x = mean(x))
         ```
 
-    d.  Write down what you think the output will look like, then check if you were correct, and describe what the pipeline does.
-        Then, comment on what the message says.
+    d.  Çıktının neye benzeyeceğini yazın, sonra doğru olup olmadığınızı kontrol edin ve pipeline'ın ne yaptığını açıklayın.
+        Ardından, mesajın ne söylediğine dair yorum yapın.
 
         ```{r}
-        #| eval: false  
+        #| eval: false
         df |>
           group_by(y, z) |>
           summarize(mean_x = mean(x))
         ```
 
-    e.  Write down what you think the output will look like, then check if you were correct, and describe what the pipeline does.
-        How is the output different from the one in part (d)?
+    e.  Çıktının neye benzeyeceğini yazın, sonra doğru olup olmadığınızı kontrol edin ve pipeline'ın ne yaptığını açıklayın.
+        Çıktı, (d) şıkkındakinden nasıl farklı?
 
         ```{r}
         #| eval: false
@@ -789,30 +790,30 @@ You can learn more about it in the [dplyr 1.1.0 blog post](https://www.tidyverse
           summarize(mean_x = mean(x), .groups = "drop")
         ```
 
-    f.  Write down what you think the outputs will look like, then check if you were correct, and describe what each pipeline does.
-        How are the outputs of the two pipelines different?
+    f.  Çıktıların neye benzeyeceğini yazın, sonra doğru olup olmadığınızı kontrol edin ve her pipeline'ın ne yaptığını açıklayın.
+        İki pipeline'ın çıktıları nasıl farklı?
 
         ```{r}
-        #| eval: false  
+        #| eval: false
         df |>
           group_by(y, z) |>
           summarize(mean_x = mean(x))
-            
+
         df |>
           group_by(y, z) |>
           mutate(mean_x = mean(x))
         ```
 
-## Case study: aggregates and sample size {#sec-sample-size}
+## Örnek Olay: Toplulaştırmalar ve Örneklem Büyüklüğü {#sec-sample-size}
 
-Whenever you do any aggregation, it's always a good idea to include a count (`n()`).
-That way, you can ensure that you're not drawing conclusions based on very small amounts of data.
-We'll demonstrate this with some baseball data from the **Lahman** package.
-Specifically, we will compare what proportion of times a player gets a hit (`H`) vs. the number of times they try to put the ball in play (`AB`):
+Herhangi bir toplulaştırma yaptığınızda, her zaman bir sayım (`n()`) eklemek iyi bir fikirdir.
+Bu şekilde, çok küçük miktarda veriye dayanarak sonuç çıkarmadığınızdan emin olabilirsiniz.
+Bunu **Lahman** paketinden bazı beyzbol verileriyle göstereceğiz.
+Özellikle, bir oyuncunun vuruş yapma oranını (`H`) topu oyuna sokmayı denediği sayıya (`AB`) karşı karşılaştıracağız:
 
 ```{r}
-batters <- Lahman::Batting |> 
-  group_by(playerID) |> 
+batters <- Lahman::Batting |>
+  group_by(playerID) |>
   summarize(
     performance = sum(H, na.rm = TRUE) / sum(AB, na.rm = TRUE),
     n = sum(AB, na.rm = TRUE)
@@ -820,48 +821,48 @@ batters <- Lahman::Batting |>
 batters
 ```
 
-When we plot the skill of the batter (measured by the batting average, `performance`) against the number of opportunities to hit the ball (measured by times at bat, `n`), you see two patterns:
+Vurucunun becerisini (vuruş ortalamasıyla, `performance`, ölçülür) topa vurma fırsatlarının sayısına (vuruş sayısıyla, `n`, ölçülür) karşı çizdiğimizde, iki örüntü görürsünüz:
 
-1.  The variation in `performance` is larger among players with fewer at-bats.
-    The shape of this plot is very characteristic: whenever you plot a mean (or other summary statistics) vs. group size, you'll see that the variation decreases as the sample size increases[^data-transform-4].
+1.  `performance`'taki varyasyon, daha az vuruşu olan oyuncular arasında daha büyüktür.
+    Bu grafiğin şekli çok karakteristiktir: bir ortalamayı (veya başka bir özet istatistiği) grup büyüklüğüne karşı çizdiğinizde, örneklem büyüklüğü arttıkça varyasyonun azaldığını göreceksiniz[^data-transform-4].
 
-2.  There's a positive correlation between skill (`performance`) and opportunities to hit the ball (`n`) because teams want to give their best batters the most opportunities to hit the ball.
+2.  Beceri (`performance`) ile topa vurma fırsatları (`n`) arasında pozitif bir korelasyon vardır; çünkü takımlar en iyi vurucularına topa vurma konusunda en fazla fırsatı vermek ister.
 
-[^data-transform-4]: \*cough\* the law of large numbers \*cough\*.
+[^data-transform-4]: \*öhöm\* büyük sayılar yasası \*öhöm\*.
 
 ```{r}
 #| warning: false
 #| fig-alt: |
-#|   A scatterplot of the number of batting performances vs. batting opportunities 
-#|   overlaid with a smoothed line. Average performance increases sharply
-#|   from 0.2 at when n is ~100 to 0.25 when n is ~1000. Average performance
-#|   continues to increase linearly at a much shallower slope, reaching
-#|   0.3 when n is ~12,000.
-batters |> 
-  filter(n > 100) |> 
+#|   Vuruş performansı sayısına karşı vuruş fırsatlarının, üzerine düzgün
+#|   bir çizgi bindirilmiş bir saçılım grafiği. Ortalama performans, n
+#|   ~100 iken 0,2'den n ~1000 iken 0,25'e keskin bir şekilde artar.
+#|   Ortalama performans, çok daha sığ bir eğimle doğrusal olarak artmaya
+#|   devam eder ve n ~12.000 iken 0,3'e ulaşır.
+batters |>
+  filter(n > 100) |>
   ggplot(aes(x = n, y = performance)) +
-  geom_point(alpha = 1 / 10) + 
+  geom_point(alpha = 1 / 10) +
   geom_smooth(se = FALSE)
 ```
 
-Note the handy pattern for combining ggplot2 and dplyr.
-You just have to remember to switch from `|>`, for dataset processing, to `+` for adding layers to your plot.
+ggplot2 ve dplyr'i birleştirmek için kullanışlı örüntüye dikkat edin.
+Yalnızca, veri kümesi işleme için `|>`'dan, grafiğinize katman eklemek için `+`'a geçmeyi hatırlamanız gerekir.
 
-This also has important implications for ranking.
-If you naively sort on `desc(performance)`, the people with the best batting averages are clearly the ones who tried to put the ball in play very few times and happened to get a hit, they're not necessarily the most skilled players:
+Bunun sıralama için de önemli sonuçları vardır.
+`desc(performance)` üzerinde saf bir şekilde sıralarsanız, en iyi vuruş ortalamasına sahip kişiler açıkça topu oyuna çok az sayıda sokmaya çalışıp tesadüfen vuruş yapanlardır; bunlar mutlaka en becerikli oyuncular değildir:
 
 ```{r}
-batters |> 
+batters |>
   arrange(desc(performance))
 ```
 
-You can find a good explanation of this problem and how to overcome it at <http://varianceexplained.org/r/empirical_bayes_baseball/> and <https://www.evanmiller.org/how-not-to-sort-by-average-rating.html>.
+Bu problemin ve bunun nasıl aşılacağının iyi bir açıklamasını <http://varianceexplained.org/r/empirical_bayes_baseball/> ve <https://www.evanmiller.org/how-not-to-sort-by-average-rating.html> adreslerinde bulabilirsiniz.
 
-## Summary
+## Özet
 
-In this chapter, you've learned the tools that dplyr provides for working with data frames.
-The tools are roughly grouped into three categories: those that manipulate the rows (like `filter()` and `arrange()`), those that manipulate the columns (like `select()` and `mutate()`) and those that manipulate groups (like `group_by()` and `summarize()`).
-In this chapter, we've focused on these "whole data frame" tools, but you haven't yet learned much about what you can do with the individual variable.
-We'll return to that in the Transform part of the book, where each chapter provides tools for a specific type of variable.
+Bu bölümde, dplyr'in veri çerçeveleriyle çalışmak için sağladığı araçları öğrendiniz.
+Araçlar kabaca üç kategoriye ayrılır: satırları manipüle edenler (`filter()` ve `arrange()` gibi), sütunları manipüle edenler (`select()` ve `mutate()` gibi) ve grupları manipüle edenler (`group_by()` ve `summarize()` gibi).
+Bu bölümde, bu "tüm veri çerçevesi" araçlarına odaklandık; ama bireysel değişkenle neler yapabileceğiniz hakkında henüz çok fazla şey öğrenmediniz.
+Buna, her bölümün belirli bir değişken türü için araçlar sağladığı kitabın Dönüştürme bölümünde geri döneceğiz.
 
-In the next chapter, we'll pivot back to workflow to discuss the importance of code style and keeping your code well organized to make it easy for you and others to read and understand.
+Bir sonraki bölümde, kod stilinin önemini ve kodunuzu sizin ve başkalarının okuyup anlamasını kolaylaştıracak şekilde düzenli tutmayı tartışmak için iş akışına geri döneceğiz.
