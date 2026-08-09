@@ -1,27 +1,27 @@
 # İkinci Baskıya Önsöz {.unnumbered}
 
 "Veri Bilimi için R" kitabının ikinci baskısına hoş geldiniz! Bu baskı, ilk edisyonun kapsamlı bir şekilde yeniden ele alınmış halidir: 
-Artık güncelliğini yitirdiğini düşündüğümüz içerikleri çıkardık, ilk baskıda yer vermeyi dilediğimiz yeni konuları ekledik ve metni olduğu kadar kodları da güncel **en iyi uygulama standartlarını** (best practices) yansıtacak şekilde revize ettik. 
-Ayrıca, aramıza yeni bir yazarın katılmasından büyük heyecan duyuyoruz: Saygın bir veri bilimi eğitmeni ve Posit (eski adıyla RStudio) şirketindeki meslektaşımız olan Mine Çetinkaya-Rundel, bu edisyonda bizlere eşlik ediyor.
+Artık yararlı olmadığını düşündüğümüz içerikleri çıkardık, ilk baskıda yer vermeyi dilediğimiz yeni konuları ekledik ve metni olduğu kadar kodları da güncel **en iyi uygulamaları** (best practices) yansıtacak şekilde revize ettik.
+Ayrıca, aramıza yeni bir yazarın katılmasından büyük heyecan duyuyoruz: Tanınmış bir veri bilimi eğitmeni ve Posit (eski adıyla RStudio) şirketindeki meslektaşımız olan Mine Çetinkaya-Rundel, bu edisyonda bizlere eşlik ediyor.
 
 Yapılan en köklü değişikliklerin kısa bir özeti aşağıdadır:
 
--   Kitabın ilk bölümü "Bütünsel Süreç" (Whole game) olarak yeniden adlandırıldı. 
-    Bu bölümün amacı, biz detaylara derinlemesine dalmadan önce size veri biliminin "bütünsel süreci" hakkında genel bir çerçeve sunmaktı
+-   Kitabın ilk bölümü "Bütünsel Bakış" (Whole game) olarak yeniden adlandırıldı.
+    Bu bölümün amacı, biz detaylara derinlemesine dalmadan önce size veri biliminin "bütünsel bakışı" hakkında genel bir çerçeve sunmaktı.
 
 -   Kitabın ikinci bölümü "Görselleştirme" (Visualize) adını taşımaktadır. 
     Bu bölüm, ilk baskıya kıyasla veri görselleştirme araçlarını ve en iyi uygulama yöntemlerini çok daha kapsamlı bir şekilde ele almaktadır. 
-    Tüm ayrıntılara ulaşmak için en iyi kaynak hâlâ [ggplot2 book](http://ggplot2-book.org/), olsa da, R4DS artık en önemli tekniklerin çok daha büyük bir kısmını kapsamaktadır.
+    Tüm ayrıntılara ulaşmak için en iyi kaynak hâlâ [ggplot2 book](http://ggplot2-book.org/) olsa da, R4DS artık en önemli tekniklerin çok daha büyük bir kısmını kapsamaktadır.
 
 -   Kitabın üçüncü bölümü artık "Dönüştürme" (Transform) adını taşıyor; ayrıca sayılar, mantıksal vektörler ve eksik değerler üzerine yeni bölümler eklendi. 
     Bu konular daha önce veri dönüştürme bölümünün birer parçasıydı, ancak tüm detaylarıyla ele alınabilmeleri için çok daha geniş bir alana ihtiyaç duyuldu.
 
--   Kitabın dördüncü bölümü "Veri Aktarımı" (Import) olarak adlandırılmıştır. 
+-   Kitabın dördüncü bölümü "Aktarma" (Import) olarak adlandırılmıştır.
     Bu kısım; düz metin dosyalarını okumanın ötesine geçerek elektronik tablolarla çalışma, veritabanlarından veri çekme, büyük veri (big data) ile çalışma, hiyerarşik verileri tablo yapısına dönüştürme (rectangling) ve web kazıma (web scraping) gibi konuları kapsayan tamamen yeni bir bölüm dizisinden oluşmaktadır.
 
--   Kitabın "Programlama" (Program) bölümü yerini koruyor; ancak fonksiyon yazımı ve iterasyonun (döngüsel işlemler) en kritik noktalarına odaklanacak şekilde baştan aşağı yeniden yazıldı.
+-   Kitabın "Programlama" (Program) bölümü yerini koruyor; ancak fonksiyon yazımı ve iterasyonun (döngüsel işlemler) en önemli noktalarına odaklanacak şekilde baştan aşağı yeniden yazıldı.
 
--   Fonksiyon yazımı konusu, artık tidyverse fonksiyonlarını paketlemeye (tidy evaluation zorluklarının üstesinden gelmeye) dair detayları da içeriyor; 
+-   Fonksiyon yazımı konusu, artık tidyverse fonksiyonlarını sarmalamaya (tidy evaluation zorluklarının üstesinden gelmeye) dair detayları da içeriyor;
     zira bu süreç son birkaç yılda hem çok daha kolaylaştı hem de daha büyük bir önem kazandı. 
     Ayrıca, gerçek hayattaki (wild-caught) R kodlarında karşınıza çıkma olasılığı yüksek olan önemli temel R (base R) fonksiyonlarına dair yeni bir bölüm ekledik.
 
@@ -30,4 +30,4 @@ Yapılan en köklü değişikliklerin kısa bir özeti aşağıdadır:
     Genel olarak [tidymodels](https://www.tidymodels.org/) paketlerini kullanmanızı ve Max Kuhn ile Julia Silge tarafından kaleme alınan [Tidy Modeling with R](https://www.tmwr.org/) kitabını okumanızı öneriyoruz.
 
 -   "İletişim" (Communicate) bölümü yerini koruyor; ancak R Markdown yerine [Quarto](https://quarto.org/) platformunu öne çıkaracak şekilde kapsamlı bir güncellemeden geçti. 
-    Kitabın bu edisyonu da Quarto ile kaleme alındı ve bu platformun geleceğin standart aracı olduğu oldukça aşikâr.
+    Kitabın bu edisyonu da Quarto ile kaleme alındı ve bu platformun geleceğin aracı olduğu oldukça aşikâr.

@@ -1,15 +1,16 @@
 # Hoş Geldiniz {.unnumbered}
 
 Bu web sitesi, **"Veri Bilimi için R"** kitabının 2. baskısının Türkçe çevirisidir.
-Bu kitap, veri bilimi becerileri için bir **uygulama klavuzu** niteliğindedir. 
-Nasıl ki bir kimyager işe deney tüplerini temizlemeyi ve laboratuvar düzenini sağlamayı öğrenerek başlıyorsa, siz de veriyi temizlemeyi, grafikler üzerinden hikaye anlatmayı ve daha pek çok kritik yetkinliği burada öğreneceksiniz. 
-Bunlar, veri bilimini "teori" olmaktan çıkarıp "eyleme" dönüştüren becerilerdir. Burada, tüm bu süreçleri R ile yürütürken kullanılan en güncel **sektörel standartları** (best practices) bulacaksınız.
+Bu kitap, R ile veri bilimi yapmayı öğretecek: Verinizi R'a nasıl aktaracağınızı, en kullanışlı yapıya nasıl getireceğinizi, nasıl dönüştüreceğinizi ve görselleştireceğinizi öğreneceksiniz.
+Bu kitap, veri bilimi becerileri için bir **uygulama kılavuzu** niteliğindedir.
+Nasıl ki bir kimyager işe deney tüplerini temizlemeyi ve laboratuvar düzenini sağlamayı öğrenerek başlıyorsa, siz de veriyi temizlemeyi, grafik çizmeyi ve daha pek çok yetkinliği burada öğreneceksiniz.
+Bunlar, veri biliminin gerçekleşmesini sağlayan becerilerdir. Burada, tüm bu süreçleri R ile yürütürken kullanılan **en iyi uygulamaları** (best practices) bulacaksınız.
 Zamanı verimli kullanmak adına; **grafik grameri** (grammar of graphics), **açıklamalı programlama** (literate programming) ve **tekrarlanabilir araştırma** yöntemlerini nasıl kullanacağınızı göreceksiniz. 
 Ayrıca; veri düzenleme (wrangling), görselleştirme ve keşif dolu analiz süreçlerinde, zihinsel enerjinizi yeni bulgulara odaklayabilmek için bilişsel kaynaklarınızı nasıl yönetmeniz gerektiğini öğreneceksiniz.
 
 Bu web sitesi her zaman ücretsiz kalacaktır ve [CC BY-NC-ND 3.0](https://creativecommons.org/licenses/by-nc-nd/3.0/us/) lisansı ile korunmaktadır.
-Kitabın fiziksel bir kopyasına sahip olmak isterseniz [Amazon](https://www.amazon.com/dp/1492097403?&tag=hadlwick-20).üzerinden sipariş verebilirsiniz. 
-Eğer kitabın ücretsiz sunulmasını değerli buluyor ve bu emeğe karşılık vermek istiyorsanız, lütfen [Kākāpō Recovery](https://www.doc.govt.nz/kakapo-donate): vakfına bağışta bulunun: 
+Kitabın fiziksel bir kopyasına sahip olmak isterseniz [Amazon](https://www.amazon.com/dp/1492097403?&tag=hadlwick-20) üzerinden sipariş verebilirsiniz.
+Eğer kitabın ücretsiz sunulmasını değerli buluyor ve bu emeğe karşılık vermek istiyorsanız, lütfen [Kākāpō Recovery](https://www.doc.govt.nz/kakapo-donate) vakfına bağışta bulunun:
 R4DS'in kapağında da yer alan [kākāpō](https://www.youtube.com/watch?v=9T1vfsHYiKY) Yeni Zelanda'ya özgü, nesli kritik derecede tehlike altında olan bir papağan türüdür; dünyada sadece 244 adet kalmıştır.
 
 Başka bir dil konuşuyorsanız, kitabın birinci baskısının ücretsiz olarak sunulan şu çevirileri ilginizi çekebilir:

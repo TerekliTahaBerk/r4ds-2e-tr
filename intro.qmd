@@ -6,7 +6,7 @@ source("_common.R")
 ```
 
 Veri bilimi, ham veriyi anlayışa, içgörüye ve bilgiye dönüştürmenize olanak tanıyan heyecan verici bir disiplindir. 
-“R for Data Science” kitabının amacı, veri bilimini verimli ve yeniden üretilebilir bir şekilde yapmanızı sağlayacak R içindeki en önemli araçları öğrenmenize yardımcı olmak ve bu süreçte biraz eğlenmenizi sağlamaktır 😃. 
+“Veri Bilimi için R” kitabının amacı, veri bilimini verimli ve yeniden üretilebilir bir şekilde yapmanızı sağlayacak R içindeki en önemli araçları öğrenmenize yardımcı olmak ve bu süreçte biraz eğlenmenizi sağlamaktır 😃.
 Bu kitabı okuduktan sonra, R'ın en iyi parçalarını kullanarak çok çeşitli veri bilimi zorluklarının üstesinden gelecek araçlara sahip olacaksınız.
 
 ## Neler Öğreneceksiniz?
@@ -74,13 +74,17 @@ Veri bilimi araçlarına dair yukarıdaki açıklama, kabaca bir analiz sırası
 Ancak tecrübelerimize göre, işe ilk olarak veriyi içe aktarma ve düzenlemeyi öğrenerek başlamak pek ideal değildir; çünkü bu süreç zamanın %80'inde rutin ve sıkıcıyken, geri kalan %20'sinde ise tuhaf ve moral bozucudur. 
 Yeni bir konuyu öğrenmeye başlamak için burası pek de iyi bir nokta değil!
 
-Bunun yerine, halihazırda içe aktarılmış ve düzenlenmiş verilerin görselleştirilmesi ve dönüştürülmesiyle başlayacağız. 
+Bunun yerine, halihazırda içe aktarılmış ve düzenlenmiş verilerin görselleştirilmesi ve dönüştürülmesiyle başlayacağız.
 Bu sayede, kendi verilerinizi sisteme alıp düzenleme aşamasına geldiğinizde, çekeceğiniz zahmetin karşılığını alacağınızı bildiğiniz için motivasyonunuz yüksek kalacaktır.
+
+Her bölümde tutarlı bir düzene bağlı kalmaya çalışıyoruz: önce büyük resmi görebilmeniz için birkaç motive edici örnekle başlıyor, ardından ayrıntılara giriyoruz.
+Kitabın her bölümü, öğrendiklerinizi uygulamanıza yardımcı olacak alıştırmalarla eşleştirilmiştir.
+Alıştırmaları atlamak cazip gelebilir, ancak gerçek problemler üzerinde pratik yapmaktan daha iyi bir öğrenme yolu yoktur.
 
 ## Neler Öğrenmeyeceksiniz?
 
 Bu kitabın kapsamadığı birkaç önemli konu bulunuyor. 
-En temel konulara amansızca odaklanmanın, sizin mümkün olduğunca hızlı bir şekilde işe koyulabilmeniz için kritik olduğuna inanıyoruz. 
+En temel konulara amansızca odaklanmanın, sizin mümkün olduğunca hızlı bir şekilde işe koyulabilmeniz için önemli olduğuna inanıyoruz.
 Bu da kitabın her önemli konuyu ele alamayacağı anlamına geliyor.
 
 ### Modelleme
@@ -97,8 +101,7 @@ Kitabın büyük bir bölümünde öğreneceğiniz araçlar, yüzlerce megabaytl
 Ayrıca, büyük verileri depolamak için sıklıkla kullanılan veri tabanlarından ve parquet dosyalarından nasıl veri çekeceğinizi de göstereceğiz. 
 Tüm veri kümesiyle çalışmanız her zaman mümkün olmayabilir, ancak bu bir sorun teşkil etmez; çünkü ilgilendiğiniz soruyu yanıtlamak için genellikle verinin bir alt kümesine veya alt örneklemine ihtiyacınız vardır.
 
-Eğer rutin olarak daha büyük verilerle (örneğin 10--100 GB) çalışıyorsanız, [data.table](https://github.com/Rdatatable/data.table).
-hakkında daha fazla bilgi edinmenizi öneririz. Burada bu paketi öğretmiyoruz çünkü **tidyverse**'den farklı bir arayüz kullanıyor ve bazı farklı kuralları öğrenmenizi gerektiriyor. 
+Eğer rutin olarak daha büyük verilerle (örneğin 10--100 GB) çalışıyorsanız, [data.table](https://github.com/Rdatatable/data.table) hakkında daha fazla bilgi edinmenizi öneririz. Burada bu paketi öğretmiyoruz çünkü **tidyverse**'den farklı bir arayüz kullanıyor ve bazı farklı kuralları öğrenmenizi gerektiriyor.
 Bununla birlikte, inanılmaz derecede hızlıdır ve büyük verilerle uğraşıyorsanız, onu öğrenmek için zaman ayırmanıza değecek bir performans artışı sağlar.
 
 ### Python, Julia ve Arkadaşları
@@ -229,15 +232,15 @@ Kitap boyunca, kodlara atıfta bulunmak için tutarlı bir kurallar dizisi kulla
 
 -   Fonksiyonlar, kod yazı tipinde görüntülenir ve ardından `sum()` veya `mean()` gibi parantezler gelir.
 
--   Diğer R nesneleri (veri veya fonksiyon argümanları gibi), `flights` veya `x` örneklerinde olduğu gibi parantez olmaksızın kod yazı tipinde gösterilir..
+-   Diğer R nesneleri (veri veya fonksiyon argümanları gibi), `flights` veya `x` örneklerinde olduğu gibi parantez olmaksızın kod yazı tipinde gösterilir.
 
 -   Bazen bir nesnenin hangi paketten geldiğini netleştirmek için, paket adının ardından iki üst üste nokta kullanırız: `dplyr::mutate()` veya `nycflights13::flights` gibi. 
     Bu kullanım aynı zamanda geçerli bir R kodudur.
 
-## Acknowledgments
+## Teşekkür
 
-This book isn't just the product of Hadley, Mine, and Garrett but is the result of many conversations (in person and online) that we've had with many people in the R community.
-We're incredibly grateful for all the conversations we've had with y'all; thank you so much!
+Bu kitap yalnızca Hadley, Mine ve Garrett'ın ürünü değil, R topluluğundaki pek çok kişiyle yüz yüze ve çevrimiçi olarak yaptığımız sayısız konuşmanın sonucudur.
+Sizinle yaptığımız tüm bu konuşmalar için son derece minnettarız; çok teşekkür ederiz!
 
 ```{r}
 #| eval: false
@@ -291,17 +294,17 @@ contributors <- contributors |>
     desc = ifelse(is.na(name), login, paste0(name, " (", login, ")"))
   )
 
-cat("This book was written in the open, and many people contributed via pull requests. A special thanks to all ",nrow(contributors), " of you who contributed improvements via GitHub pull requests (in alphabetical order by username): ", sep = "")
+cat("Bu kitap açık bir şekilde yazıldı ve pull request'ler aracılığıyla birçok kişi katkıda bulundu. GitHub pull request'leri aracılığıyla iyileştirmelere katkıda bulunan ",nrow(contributors), " kişiye özel teşekkürler (kullanıcı adına göre alfabetik sırada): ", sep = "")
 cat(paste0(contributors$desc, collapse = ", "))
 cat(".\n")
 ```
 
-## Colophon
+## Yayın Bilgileri
 
-An online version of this book is available at <https://r4ds.hadley.nz>.
-It will continue to evolve in between reprints of the physical book.
-The source of the book is available at <https://github.com/hadley/r4ds>.
-The book is powered by [Quarto](https://quarto.org), which makes it easy to write books that combine text and executable code.
+Bu kitabın çevrimiçi bir sürümüne <https://r4ds.hadley.nz> adresinden ulaşabilirsiniz.
+Bu çevrimiçi sürüm, kitabın fiziksel baskıları arasında gelişmeye devam edecektir.
+Kitabın kaynak dosyalarına <https://github.com/hadley/r4ds> adresinden ulaşabilirsiniz.
+Kitap, metin ile çalıştırılabilir kodu birleştiren kitaplar yazmayı kolaylaştıran [Quarto](https://quarto.org) ile hazırlanmıştır.
 
 ```{r}
 #| eval: false
