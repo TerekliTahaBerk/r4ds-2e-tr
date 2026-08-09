@@ -36,7 +36,7 @@ book:
     - text: "Giriş"
       file: intro.qmd
 
-    - part: "Bütünsel Bakış"
+    - part: whole-game.qmd
       chapters:
         - text: "Veri Görselleştirme"
           file: data-visualize.qmd
@@ -55,7 +55,7 @@ book:
         - text: "İş Akışı: Yardım Almak"
           file: workflow-help.qmd
 
-    - part: "Görselleştirme"
+    - part: visualize.qmd
       chapters:
         - text: "Katmanlar"
           file: layers.qmd
@@ -64,7 +64,7 @@ book:
         - text: "İletişim"
           file: communication.qmd
 
-    - part: "Dönüştürme"
+    - part: transform.qmd
       chapters:
         - text: "Mantıksal Vektörler"
           file: logicals.qmd
@@ -83,7 +83,7 @@ book:
         - text: "Birleştirmeler (Joins)"
           file: joins.qmd
 
-    - part: "Aktarma"
+    - part: import.qmd
       chapters:
         - text: "Hesap Çizelgeleri"
           file: spreadsheets.qmd
@@ -96,7 +96,7 @@ book:
         - text: "Web Kazıma"
           file: webscraping.qmd
 
-    - part: "Programlama"
+    - part: program.qmd
       chapters:
         - text: "Fonksiyonlar"
           file: functions.qmd
@@ -105,7 +105,7 @@ book:
         - text: "Temel R"
           file: base-R.qmd
 
-    - part: "İletişim"
+    - part: communicate.qmd
       chapters:
         - text: "Quarto"
           file: quarto.qmd

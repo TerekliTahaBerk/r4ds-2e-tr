@@ -1,4 +1,4 @@
-# Whole game {#sec-whole-game-intro .unnumbered}
+# Bütünsel Bakış {#sec-whole-game-intro .unnumbered}
 
 ```{r}
 #| results: "asis"
@@ -6,39 +6,40 @@
 source("_common.R")
 ```
 
-Our goal in this part of the book is to give you a rapid overview of the main tools of data science: **importing**, **tidying**, **transforming**, and **visualizing data**, as shown in @fig-ds-whole-game.
-We want to show you the "whole game" of data science giving you just enough of all the major pieces so that you can tackle real, if simple, datasets.
-The later parts of the book will hit each of these topics in more depth, increasing the range of data science challenges that you can tackle.
+Kitabın bu bölümündeki amacımız, size veri biliminin temel araçlarına hızlı bir genel bakış sunmaktır: @fig-ds-whole-game içinde gösterildiği gibi **içe aktarma**, **düzenleme**, **dönüştürme** ve **veri görselleştirme**.
+Size veri biliminin "bütünsel bakışını" göstermek istiyoruz; yani gerçek -basit de olsa- veri kümeleriyle başa çıkabilmeniz için tüm önemli parçalardan yeterince fikir vermek istiyoruz.
+Kitabın sonraki bölümleri bu konuların her birini çok daha derinlemesine ele alacak ve üstesinden gelebileceğiniz veri bilimi zorluklarının kapsamını genişletecektir.
 
 ```{r}
 #| label: fig-ds-whole-game 
 #| echo: false
 #| out.width: NULL
 #| fig-cap: |
-#|   In this section of the book, you'll learn how to import,
-#|   tidy, transform, and visualize data.
+#|   Kitabın bu bölümünde veriyi nasıl içe aktaracağınızı, düzenleyeceğinizi,
+#|   dönüştüreceğinizi ve görselleştireceğinizi öğreneceksiniz.
 #| fig-alt: |
-#|   A diagram displaying the data science cycle: Import -> Tidy ->
-#|   Understand  (which has the phases Transform -> Visualize -> Model in a
-#|   cycle) -> Communicate. Surrounding all of these is Program 
-#|   Import, Tidy, Transform, and Visualize is highlighted.
+#|   Veri bilimi döngüsünü gösteren bir diyagram: İçe Aktar (Import) ->
+#|   Düzenle (Tidy) -> Anla (Anla aşaması kendi içinde Dönüştür ->
+#|   Görselleştir -> Modelle şeklinde bir döngüye sahiptir) -> İletişim Kur
+#|   (Communicate). Tüm bu süreci Programlama (Program) çevreler.
+#|   İçe Aktar, Düzenle, Dönüştür ve Görselleştir vurgulanmıştır.
 knitr::include_graphics("diagrams/data-science/whole-game.png", dpi = 270)
 ```
 
-Four chapters focus on the tools of data science:
+Dört bölüm, veri biliminin araçlarına odaklanır:
 
--   Visualization is a great place to start with R programming, because the payoff is so clear: you get to make elegant and informative plots that help you understand data.
-    In @sec-data-visualization you'll dive into visualization, learning the basic structure of a ggplot2 plot, and powerful techniques for turning data into plots.
+-   Görselleştirme, R programlamaya başlamak için harika bir noktadır; çünkü kazanımı çok nettir: veriyi anlamanıza yardımcı olacak zarif ve bilgilendirici grafikler oluşturabilirsiniz.
+    @sec-data-visualization bölümünde görselleştirmeye derinlemesine dalacak, bir ggplot2 grafiğinin temel yapısını ve veriyi grafiklere dönüştürmenin güçlü tekniklerini öğreneceksiniz.
 
--   Visualization alone is typically not enough, so in @sec-data-transform, you'll learn the key verbs that allow you to select important variables, filter out key observations, create new variables, and compute summaries.
+-   Görselleştirme tek başına genellikle yeterli değildir; bu yüzden @sec-data-transform bölümünde, önemli değişkenleri seçmenizi, kilit gözlemleri filtrelemenizi, yeni değişkenler oluşturmanızı ve özet istatistikler hesaplamanızı sağlayan temel fiilleri öğreneceksiniz.
 
--   In @sec-data-tidy, you'll learn about tidy data, a consistent way of storing your data that makes transformation, visualization, and modelling easier.
-    You'll learn the underlying principles, and how to get your data into a tidy form.
+-   @sec-data-tidy bölümünde, dönüştürmeyi, görselleştirmeyi ve modellemeyi kolaylaştıran, verinizi tutarlı bir biçimde saklama yöntemi olan düzenli veri (tidy data) hakkında bilgi edineceksiniz.
+    Bu yaklaşımın altında yatan ilkeleri ve verinizi düzenli bir forma nasıl getireceğinizi öğreneceksiniz.
 
--   Before you can transform and visualize your data, you need to first get your data into R.
-    In @sec-data-import you'll learn the basics of getting `.csv` files into R.
+-   Verinizi dönüştürüp görselleştirebilmeniz için önce onu R'a aktarmanız gerekir.
+    @sec-data-import bölümünde, `.csv` dosyalarını R'a aktarmanın temellerini öğreneceksiniz.
 
-Nestled among these chapters are four other chapters that focus on your R workflow.
-In @sec-workflow-basics, @sec-workflow-style, and @sec-workflow-scripts-projects you'll learn good workflow practices for writing and organizing your R code.
-These will set you up for success in the long run, as they'll give you the tools to stay organized when you tackle real projects.
-Finally, @sec-workflow-getting-help will teach you how to get help and keep learning.
+Bu bölümlerin arasına yerleştirilmiş dört bölüm daha, R iş akışınıza odaklanır.
+@sec-workflow-basics, @sec-workflow-style ve @sec-workflow-scripts-projects bölümlerinde, R kodunuzu yazmak ve düzenlemek için iyi iş akışı pratiklerini öğreneceksiniz.
+Bunlar, gerçek projelere giriştiğinizde düzenli kalmanız için gereken araçları size sağlayarak, uzun vadede başarılı olmanızı sağlayacaktır.
+Son olarak, @sec-workflow-getting-help bölümü size nasıl yardım alacağınızı ve öğrenmeye nasıl devam edeceğinizi öğretecektir.

@@ -1,36 +1,36 @@
-# Visualize {#sec-visualize .unnumbered}
+# Görselleştirme {#sec-visualize .unnumbered}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-After reading the first part of the book, you understand (at least superficially) the most important tools for doing data science.
-Now it's time to start diving into the details.
-In this part of the book, you'll learn about visualizing data in further depth.
+Kitabın ilk bölümünü okuduktan sonra, veri bilimi yapmanın en önemli araçlarını (en azından yüzeysel olarak) anlamış oldunuz.
+Şimdi ayrıntılara dalmaya başlama zamanı.
+Kitabın bu bölümünde, veri görselleştirmeyi çok daha derinlemesine öğreneceksiniz.
 
 ```{r}
 #| label: fig-ds-visualize
 #| echo: false
 #| fig-cap: |
-#|   Data visualization is often the first step in data exploration.
+#|   Veri görselleştirme genellikle veri keşfinin ilk adımıdır.
 #| fig-alt: |
-#|   Our data science model, with visualize highlighted in blue.
+#|   Veri bilimi modelimiz; görselleştirme aşaması mavi renkle vurgulanmıştır.
 #| out.width: NULL
 knitr::include_graphics("diagrams/data-science/visualize.png", dpi = 270)
 ```
 
-Each chapter addresses one to a few aspects of creating a data visualization.
+Her bölüm, veri görselleştirmesi oluşturmanın bir veya birkaç yönünü ele alır.
 
--   In @sec-layers you will learn about the layered grammar of graphics.
+-   @sec-layers bölümünde, grafiklerin katmanlı grameri (layered grammar of graphics) hakkında bilgi edineceksiniz.
 
--   In @sec-exploratory-data-analysis, you'll combine visualization with your curiosity and skepticism to ask and answer interesting questions about data.
+-   @sec-exploratory-data-analysis bölümünde, veriye dair ilginç sorular sorup yanıtlamak için görselleştirmeyi merakınız ve şüpheciliğinizle birleştireceksiniz.
 
--   Finally, in @sec-communication you will learn how to take your exploratory graphics, elevate them, and turn them into expository graphics, graphics that help the newcomer to your analysis understand what's going on as quickly and easily as possible.
+-   Son olarak, @sec-communication bölümünde, keşifçi grafiklerinizi nasıl alıp bir üst seviyeye taşıyacağınızı ve bunları açıklayıcı grafiklere -analizinize yeni bakan birinin neler olup bittiğini mümkün olduğunca hızlı ve kolay anlamasına yardımcı olan grafiklere- nasıl dönüştüreceğinizi öğreneceksiniz.
 
-These three chapters get you started in the world of visualization, but there is much more to learn.
-The absolute best place to learn more is the ggplot2 book: [*ggplot2: Elegant graphics for data analysis*](https://ggplot2-book.org/).
-It goes into much more depth about the underlying theory, and has many more examples of how to combine the individual pieces to solve practical problems.
-Another great resource is the ggplot2 extensions gallery <https://exts.ggplot2.tidyverse.org/gallery/>.
-This site lists many of the packages that extend ggplot2 with new geoms and scales.
-It's a great place to start if you're trying to do something that seems hard with ggplot2.
+Bu üç bölüm, görselleştirme dünyasına adım atmanızı sağlar; ancak öğrenilecek çok daha fazla şey vardır.
+Daha fazlasını öğrenmek için kesinlikle en iyi kaynak ggplot2 kitabıdır: [*ggplot2: Elegant graphics for data analysis*](https://ggplot2-book.org/).
+Bu kitap, altta yatan teoriyi çok daha derinlemesine ele alır ve pratik problemleri çözmek için tek tek parçaları nasıl birleştireceğinize dair çok daha fazla örnek sunar.
+Bir başka harika kaynak da ggplot2 uzantıları galerisidir: <https://exts.ggplot2.tidyverse.org/gallery/>.
+Bu site, ggplot2'yi yeni geom'lar ve scale'lerle genişleten pek çok paketi listeler.
+ggplot2 ile yapılması zor görünen bir şeyi yapmaya çalışıyorsanız, başlamak için harika bir yerdir.

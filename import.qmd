@@ -1,39 +1,39 @@
-# Import {#sec-import .unnumbered}
+# Aktarma {#sec-import .unnumbered}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-In this part of the book, you'll learn how to import a wider range of data into R, as well as how to get it into a form useful for analysis.
-Sometimes this is just a matter of calling a function from the appropriate data import package.
-But in more complex cases it might require both tidying and transformation in order to get to the tidy rectangle that you'd prefer to work with.
+Kitabın bu bölümünde, R'a çok daha geniş bir veri yelpazesini nasıl aktaracağınızı ve bunu analiz için kullanışlı bir forma nasıl getireceğinizi öğreneceksiniz.
+Bazen bu, yalnızca uygun veri aktarma paketinden bir fonksiyon çağırmaktan ibarettir.
+Ancak daha karmaşık durumlarda, üzerinde çalışmayı tercih edeceğiniz düzenli (tidy) dikdörtgene ulaşmak için hem düzenleme hem de dönüştürme gerekebilir.
 
 ```{r}
 #| label: fig-ds-import
 #| echo: false
 #| fig-cap: |
-#|   Data import is the beginning of the data science process; without
-#|   data you can't do data science!
+#|   Veri aktarma, veri bilimi sürecinin başlangıcıdır; veri olmadan
+#|   veri bilimi yapamazsınız!
 #| fig-alt: |
-#|   Our data science model with import highlighted in blue.
+#|   Veri bilimi modelimiz; aktarma aşaması mavi renkle vurgulanmıştır.
 #| out.width: NULL
 knitr::include_graphics("diagrams/data-science/import.png", dpi = 270)
 ```
 
-In this part of the book you'll learn how to access data stored in the following ways:
+Kitabın bu bölümünde, aşağıdaki şekillerde saklanan verilere nasıl erişeceğinizi öğreneceksiniz:
 
--   In @sec-import-spreadsheets, you'll learn how to import data from Excel spreadsheets and Google Sheets.
+-   @sec-import-spreadsheets bölümünde, Excel hesap çizelgelerinden ve Google E-Tablolar'dan veri nasıl aktarılır öğreneceksiniz.
 
--   In @sec-import-databases, you'll learn about getting data out of a database and into R (and you'll also learn a little about how to get data out of R and into a database).
+-   @sec-import-databases bölümünde, verinin bir veritabanından R'a nasıl aktarılacağını öğreneceksiniz (ayrıca verinin R'dan bir veritabanına nasıl aktarılacağı hakkında da biraz bilgi edineceksiniz).
 
--   In @sec-arrow, you'll learn about Arrow, a powerful tool for working with out-of-memory data, particularly when it's stored in the parquet format.
+-   @sec-arrow bölümünde, özellikle parquet formatında saklandığında bellek dışı (out-of-memory) verilerle çalışmak için güçlü bir araç olan Arrow hakkında bilgi edineceksiniz.
 
--   In @sec-rectangling, you'll learn how to work with hierarchical data, including the deeply nested lists produced by data stored in the JSON format.
+-   @sec-rectangling bölümünde, JSON formatında saklanan verilerin ürettiği derinlemesine iç içe geçmiş listeler de dahil olmak üzere hiyerarşik verilerle nasıl çalışılacağını öğreneceksiniz.
 
--   In @sec-scraping, you'll learn web "scraping", the art and science of extracting data from web pages.
+-   @sec-scraping bölümünde, web sayfalarından veri çıkarmanın sanatı ve bilimi olan web "kazımayı" (scraping) öğreneceksiniz.
 
-There are two important tidyverse packages that we don't discuss here: haven and xml2.
-If you're working with data from SPSS, Stata, and SAS files, check out the **haven** package, <https://haven.tidyverse.org>.
-If you're working with XML data, check out the **xml2** package, <https://xml2.r-lib.org>.
-Otherwise, you'll need to do some research to figure out which package you'll need to use; google is your friend here 😃.
+Burada ele almadığımız iki önemli tidyverse paketi vardır: haven ve xml2.
+SPSS, Stata ve SAS dosyalarından verilerle çalışıyorsanız, **haven** paketine göz atın: <https://haven.tidyverse.org>.
+XML verileriyle çalışıyorsanız, **xml2** paketine göz atın: <https://xml2.r-lib.org>.
+Aksi takdirde, hangi paketi kullanmanız gerektiğini bulmak için biraz araştırma yapmanız gerekecek; google burada en iyi dostunuzdur 😃.

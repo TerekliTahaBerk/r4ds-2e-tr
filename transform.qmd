@@ -1,4 +1,4 @@
-# Transform {#sec-transform-intro .unnumbered}
+# Dönüştürme {#sec-transform-intro .unnumbered}
 
 ```{r}
 #| results: "asis"
@@ -6,44 +6,44 @@
 source("_common.R")
 ```
 
-The second part of the book was a deep dive into data visualization.
-In this part of the book, you'll learn about the most important types of variables that you'll encounter inside a data frame and learn the tools you can use to work with them.
+Kitabın ikinci bölümü, veri görselleştirmeye derinlemesine bir dalıştı.
+Kitabın bu bölümünde, bir veri çerçevesi (data frame) içinde karşılaşacağınız en önemli değişken türlerini ve bunlarla çalışmak için kullanabileceğiniz araçları öğreneceksiniz.
 
 ```{r}
 #| label: fig-ds-transform
 #| echo: false
 #| fig-cap: |
-#|   The options for data transformation depend heavily on the type of 
-#|   data involved, the subject of this part of the book.
+#|   Veri dönüştürme seçenekleri, büyük ölçüde söz konusu verinin türüne
+#|   bağlıdır; bu da kitabın bu bölümünün konusudur.
 #| fig-alt: |
-#|   Our data science model, with transform highlighted in blue.
+#|   Veri bilimi modelimiz; dönüştürme aşaması mavi renkle vurgulanmıştır.
 #| out.width: NULL
 knitr::include_graphics("diagrams/data-science/transform.png", dpi = 270)
 ```
 
-You can read these chapters as you need them; they're designed to be largely standalone so that they can be read out of order.
+Bu bölümleri ihtiyaç duydukça okuyabilirsiniz; büyük ölçüde bağımsız olacak şekilde tasarlanmışlardır, dolayısıyla sırasız da okunabilirler.
 
--   @sec-logicals teaches you about logical vectors.
-    These are the simplest types of vectors, but are extremely powerful.
-    You'll learn how to create them with numeric comparisons, how to combine them with Boolean algebra, how to use them in summaries, and how to use them for conditional transformations.
+-   @sec-logicals bölümü size mantıksal vektörleri (logical vectors) öğretir.
+    Bunlar vektörlerin en basit türüdür, ancak son derece güçlüdürler.
+    Onları sayısal karşılaştırmalarla nasıl oluşturacağınızı, Boole cebiriyle nasıl birleştireceğinizi, özetlerde nasıl kullanacağınızı ve koşullu dönüştürmeler için nasıl kullanacağınızı öğreneceksiniz.
 
--   @sec-numbers dives into tools for vectors of numbers, the powerhouse of data science.
-    You'll learn more about counting and a bunch of important transformation and summary functions.
+-   @sec-numbers bölümü, veri biliminin güç kaynağı olan sayı vektörleri için araçlara derinlemesine dalar.
+    Sayma işlemi ve bir dizi önemli dönüştürme ve özetleme fonksiyonu hakkında daha fazla bilgi edineceksiniz.
 
--   @sec-strings will give you the tools to work with strings: you'll slice them, you'll dice them, and you'll stick them back together again.
-    This chapter mostly focuses on the stringr package, but you'll also learn some more tidyr functions devoted to extracting data from character strings.
+-   @sec-strings, karakter dizileriyle (strings) çalışmanız için size gereken araçları verir: onları dilimleyecek, parçalayacak ve yeniden bir araya getireceksiniz.
+    Bu bölüm ağırlıklı olarak stringr paketine odaklanır; ancak karakter dizilerinden veri çıkarmaya adanmış birkaç tidyr fonksiyonunu da öğreneceksiniz.
 
--   @sec-regular-expressions introduces you to regular expressions, a powerful tool for manipulating strings.
-    This chapter will take you from thinking that a cat walked over your keyboard to reading and writing complex string patterns.
+-   @sec-regular-expressions, karakter dizilerini işlemek için güçlü bir araç olan düzenli ifadeleri (regular expressions) size tanıtır.
+    Bu bölüm sizi, "klavyenin üzerinden bir kedi mi geçti" dedirten görüntüden, karmaşık karakter dizisi kalıplarını okuyup yazabilecek noktaya taşıyacaktır.
 
--   @sec-factors introduces factors: the data type that R uses to store categorical data.
-    You use a factor when a variable has a fixed set of possible values, or when you want to use a non-alphabetical ordering of a string.
+-   @sec-factors, faktörleri (factors) tanıtır: R'ın kategorik verileri saklamak için kullandığı veri türü.
+    Bir değişkenin sabit bir olası değerler kümesi olduğunda veya bir karakter dizisi için alfabetik olmayan bir sıralama kullanmak istediğinizde faktör kullanırsınız.
 
--   @sec-dates-and-times will give you the key tools for working with dates and date-times.
-    Unfortunately, the more you learn about date-times, the more complicated they seem to get, but with the help of the lubridate package, you'll learn how to overcome the most common challenges.
+-   @sec-dates-and-times, tarihler ve tarih-saatlerle çalışmak için size temel araçları verir.
+    Ne yazık ki tarih-saatler hakkında öğrendikçe daha karmaşık hale geliyormuş gibi görünürler; ancak lubridate paketinin yardımıyla en yaygın zorlukların üstesinden nasıl geleceğinizi öğreneceksiniz.
 
--   @sec-missing-values discusses missing values in depth.
-    We've discussed them a couple of times in isolation, but now it's time to discuss them holistically, helping you come to grips with the difference between implicit and explicit missing values, and how and why you might convert between them.
+-   @sec-missing-values, eksik değerleri derinlemesine ele alır.
+    Bunlardan daha önce birkaç kez, ayrı ayrı bahsetmiştik; ancak şimdi onları bütünsel olarak ele alma, örtük (implicit) ve açık (explicit) eksik değerler arasındaki farkı kavramanıza ve bunlar arasında nasıl ve neden dönüşüm yapabileceğinizi anlamanıza yardımcı olma zamanı.
 
--   @sec-joins finishes up this part of the book by giving you tools to join two (or more) data frames together.
-    Learning about joins will force you to grapple with the idea of keys, and think about how you identify each row in a dataset.
+-   @sec-joins, size iki (veya daha fazla) veri çerçevesini birleştirmek için araçlar vererek kitabın bu bölümünü tamamlar.
+    Birleştirmeleri (joins) öğrenmek, sizi anahtar (key) kavramıyla uğraşmaya ve bir veri kümesindeki her satırı nasıl tanımladığınızı düşünmeye zorlayacaktır.
