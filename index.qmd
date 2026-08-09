@@ -22,6 +22,7 @@ Başka bir dil konuşuyorsanız, kitabın birinci baskısının ücretsiz olarak
 ve ikinci baskısı:
 
 -   [Spanish](https://davidrsch.github.io/r4ds-es/)
+-   [Vietnamese](https://vn.r4ds.hadley.nz/)
 
 Kitaptaki alıştırmalar için önerilen çözümlere <https://mine-cetinkaya-rundel.github.io/r4ds-solutions> adresinden ulaşabilirsiniz.
 
