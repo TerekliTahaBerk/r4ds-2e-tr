@@ -1,35 +1,35 @@
-# Exploratory data analysis {#sec-exploratory-data-analysis}
+# Keşifçi Veri Analizi {#sec-exploratory-data-analysis}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## Giriş
 
-This chapter will show you how to use visualization and transformation to explore your data in a systematic way, a task that statisticians call exploratory data analysis, or EDA for short.
-EDA is an iterative cycle.
-You:
+Bu bölüm, verinizi sistematik bir şekilde keşfetmek için görselleştirme ve dönüştürmeyi nasıl kullanacağınızı gösterecek; istatistikçilerin keşifçi veri analizi veya kısaca EDA (exploratory data analysis) dediği bir görev.
+EDA yinelemeli bir döngüdür.
+Şunları yaparsınız:
 
-1.  Generate questions about your data.
+1.  Veriniz hakkında sorular üretirsiniz.
 
-2.  Search for answers by visualizing, transforming, and modelling your data.
+2.  Verinizi görselleştirerek, dönüştürerek ve modelleyerek yanıtlar ararsınız.
 
-3.  Use what you learn to refine your questions and/or generate new questions.
+3.  Öğrendiklerinizi, sorularınızı iyileştirmek ve/veya yeni sorular üretmek için kullanırsınız.
 
-EDA is not a formal process with a strict set of rules.
-More than anything, EDA is a state of mind.
-During the initial phases of EDA you should feel free to investigate every idea that occurs to you.
-Some of these ideas will pan out, and some will be dead ends.
-As your exploration continues, you will home in on a few particularly productive insights that you'll eventually write up and communicate to others.
+EDA, katı bir kurallar bütünü olan resmi bir süreç değildir.
+Her şeyden çok, EDA bir zihniyettir.
+EDA'nın ilk aşamalarında, aklınıza gelen her fikri araştırmakta özgür hissetmelisiniz.
+Bu fikirlerin bazıları meyve verecek, bazıları ise çıkmaz sokak olacaktır.
+Keşfiniz devam ettikçe, sonunda yazıya döküp başkalarına ileteceğiniz, özellikle üretken birkaç içgörüye odaklanacaksınız.
 
-EDA is an important part of any data analysis, even if the primary research questions are handed to you on a platter, because you always need to investigate the quality of your data.
-Data cleaning is just one application of EDA: you ask questions about whether your data meets your expectations or not.
-To do data cleaning, you'll need to deploy all the tools of EDA: visualization, transformation, and modelling.
+EDA, temel araştırma soruları size tepsi içinde sunulmuş olsa bile, herhangi bir veri analizinin önemli bir parçasıdır; çünkü verinizin kalitesini her zaman araştırmanız gerekir.
+Veri temizleme, EDA'nın yalnızca bir uygulamasıdır: verinizin beklentilerinizi karşılayıp karşılamadığına dair sorular sorarsınız.
+Veri temizlemeyi yapmak için, EDA'nın tüm araçlarını kullanmanız gerekecektir: görselleştirme, dönüştürme ve modelleme.
 
-### Prerequisites
+### Ön Koşullar
 
-In this chapter we'll combine what you've learned about dplyr and ggplot2 to interactively ask questions, answer them with data, and then ask new questions.
+Bu bölümde, sorular sormak, onları veriyle yanıtlamak ve ardından yeni sorular sormak için dplyr ve ggplot2 hakkında öğrendiklerinizi etkileşimli bir şekilde birleştireceğiz.
 
 ```{r}
 #| label: setup
@@ -37,88 +37,90 @@ In this chapter we'll combine what you've learned about dplyr and ggplot2 to int
 library(tidyverse)
 ```
 
-## Questions
+## Sorular
 
-> "There are no routine statistical questions, only questionable statistical routines." --- Sir David Cox
+> "Rutin istatistiksel sorular yoktur, yalnızca sorgulanabilir istatistiksel rutinler vardır." --- Sir David Cox
 
-> "Far better an approximate answer to the right question, which is often vague, than an exact answer to the wrong question, which can always be made precise." --- John Tukey
+> "Genellikle belirsiz olan doğru soruya yaklaşık bir yanıt, her zaman kesinleştirilebilen yanlış soruya kesin bir yanıttan çok daha iyidir." --- John Tukey
 
-Your goal during EDA is to develop an understanding of your data.
-The easiest way to do this is to use questions as tools to guide your investigation.
-When you ask a question, the question focuses your attention on a specific part of your dataset and helps you decide which graphs, models, or transformations to make.
+EDA sırasındaki amacınız, veriniz hakkında bir anlayış geliştirmektir.
+Bunu yapmanın en kolay yolu, soruları araştırmanıza rehberlik edecek araçlar olarak kullanmaktır.
+Bir soru sorduğunuzda, o soru dikkatinizi veri kümenizin belirli bir bölümüne odaklar ve hangi grafikleri, modelleri veya dönüşümleri yapacağınıza karar vermenize yardımcı olur.
 
-EDA is fundamentally a creative process.
-And like most creative processes, the key to asking *quality* questions is to generate a large *quantity* of questions.
-It is difficult to ask revealing questions at the start of your analysis because you do not know what insights can be gleaned from your dataset.
-On the other hand, each new question that you ask will expose you to a new aspect of your data and increase your chance of making a discovery.
-You can quickly drill down into the most interesting parts of your data---and develop a set of thought-provoking questions---if you follow up each question with a new question based on what you find.
+EDA, temelde yaratıcı bir süreçtir.
+Ve çoğu yaratıcı süreç gibi, *kaliteli* sorular sormanın anahtarı, çok *miktarda* soru üretmektir.
+Analizinizin başında açığa çıkarıcı sorular sormak zordur; çünkü veri kümenizden hangi içgörülerin elde edilebileceğini bilmiyorsunuzdur.
+Öte yandan, sorduğunuz her yeni soru sizi verinizin yeni bir yönüyle karşı karşıya bırakacak ve bir keşif yapma şansınızı artıracaktır.
+Bulduklarınıza dayanarak her soruyu yeni bir soruyla takip ederseniz, verinizin en ilginç kısımlarına hızla inebilir --- ve düşündürücü bir dizi soru geliştirebilirsiniz.
 
-There is no rule about which questions you should ask to guide your research.
-However, two types of questions will always be useful for making discoveries within your data.
-You can loosely word these questions as:
+Araştırmanıza rehberlik etmek için hangi soruları sormanız gerektiğine dair bir kural yoktur.
+Ancak, iki tür soru, veriniz içinde keşifler yapmak için her zaman kullanışlı olacaktır.
+Bu soruları gevşek bir şekilde şöyle ifade edebilirsiniz:
 
-1.  What type of variation occurs within my variables?
+1.  Değişkenlerim içinde ne tür bir varyasyon oluşuyor?
 
-2.  What type of covariation occurs between my variables?
+2.  Değişkenlerim arasında ne tür bir kovaryasyon oluşuyor?
 
-The rest of this chapter will look at these two questions.
-We'll explain what variation and covariation are, and we'll show you several ways to answer each question.
+Bu bölümün geri kalanı bu iki soruya bakacak.
+Varyasyon ve kovaryasyonun ne olduğunu açıklayacağız ve her soruyu yanıtlamanın birkaç yolunu size göstereceğiz.
 
-## Variation
+## Varyasyon
 
-**Variation** is the tendency of the values of a variable to change from measurement to measurement.
-You can see variation easily in real life; if you measure any continuous variable twice, you will get two different results.
-This is true even if you measure quantities that are constant, like the speed of light.
-Each of your measurements will include a small amount of error that varies from measurement to measurement.
-Variables can also vary if you measure across different subjects (e.g., the eye colors of different people) or at different times (e.g., the energy levels of an electron at different moments).
-Every variable has its own pattern of variation, which can reveal interesting information about how it varies between measurements on the same observation as well as across observations.
-The best way to understand that pattern is to visualize the distribution of the variable's values, which you've learned about in @sec-data-visualization.
+**Varyasyon**, bir değişkenin değerlerinin ölçümden ölçüme değişme eğilimidir.
+Varyasyonu gerçek hayatta kolayca görebilirsiniz; herhangi bir sürekli değişkeni iki kez ölçerseniz, iki farklı sonuç elde edersiniz.
+Bu, ışık hızı gibi sabit olan büyüklükleri ölçseniz bile doğrudur.
+Ölçümlerinizin her biri, ölçümden ölçüme değişen küçük miktarda bir hata içerecektir.
+Değişkenler ayrıca farklı özneler arasında ölçüm yaparsanız (örneğin, farklı insanların göz renkleri) veya farklı zamanlarda ölçüm yaparsanız (örneğin, bir elektronun farklı anlardaki enerji seviyeleri) da değişebilir.
+Her değişkenin kendi varyasyon örüntüsü vardır; bu da aynı gözlem üzerindeki ölçümler arasında olduğu kadar gözlemler arasında da nasıl değiştiği hakkında ilginç bilgiler ortaya çıkarabilir.
+Bu örüntüyü anlamanın en iyi yolu, @sec-data-visualization içinde öğrendiğiniz gibi, değişkenin değerlerinin dağılımını görselleştirmektir.
 
-We'll start our exploration by visualizing the distribution of weights (`carat`) of \~54,000 diamonds from the `diamonds` dataset.
-Since `carat` is a numerical variable, we can use a histogram:
+Keşfimize, `diamonds` veri kümesindeki ~54.000 elmasın ağırlıklarının (`carat`) dağılımını görselleştirerek başlayacağız.
+`carat` sayısal bir değişken olduğundan, bir histogram kullanabiliriz:
 
 ```{r}
 #| fig-alt: |
-#|   A histogram of carats of diamonds, with the x-axis ranging from 0 to 4.5 
-#|   and the y-axis ranging from 0 to 30000. The distribution is right skewed 
-#|   with very few diamonds in the bin centered at 0, almost 30000 diamonds in 
-#|   the bin centered at 0.5, approximately 15000 diamonds in the bin centered 
-#|   at 1, and much fewer, approximately 5000 diamonds in the bin centered at 
-#|   1.5. Beyond this, there's a trailing tail.
+#|   Elmasların karat değerlerinin, x ekseninin 0'dan 4.5'e, y ekseninin
+#|   0'dan 30000'e kadar uzandığı bir histogramı. Dağılım sağa
+#|   çarpıktır; 0'da merkezlenen kutuda çok az elmas, 0.5'te
+#|   merkezlenen kutuda neredeyse 30000 elmas, 1'de merkezlenen kutuda
+#|   yaklaşık 15000 elmas ve 1.5'te merkezlenen kutuda çok daha az,
+#|   yaklaşık 5000 elmas vardır. Bunun ötesinde, uzayan bir kuyruk
+#|   vardır.
 ggplot(diamonds, aes(x = carat)) +
   geom_histogram(binwidth = 0.5)
 ```
 
-Now that you can visualize variation, what should you look for in your plots?
-And what type of follow-up questions should you ask?
-We've put together a list below of the most useful types of information that you will find in your graphs, along with some follow-up questions for each type of information.
-The key to asking good follow-up questions will be to rely on your curiosity (What do you want to learn more about?) as well as your skepticism (How could this be misleading?).
+Artık varyasyonu görselleştirebildiğinize göre, grafiklerinizde neye bakmalısınız?
+Ve ne tür takip soruları sormalısınız?
+Aşağıda, grafiklerinizde bulacağınız en kullanışlı bilgi türlerinin bir listesini, her bilgi türü için bazı takip sorularıyla birlikte bir araya getirdik.
+İyi takip soruları sormanın anahtarı, merakınıza (Daha fazlasını neyi öğrenmek istiyorsunuz?) olduğu kadar şüpheciliğinize (Bu nasıl yanıltıcı olabilir?) de güvenmek olacaktır.
 
-### Typical values
+### Tipik Değerler
 
-In both bar charts and histograms, tall bars show the common values of a variable, and shorter bars show less-common values.
-Places that do not have bars reveal values that were not seen in your data.
-To turn this information into useful questions, look for anything unexpected:
+Hem çubuk grafiklerde hem de histogramlarda, uzun çubuklar bir değişkenin yaygın değerlerini, kısa çubuklar ise daha az yaygın değerleri gösterir.
+Çubuk bulunmayan yerler, verinizde görülmeyen değerleri ortaya çıkarır.
+Bu bilgiyi kullanışlı sorulara dönüştürmek için, beklenmedik herhangi bir şey arayın:
 
--   Which values are the most common?
-    Why?
+-   Hangi değerler en yaygın?
+    Neden?
 
--   Which values are rare?
-    Why?
-    Does that match your expectations?
+-   Hangi değerler nadir?
+    Neden?
+    Bu, beklentilerinizle örtüşüyor mu?
 
--   Can you see any unusual patterns?
-    What might explain them?
+-   Herhangi bir olağandışı örüntü görüyor musunuz?
+    Bunları ne açıklayabilir?
 
-Let's take a look at the distribution of `carat` for smaller diamonds.
+Daha küçük elmaslar için `carat`'ın dağılımına bir bakalım.
 
 ```{r}
 #| fig-alt: |
-#|   A histogram of carats of diamonds, with the x-axis ranging from 0 to 3 and 
-#|   the y-axis ranging from 0 to roughly 2500. The binwidth is quite narrow 
-#|   (0.01), resulting in a very large number of skinny bars. The distribution 
-#|   is right skewed, with many peaks followed by bars in decreasing heights, 
-#|   until a sharp increase at the next peak.
+#|   Elmasların karat değerlerinin, x ekseninin 0'dan 3'e, y ekseninin
+#|   0'dan yaklaşık 2500'e kadar uzandığı bir histogramı. Kutu
+#|   genişliği oldukça dar (0.01), bu da çok sayıda ince çubukla
+#|   sonuçlanıyor. Dağılım sağa çarpık; bir sonraki tepe noktasındaki
+#|   keskin artışa kadar, azalan yüksekliklerde çubukların izlediği pek
+#|   çok tepe noktası var.
 smaller <- diamonds |> 
   filter(carat < 3)
 
@@ -126,64 +128,66 @@ ggplot(smaller, aes(x = carat)) +
   geom_histogram(binwidth = 0.01)
 ```
 
-This histogram suggests several interesting questions:
+Bu histogram birkaç ilginç soru öneriyor:
 
--   Why are there more diamonds at whole carats and common fractions of carats?
+-   Neden tam karat değerlerinde ve yaygın karat kesirlerinde daha fazla elmas var?
 
--   Why are there more diamonds slightly to the right of each peak than there are slightly to the left of each peak?
+-   Neden her tepe noktasının hemen sağında, hemen solundan daha fazla elmas var?
 
-Visualizations can also reveal clusters, which suggest that subgroups exist in your data.
-To understand the subgroups, ask:
+Görselleştirmeler ayrıca, verinizde alt grupların var olduğunu öne süren kümeleri de ortaya çıkarabilir.
+Alt grupları anlamak için şunu sorun:
 
--   How are the observations within each subgroup similar to each other?
+-   Her alt grup içindeki gözlemler birbirlerine nasıl benziyor?
 
--   How are the observations in separate clusters different from each other?
+-   Ayrı kümelerdeki gözlemler birbirlerinden nasıl farklı?
 
--   How can you explain or describe the clusters?
+-   Kümeleri nasıl açıklayabilir veya tanımlayabilirsiniz?
 
--   Why might the appearance of clusters be misleading?
+-   Kümelerin görünümü neden yanıltıcı olabilir?
 
-Some of these questions can be answered with the data while some will require domain expertise about the data.
-Many of them will prompt you to explore a relationship *between* variables, for example, to see if the values of one variable can explain the behavior of another variable.
-We'll get to that shortly.
+Bu soruların bazıları veriyle yanıtlanabilirken, bazıları veri hakkında alan uzmanlığı gerektirecektir.
+Bunların çoğu, örneğin bir değişkenin değerlerinin başka bir değişkenin davranışını açıklayıp açıklayamayacağını görmek için, değişkenler *arasındaki* bir ilişkiyi keşfetmenizi isteyecektir.
+Bu konuya kısa süre sonra geleceğiz.
 
-### Unusual values
+### Olağandışı Değerler
 
-Outliers are observations that are unusual; data points that don't seem to fit the pattern.
-Sometimes outliers are data entry errors, sometimes they are simply values at the extremes that happened to be observed in this data collection, and other times they suggest important new discoveries.
-When you have a lot of data, outliers are sometimes difficult to see in a histogram.
-For example, take the distribution of the `y` variable from the diamonds dataset.
-The only evidence of outliers is the unusually wide limits on the x-axis.
+Aykırı değerler (outliers), olağandışı olan gözlemlerdir; örüntüye uymuyor gibi görünen veri noktaları.
+Bazen aykırı değerler veri girişi hatalarıdır, bazen bu veri toplamada gözlemlenmiş uç değerlerdir, bazen de önemli yeni keşifler önerirler.
+Çok fazla veriniz olduğunda, aykırı değerleri bir histogramda görmek bazen zordur.
+Örneğin, diamonds veri kümesindeki `y` değişkeninin dağılımını ele alın.
+Aykırı değerlerin tek kanıtı, x ekseni üzerindeki olağandışı geniş sınırlardır.
 
 ```{r}
 #| fig-alt: |
-#|   A histogram of lengths of diamonds. The x-axis ranges from 0 to 60 and 
-#|   the y-axis ranges from 0 to 12000. There is a peak around 5, and the 
-#|   data appear to be completely clustered around the peak.
+#|   Elmasların uzunluklarının bir histogramı. X ekseni 0'dan 60'a, y
+#|   ekseni 0'dan 12000'e kadar uzanıyor. 5 civarında bir tepe noktası
+#|   var ve veri tamamen bu tepe noktasının etrafında kümelenmiş
+#|   görünüyor.
 ggplot(diamonds, aes(x = y)) + 
   geom_histogram(binwidth = 0.5)
 ```
 
-There are so many observations in the common bins that the rare bins are very short, making it very difficult to see them (although maybe if you stare intently at 0 you'll spot something).
-To make it easy to see the unusual values, we need to zoom to small values of the y-axis with `coord_cartesian()`:
+Yaygın kutularda o kadar çok gözlem var ki, nadir kutular çok kısa kalıyor ve onları görmeyi çok zorlaştırıyor (yine de belki 0'a dikkatlice bakarsanız bir şey fark edebilirsiniz).
+Olağandışı değerleri görmeyi kolaylaştırmak için, `coord_cartesian()` ile y ekseninin küçük değerlerine yakınlaşmamız gerekir:
 
 ```{r}
 #| fig-alt: |
-#|   A histogram of lengths of diamonds. The x-axis ranges from 0 to 60 and the 
-#|   y-axis ranges from 0 to 50. There is a peak around 5, and the data 
-#|   appear to be completely clustered around the peak. Other than those data, 
-#|   there is one bin at 0 with a height of about 8, one a little over 30 with 
-#|   a height of 1 and another one a little below 60 with a height of 1.
+#|   Elmasların uzunluklarının bir histogramı. X ekseni 0'dan 60'a, y
+#|   ekseni 0'dan 50'ye kadar uzanıyor. 5 civarında bir tepe noktası
+#|   var ve veri tamamen bu tepe noktasının etrafında kümelenmiş
+#|   görünüyor. Bu veriler dışında, 0'da yüksekliği yaklaşık 8 olan bir
+#|   kutu, 30'un biraz üzerinde yüksekliği 1 olan bir kutu ve 60'ın
+#|   biraz altında yüksekliği 1 olan bir kutu daha var.
 ggplot(diamonds, aes(x = y)) + 
   geom_histogram(binwidth = 0.5) +
   coord_cartesian(ylim = c(0, 50))
 ```
 
-`coord_cartesian()` also has an `xlim()` argument for when you need to zoom into the x-axis.
-ggplot2 also has `xlim()` and `ylim()` functions that work slightly differently: they throw away the data outside the limits.
+`coord_cartesian()`, x eksenine yakınlaşmanız gerektiğinde kullanabileceğiniz bir `xlim()` argümanına da sahiptir.
+ggplot2'nin ayrıca biraz farklı çalışan `xlim()` ve `ylim()` fonksiyonları vardır: bunlar, sınırların dışındaki veriyi atarlar.
 
-This allows us to see that there are three unusual values: 0, \~30, and \~60.
-We pluck them out with dplyr:
+Bu, üç olağandışı değer olduğunu görmemizi sağlar: 0, \~30 ve \~60.
+Bunları dplyr ile ayıklıyoruz:
 
 ```{r}
 #| include: false
@@ -203,40 +207,40 @@ unusual
 options(old)
 ```
 
-The `y` variable measures one of the three dimensions of these diamonds, in mm.
-We know that diamonds can't have a width of 0mm, so these values must be incorrect.
-By doing EDA, we have discovered missing data that was coded as 0, which we never would have found by simply searching for `NA`s.
-Going forward we might choose to re-code these values as `NA`s in order to prevent misleading calculations.
-We might also suspect that measurements of 32mm and 59mm are implausible: those diamonds are over an inch long, but don't cost hundreds of thousands of dollars!
+`y` değişkeni, bu elmasların üç boyutundan birini, mm cinsinden ölçer.
+Elmasların 0mm genişliğe sahip olamayacağını biliyoruz, dolayısıyla bu değerler yanlış olmalıdır.
+EDA yaparak, yalnızca `NA` arayarak asla bulamayacağımız, 0 olarak kodlanmış eksik veriyi keşfettik.
+İleride, yanıltıcı hesaplamaları önlemek için bu değerleri `NA` olarak yeniden kodlamayı seçebiliriz.
+Ayrıca 32mm ve 59mm'lik ölçümlerin gerçekçi olmadığından şüphelenebiliriz: bu elmaslar bir inçten daha uzun, ama yüz binlerce dolara mal olmuyorlar!
 
-It's good practice to repeat your analysis with and without the outliers.
-If they have minimal effect on the results, and you can't figure out why they're there, it's reasonable to omit them, and move on.
-However, if they have a substantial effect on your results, you shouldn't drop them without justification.
-You'll need to figure out what caused them (e.g., a data entry error) and disclose that you removed them in your write-up.
+Analizinizi hem aykırı değerlerle hem de onlar olmadan tekrarlamak iyi bir uygulamadır.
+Sonuçlar üzerinde minimal bir etkileri varsa ve neden orada olduklarını çözemiyorsanız, onları çıkarıp devam etmek makuldür.
+Ancak, sonuçlarınız üzerinde önemli bir etkileri varsa, gerekçe göstermeden onları çıkarmamalısınız.
+Onlara neyin sebep olduğunu (örneğin bir veri girişi hatası) bulmanız ve yazınızda onları çıkardığınızı açıklamanız gerekecektir.
 
-### Exercises
+### Alıştırmalar
 
-1.  Explore the distribution of each of the `x`, `y`, and `z` variables in `diamonds`.
-    What do you learn?
-    Think about a diamond and how you might decide which dimension is the length, width, and depth.
+1.  `diamonds` içindeki `x`, `y` ve `z` değişkenlerinin her birinin dağılımını keşfedin.
+    Ne öğreniyorsunuz?
+    Bir elması ve hangi boyutun uzunluk, genişlik ve derinlik olduğuna nasıl karar verebileceğinizi düşünün.
 
-2.  Explore the distribution of `price`.
-    Do you discover anything unusual or surprising?
-    (Hint: Carefully think about the `binwidth` and make sure you try a wide range of values.)
+2.  `price`'ın dağılımını keşfedin.
+    Olağandışı veya şaşırtıcı bir şey keşfediyor musunuz?
+    (İpucu: `binwidth`'i dikkatlice düşünün ve geniş bir değer aralığı denediğinizden emin olun.)
 
-3.  How many diamonds are 0.99 carat?
-    How many are 1 carat?
-    What do you think is the cause of the difference?
+3.  Kaç elmas 0.99 karat?
+    Kaç tanesi 1 karat?
+    Bu farkın nedeninin ne olduğunu düşünüyorsunuz?
 
-4.  Compare and contrast `coord_cartesian()` vs. `xlim()` or `ylim()` when zooming in on a histogram.
-    What happens if you leave `binwidth` unset?
-    What happens if you try and zoom so only half a bar shows?
+4.  Bir histograma yakınlaşırken `coord_cartesian()`'ı `xlim()` veya `ylim()` ile karşılaştırıp karşıtlaştırın.
+    `binwidth`'i ayarlanmamış bırakırsanız ne olur?
+    Yalnızca yarım bir çubuk görünecek şekilde yakınlaşmaya çalışırsanız ne olur?
 
-## Unusual values {#sec-unusual-values-eda}
+## Olağandışı Değerler {#sec-unusual-values-eda}
 
-If you've encountered unusual values in your dataset, and simply want to move on to the rest of your analysis, you have two options.
+Veri kümenizde olağandışı değerlerle karşılaştıysanız ve analizinizin geri kalanına geçmek istiyorsanız, iki seçeneğiniz vardır.
 
-1.  Drop the entire row with the strange values:
+1.  Garip değerlere sahip tüm satırı çıkarın:
 
     ```{r}
     #| eval: false
@@ -244,32 +248,32 @@ If you've encountered unusual values in your dataset, and simply want to move on
       filter(between(y, 3, 20))
     ```
 
-    We don't recommend this option because one invalid value doesn't imply that all the other values for that observation are also invalid.
-    Additionally, if you have low quality data, by the time that you've applied this approach to every variable you might find that you don't have any data left!
+    Bu seçeneği önermiyoruz; çünkü geçersiz bir değer, o gözlem için diğer tüm değerlerin de geçersiz olduğu anlamına gelmez.
+    Ayrıca, düşük kaliteli veriniz varsa, bu yaklaşımı her değişkene uyguladığınızda elinizde hiç veri kalmadığını görebilirsiniz!
 
-2.  Instead, we recommend replacing the unusual values with missing values.
-    The easiest way to do this is to use `mutate()` to replace the variable with a modified copy.
-    You can use the `if_else()` function to replace unusual values with `NA`:
+2.  Bunun yerine, olağandışı değerleri eksik değerlerle değiştirmenizi öneririz.
+    Bunu yapmanın en kolay yolu, değişkeni değiştirilmiş bir kopyayla değiştirmek için `mutate()`'i kullanmaktır.
+    Olağandışı değerleri `NA` ile değiştirmek için `if_else()` fonksiyonunu kullanabilirsiniz:
 
     ```{r}
     diamonds2 <- diamonds |> 
       mutate(y = if_else(y < 3 | y > 20, NA, y))
     ```
 
-It's not obvious where you should plot missing values, so ggplot2 doesn't include them in the plot, but it does warn that they've been removed:
+Eksik değerleri nerede çizmeniz gerektiği belli değildir, bu yüzden ggplot2 onları grafiğe dahil etmez; ama kaldırıldıklarına dair uyarır:
 
 ```{r}
 #| dev: "png"
 #| fig-alt: |
-#|   A scatterplot of widths vs. lengths of diamonds. There is a strong, 
-#|   linear association between the two variables. All but one of the diamonds 
-#|   has length greater than 3. The one outlier has a length of 0 and a width 
-#|   of about 6.5. 
+#|   Elmasların genişliklerine karşı uzunluklarının bir saçılım
+#|   grafiği. İki değişken arasında güçlü, doğrusal bir ilişki var. Bir
+#|   tanesi hariç tüm elmasların uzunluğu 3'ten büyük. Tek aykırı
+#|   değerin uzunluğu 0 ve genişliği yaklaşık 6.5.
 ggplot(diamonds2, aes(x = x, y = y)) + 
   geom_point()
 ```
 
-To suppress that warning, set `na.rm = TRUE`:
+Bu uyarıyı bastırmak için, `na.rm = TRUE` ayarlayın:
 
 ```{r}
 #| eval: false
@@ -277,19 +281,19 @@ ggplot(diamonds2, aes(x = x, y = y)) +
   geom_point(na.rm = TRUE)
 ```
 
-Other times you want to understand what makes observations with missing values different to observations with recorded values.
-For example, in `nycflights13::flights`[^eda-1], missing values in the `dep_time` variable indicate that the flight was cancelled.
-So you might want to compare the scheduled departure times for cancelled and non-cancelled times.
-You can do this by making a new variable, using `is.na()` to check if `dep_time` is missing.
+Diğer zamanlarda, eksik değerlere sahip gözlemleri kaydedilmiş değerlere sahip gözlemlerden neyin farklı kıldığını anlamak istersiniz.
+Örneğin, `nycflights13::flights`[^eda-1] içinde, `dep_time` değişkenindeki eksik değerler, uçuşun iptal edildiğini gösterir.
+Dolayısıyla, iptal edilen ve edilmeyen uçuşların planlanan kalkış zamanlarını karşılaştırmak isteyebilirsiniz.
+Bunu, `dep_time`'ın eksik olup olmadığını kontrol etmek için `is.na()`'i kullanarak yeni bir değişken oluşturarak yapabilirsiniz.
 
-[^eda-1]: Remember that when we need to be explicit about where a function (or dataset) comes from, we'll use the special form `package::function()` or `package::dataset`.
+[^eda-1]: Bir fonksiyonun (veya veri kümesinin) nereden geldiği konusunda açık olmamız gerektiğinde, `paket::fonksiyon()` veya `paket::veri_kümesi` özel biçimini kullanacağımızı hatırlayın.
 
 ```{r}
 #| fig-alt: |
-#|   A frequency polygon of scheduled departure times of flights. Two lines 
-#|   represent flights that are cancelled and not cancelled. The x-axis ranges 
-#|   from 0 to 25 minutes and the y-axis ranges from 0 to 10000. The number of 
-#|   flights not cancelled are much higher than those cancelled.
+#|   Uçuşların planlanan kalkış zamanlarının bir frekans poligonu. İki
+#|   çizgi, iptal edilen ve edilmeyen uçuşları temsil ediyor. X ekseni
+#|   0'dan 25 dakikaya, y ekseni 0'dan 10000'e kadar uzanıyor. İptal
+#|   edilmeyen uçuşların sayısı, iptal edilenlerden çok daha yüksek.
 nycflights13::flights |> 
   mutate(
     cancelled = is.na(dep_time),
@@ -301,252 +305,260 @@ nycflights13::flights |>
   geom_freqpoly(aes(color = cancelled), binwidth = 1/4)
 ```
 
-However this plot isn't great because there are many more non-cancelled flights than cancelled flights.
-In the next section we'll explore some techniques for improving this comparison.
+Ancak bu grafik pek iyi değil; çünkü iptal edilmeyen uçuş sayısı iptal edilenlerden çok daha fazla.
+Bir sonraki bölümde, bu karşılaştırmayı iyileştirmek için bazı teknikleri keşfedeceğiz.
 
-### Exercises
+### Alıştırmalar
 
-1.  What happens to missing values in a histogram?
-    What happens to missing values in a bar chart?
-    Why is there a difference in how missing values are handled in histograms and bar charts?
+1.  Bir histogramda eksik değerlere ne olur?
+    Bir çubuk grafikte eksik değerlere ne olur?
+    Eksik değerlerin histogramlarda ve çubuk grafiklerde ele alınış biçiminde neden bir fark var?
 
-2.  What does `na.rm = TRUE` do in `mean()` and `sum()`?
+2.  `na.rm = TRUE`, `mean()` ve `sum()` içinde ne yapar?
 
-3.  Recreate the frequency plot of `scheduled_dep_time` colored by whether the flight was cancelled or not.
-    Also facet by the `cancelled` variable.
-    Experiment with different values of the `scales` variable in the faceting function to mitigate the effect of more non-cancelled flights than cancelled flights.
+3.  `scheduled_dep_time`'ın, uçuşun iptal edilip edilmediğine göre renklendirilmiş frekans grafiğini yeniden oluşturun.
+    Ayrıca `cancelled` değişkenine göre facet'leyin.
+    İptal edilmeyen uçuşların iptal edilenlerden daha fazla olmasının etkisini azaltmak için, facetleme fonksiyonundaki `scales` değişkeninin farklı değerlerini deneyin.
 
-## Covariation
+## Kovaryasyon
 
-If variation describes the behavior *within* a variable, covariation describes the behavior *between* variables.
-**Covariation** is the tendency for the values of two or more variables to vary together in a related way.
-The best way to spot covariation is to visualize the relationship between two or more variables.
+Varyasyon bir değişken *içindeki* davranışı tanımlıyorsa, kovaryasyon değişkenler *arasındaki* davranışı tanımlar.
+**Kovaryasyon**, iki veya daha fazla değişkenin değerlerinin ilişkili bir şekilde birlikte değişme eğilimidir.
+Kovaryasyonu tespit etmenin en iyi yolu, iki veya daha fazla değişken arasındaki ilişkiyi görselleştirmektir.
 
-### A categorical and a numerical variable {#sec-cat-num}
+### Bir Kategorik ve Bir Sayısal Değişken {#sec-cat-num}
 
-For example, let's explore how the price of a diamond varies with its quality (measured by `cut`) using `geom_freqpoly()`:
+Örneğin, `geom_freqpoly()` kullanarak bir elmasın fiyatının kalitesine (`cut` ile ölçülen) göre nasıl değiştiğini keşfedelim:
 
 ```{r}
 #| fig-alt: |
-#|   A frequency polygon of prices of diamonds where each cut of carat (Fair, 
-#|   Good, Very Good, Premium, and Ideal) is represented with a different color 
-#|   line. The x-axis ranges from 0 to 30000 and the y-axis ranges from 0 to 
-#|   5000. The lines overlap a great deal, suggesting similar frequency 
-#|   distributions of prices of diamonds. One notable feature is that 
-#|   Ideal diamonds have the highest peak around 1500.
+#|   Elmasların fiyatlarının, her cut düzeyinin (Fair, Good, Very Good,
+#|   Premium ve Ideal) farklı bir renkli çizgiyle temsil edildiği bir
+#|   frekans poligonu. X ekseni 0'dan 30000'e, y ekseni 0'dan 5000'e
+#|   kadar uzanıyor. Çizgiler büyük ölçüde çakışıyor, bu da elmas
+#|   fiyatlarının benzer frekans dağılımlarına sahip olduğunu
+#|   düşündürüyor. Dikkat çekici bir özellik, Ideal elmasların 1500
+#|   civarında en yüksek tepe noktasına sahip olması.
 ggplot(diamonds, aes(x = price)) + 
   geom_freqpoly(aes(color = cut), binwidth = 500, linewidth = 0.75)
 ```
 
-Note that ggplot2 uses an ordered color scale for `cut` because it's defined as an ordered factor variable in the data.
-You'll learn more about these in @sec-ordered-factors.
+ggplot2'nin `cut` için sıralı bir renk scale'i kullandığına dikkat edin; çünkü bu, veride sıralı bir faktör değişkeni olarak tanımlanmıştır.
+Bunlar hakkında daha fazla bilgiyi @sec-ordered-factors içinde öğreneceksiniz.
 
-The default appearance of `geom_freqpoly()` is not that useful here because the height, determined by the overall count, differs so much across `cut`s, making it hard to see the differences in the shapes of their distributions.
+`geom_freqpoly()`'nin varsayılan görünümü burada pek kullanışlı değildir; çünkü genel sayım tarafından belirlenen yükseklik, `cut`'lar arasında o kadar çok farklılık gösterir ki, dağılımlarının şekillerindeki farkları görmeyi zorlaştırır.
 
-To make the comparison easier we need to swap what is displayed on the y-axis.
-Instead of displaying count, we'll display the **density**, which is the count standardized so that the area under each frequency polygon is one.
+Karşılaştırmayı kolaylaştırmak için, y ekseninde gösterileni değiştirmemiz gerekir.
+Sayım göstermek yerine, her frekans poligonunun altındaki alanın bir olacak şekilde standartlaştırılmış sayım olan **yoğunluğu** (density) göstereceğiz.
 
 ```{r}
 #| fig-alt: |
-#|   A frequency polygon of densities of prices of diamonds where each cut of 
-#|   carat (Fair, Good, Very Good, Premium, and Ideal) is represented with a 
-#|   different color line. The x-axis ranges from 0 to 20000. The lines overlap 
-#|   a great deal, suggesting similar density distributions of prices of 
-#|   diamonds. One notable feature is that all but Fair diamonds have high peaks 
-#|   around a price of 1500 and Fair diamonds have a higher mean than others.
+#|   Elmasların fiyatlarının yoğunluklarının, her cut düzeyinin (Fair,
+#|   Good, Very Good, Premium ve Ideal) farklı bir renkli çizgiyle
+#|   temsil edildiği bir frekans poligonu. X ekseni 0'dan 20000'e kadar
+#|   uzanıyor. Çizgiler büyük ölçüde çakışıyor, bu da elmas
+#|   fiyatlarının benzer yoğunluk dağılımlarına sahip olduğunu
+#|   düşündürüyor. Dikkat çekici bir özellik, Fair hariç tüm elmasların
+#|   1500 fiyat civarında yüksek tepe noktalarına sahip olması ve Fair
+#|   elmasların diğerlerinden daha yüksek bir ortalamaya sahip olması.
 ggplot(diamonds, aes(x = price, y = after_stat(density))) + 
   geom_freqpoly(aes(color = cut), binwidth = 500, linewidth = 0.75)
 ```
 
-Note that we're mapping the density to `y`, but since `density` is not a variable in the `diamonds` dataset, we need to first calculate it.
-We use the `after_stat()` function to do so.
+Yoğunluğu `y`'ye eşlediğimize dikkat edin; ama `density`, `diamonds` veri kümesinde bir değişken olmadığından, önce onu hesaplamamız gerekir.
+Bunu yapmak için `after_stat()` fonksiyonunu kullanırız.
 
-There's something rather surprising about this plot - it appears that fair diamonds (the lowest quality) have the highest average price!
-But maybe that's because frequency polygons are a little hard to interpret - there's a lot going on in this plot.
+Bu grafikte oldukça şaşırtıcı bir şey var - fair elmasların (en düşük kalite) en yüksek ortalama fiyata sahip olduğu görülüyor!
+Ama belki de bunun nedeni, frekans poligonlarının yorumlanmasının biraz zor olmasıdır - bu grafikte çok fazla şey oluyor.
 
-A visually simpler plot for exploring this relationship is using side-by-side boxplots.
+Bu ilişkiyi keşfetmek için görsel olarak daha basit bir grafik, yan yana kutu grafikleri kullanmaktır.
 
 ```{r}
 #| fig-alt: |
-#|   Side-by-side boxplots of prices of diamonds by cut. The distribution of 
-#|   prices is right skewed for each cut (Fair, Good, Very Good, Premium, and 
-#|   Ideal). The medians are close to each other, with the median for Ideal 
-#|   diamonds lowest and that for Fair highest.
+#|   Elmasların fiyatlarının cut'a göre yan yana kutu grafikleri.
+#|   Fiyatların dağılımı her cut (Fair, Good, Very Good, Premium ve
+#|   Ideal) için sağa çarpık. Medyanlar birbirine yakın; Ideal elmaslar
+#|   için medyan en düşük, Fair için ise en yüksek.
 ggplot(diamonds, aes(x = cut, y = price)) +
   geom_boxplot()
 ```
 
-We see much less information about the distribution, but the boxplots are much more compact so we can more easily compare them (and fit more on one plot).
-It supports the counter-intuitive finding that better quality diamonds are typically cheaper!
-In the exercises, you'll be challenged to figure out why.
+Dağılım hakkında çok daha az bilgi görüyoruz; ama kutu grafikleri çok daha kompakt, bu yüzden onları daha kolay karşılaştırabiliyoruz (ve bir grafiğe daha fazlasını sığdırabiliyoruz).
+Bu, daha kaliteli elmasların genellikle daha ucuz olduğuna dair sezgilere aykırı bulguyu destekliyor!
+Alıştırmalarda, nedenini bulmakla karşı karşıya kalacaksınız.
 
-`cut` is an ordered factor: fair is worse than good, which is worse than very good and so on.
-Many categorical variables don't have such an intrinsic order, so you might want to reorder them to make a more informative display.
-One way to do that is with `fct_reorder()`.
-You'll learn more about that function in @sec-modifying-factor-order, but we want to give you a quick preview here because it's so useful.
-For example, take the `class` variable in the `mpg` dataset.
-You might be interested to know how highway mileage varies across classes:
+`cut` sıralı bir faktördür: fair, good'dan daha kötüdür, good ise very good'dan daha kötüdür, ve böyle devam eder.
+Pek çok kategorik değişkenin böyle içsel bir sırası yoktur, bu yüzden daha bilgilendirici bir görüntü oluşturmak için onları yeniden sıralamak isteyebilirsiniz.
+Bunu yapmanın bir yolu `fct_reorder()`'dır.
+Bu fonksiyon hakkında daha fazla bilgiyi @sec-modifying-factor-order içinde öğreneceksiniz; ama o kadar kullanışlı ki burada size hızlı bir önizleme vermek istiyoruz.
+Örneğin, `mpg` veri kümesindeki `class` değişkenini ele alalım.
+Otoyol yakıt tüketiminin sınıflar arasında nasıl değiştiğini bilmek isteyebilirsiniz:
 
 ```{r}
 #| fig-alt: |
-#|   Side-by-side boxplots of highway mileages of cars by class. Classes are 
-#|   on the x-axis (2seaters, compact, midsize, minivan, pickup, subcompact, 
-#|   and suv).
+#|   Araçların otoyol yakıt tüketimlerinin class'a göre yan yana kutu
+#|   grafikleri. Sınıflar x ekseninde (2seater, compact, midsize,
+#|   minivan, pickup, subcompact ve suv).
 ggplot(mpg, aes(x = class, y = hwy)) +
   geom_boxplot()
 ```
 
-To make the trend easier to see, we can reorder `class` based on the median value of `hwy`:
+Eğilimi görmeyi kolaylaştırmak için, `class`'ı `hwy`'nin medyan değerine göre yeniden sıralayabiliriz:
 
 ```{r}
 #| fig-alt: |
-#|   Side-by-side boxplots of highway mileages of cars by class. Classes are 
-#|   on the x-axis and ordered by increasing median highway mileage (pickup, 
-#|   suv, minivan, 2seater, subcompact, compact, and midsize).
+#|   Araçların otoyol yakıt tüketimlerinin class'a göre yan yana kutu
+#|   grafikleri. Sınıflar x ekseninde ve artan medyan otoyol yakıt
+#|   tüketimine göre sıralanmış (pickup, suv, minivan, 2seater,
+#|   subcompact, compact ve midsize).
 ggplot(mpg, aes(x = fct_reorder(class, hwy, median), y = hwy)) +
   geom_boxplot()
 ```
 
-If you have long variable names, `geom_boxplot()` will work better if you flip it 90°.
-You can do that by exchanging the x and y aesthetic mappings.
+Uzun değişken adlarınız varsa, `geom_boxplot()` 90° çevirirseniz daha iyi çalışır.
+Bunu, x ve y estetik eşlemelerini değiştirerek yapabilirsiniz.
 
 ```{r}
 #| fig-alt: |
-#|   Side-by-side boxplots of highway mileages of cars by class. Classes are 
-#|   on the y-axis and ordered by increasing median highway mileage.
+#|   Araçların otoyol yakıt tüketimlerinin class'a göre yan yana kutu
+#|   grafikleri. Sınıflar y ekseninde ve artan medyan otoyol yakıt
+#|   tüketimine göre sıralanmış.
 ggplot(mpg, aes(x = hwy, y = fct_reorder(class, hwy, median))) +
   geom_boxplot()
 ```
 
-#### Exercises
+#### Alıştırmalar
 
-1.  Use what you've learned to improve the visualization of the departure times of cancelled vs. non-cancelled flights.
+1.  İptal edilen ve edilmeyen uçuşların kalkış zamanlarının görselleştirmesini iyileştirmek için öğrendiklerinizi kullanın.
 
-2.  Based on EDA, what variable in the diamonds dataset appears to be most important for predicting the price of a diamond?
-    How is that variable correlated with cut?
-    Why does the combination of those two relationships lead to lower quality diamonds being more expensive?
+2.  EDA'ya dayanarak, diamonds veri kümesinde bir elmasın fiyatını tahmin etmek için en önemli görünen değişken hangisi?
+    Bu değişken cut ile nasıl bir korelasyona sahip?
+    Bu iki ilişkinin kombinasyonu neden daha düşük kaliteli elmasların daha pahalı olmasına yol açıyor?
 
-3.  Instead of exchanging the x and y variables, add `coord_flip()` as a new layer to the vertical boxplot to create a horizontal one.
-    How does this compare to exchanging the variables?
+3.  X ve y değişkenlerini değiştirmek yerine, dikey kutu grafiğine yeni bir katman olarak `coord_flip()` ekleyerek yatay bir kutu grafiği oluşturun.
+    Bu, değişkenleri değiştirmekle nasıl karşılaştırılır?
 
-4.  One problem with boxplots is that they were developed in an era of much smaller datasets and tend to display a prohibitively large number of "outlying values".
-    One approach to remedy this problem is the letter value plot.
-    Install the lvplot package, and try using `geom_lv()` to display the distribution of price vs. cut.
-    What do you learn?
-    How do you interpret the plots?
+4.  Kutu grafiklerindeki bir sorun, çok daha küçük veri kümelerinin olduğu bir dönemde geliştirilmiş olmaları ve aşırı sayıda "aykırı değer" göstermeye eğilimli olmalarıdır.
+    Bu sorunu gidermenin bir yaklaşımı letter value grafiğidir.
+    lvplot paketini kurun ve price ile cut'ın dağılımını göstermek için `geom_lv()`'yi kullanmayı deneyin.
+    Ne öğreniyorsunuz?
+    Grafikleri nasıl yorumluyorsunuz?
 
-5.  Create a visualization of diamond prices vs. a categorical variable from the `diamonds` dataset using `geom_violin()`, then a faceted `geom_histogram()`, then a colored `geom_freqpoly()`, and then a colored `geom_density()`.
-    Compare and contrast the four plots.
-    What are the pros and cons of each method of visualizing the distribution of a numerical variable based on the levels of a categorical variable?
+5.  `diamonds` veri kümesinden bir kategorik değişkene karşı elmas fiyatlarının görselleştirmesini önce `geom_violin()` ile, ardından facet'lenmiş bir `geom_histogram()` ile, sonra renklendirilmiş bir `geom_freqpoly()` ile ve son olarak renklendirilmiş bir `geom_density()` ile oluşturun.
+    Dört grafiği karşılaştırıp karşıtlaştırın.
+    Kategorik bir değişkenin düzeylerine dayanarak sayısal bir değişkenin dağılımını görselleştirmenin her yönteminin artıları ve eksileri nelerdir?
 
-6.  If you have a small dataset, it's sometimes useful to use `geom_jitter()` to avoid overplotting to more easily see the relationship between a continuous and categorical variable.
-    The ggbeeswarm package provides a number of methods similar to `geom_jitter()`.
-    List them and briefly describe what each one does.
+6.  Küçük bir veri kümeniz varsa, sürekli ve kategorik bir değişken arasındaki ilişkiyi daha kolay görmek için aşırı çizimi önlemek üzere `geom_jitter()` kullanmak bazen yararlıdır.
+    ggbeeswarm paketi, `geom_jitter()`'a benzer bir dizi yöntem sunar.
+    Onları listeleyin ve her birinin ne yaptığını kısaca açıklayın.
 
-### Two categorical variables
+### İki Kategorik Değişken
 
-To visualize the covariation between categorical variables, you'll need to count the number of observations for each combination of levels of these categorical variables.
-One way to do that is to rely on the built-in `geom_count()`:
+Kategorik değişkenler arasındaki kovaryasyonu görselleştirmek için, bu kategorik değişkenlerin düzeylerinin her kombinasyonu için gözlem sayısını saymanız gerekir.
+Bunu yapmanın bir yolu, yerleşik `geom_count()`'a güvenmektir:
 
 ```{r}
 #| fig-alt: |
-#|   A scatterplot of color vs. cut of diamonds. There is one point for each
-#|   combination of levels of cut (Fair, Good, Very Good, Premium, and Ideal) 
-#|   and color (D, E, F, G, G, I, and J). The sizes of the points represent 
-#|   the number of observations for that combination. The legend indicates 
-#|   that these sizes range between 1000 and 4000.
+#|   Elmasların color'a karşı cut'ının bir saçılım grafiği. cut (Fair,
+#|   Good, Very Good, Premium ve Ideal) ve color (D, E, F, G, G, I ve
+#|   J) düzeylerinin her kombinasyonu için bir nokta var. Noktaların
+#|   boyutları, o kombinasyon için gözlem sayısını temsil ediyor.
+#|   Açıklama kutusu, bu boyutların 1000 ile 4000 arasında değiştiğini
+#|   gösteriyor.
 ggplot(diamonds, aes(x = cut, y = color)) +
   geom_count()
 ```
 
-The size of each circle in the plot displays how many observations occurred at each combination of values.
-Covariation will appear as a strong correlation between specific x values and specific y values.
+Grafikteki her dairenin boyutu, her değer kombinasyonunda kaç gözlem meydana geldiğini gösterir.
+Kovaryasyon, belirli x değerleri ile belirli y değerleri arasında güçlü bir korelasyon olarak ortaya çıkacaktır.
 
-Another approach for exploring the relationship between these variables is computing the counts with dplyr:
+Bu değişkenler arasındaki ilişkiyi keşfetmenin bir başka yaklaşımı, sayımları dplyr ile hesaplamaktır:
 
 ```{r}
 diamonds |> 
   count(color, cut)
 ```
 
-Then visualize with `geom_tile()` and the fill aesthetic:
+Ardından `geom_tile()` ve fill estetiğiyle görselleştirin:
 
 ```{r}
 #| fig-alt: |
-#|   A tile plot of cut vs. color of diamonds. Each tile represents a 
-#|   cut/color combination and tiles are colored according to the number of 
-#|   observations in each tile. There are more Ideal diamonds than other cuts, 
-#|   with the highest number being Ideal diamonds with color G. Fair diamonds 
-#|   and diamonds with color I are the lowest in frequency.
+#|   Elmasların cut'a karşı color'ının bir tile (döşeme) grafiği. Her
+#|   döşeme bir cut/color kombinasyonunu temsil eder ve döşemeler, her
+#|   birindeki gözlem sayısına göre renklendirilir. Diğer cut'lardan
+#|   daha fazla Ideal elmas var; en yüksek sayı, color'ı G olan Ideal
+#|   elmaslarda. Fair elmaslar ve color'ı I olan elmaslar frekans
+#|   bakımından en düşük.
 diamonds |> 
   count(color, cut) |>  
   ggplot(aes(x = color, y = cut)) +
   geom_tile(aes(fill = n))
 ```
 
-If the categorical variables are unordered, you might want to use the seriation package to simultaneously reorder the rows and columns in order to more clearly reveal interesting patterns.
-For larger plots, you might want to try the heatmaply package, which creates interactive plots.
+Kategorik değişkenler sırasızsa, ilginç örüntüleri daha net ortaya çıkarmak için satırları ve sütunları aynı anda yeniden sıralamak üzere seriation paketini kullanmak isteyebilirsiniz.
+Daha büyük grafikler için, etkileşimli grafikler oluşturan heatmaply paketini denemek isteyebilirsiniz.
 
-#### Exercises
+#### Alıştırmalar
 
-1.  How could you rescale the count dataset above to more clearly show the distribution of cut within color, or color within cut?
+1.  color içinde cut'ın veya cut içinde color'ın dağılımını daha net göstermek için yukarıdaki sayım veri kümesini nasıl yeniden ölçeklendirebilirsiniz?
 
-2.  What different data insights do you get with a segmented bar chart if color is mapped to the `x` aesthetic and `cut` is mapped to the `fill` aesthetic?
-    Calculate the counts that fall into each of the segments.
+2.  color, `x` estetiğine ve `cut`, `fill` estetiğine eşlenirse, bölümlere ayrılmış bir çubuk grafikle hangi farklı veri içgörülerini elde edersiniz?
+    Her bölüme düşen sayımları hesaplayın.
 
-3.  Use `geom_tile()` together with dplyr to explore how average flight departure delays vary by destination and month of year.
-    What makes the plot difficult to read?
-    How could you improve it?
+3.  Ortalama uçuş kalkış gecikmelerinin varış yerine ve yılın ayına göre nasıl değiştiğini keşfetmek için `geom_tile()`'ı dplyr ile birlikte kullanın.
+    Grafiği okumayı ne zorlaştırıyor?
+    Onu nasıl iyileştirebilirsiniz?
 
-### Two numerical variables
+### İki Sayısal Değişken
 
-You've already seen one great way to visualize the covariation between two numerical variables: draw a scatterplot with `geom_point()`.
-You can see covariation as a pattern in the points.
-For example, you can see a positive relationship between the carat size and price of a diamond: diamonds with more carats have a higher price.
-The relationship is exponential.
+İki sayısal değişken arasındaki kovaryasyonu görselleştirmenin harika bir yolunu zaten gördünüz: `geom_point()` ile bir saçılım grafiği çizmek.
+Kovaryasyonu noktalardaki bir örüntü olarak görebilirsiniz.
+Örneğin, bir elmasın karat boyutu ile fiyatı arasında pozitif bir ilişki görebilirsiniz: daha fazla karata sahip elmasların fiyatı daha yüksektir.
+İlişki üsteldir.
 
 ```{r}
 #| dev: "png"
 #| fig-alt: |
-#|   A scatterplot of price vs. carat. The relationship is positive, somewhat 
-#|   strong, and exponential.
+#|   carat'a karşı price'ın bir saçılım grafiği. İlişki pozitif, biraz
+#|   güçlü ve üstel.
 ggplot(smaller, aes(x = carat, y = price)) +
   geom_point()
 ```
 
-(In this section we'll use the `smaller` dataset to stay focused on the bulk of the diamonds that are smaller than 3 carats)
+(Bu bölümde, 3 karattan küçük elmasların büyük çoğunluğuna odaklanmak için `smaller` veri kümesini kullanacağız)
 
-Scatterplots become less useful as the size of your dataset grows, because points begin to overplot, and pile up into areas of uniform black, making it hard to judge differences in the density of the data across the 2-dimensional space as well as making it hard to spot the trend.
-You've already seen one way to fix the problem: using the `alpha` aesthetic to add transparency.
+Saçılım grafikleri, veri kümenizin boyutu büyüdükçe daha az kullanışlı hale gelir; çünkü noktalar üst üste binmeye başlar ve tekdüze siyah alanlar halinde yığılır, bu da verinin 2 boyutlu uzaydaki yoğunluk farklarını değerlendirmeyi ve eğilimi tespit etmeyi zorlaştırır.
+Sorunu düzeltmenin bir yolunu zaten gördünüz: saydamlık eklemek için `alpha` estetiğini kullanmak.
 
 ```{r}
 #| dev: "png"
 #| fig-alt: |
-#|   A scatterplot of price vs. carat. The relationship is positive, somewhat 
-#|   strong, and exponential. The points are transparent, showing clusters where 
-#|   the number of points is higher than other areas, The most obvious clusters 
-#|   are for diamonds with 1, 1.5, and 2 carats.
+#|   carat'a karşı price'ın bir saçılım grafiği. İlişki pozitif, biraz
+#|   güçlü ve üstel. Noktalar saydam, nokta sayısının diğer alanlardan
+#|   daha yüksek olduğu kümeleri gösteriyor. En belirgin kümeler, 1,
+#|   1.5 ve 2 karatlık elmaslar için.
 ggplot(smaller, aes(x = carat, y = price)) + 
   geom_point(alpha = 1 / 100)
 ```
 
-But using transparency can be challenging for very large datasets.
-Another solution is to use bin.
-Previously you used `geom_histogram()` and `geom_freqpoly()` to bin in one dimension.
-Now you'll learn how to use `geom_bin2d()` and `geom_hex()` to bin in two dimensions.
+Ama saydamlık kullanmak çok büyük veri kümeleri için zor olabilir.
+Başka bir çözüm, kutulama (bin) kullanmaktır.
+Daha önce, bir boyutta kutulamak için `geom_histogram()` ve `geom_freqpoly()`'yi kullandınız.
+Şimdi, iki boyutta kutulamak için `geom_bin2d()` ve `geom_hex()`'i nasıl kullanacağınızı öğreneceksiniz.
 
-`geom_bin2d()` and `geom_hex()` divide the coordinate plane into 2d bins and then use a fill color to display how many points fall into each bin.
-`geom_bin2d()` creates rectangular bins.
-`geom_hex()` creates hexagonal bins.
-You will need to install the hexbin package to use `geom_hex()`.
+`geom_bin2d()` ve `geom_hex()`, koordinat düzlemini 2 boyutlu kutulara böler ve ardından her kutuya kaç nokta düştüğünü göstermek için bir fill rengi kullanır.
+`geom_bin2d()` dikdörtgen kutular oluşturur.
+`geom_hex()` altıgen kutular oluşturur.
+`geom_hex()`'i kullanmak için hexbin paketini kurmanız gerekecektir.
 
 ```{r}
 #| layout-ncol: 2
 #| fig-width: 3
 #| fig-alt: |
-#|   Plot 1: A binned density plot of price vs. carat. Plot 2: A hexagonal bin 
-#|   plot of price vs. carat. Both plots show that the highest density of 
-#|   diamonds have low carats and low prices.
+#|   Grafik 1: carat'a karşı price'ın kutulanmış bir yoğunluk grafiği.
+#|   Grafik 2: carat'a karşı price'ın altıgen kutu grafiği. Her iki
+#|   grafik de en yüksek elmas yoğunluğunun düşük karat ve düşük
+#|   fiyatlarda olduğunu gösteriyor.
 ggplot(smaller, aes(x = carat, y = price)) +
   geom_bin2d()
 
@@ -555,43 +567,44 @@ ggplot(smaller, aes(x = carat, y = price)) +
   geom_hex()
 ```
 
-Another option is to bin one continuous variable so it acts like a categorical variable.
-Then you can use one of the techniques for visualizing the combination of a categorical and a continuous variable that you learned about.
-For example, you could bin `carat` and then for each group, display a boxplot:
+Başka bir seçenek, bir sürekli değişkeni, kategorik bir değişken gibi davranacak şekilde kutulamaktır.
+Ardından, öğrendiğiniz kategorik ve sürekli bir değişkenin kombinasyonunu görselleştirme tekniklerinden birini kullanabilirsiniz.
+Örneğin, `carat`'ı kutulayabilir ve ardından her grup için bir kutu grafiği gösterebilirsiniz:
 
 ```{r}
 #| fig-alt: |
-#|   Side-by-side box plots of price by carat. Each box plot represents diamonds 
-#|   that are 0.1 carats apart in weight. The box plots show that as carat 
-#|   increases the median price increases as well. Additionally, diamonds with 
-#|   1.5 carats or lower have right skewed price distributions, 1.5 to 2 have 
-#|   roughly symmetric price distributions, and diamonds that weigh more have 
-#|   left skewed distributions. Cheaper, smaller diamonds have outliers on the 
-#|   higher end, more expensive, bigger diamonds have outliers on the lower end.
+#|   carat'a göre price'ın yan yana kutu grafikleri. Her kutu grafiği,
+#|   ağırlıkça 0.1 karat arayla ayrılmış elmasları temsil ediyor. Kutu
+#|   grafikleri, carat arttıkça medyan fiyatın da arttığını gösteriyor.
+#|   Ayrıca, 1.5 karat veya daha az elmasların fiyat dağılımları sağa
+#|   çarpık, 1.5 ile 2 arasındakiler kabaca simetrik ve daha ağır
+#|   elmaslar sola çarpık dağılımlara sahip. Daha ucuz, daha küçük
+#|   elmasların aykırı değerleri üst uçta, daha pahalı, daha büyük
+#|   elmasların aykırı değerleri ise alt uçta.
 ggplot(smaller, aes(x = carat, y = price)) + 
   geom_boxplot(aes(group = cut_width(carat, 0.1)))
 ```
 
-`cut_width(x, width)`, as used above, divides `x` into bins of width `width`.
-By default, boxplots look roughly the same (apart from number of outliers) regardless of how many observations there are, so it's difficult to tell that each boxplot summarizes a different number of points.
-One way to show that is to make the width of the boxplot proportional to the number of points with `varwidth = TRUE`.
+Yukarıda kullanıldığı gibi `cut_width(x, width)`, `x`'i `width` genişliğinde kutulara böler.
+Varsayılan olarak, kutu grafikleri kaç gözlem olursa olsun (aykırı değer sayısı hariç) kabaca aynı görünür, bu yüzden her kutu grafiğinin farklı sayıda noktayı özetlediğini söylemek zordur.
+Bunu göstermenin bir yolu, `varwidth = TRUE` ile kutu grafiğinin genişliğini nokta sayısıyla orantılı yapmaktır.
 
-#### Exercises
+#### Alıştırmalar
 
-1.  Instead of summarizing the conditional distribution with a boxplot, you could use a frequency polygon.
-    What do you need to consider when using `cut_width()` vs. `cut_number()`?
-    How does that impact a visualization of the 2d distribution of `carat` and `price`?
+1.  Koşullu dağılımı bir kutu grafiğiyle özetlemek yerine, bir frekans poligonu kullanabilirsiniz.
+    `cut_width()`'i `cut_number()`'a karşı kullanırken neyi göz önünde bulundurmanız gerekir?
+    Bu, `carat` ve `price`'ın 2 boyutlu dağılımının görselleştirmesini nasıl etkiler?
 
-2.  Visualize the distribution of `carat`, partitioned by `price`.
+2.  `price`'a göre bölümlenmiş `carat`'ın dağılımını görselleştirin.
 
-3.  How does the price distribution of very large diamonds compare to small diamonds?
-    Is it as you expect, or does it surprise you?
+3.  Çok büyük elmasların fiyat dağılımı, küçük elmaslarla nasıl karşılaştırılır?
+    Beklediğiniz gibi mi, yoksa sizi şaşırtıyor mu?
 
-4.  Combine two of the techniques you've learned to visualize the combined distribution of cut, carat, and price.
+4.  cut, carat ve price'ın birleşik dağılımını görselleştirmek için öğrendiğiniz tekniklerden ikisini birleştirin.
 
-5.  Two dimensional plots reveal outliers that are not visible in one dimensional plots.
-    For example, some points in the following plot have an unusual combination of `x` and `y` values, which makes the points outliers even though their `x` and `y` values appear normal when examined separately.
-    Why is a scatterplot a better display than a binned plot for this case?
+5.  İki boyutlu grafikler, tek boyutlu grafiklerde görünmeyen aykırı değerleri ortaya çıkarır.
+    Örneğin, aşağıdaki grafikteki bazı noktalar olağandışı bir `x` ve `y` değeri kombinasyonuna sahiptir; bu da `x` ve `y` değerleri ayrı ayrı incelendiğinde normal görünse bile bu noktaları aykırı değer yapar.
+    Bu durumda bir saçılım grafiği neden kutulanmış bir grafikten daha iyi bir gösterimdir?
 
     ```{r}
     #| eval: false
@@ -602,8 +615,8 @@ One way to show that is to make the width of the boxplot proportional to the num
       coord_cartesian(xlim = c(4, 11), ylim = c(4, 11))
     ```
 
-6.  Instead of creating boxes of equal width with `cut_width()`, we could create boxes that contain roughly equal number of points with `cut_number()`.
-    What are the advantages and disadvantages of this approach?
+6.  `cut_width()` ile eşit genişlikte kutular oluşturmak yerine, `cut_number()` ile kabaca eşit sayıda nokta içeren kutular oluşturabiliriz.
+    Bu yaklaşımın avantajları ve dezavantajları nelerdir?
 
     ```{r}
     #| eval: false
@@ -611,43 +624,44 @@ One way to show that is to make the width of the boxplot proportional to the num
       geom_boxplot(aes(group = cut_number(carat, 20)))
     ```
 
-## Patterns and models
+## Örüntüler ve Modeller
 
-If a systematic relationship exists between two variables it will appear as a pattern in the data.
-If you spot a pattern, ask yourself:
+İki değişken arasında sistematik bir ilişki varsa, bu veride bir örüntü olarak ortaya çıkacaktır.
+Bir örüntü fark ederseniz, kendinize sorun:
 
--   Could this pattern be due to coincidence (i.e. random chance)?
+-   Bu örüntü bir rastlantıdan (yani rastgele şans) kaynaklanıyor olabilir mi?
 
--   How can you describe the relationship implied by the pattern?
+-   Örüntünün ima ettiği ilişkiyi nasıl tanımlayabilirsiniz?
 
--   How strong is the relationship implied by the pattern?
+-   Örüntünün ima ettiği ilişki ne kadar güçlü?
 
--   What other variables might affect the relationship?
+-   Başka hangi değişkenler ilişkiyi etkileyebilir?
 
--   Does the relationship change if you look at individual subgroups of the data?
+-   Verinin ayrı alt gruplarına bakarsanız ilişki değişiyor mu?
 
-Patterns in your data provide clues about relationships, i.e., they reveal covariation.
-If you think of variation as a phenomenon that creates uncertainty, covariation is a phenomenon that reduces it.
-If two variables covary, you can use the values of one variable to make better predictions about the values of the second.
-If the covariation is due to a causal relationship (a special case), then you can use the value of one variable to control the value of the second.
+Verinizdeki örüntüler ilişkiler hakkında ipuçları sağlar; yani kovaryasyonu ortaya çıkarırlar.
+Varyasyonu belirsizlik yaratan bir olgu olarak düşünürseniz, kovaryasyon onu azaltan bir olgudur.
+İki değişken birlikte değişirse, bir değişkenin değerlerini diğerinin değerleri hakkında daha iyi tahminler yapmak için kullanabilirsiniz.
+Kovaryasyon nedensel bir ilişkiden kaynaklanıyorsa (özel bir durum), bir değişkenin değerini diğerinin değerini kontrol etmek için kullanabilirsiniz.
 
-Models are a tool for extracting patterns out of data.
-For example, consider the diamonds data.
-It's hard to understand the relationship between cut and price, because cut and carat, and carat and price are tightly related.
-It's possible to use a model to remove the very strong relationship between price and carat so we can explore the subtleties that remain.
-The following code fits a model that predicts `price` from `carat` and then computes the residuals (the difference between the predicted value and the actual value).
-The residuals give us a view of the price of the diamond, once the effect of carat has been removed.
-Note that instead of using the raw values of `price` and `carat`, we log transform them first, and fit a model to the log-transformed values.
-Then, we exponentiate the residuals to put them back in the scale of raw prices.
+Modeller, veriden örüntüleri çıkarmak için bir araçtır.
+Örneğin, diamonds verisini ele alın.
+cut ve carat, carat ve price sıkı sıkıya ilişkili olduğundan, cut ile price arasındaki ilişkiyi anlamak zordur.
+Kalan incelikleri keşfedebilmemiz için, price ile carat arasındaki çok güçlü ilişkiyi kaldırmak üzere bir model kullanmak mümkündür.
+Aşağıdaki kod, `carat`'tan `price`'ı tahmin eden bir model uydurur ve ardından artıkları (residuals) (tahmin edilen değer ile gerçek değer arasındaki fark) hesaplar.
+Artıklar, carat'ın etkisi kaldırıldıktan sonra bize elmasın fiyatına dair bir görünüm sunar.
+`price` ve `carat`'ın ham değerlerini kullanmak yerine, önce onları logaritmik olarak dönüştürüyoruz ve logaritmik dönüştürülmüş değerlere bir model uyduruyoruz.
+Ardından, artıkları ham fiyatların ölçeğine geri koymak için üstelini alıyoruz.
 
 ```{r}
 #| message: false
 #| dev: "png"
 #| fig-alt: |
-#|   A scatterplot of residuals vs. carat of diamonds. The x-axis ranges from 0 
-#|   to 5, the y-axis ranges from 0 to almost 4. Much of the data are clustered 
-#|   around low values of carat and residuals. There is a clear, curved pattern 
-#|   showing decrease in residuals as carat increases.
+#|   Elmasların carat'ına karşı artıklarının bir saçılım grafiği. X
+#|   ekseni 0'dan 5'e, y ekseni 0'dan neredeyse 4'e kadar uzanıyor.
+#|   Verinin büyük kısmı, düşük carat ve artık değerleri etrafında
+#|   kümelenmiş. carat arttıkça artıklarda azalmayı gösteren belirgin,
+#|   eğrisel bir örüntü var.
 library(tidymodels)
 
 diamonds <- diamonds |>
@@ -666,24 +680,23 @@ ggplot(diamonds_aug, aes(x = carat, y = .resid)) +
   geom_point()
 ```
 
-Once you've removed the strong relationship between carat and price, you can see what you expect in the relationship between cut and price: relative to their size, better quality diamonds are more expensive.
+carat ile price arasındaki güçlü ilişkiyi kaldırdığınızda, cut ile price arasındaki ilişkide beklediğinizi görebilirsiniz: boyutlarına göre, daha kaliteli elmaslar daha pahalıdır.
 
 ```{r}
 #| fig-alt: |
-#|   Side-by-side box plots of residuals by cut. The x-axis displays the various 
-#|   cuts (Fair to Ideal), the y-axis ranges from 0 to almost 5. The medians are 
-#|   quite similar, between roughly 0.75 to 1.25. Each of the distributions of 
-#|   residuals is right skewed, with many outliers on the higher end.
+#|   cut'a göre artıkların yan yana kutu grafikleri. X ekseni çeşitli
+#|   cut'ları gösteriyor (Fair'den Ideal'e), y ekseni 0'dan neredeyse
+#|   5'e kadar uzanıyor. Medyanlar oldukça benzer, kabaca 0.75 ile 1.25
+#|   arasında. Artıkların dağılımlarının her biri sağa çarpık, üst
+#|   uçta pek çok aykırı değerle.
 ggplot(diamonds_aug, aes(x = cut, y = .resid)) + 
   geom_boxplot()
 ```
 
-We're not discussing modelling in this book because understanding what models are and how they work is easiest once you have tools of data wrangling and programming in hand.
+Bu kitapta modellemeyi tartışmıyoruz; çünkü modellerin ne olduğunu ve nasıl çalıştığını anlamak, elinizde veri düzenleme ve programlama araçları olduğunda en kolaydır.
 
-## Summary
+## Özet
 
-In this chapter you've learned a variety of tools to help you understand the variation within your data.
-You've seen techniques that work with a single variable at a time and with a pair of variables.
-This might seem painfully restrictive if you have tens or hundreds of variables in your data, but they're the foundation upon which all other techniques are built.
-
-In the next chapter, we'll focus on the tools we can use to communicate our results.
+Bu bölümde, verinizdeki varyasyonu anlamanıza yardımcı olacak çeşitli araçlar öğrendiniz.
+Aynı anda tek bir değişkenle ve bir çift değişkenle çalışan teknikler gördünüz.
+Verinizde onlarca veya yüzlerce değişken varsa bu can sıkıcı derecede kısıtlayıcı görünebilir; ama bunlar, diğer tüm tekniklerin üzerine inşa edildiği temeldir.
