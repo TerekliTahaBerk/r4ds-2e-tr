@@ -5,8 +5,7 @@ Authors@R: c(
     person("Hadley", "Wickham", , "hadley@rstudio.com", role = "aut"),
     person("Mine", "\u00C7etinkaya-Rundel", , "mine@rstudio.com", role = "aut"),
     person("Garrett", "Grolemund", , "garrett@rstudio.com", role = "aut"),
-    person("Taha Berk", "Terekli", , "terekli@tahaberk.com", role = c("trl", "cre")),
-    person("Zeynep", "K\u00F6se", role = "trl")
+    person("Taha Berk", "Terekli", , "terekli@tahaberk.com", role = c("trl", "cre"))
   )
 Description: Hadley Wickham, Mine Çetinkaya-Rundel ve Garrett Grolemund
     tarafından yazılan Veri Bilimi için R kitabının ikinci baskısının Türkçe

@@ -10,6 +10,8 @@ Bu depo, Hadley Wickham, Mine Çetinkaya-Rundel ve Garrett Grolemund tarafından
 
 Çeviri, İngilizce kaynak deponun `e7a2b797b6bff53602a6e1d2fbe6d0a0a2c01a17` commit'i esas alınarak hazırlanmıştır. Kitap [Quarto](https://quarto.org/) ile oluşturulur.
 
+İkinci baskının Türkçe çevirisi **Taha Berk Terekli** tarafından hazırlanmıştır. Birinci baskının Türkçe çevirisine emek veren editör ve katkıcılara kitabın [Çeviriye önsöz](index.qmd#çeviriye-önsöz) bölümünde teşekkür edilmektedir.
+
 ## Yerel olarak oluşturma
 
 Kitabı oluşturmak için güncel bir Quarto kurulumu, R ve `DESCRIPTION` dosyasında listelenen R paketleri gerekir. Bağımlılıkları kurduktan sonra depo kökünde şu komutu çalıştırın:

@@ -42,13 +42,47 @@ Veri bilimi (data science), bu özgürleştirici ortamda tüm disiplinlerle iç 
 Günümüz veri analisti için fırsat eşitliği sağlayan bir başka unsur da R gibi ücretsiz, açık kaynaklı ve topluluk destekli programlama dillerinin yaygınlaşmasıdır.
 Artık karmaşık analizler yapmak isteyen bir araştırmacının tek ihtiyacı bir bilgisayar, internet bağlantısı ve doğru kaynaklara ulaşma isteğidir.
 
-### Bir geleneğin devamı: İkinci baskı (2e)
+### Birinci baskının Türkçe çevirisine teşekkür
 
-Elinizdeki çalışma, ortak bir emeğin ve sürekliliğin ürünüdür.
-Kitabın **birinci baskısı**, COVID-19 pandemisinin zorlu koşullarında **İsmail Bekar, Nurbahar Usta ve Bilgecan Şen**'in editörlüğünde büyük bir özveriyle Türkçeye kazandırılmıştı.
+Elinizdeki çalışma, ortak bir emeğin ve kuşaklar arasında aktarılan gönüllü bir çeviri geleneğinin devamıdır.
+[*Veri Bilimi için R* kitabının birinci baskısı](https://tr.r4ds.hadley.nz), COVID-19 salgınından önce başlayan ve salgın yıllarının kişisel ve mesleki güçlükleri arasında tamamlanan uzun bir çalışmayla Türkçeye kazandırıldı.
+Bu öncü çalışma, kitabın Türkiye'de daha geniş bir okur kitlesine ulaşmasının yolunu açtı ve ikinci baskının çevirisi için değerli bir temel oluşturdu.
 
-Bugün bu değerli mirası devralarak veri işleme, görselleştirme ve modern programlama uygulamalarının baştan sona yenilendiği **ikinci baskıyı** (2e) Türkçeye kazandırmış olmanın heyecanını yaşıyoruz.
-Bu yeni baskının çeviri süreci **Taha Berk Terekli** ve **Zeynep Köse** tarafından yürütülmüştür.
-Amacımız yalnızca metni Türkçeleştirmek değil, R ekosistemindeki köklü değişiklikleri ve güncel en iyi uygulamaları ana dilimizde sunarak bu değerli kaynağı güncel tutmaktır.
+Birinci baskının çeviri editörleri **[İsmail Bekar](https://x.com/fire_ecologist)** ([@fire_ecologist](https://x.com/fire_ecologist)), **[Nurbahar Usta](https://x.com/nurbaharusta)** ([@nurbaharusta](https://x.com/nurbaharusta)) ve **[Bilgecan Şen](https://x.com/bilgecan_sen)** ([@bilgecan_sen](https://x.com/bilgecan_sen)) idi.
 
-Bu çeviri bütünüyle gönüllü bir çabanın ürünüdür. Titizliğimize rağmen gözden kaçan hatalar olabilir. Bu hataları bize bildirerek kaynağın gelişmesine katkıda bulunursanız çok mutlu oluruz. Düzelti ve çeviri önerilerinizi <https://bit.ly/r4ds-oneri> adresinden iletebilirsiniz.
+Birinci baskının çevirisine katkıda bulunanlar şunlardı:
+
+-   **Anıl Bahar** — 28. Bölüm
+-   **Ayşe Mergenci** — 7. Bölüm
+-   **Bahar Patlar** — 27. ve 29. Bölümler
+-   **Elif Bozlak** — 14. Bölüm
+-   **Cansu Çetin** — 13. Bölüm
+-   **Cansu Ülgen** — 10. Bölüm
+-   **Dilşad Dağtekin** — 3. ve 4. Bölümler
+-   **Gökçe Ayan** — 11. ve 12. Bölümler
+-   **Gürçay Kıvanç Akyıldız** — 23. Bölüm
+-   **Gürkan Semiz** — 8. Bölüm
+-   **[İsmail Bekar](https://x.com/fire_ecologist)** — 1., 2., 9., 22. ve 30. Bölümler
+-   **Kahraman İpekdal** — 19. ve 20. Bölümler
+-   **Melike Dönertaş** — 5., 6., 15. ve 16. Bölümler
+-   **[Nurbahar Usta](https://x.com/nurbaharusta)** — 17., 18., 21. ve 26. Bölümler
+-   **Ortaç Çetintaş** — 24. ve 25. Bölümler
+
+Bu çeviriye emek veren herkese ve çalışmaya destek olan **Ekoloji ve Evrimsel Biyoloji Derneği'ne** gönülden teşekkür ederim.
+Onların gönüllü emeği olmasaydı bugün sürdürdüğümüz bu Türkçe kaynak geleneği de aynı ölçüde güçlü olmazdı.
+
+### İkinci baskının Türkçe çevirisi
+
+Veri işleme, görselleştirme ve modern programlama uygulamalarının baştan sona yenilendiği bu ikinci baskının Türkçe çevirisi **[Taha Berk Terekli](https://x.com/tahbrk)** ([@tahbrk](https://x.com/tahbrk)) tarafından hazırlanmıştır.
+Bu çalışmadaki amacım yalnızca İngilizce metni Türkçeye aktarmak değil; kitabın öğretici yapısını, teknik doğruluğunu ve doğal anlatımını koruyarak R ekosistemindeki güncel yaklaşım ve uygulamaları Türkçe okurla buluşturmaktır.
+
+Bu uzun süreç boyunca sabırları, anlayışları ve cesaretlendirmeleriyle yanımda olan aileme, arkadaşlarıma ve sevdiklerime içtenlikle teşekkür ederim.
+Çalışmayı sürdürmemi sağlayan her sohbetin, geri bildirimin ve moral desteğinin bu çeviride ayrı bir payı var.
+Ayrıca bilgisini özgürce paylaşan R topluluğuna ve açık kaynak kültürünü yaşatan herkese teşekkür borçluyum.
+
+Bu çeviri bütünüyle gönüllü bir çalışmanın ürünüdür.
+Gösterilen özene rağmen gözden kaçan hatalar bulunabilir; düzelti ve çeviri önerilerinizi [projenin sorun takipçisi](https://github.com/TerekliTahaBerk/r4ds-2e-tr/issues) üzerinden paylaşarak kaynağın gelişmesine katkıda bulunabilirsiniz.
+
+**[Taha Berk Terekli](https://x.com/tahbrk)** — [@tahbrk](https://x.com/tahbrk)
+
+*İkinci baskının Türkçe çevirmeni*
