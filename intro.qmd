@@ -31,9 +31,9 @@ Tipik bir veri bilimi projesinin adımlarına ilişkin modelimiz @fig-ds-diagram
 knitr::include_graphics("diagrams/data-science/base.png", dpi = 270)
 ```
 
-Öncelikle verilerinizi R'a **aktarmalısınız**.
+Öncelikle verilerinizi R'a **içe aktarmalısınız**.
 Bu işlem genellikle bir dosyada, veritabanında veya web uygulaması programlama arayüzünde (API) saklanan verileri alıp R'daki bir **veri çerçevesine** (data frame) yüklemek anlamına gelir.
-Verilerinizi R'a aktaramıyorsanız üzerlerinde veri bilimi de yapamazsınız!
+Verilerinizi R'a içe aktaramıyorsanız üzerlerinde veri bilimi de yapamazsınız!
 
 Verilerinizi içe aktardıktan sonra **düzenlemek** iyi bir fikirdir.
 Verileri düzenlemek, veri kümesinin anlamsal yapısıyla saklanma biçiminin örtüştüğü tutarlı bir yapıda saklamak demektir.
@@ -73,7 +73,7 @@ Kitap boyunca daha fazlasını öğrenebileceğiniz kaynaklara yönlendirmeler y
 ## Bu kitap nasıl düzenlendi?
 
 Veri bilimi araçlarına ilişkin yukarıdaki açıklama, bu araçları bir analiz sırasında kabaca kullanacağınız sıraya göre düzenlenmiştir (elbette bu adımlardan defalarca geçeceksiniz).
-Ancak deneyimlerimize göre işe veri aktarmayı ve düzenlemeyi öğrenerek başlamak pek uygun değildir; çünkü bu süreç zamanın %80'inde sıradan ve sıkıcı, kalan %20'sinde ise tuhaf ve sinir bozucudur.
+Ancak deneyimlerimize göre işe veri içe aktarmayı ve düzenlemeyi öğrenerek başlamak pek uygun değildir; çünkü bu süreç zamanın %80'inde sıradan ve sıkıcı, kalan %20'sinde ise tuhaf ve sinir bozucudur.
 Yeni bir konuyu öğrenmeye başlamak için hiç de iyi bir yer değil!
 
 Bunun yerine, önceden içe aktarılıp düzenlenmiş verileri görselleştirmek ve dönüştürmekle başlayacağız.

@@ -2,7 +2,7 @@
 
 Bu dosya, bölümler arasında tutarlı teknik dil kullanmak için tutulan çeviri belleğidir. Bağlam farklı bir karşılık gerektiriyorsa ilgili dosyada bu durum ayrıca değerlendirilir.
 
-| English term | Tercih edilen Türkçe | İlk kullanım | Notlar |
+| İngilizce terim | Tercih edilen Türkçe | İlk kullanım | Notlar |
 |---|---|---|---|
 | aesthetic / aesthetic mapping | estetik / estetik eşleme | `data-visualize.qmd` | ggplot2 bağlamında kullanılır. |
 | assignment / assignment operator | atama / atama operatörü | `workflow-basics.qmd` | `<-` kod içinde aynen korunur. |

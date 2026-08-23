@@ -138,7 +138,7 @@ read_csv(csv, col_types = cols(date = col_date("%d/%m/%y")))
 read_csv(csv, col_types = cols(date = col_date("%y/%m/%d")))
 ```
 
-Tarih biçimini nasıl belirtirseniz belirtin, tarih R'a aktarıldıktan sonra her zaman aynı biçimde görüntülenir.
+Tarih biçimini nasıl belirtirseniz belirtin, tarih R'a içe aktarıldıktan sonra her zaman aynı biçimde görüntülenir.
 
 `%b` veya `%B` kullanıyor ve İngilizce dışındaki tarihlerle çalışıyorsanız bir `locale()` da sağlamanız gerekir.
 `date_names_langs()` içindeki yerleşik diller listesine bakın ya da `date_names()` ile kendinizinkini oluşturun.
@@ -297,7 +297,7 @@ as_date(365 * 10 + 2)
 
 ## Tarih-saat bileşenleri
 
-Tarih-saat verilerini R'ın tarih-saat veri yapılarına nasıl aktaracağınızı öğrendiğinize göre bunlarla neler yapabileceğinizi inceleyelim.
+Tarih-saat verilerini R'ın tarih-saat veri yapılarına nasıl içe aktaracağınızı öğrendiğinize göre bunlarla neler yapabileceğinizi inceleyelim.
 Bu bölüm ayrı bileşenleri alıp ayarlamanızı sağlayan erişim fonksiyonlarına odaklanacak.
 Sonraki bölümde tarih-saatlerle aritmetiğin nasıl çalıştığına bakacağız.
 
@@ -690,7 +690,7 @@ y2024 / days(1)
 Saat dilimleri jeopolitik oluşumlarla etkileşimleri nedeniyle son derece karmaşık bir konudur.
 Neyse ki ayrıntıların tümü veri analizi için önemli olmadığından hepsine girmemiz gerekmiyor; ancak doğrudan ele almamız gereken birkaç güçlük var.
 
-<!--# https://www.ietf.org/timezones/tzdb-2018a/theory.html -->
+<!--# https://data.iana.org/time-zones/theory.html -->
 
 İlk güçlük, saat dilimlerinin günlük adlarının çoğunlukla belirsiz olmasıdır.
 Örneğin Amerikalıysanız EST'yi, yani Eastern Standard Time'ı muhtemelen biliyorsunuzdur.

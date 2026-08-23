@@ -7,12 +7,12 @@ source("_common.R")
 
 ## Giriş
 
-@sec-data-import bölümünde `.csv` ve `.tsv` gibi düz metin dosyalarından veri aktarmayı öğrendiniz.
+@sec-data-import bölümünde `.csv` ve `.tsv` gibi düz metin dosyalarından veri içe aktarmayı öğrendiniz.
 Şimdi Excel veya Google E-Tablolar hesap çizelgelerinden veri almayı öğrenme zamanı.
 @sec-data-import bölümünde öğrendiklerinizden yararlanacak, ayrıca hesap çizelgelerindeki verilerle çalışmanın getirdiği ek konuları ve karmaşıklıkları ele alacağız.
 
 Siz veya çalışma arkadaşlarınız verileri düzenlemek için hesap çizelgeleri kullanıyorsanız Karl Broman ve Kara Woo'nun "Data Organization in Spreadsheets" makalesini okumanızı özellikle öneririz: <https://doi.org/10.1080/00031305.2017.1375989>.
-Bu makaledeki en iyi uygulamalar, analiz etmek ve görselleştirmek üzere hesap çizelgelerinden R'a veri aktarırken sizi birçok sıkıntıdan kurtaracaktır.
+Bu makaledeki en iyi uygulamalar, analiz etmek ve görselleştirmek üzere hesap çizelgelerinden R'a veri içe aktarırken sizi birçok sıkıntıdan kurtaracaktır.
 
 ## Excel
 
@@ -301,10 +301,10 @@ Kafa karıştırıcı biçimde, sayı gibi görünen ancak gerçekte karakter di
 
 Temel verilerin saklanma ve gösterilme biçimleri arasındaki farklar, veriler R'a yüklendiğinde şaşırtıcı sonuçlara yol açabilir.
 readxl varsayılan olarak belirli bir sütundaki veri türünü tahmin eder.
-Önerilen iş akışı, sütun türlerini readxl'ın tahmin etmesine izin vermek, tahminleri denetlemek ve uygun değillerse @sec-reading-spreadsheets-excel bölümünde gösterildiği gibi `col_types` belirterek verileri yeniden aktarmaktır.
+Önerilen iş akışı, sütun türlerini readxl'ın tahmin etmesine izin vermek, tahminleri denetlemek ve uygun değillerse @sec-reading-spreadsheets-excel bölümünde gösterildiği gibi `col_types` belirterek verileri yeniden içe aktarmaktır.
 
 Excel hesap çizelgenizde bu türleri karışık biçimde içeren, örneğin bazı hücreleri sayısal, bazıları metin, bazıları tarih olan bir sütun bulunması başka bir güçlüktür.
-Veriler R'a aktarılırken readxl bazı kararlar vermek zorundadır.
+Veriler R'a içe aktarılırken readxl bazı kararlar vermek zorundadır.
 Bu durumlarda sütun türünü `"list"` olarak ayarlayabilirsiniz. Böylece sütun, her elemanının türü ayrı ayrı tahmin edilen, uzunluğu 1 olan vektörlerden oluşan bir liste olarak yüklenir.
 
 ::: callout-note

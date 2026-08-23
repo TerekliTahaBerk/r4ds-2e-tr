@@ -5,7 +5,7 @@
 source("_common.R")
 ```
 
-Şimdiye kadar verilerinizi R'a aktarmak, çözümlemeye uygun bir biçimde düzenlemek ve ardından dönüştürme ile görselleştirme yoluyla anlamak için gereken araçları öğrendiniz.
+Şimdiye kadar verilerinizi R'a içe aktarmak, çözümlemeye uygun bir biçimde düzenlemek ve ardından dönüştürme ile görselleştirme yoluyla anlamak için gereken araçları öğrendiniz.
 Ancak çözümlemeniz ne kadar başarılı olursa olsun onu başkalarına açıklayamadığınız sürece hiçbir önemi yoktur: Sonuçlarınızı **iletmeniz** gerekir.
 
 ```{r}

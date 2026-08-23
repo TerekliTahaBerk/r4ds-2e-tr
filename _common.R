@@ -20,12 +20,12 @@ options(
   cli.num_colors = 0,
   cli.hyperlink = FALSE,
   pillar.bold = TRUE,
-  width = 77 # 80 - 3 for #> comment
+  width = 77 # 80 eksi #> yorumunun 3 karakteri
 )
 
 ggplot2::theme_set(ggplot2::theme_gray(12))
 
-# use results: "asis" when setting a status for a chapter
+# Bir bölümün durumunu ayarlarken results: "asis" kullanın
 status <- function(type) {
   status <- switch(
     type,

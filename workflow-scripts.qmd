@@ -157,7 +157,7 @@ Bir dizinde çok sayıda dosyanız varsa düzeni bir adım ileri götürüp fark
 
 Bir gün R'dan çıkmanız, başka bir şey yapmanız ve daha sonra analizinize geri dönmeniz gerekecek.
 Bir gün, aynı anda birden fazla analiz üzerinde çalışacak ve bunları ayrı tutmak isteyeceksiniz.
-Bir gün, dış dünyadan veriyi R'a getirmeniz ve sayısal sonuçları ile şekilleri R'dan tekrar dünyaya göndermeniz gerekecek.
+Bir gün dış dünyadan veriyi R'a getirmeniz, sayısal sonuçları ve şekilleri de R'dan yeniden dış dünyaya göndermeniz gerekecek.
 
 Bu gerçek hayat durumlarıyla başa çıkmak için iki karar vermeniz gerekir:
 
@@ -345,7 +345,7 @@ Bu durum işleri gereksiz yere zorlaştırır; bu yüzden her zaman düz eğik �
     Onu kullanmayı pratik edin!
 
 2.  RStudio tanılamaları başka hangi yaygın hataları raporlayacak?
-    Öğrenmek için <https://support.posit.co/hc/en-us/articles/205753617-Code-Diagnostics> adresini okuyun.
+    Öğrenmek için <https://support.posit.co/hc/en-us/articles/205753617-Code-Diagnostics-in-the-RStudio-IDE> adresini okuyun.
 
 ## Özet
 

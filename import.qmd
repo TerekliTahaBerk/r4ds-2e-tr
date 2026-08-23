@@ -5,7 +5,7 @@
 source("_common.R")
 ```
 
-Kitabın bu kısmında çok daha geniş bir veri yelpazesini R'a aktarmayı ve analiz için kullanışlı bir biçime getirmeyi öğreneceksiniz.
+Kitabın bu kısmında çok daha geniş bir veri yelpazesini R'a içe aktarmayı ve analiz için kullanışlı bir biçime getirmeyi öğreneceksiniz.
 Bazen bunun için uygun veri içe aktarma paketinden tek bir fonksiyon çağırmak yeterlidir.
 Daha karmaşık durumlarda ise üzerinde çalışmayı tercih edeceğiniz düzenli veri dikdörtgenine ulaşmak için hem düzenleme hem de dönüştürme gerekebilir.
 
@@ -23,9 +23,9 @@ knitr::include_graphics("diagrams/data-science/import.png", dpi = 270)
 
 Kitabın bu kısmında, aşağıdaki biçimlerde saklanan verilere nasıl erişeceğinizi öğreneceksiniz:
 
--   @sec-import-spreadsheets bölümünde Excel hesap çizelgelerinden ve Google E-Tablolar'dan veri aktarmayı öğreneceksiniz.
+-   @sec-import-spreadsheets bölümünde Excel hesap çizelgelerinden ve Google E-Tablolar'dan veri içe aktarmayı öğreneceksiniz.
 
--   @sec-import-databases bölümünde verileri bir veritabanından R'a aktarmayı öğrenecek, R'dan veritabanına aktarma konusunda da kısaca bilgi edineceksiniz.
+-   @sec-import-databases bölümünde verileri bir veritabanından R'a içe aktarmayı öğrenecek, R'dan veritabanına aktarma konusunda da kısaca bilgi edineceksiniz.
 
 -   @sec-arrow bölümünde, özellikle Parquet biçiminde saklanan ve belleğe sığmayan verilerle çalışmak için güçlü bir araç olan Arrow'u öğreneceksiniz.
 

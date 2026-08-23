@@ -9,14 +9,14 @@ En büyük değişikliklerin kısa bir özeti şöyle:
 -   Kitabın ilk kısmının adı “Bütünsel bakış” olarak değiştirildi.
     Bu kısmın amacı, ayrıntılara dalmadan önce size veri bilimi sürecinin bütününe ilişkin genel bir çerçeve sunmaktır.
 
--   Kitabın ikinci kısmının adı “Görselleştirme”.
+-   Kitabın ikinci kısmının adı “Görselleştirme”dir.
     Bu kısım, veri görselleştirme araçlarını ve en iyi uygulamaları ilk baskıya kıyasla çok daha kapsamlı biçimde ele alıyor.
     Tüm ayrıntılar için en iyi kaynak hâlâ [ggplot2 kitabı](http://ggplot2-book.org/), ancak R4DS artık en önemli tekniklerin çok daha büyük bir bölümünü kapsıyor.
 
 -   Kitabın üçüncü kısmının adı artık “Dönüştürme”; ayrıca bu kısma sayılar, mantıksal vektörler ve eksik değerler hakkında yeni bölümler eklendi.
     Bu konular daha önce veri dönüştürme bölümünün içinde ele alınıyordu, ancak tüm ayrıntıları kapsayabilmek için çok daha fazla yere ihtiyaç vardı.
 
--   Kitabın dördüncü kısmının adı “Aktarma”.
+-   Kitabın dördüncü kısmının adı “İçe aktarma”dır.
     Bu, düz metin dosyalarını okumanın ötesine geçerek hesap çizelgeleriyle çalışmayı, veritabanlarından veri almayı, büyük verilerle çalışmayı, hiyerarşik verileri tablo biçimine dönüştürmeyi ve web sitelerinden veri kazımayı ele alan yepyeni bir bölüm dizisidir.
 
 -   “Programlama” kısmı yerini koruyor, ancak fonksiyon yazımının ve iterasyonun en önemli yönlerine odaklanacak şekilde baştan sona yeniden yazıldı.

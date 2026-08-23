@@ -36,8 +36,8 @@ Dört bölüm, veri biliminin araçlarına odaklanır:
 -   @sec-data-tidy bölümünde, dönüştürmeyi, görselleştirmeyi ve modellemeyi kolaylaştıran tutarlı bir veri saklama yöntemi olan düzenli veri (tidy data) hakkında bilgi edineceksiniz.
     Bu yaklaşımın temelindeki ilkeleri ve verilerinizi nasıl düzenli bir biçime getireceğinizi göreceksiniz.
 
--   Verilerinizi dönüştürüp görselleştirebilmek için önce R'a aktarmanız gerekir.
-    @sec-data-import bölümünde, `.csv` dosyalarını R'a aktarmanın temellerini öğreneceksiniz.
+-   Verilerinizi dönüştürüp görselleştirebilmek için önce R'a içe aktarmanız gerekir.
+    @sec-data-import bölümünde, `.csv` dosyalarını R'a içe aktarmanın temellerini öğreneceksiniz.
 
 Bu bölümlerin arasına R iş akışınıza odaklanan dört bölüm daha serpiştirilmiştir.
 @sec-workflow-basics, @sec-workflow-style ve @sec-workflow-scripts-projects bölümlerinde R kodunuzu yazmaya ve düzenlemeye yönelik iyi iş akışı uygulamalarını öğreneceksiniz.

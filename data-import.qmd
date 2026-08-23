@@ -8,7 +8,7 @@ source("_common.R")
 ## Giriş
 
 R paketlerinin sağladığı verilerle çalışmak, veri bilimi araçlarını öğrenmenin harika bir yoludur; ancak bir noktada öğrendiklerinizi kendi verilerinize uygulamak istersiniz.
-Bu bölümde veri dosyalarını R'a aktarmanın temellerini öğreneceksiniz.
+Bu bölümde veri dosyalarını R'a içe aktarmanın temellerini öğreneceksiniz.
 
 Bu bölüm özellikle tablo biçimindeki düz metin dosyalarını okumaya odaklanır.
 Sütun adları, sütun türleri ve eksik veriler gibi özellikleri ele almaya yönelik pratik önerilerle başlayacağız.
@@ -17,7 +17,7 @@ Son olarak, R'da veri çerçevelerini elle nasıl oluşturacağınızı öğrene
 
 ### Ön koşullar
 
-Bu bölümde çekirdek tidyverse'in bir parçası olan **readr** paketiyle düz metin dosyalarını R'a aktarmayı öğreneceksiniz.
+Bu bölümde çekirdek tidyverse'in bir parçası olan **readr** paketiyle düz metin dosyalarını R'a içe aktarmayı öğreneceksiniz.
 
 ```{r}
 #| label: setup

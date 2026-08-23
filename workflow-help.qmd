@@ -124,7 +124,7 @@ R topluluğunu daha geniş ölçekte takip etmek için [R Weekly](https://rweekl
 ## Özet
 
 Bu bölüm, kitabın Bütünsel bakış (Whole Game) kısmını tamamlıyor.
-Artık veri bilimi sürecinin en önemli kısımlarını gördünüz: görselleştirme, dönüştürme, düzenleme ve aktarma.
+Artık veri bilimi sürecinin en önemli kısımlarını gördünüz: görselleştirme, dönüştürme, düzenleme ve içe aktarma.
 Artık tüm sürece dair bütünsel bir bakış açınız var ve küçük parçaların ayrıntılarına girmeye başlıyoruz.
 
 Kitabın bir sonraki kısmı olan Görselleştirme; grafik gramerini ve ggplot2 ile veri görselleştirmeyi daha ayrıntılı ele alır, şimdiye kadar öğrendiğiniz araçlarla keşifçi veri analizinin nasıl yapılacağını gösterir ve iletişim amaçlı grafik oluşturmaya yönelik iyi uygulamaları tanıtır.

@@ -7,7 +7,7 @@ editor: visual
 #| label: setup
 ```
 
-# Quarto 
+# Quarto
 
 ```{r}
 #| label: cars

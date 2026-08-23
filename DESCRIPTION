@@ -13,7 +13,7 @@ Description: Hadley Wickham, Mine Çetinkaya-Rundel ve Garrett Grolemund
 URL: https://www.tahaberk.com/r4ds-2e-tr/,
     https://github.com/TerekliTahaBerk/r4ds-2e-tr
 BugReports: https://github.com/TerekliTahaBerk/r4ds-2e-tr/issues
-Depends: 
+Depends:
     R (>= 3.1.0)
 Imports:
     arrow,

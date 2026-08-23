@@ -17,7 +17,7 @@ Bunun yerine, site API sunsun ya da sunmasın çalışan bir teknik olan web kaz
 [^webscraping-1]: Ayrıca birçok popüler API'yi sarmalayan CRAN paketleri zaten vardır; bu nedenle işe biraz araştırma yaparak başlayın!
 
 Bu bölümde HTML'in temellerine geçmeden önce web kazımanın etik ve hukuki yönlerini ele alacağız.
-Ardından sayfadaki belirli öğeleri bulmak için CSS seçicilerinin temellerini ve HTML'deki metinlerle özniteliklerden R'a veri aktarmak için rvest fonksiyonlarını nasıl kullanacağınızı öğreneceksiniz.
+Ardından sayfadaki belirli öğeleri bulmak için CSS seçicilerinin temellerini ve HTML'deki metinlerle özniteliklerden R'a veri içe aktarmak için rvest fonksiyonlarını nasıl kullanacağınızı öğreneceksiniz.
 Sonrasında kazıdığınız sayfa için hangi CSS seçicisine ihtiyacınız olduğunu belirlemeye yarayan bazı teknikleri tartışacak; birkaç örnek olay ve dinamik web siteleri üzerine kısa bir değerlendirmeyle bitireceğiz.
 
 ### Ön koşullar
@@ -541,7 +541,7 @@ Daha fazla ayrıntı için [rvest web sitesine](http://rvest.tidyverse.org/) bak
 ## Özet
 
 Bu bölümde web sayfalarından veri kazımanın nedenlerini, neden yapılmaması gerekebileceğini ve nasıl yapılacağını öğrendiniz.
-Önce HTML'in temellerini ve belirli öğelere başvurmak için CSS seçicilerini kullanmayı, ardından HTML'den R'a veri aktarmak için rvest paketini kullanmayı öğrendiniz.
+Önce HTML'in temellerini ve belirli öğelere başvurmak için CSS seçicilerini kullanmayı, ardından HTML'den R'a veri içe aktarmak için rvest paketini kullanmayı öğrendiniz.
 Sonra web kazımayı iki örnek olayla gösterdik: rvest paketinin web sitesinden Star Wars filmleri hakkındaki verileri kazıdığımız daha basit bir durum ve IMDb'deki en iyi 250 filmi kazıdığımız daha karmaşık bir durum.
 
 Özellikle dinamik siteler söz konusu olduğunda web'den veri kazımanın teknik ayrıntıları karmaşık olabilir; ancak hukuki ve etik değerlendirmeler daha da karmaşık olabilir.

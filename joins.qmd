@@ -884,4 +884,4 @@ Son olarak eşitsizlik birleştirmelerinin gücüne göz atıp birkaç ilginç k
 Bu bölüm, kitabın ayrı sütunlar ve tibble'larla kullanabileceğiniz araçlara odaklanan "Dönüştürme" kısmını tamamlıyor.
 Mantıksal vektörler, sayılar ve eksiksiz tablolarla çalışmak için dplyr ve temel R fonksiyonlarını; karakter dizileri için stringr, tarih-saatler için lubridate ve faktörler için forcats fonksiyonlarını öğrendiniz.
 
-Kitabın sonraki kısmında çeşitli veri türlerini düzenli biçimde R'a aktarma hakkında daha fazla bilgi edineceksiniz.
+Kitabın sonraki kısmında çeşitli veri türlerini düzenli biçimde R'a içe aktarma hakkında daha fazla bilgi edineceksiniz.

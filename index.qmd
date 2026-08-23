@@ -48,7 +48,7 @@ Elinizdeki çalışma, ortak bir emeğin ve kuşaklar arasında aktarılan gön�
 [*Veri Bilimi için R* kitabının birinci baskısı](https://tr.r4ds.hadley.nz), COVID-19 salgınından önce başlayan ve salgın yıllarının kişisel ve mesleki güçlükleri arasında tamamlanan uzun bir çalışmayla Türkçeye kazandırıldı.
 Bu öncü çalışma, kitabın Türkiye'de daha geniş bir okur kitlesine ulaşmasının yolunu açtı ve ikinci baskının çevirisi için değerli bir temel oluşturdu.
 
-Birinci baskının çeviri editörleri **[İsmail Bekar](https://x.com/fire_ecologist)** ([@fire_ecologist](https://x.com/fire_ecologist)), **[Nurbahar Usta](https://x.com/nurbaharusta)** ([@nurbaharusta](https://x.com/nurbaharusta)) ve **[Bilgecan Şen](https://x.com/bilgecan_sen)** ([@bilgecan_sen](https://x.com/bilgecan_sen)) idi.
+Birinci baskının çeviri editörleri **[İsmail Bekar](https://x.com/fire_ecologist)**, **[Nurbahar Usta](https://x.com/nurbaharusta)** ve **[Bilgecan Şen](https://x.com/bilgecan_sen)** idi.
 
 Birinci baskının çevirisine katkıda bulunanlar şunlardı:
 
@@ -71,18 +71,12 @@ Birinci baskının çevirisine katkıda bulunanlar şunlardı:
 Bu çeviriye emek veren herkese ve çalışmaya destek olan **Ekoloji ve Evrimsel Biyoloji Derneği'ne** gönülden teşekkür ederim.
 Onların gönüllü emeği olmasaydı bugün sürdürdüğümüz bu Türkçe kaynak geleneği de aynı ölçüde güçlü olmazdı.
 
-### İkinci baskının Türkçe çevirisi
+### İkinci Baskının Türkçe Çevirisi
 
-Veri işleme, görselleştirme ve modern programlama uygulamalarının baştan sona yenilendiği bu ikinci baskının Türkçe çevirisi **[Taha Berk Terekli](https://x.com/tahbrk)** ([@tahbrk](https://x.com/tahbrk)) tarafından hazırlanmıştır.
-Bu çalışmadaki amacım yalnızca İngilizce metni Türkçeye aktarmak değil; kitabın öğretici yapısını, teknik doğruluğunu ve doğal anlatımını koruyarak R ekosistemindeki güncel yaklaşım ve uygulamaları Türkçe okurla buluşturmaktır.
+Veri işleme, görselleştirme ve modern programlama uygulamalarının baştan sona yenilendiği bu ikinci baskının Türkçe çevirisi **[Taha Berk Terekli](https://x.com/tahbrk)** tarafından hazırlanmıştır.
 
-Bu uzun süreç boyunca sabırları, anlayışları ve cesaretlendirmeleriyle yanımda olan aileme, arkadaşlarıma ve sevdiklerime içtenlikle teşekkür ederim.
-Çalışmayı sürdürmemi sağlayan her sohbetin, geri bildirimin ve moral desteğinin bu çeviride ayrı bir payı var.
-Ayrıca bilgisini özgürce paylaşan R topluluğuna ve açık kaynak kültürünü yaşatan herkese teşekkür borçluyum.
+Bu çalışmadaki amacım yalnızca metni Türkçeye aktarmak değil; kitabın öğretici yapısını, teknik doğruluğunu ve doğal anlatımını koruyarak R ekosistemindeki güncel yaklaşımları Türkçe okurla buluşturmaktır.
 
-Bu çeviri bütünüyle gönüllü bir çalışmanın ürünüdür.
-Gösterilen özene rağmen gözden kaçan hatalar bulunabilir; düzelti ve çeviri önerilerinizi [düzeltme önerileri formu](https://tally.so/r/9qAz5p) üzerinden paylaşarak kaynağın gelişmesine katkıda bulunabilirsiniz.
+Uzun ve emek isteyen bu süreçte sabırları, anlayışları ve destekleriyle yanımda olan sevdiklerime; ayrıca bilgisini özgürce paylaşan R topluluğuna ve açık kaynak kültürüne gönülden teşekkür ederim. Bu çevirinin her satırında onların desteğinin de küçük bir izi var.
 
-**[Taha Berk Terekli](https://x.com/tahbrk)** — [@tahbrk](https://x.com/tahbrk)
-
-*İkinci baskının Türkçe çevirmeni*
+Bu çeviri bütünüyle gönüllü bir çalışmanın ürünüdür. Gözden kaçan hata ve geliştirme önerilerinizi [düzeltme önerileri formu](https://tally.so/r/9qAz5p) üzerinden paylaşarak bu kaynağın daha da gelişmesine katkıda bulunabilirsiniz.
