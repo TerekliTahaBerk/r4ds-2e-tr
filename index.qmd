@@ -81,7 +81,7 @@ Bu uzun süreç boyunca sabırları, anlayışları ve cesaretlendirmeleriyle ya
 Ayrıca bilgisini özgürce paylaşan R topluluğuna ve açık kaynak kültürünü yaşatan herkese teşekkür borçluyum.
 
 Bu çeviri bütünüyle gönüllü bir çalışmanın ürünüdür.
-Gösterilen özene rağmen gözden kaçan hatalar bulunabilir; düzelti ve çeviri önerilerinizi [projenin sorun takipçisi](https://github.com/TerekliTahaBerk/r4ds-2e-tr/issues) üzerinden paylaşarak kaynağın gelişmesine katkıda bulunabilirsiniz.
+Gösterilen özene rağmen gözden kaçan hatalar bulunabilir; düzelti ve çeviri önerilerinizi [düzeltme önerileri formu](https://tally.so/r/9qAz5p) üzerinden paylaşarak kaynağın gelişmesine katkıda bulunabilirsiniz.
 
 **[Taha Berk Terekli](https://x.com/tahbrk)** — [@tahbrk](https://x.com/tahbrk)
 
