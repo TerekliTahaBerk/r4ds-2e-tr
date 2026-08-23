@@ -1,21 +1,21 @@
-# İş Akışı: Temeller {#sec-workflow-basics}
+# İş akışı: temeller {#sec-workflow-basics}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-Artık R kodu çalıştırma konusunda biraz deneyiminiz var.
-Size çok fazla ayrıntı vermedik; ama açıkça temelleri çözdünüz, yoksa bu kitabı hayal kırıklığıyla bir kenara atardınız!
-R'da programlamaya başlarken hayal kırıklığı yaşamak doğaldır; çünkü R noktalama işaretleri konusunda o kadar titizdir ki, yanlış yerde tek bir karakter bile şikayet etmesine yol açabilir.
-Ama biraz hayal kırıklığı yaşamayı beklemeniz gerekse de, bu deneyimin tipik ve geçici olduğuna dair rahatlayın: bu herkesin başına gelir ve bunu aşmanın tek yolu denemeye devam etmektir.
+Artık R kodu çalıştırma konusunda biraz deneyim kazandınız.
+Size pek ayrıntı vermedik ama belli ki temel noktaları çözdünüz; yoksa hayal kırıklığı içinde bu kitabı çoktan bir kenara atmış olurdunuz!
+R, noktalama işaretleri konusunda çok titiz olduğu ve tek bir karakterin yanlış yerde bulunması bile hata vermesine yettiği için R'da programlamaya başlarken zorlanmak doğaldır.
+Bunun herkesin başına gelen ve zamanla geçen bir süreç olduğunu bilmek içinizi biraz rahatlatabilir; bu süreci aşmanın tek yolu denemeyi sürdürmektir.
 
 Devam etmeden önce, R kodu çalıştırma konusunda sağlam bir temele sahip olduğunuzdan ve RStudio'nun en yararlı özelliklerinden bazılarını bildiğinizden emin olalım.
 
-## Kodlama Temelleri
+## Kodlamanın temelleri
 
-Sizi bir an önce grafik çizmeye başlatmak adına şimdiye kadar atladığımız bazı temelleri gözden geçirelim.
-R'ı temel matematik hesaplamaları yapmak için kullanabilirsiniz:
+Bir an önce grafik çizmeye başlamanız için şimdiye kadar değinmediğimiz bazı temel noktaları gözden geçirelim.
+R'ı basit matematiksel hesaplamalar yapmak için kullanabilirsiniz:
 
 ```{r}
 1 / 200 * 30
@@ -29,43 +29,43 @@ Atama operatörü `<-` ile yeni nesneler oluşturabilirsiniz:
 x <- 3 * 4
 ```
 
-`x`'in değerinin yazdırılmadığına, yalnızca saklandığına dikkat edin.
-Değeri görmek isterseniz, konsola `x` yazın.
+`x`'in değerinin ekrana yazdırılmadığına, yalnızca saklandığına dikkat edin.
+Değeri görmek için konsola `x` yazabilirsiniz.
 
-`c()` fonksiyonuyla (İngilizce "combine", yani birleştirmek kelimesinden gelir) birden fazla elemanı bir vektörde birleştirebilirsiniz:
+Adını İngilizce *combine* (birleştirmek) sözcüğünden alan `c()` fonksiyonuyla birden fazla elemanı bir vektörde birleştirebilirsiniz:
 
 ```{r}
 primes <- c(2, 3, 5, 7, 11, 13)
 ```
 
-Ve vektörler üzerindeki temel aritmetik işlemler, vektörün her elemanına uygulanır:
+Vektörler üzerindeki temel aritmetik işlemler de vektörün her elemanına uygulanır:
 
 ```{r}
 primes * 2
 primes - 1
 ```
 
-Nesne oluşturduğunuz tüm R ifadeleri, yani **atama** (assignment) ifadeleri, aynı forma sahiptir:
+Nesne oluşturan bütün R ifadeleri, yani **atama** ifadeleri, aynı yapıdadır:
 
 ```{r}
 #| eval: false
 object_name <- value
 ```
 
-Bu kodu okurken, kafanızda "nesne adı değeri alır" deyin.
+Bu kodu okurken içinizden "nesne adı değeri alır" deyin.
 
-Pek çok atama yapacaksınız ve `<-` yazmak can sıkıcıdır.
+Çok sayıda atama yapacaksınız; `<-` yazmaksa zahmetlidir.
 RStudio'nun klavye kısayoluyla zaman kazanabilirsiniz: Alt + - (eksi işareti).
-RStudio'nun `<-`'yi otomatik olarak boşluklarla çevrelediğine dikkat edin; bu iyi bir kod biçimlendirme pratiğidir.
-Kod, en iyi günde bile okunması sıkıcı olabilir; bu yüzden gözlerinizebirmolaverinve boşluk kullanın.
+RStudio'nun `<-` operatörünün iki yanına otomatik olarak boşluk eklediğine dikkat edin; bu, kod biçimlendirmeyle ilgili iyi bir uygulamadır.
+Kod okumak en iyi gününüzde bile yorucu olabilir; bu yüzden gözlerinizebirmolaverin ve boşluk kullanın.
 
 ## Yorumlar
 
 R, bir satırda `#`'den sonraki her metni yok sayar.
-Bu, R tarafından yok sayılan ama diğer insanlar tarafından okunan metinler olan **yorumlar**ı (comments) yazmanıza olanak tanır.
-Örneklerde bazen kodda neler olduğunu açıklayan yorumlar da bulunduracağız.
+Bu sayede, R'ın yok saydığı ancak insanların okuyabildiği metinler olan **yorumlar** yazabilirsiniz.
+Örneklerde zaman zaman kodda neler olduğunu açıklayan yorumlara yer vereceğiz.
 
-Yorumlar, aşağıdaki kodun ne yaptığını kısaca açıklamak için faydalı olabilir.
+Yorumlar, ardından gelen kodun ne yaptığını kısaca açıklamak için yararlı olabilir.
 
 ```{r}
 # asal sayılardan oluşan bir vektör oluştur
@@ -75,25 +75,25 @@ primes <- c(2, 3, 5, 7, 11, 13)
 primes * 2
 ```
 
-Bunun gibi kısa kod parçalarında, her tek satır kod için bir yorum bırakmak gerekli olmayabilir.
-Ancak yazdığınız kod karmaşıklaştıkça, yorumlar sizin (ve iş birliği yaptığınız kişilerin) kodda ne yapıldığını anlamak için harcayacağı çok fazla zamandan tasarruf etmenizi sağlayabilir.
+Bunun gibi kısa kod parçalarında her satıra ayrı bir yorum yazmak gerekmeyebilir.
+Ancak yazdığınız kod karmaşıklaştıkça yorumlar, hem sizin hem de birlikte çalıştığınız kişilerin kodda ne yapıldığını anlamak için harcayacağı zamandan büyük ölçüde tasarruf etmesini sağlayabilir.
 
-Yorumları, kodunuzun *nasıl*ını veya *ne*sini değil, *neden*ini açıklamak için kullanın.
-Kodunuzun *ne*si ve *nasıl*ı, sıkıcı olsa bile, onu dikkatlice okuyarak her zaman anlaşılabilir.
-Her adımı yorumlarda açıklar ve sonra kodu değiştirirseniz, yorumları da güncellemeniz gerektiğini hatırlamanız gerekir; aksi halde kodunuza ileride geri döndüğünüzde kafa karıştırıcı olacaktır.
+Yorumları, kodunuzun *ne* yaptığını ya da *nasıl* çalıştığını değil, *neden* o şekilde yazıldığını açıklamak için kullanın.
+Biraz zahmetli olsa bile kodu dikkatlice okuyarak *ne* yaptığını ve *nasıl* çalıştığını her zaman anlayabilirsiniz.
+Yorumlarda her adımı açıklayıp daha sonra kodu değiştirirseniz yorumları da güncellemeyi unutmamanız gerekir; yoksa ileride koda döndüğünüzde yorumlar kafa karıştırır.
 
-Bir şeyin *neden* yapıldığını anlamak, imkansız olmasa da çok daha zordur.
-Örneğin, `geom_smooth()`'un, eğrinin düzgünlüğünü kontrol eden ve daha büyük değerlerin daha düzgün bir eğri verdiği `span` adında bir argümanı vardır.
-`span`'in değerini varsayılan 0,75'ten 0,9'a değiştirmeye karar verdiğinizi varsayalım: gelecekteki bir okuyucunun *ne* olduğunu anlaması kolaydır, ama düşüncenizi bir yorumda not etmediğiniz sürece, kimse varsayılanı *neden* değiştirdiğinizi anlamayacaktır.
+Bir şeyin *neden* yapıldığını anlamak ise çok daha zordur, hatta bazen olanaksızdır.
+Örneğin `geom_smooth()` fonksiyonunun, eğrinin ne kadar pürüzsüz olacağını belirleyen `span` adlı bir argümanı vardır; daha büyük değerler daha pürüzsüz bir eğri oluşturur.
+`span` değerini varsayılan değer olan 0,75'ten 0,9'a değiştirdiğinizi varsayalım. Kodu ileride okuyan biri değişikliğin *ne* olduğunu kolayca anlayabilir ama düşüncenizi bir yorumla kaydetmediğiniz sürece varsayılan değeri *neden* değiştirdiğinizi anlayamaz.
 
-Veri analizi kodu için, yorumları genel yaklaşımınızı açıklamak ve karşılaştıkça önemli içgörüleri kaydetmek için kullanın.
-Bu bilgiyi kodun kendisinden yeniden elde etmenin bir yolu yoktur.
+Veri analizi kodlarında yorumları genel yaklaşımınızı açıklamak ve karşılaştığınız önemli içgörüleri kaydetmek için kullanın.
+Bu bilgileri yalnızca koda bakarak sonradan yeniden elde edemezsiniz.
 
-## Bir İsimde Ne Var? {#sec-whats-in-a-name}
+## Bir isimde ne var? {#sec-whats-in-a-name}
 
 Nesne adları bir harfle başlamalı ve yalnızca harfler, sayılar, `_` ve `.` içerebilir.
-Nesne adlarınızın açıklayıcı olmasını istersiniz, bu yüzden birden fazla kelime için bir kural benimsemeniz gerekir.
-Küçük harfli kelimeleri `_` ile ayırdığınız **snake_case**'i öneriyoruz.
+Nesne adlarınızın açıklayıcı olması için birden fazla sözcükten oluşan adlara yönelik bir yazım kuralı benimsemeniz gerekir.
+Küçük harfli sözcükleri `_` ile ayıran **snake_case** yazımını öneriyoruz.
 
 ```{r}
 #| eval: false
@@ -103,7 +103,7 @@ some.people.use.periods
 And_aFew.People_RENOUNCEconvention
 ```
 
-İsimlere, @sec-workflow-style bölümünde kod stilini tartışırken tekrar döneceğiz.
+@sec-workflow-style bölümünde kod stilini ele alırken adlandırma konusuna yeniden döneceğiz.
 
 Bir nesnenin adını yazarak onu inceleyebilirsiniz:
 
@@ -117,14 +117,14 @@ Başka bir atama yapın:
 this_is_a_really_long_name <- 2.5
 ```
 
-Bu nesneyi incelemek için RStudio'nun tamamlama özelliğini deneyin: "this" yazın, TAB'a basın, benzersiz bir önek elde edene kadar karakter ekleyin, ardından enter'a basın.
+Bu nesneyi incelemek için RStudio'nun kod tamamlama özelliğini deneyin: `this` yazıp Tab tuşuna basın, benzersiz bir önek elde edene kadar karakter ekleyin ve ardından Enter tuşuna basın.
 
-Bir hata yaptığınızı ve `this_is_a_really_long_name`'in değerinin 2,5 değil 3,5 olması gerektiğini varsayalım.
+Bir hata yaptığınızı ve `this_is_a_really_long_name` nesnesinin değerinin 2,5 değil 3,5 olması gerektiğini varsayalım.
 Bunu düzeltmenize yardımcı olacak başka bir klavye kısayolu kullanabilirsiniz.
-Örneğin, yazdığınız son komutu getirip düzenlemek için ↑'a basabilirsiniz.
-Ya da "this" yazıp ardından bu harflerle başlayan yazdığınız tüm komutları listelemek için Cmd/Ctrl + ↑'a basabilirsiniz.
-Gezinmek için ok tuşlarını kullanın, ardından komutu yeniden yazmak için enter'a basın.
-2,5'i 3,5 olarak değiştirin ve yeniden çalıştırın.
+Örneğin son yazdığınız komutu geri getirip düzenlemek için ↑ tuşuna basabilirsiniz.
+Başka bir seçenek olarak `this` yazıp bu harflerle başlayan bütün eski komutlarınızı listelemek için Cmd/Ctrl + ↑ tuşlarına basabilirsiniz.
+Ok tuşlarıyla listede gezinin, ardından komutu yeniden konsola getirmek için Enter tuşuna basın.
+2,5 değerini 3,5 olarak değiştirip kodu yeniden çalıştırın.
 
 Bir atama daha yapın:
 
@@ -142,68 +142,68 @@ R_rocks
 #> Error: object 'R_rocks' not found
 ```
 
-Bu, sizinle R arasındaki örtük sözleşmeyi gösterir: R sıkıcı hesaplamaları sizin için yapacaktır, ama karşılığında, talimatlarınızda tamamen kesin olmanız gerekir.
-Aksi halde, aradığınız nesnenin bulunamadığını söyleyen bir hata alma olasılığınız yüksektir.
-Yazım hataları önemlidir; R aklınızı okuyup "ah, `r_rock` yazdıklarında muhtemelen `r_rocks`'ı kastetmişlerdir" diyemez.
-Büyük/küçük harf önemlidir; benzer şekilde, R aklınızı okuyup "ah, `R_rocks` yazdıklarında muhtemelen `r_rocks`'ı kastetmişlerdir" diyemez.
+Bu örnek, sizinle R arasındaki örtük sözleşmeyi gösterir: R sıkıcı hesaplamaları sizin için yapar ama karşılığında ona verdiğiniz talimatların eksiksiz ve kesin olması gerekir.
+Aksi takdirde aradığınız nesnenin bulunamadığını bildiren bir hata almanız çok olasıdır.
+Yazım hataları önemlidir; R aklınızı okuyup "`r_rock` yazdı ama herhâlde `r_rocks` demek istedi" diyemez.
+Büyük ve küçük harfler de önemlidir; aynı şekilde R, `R_rocks` yazdığınızda aslında `r_rocks` demek istediğinizi anlayamaz.
 
-## Fonksiyon Çağırma
+## Fonksiyon çağırma
 
-R'ın şu şekilde çağrılan geniş bir yerleşik fonksiyon koleksiyonu vardır:
+R, aşağıdaki gibi çağrılan çok sayıda yerleşik fonksiyona sahiptir:
 
 ```{r}
 #| eval: false
 function_name(argument1 = value1, argument2 = value2, ...)
 ```
 
-Düzenli sayı **diz**ilimleri (**seq**uences) oluşturan `seq()`'i kullanmayı deneyelim ve bu arada RStudio'nun daha yararlı özelliklerini de öğrenelim.
-`se` yazıp TAB'a basın.
-Bir açılır pencere size olası tamamlamaları gösterir.
-Belirsizliği gidermek için daha fazla karakter (bir `q`) yazarak veya ↑/↓ oklarını kullanarak seçim yaparak `seq()`'i belirtin.
-Beliren, fonksiyonun argümanlarını ve amacını hatırlatan kayan araç ipucuna dikkat edin.
-Daha fazla yardım isterseniz, sağ alt paneldeki yardım sekmesinde tüm ayrıntıları görmek için F1'e basın.
+Düzenli sayı dizileri oluşturan `seq()` fonksiyonunu kullanmayı deneyelim ve bu sırada RStudio'nun birkaç yararlı özelliğini daha öğrenelim. (`seq` adı, İngilizce *sequence*, yani "dizi" sözcüğünün kısaltmasıdır.)
+`se` yazıp Tab tuşuna basın.
+Açılan pencere olası tamamlama seçeneklerini gösterir.
+Seçenekleri teke indirmek için bir karakter daha (`q`) yazın veya ↑/↓ tuşlarıyla `seq()` fonksiyonunu seçin.
+Fonksiyonun argümanlarını ve ne işe yaradığını hatırlatan kayan bilgi kutusuna dikkat edin.
+Daha fazla yardım için F1 tuşuna basarak sağ alt paneldeki `Help` sekmesinde bütün ayrıntıları görebilirsiniz.
 
-İstediğiniz fonksiyonu seçtikten sonra, tekrar TAB'a basın.
-RStudio sizin için eşleşen açma (`(`) ve kapama (`)`) parantezlerini ekleyecektir.
-İlk argümanın adını, `from`'u yazın ve `1`'e eşitleyin.
-Ardından, ikinci argümanın adını, `to`'yu yazın ve `10`'a eşitleyin.
-Son olarak enter'a basın.
+İstediğiniz fonksiyonu seçtikten sonra Tab tuşuna yeniden basın.
+RStudio birbiriyle eşleşen açma (`(`) ve kapama (`)`) parantezlerini sizin için ekler.
+İlk argümanın adı olan `from`'u yazıp değerini `1` olarak ayarlayın.
+Ardından ikinci argümanın adı olan `to`'yu yazıp değerini `10` olarak ayarlayın.
+Son olarak Enter tuşuna basın.
 
 ```{r}
 seq(from = 1, to = 10)
 ```
 
-Fonksiyon çağrılarında ilk birkaç argümanın adlarını genellikle atlarız, bu yüzden bunu şu şekilde yeniden yazabiliriz:
+Fonksiyon çağrılarında ilk birkaç argümanın adını genellikle belirtmeyiz; dolayısıyla bu kodu şöyle yeniden yazabiliriz:
 
 ```{r}
 seq(1, 10)
 ```
 
-Aşağıdaki kodu yazın ve RStudio'nun eşleşen tırnak işaretleri konusunda da benzer bir yardım sunduğuna dikkat edin:
+Aşağıdaki kodu yazın ve RStudio'nun eşleşen tırnak işaretlerini eklerken de benzer biçimde yardımcı olduğuna dikkat edin:
 
 ```{r}
 x <- "hello world"
 ```
 
 Tırnak işaretleri ve parantezler her zaman çift halinde gelmelidir.
-RStudio size yardımcı olmak için elinden geleni yapar; ama yine de bir şeyleri karıştırıp bir uyuşmazlıkla karşılaşmanız mümkündür.
-Bu olursa, R size devam karakteri olan "+"ı gösterecektir:
+RStudio size yardımcı olmak için elinden geleni yapar ama yine de eşleşmeyen işaretlerle karşılaşabilirsiniz.
+Böyle bir durumda R, devam karakteri olan `+` işaretini gösterir:
 
 ```         
 > x <- "hello
 +
 ```
 
-`+`, R'ın daha fazla girdi beklediğini, henüz bitirdiğinizi düşünmediğini gösterir.
-Genellikle bu, bir `"` veya `)`'i unuttuğunuz anlamına gelir. Ya eksik eşi ekleyin ya da ifadeyi iptal edip yeniden denemek için ESCAPE'e basın.
+`+`, R'ın daha fazla girdi beklediğini, yani yazmayı bitirdiğinizi düşünmediğini gösterir.
+Bu genellikle bir `"` ya da `)` işaretini unuttuğunuz anlamına gelir. Eksik işareti ekleyebilir veya ifadeyi iptal edip yeniden denemek için Esc tuşuna basabilirsiniz.
 
-Sağ üst paneldeki ortam (environment) sekmesinin, oluşturduğunuz tüm nesneleri gösterdiğine dikkat edin:
+Sağ üst paneldeki `Environment` sekmesinin oluşturduğunuz bütün nesneleri gösterdiğine dikkat edin:
 
 ```{r}
 #| echo: false
 #| fig-alt: |
-#|   RStudio'nun, Global Environment içinde r_rocks,
-#|   this_is_a_really_long_name, x ve y'yi gösteren ortam sekmesi.
+#|   RStudio'nun Global Environment bölümünde r_rocks,
+#|   this_is_a_really_long_name, x ve y'yi gösteren Environment sekmesi.
 knitr::include_graphics("screenshots/rstudio-env.png")
 ```
 
@@ -218,7 +218,7 @@ knitr::include_graphics("screenshots/rstudio-env.png")
     ```
 
     Dikkatlice bakın!
-    (Bu, anlamsız bir alıştırma gibi görünebilir; ama beyninizi en ufak farkı bile fark edecek şekilde eğitmek, programlama yaparken karşılığını verecektir.)
+    (Bu, anlamsız bir alıştırma gibi görünebilir ama zihninizi en küçük farkı bile görecek şekilde eğitmek programlama yaparken işinize yarayacaktır.)
 
 2.  Aşağıdaki R komutlarının her birini doğru çalışacak şekilde düzeltin:
 
@@ -231,8 +231,8 @@ knitr::include_graphics("screenshots/rstudio-env.png")
       geom_smooth(method = "lm)
     ```
 
-3.  Option + Shift + K / Alt + Shift + K'ya basın.
-    Ne oluyor?
+3.  Option + Shift + K / Alt + Shift + K tuşlarına basın.
+    Ne olur?
     Menüleri kullanarak aynı yere nasıl ulaşabilirsiniz?
 
 4.  @sec-ggsave bölümündeki bir alıştırmayı tekrar ele alalım.
@@ -251,5 +251,5 @@ knitr::include_graphics("screenshots/rstudio-env.png")
 
 ## Özet
 
-Artık R kodunun nasıl çalıştığı hakkında biraz daha fazla şey ve kodunuza ileride geri döndüğünüzde onu anlamanıza yardımcı olacak bazı ipuçları öğrendiniz.
-Bir sonraki bölümde, önemli değişkenleri seçmek, ilgilenilen satırlara filtrelemek veya özet istatistikler hesaplamak olsun, veriyi dönüştürmenize yardımcı olan tidyverse paketi dplyr'i size öğreterek veri bilimi yolculuğunuza devam edeceğiz.
+Artık R kodunun nasıl çalıştığı hakkında biraz daha bilgi sahibisiniz. Ayrıca ileride kodunuza döndüğünüzde onu anlamanızı kolaylaştıracak birkaç ipucu öğrendiniz.
+Bir sonraki bölümde veri bilimi yolculuğumuza `dplyr` ile devam edeceğiz. `tidyverse` paketlerinden biri olan `dplyr`; önemli değişkenleri seçmek, ilgilendiğiniz satırları süzmek ve özet istatistikler hesaplamak gibi veri dönüştürme işlemlerinde size yardımcı olur.

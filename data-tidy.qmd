@@ -1,4 +1,4 @@
-# Veri Düzenleme {#sec-data-tidy}
+# Veri düzenleme {#sec-data-tidy}
 
 ```{r}
 #| echo: false
@@ -13,17 +13,17 @@ source("_common.R")
 > "Düzenli veri kümeleri birbirine benzer, ama her dağınık veri kümesi kendine özgü bir şekilde dağınıktır."\
 > --- Hadley Wickham
 
-Bu bölümde, R'daki verinizi **düzenli veri** (tidy data) adı verilen bir sistemle tutarlı bir şekilde organize etmeyi öğreneceksiniz.
-Verinizi bu formata getirmek başlangıçta biraz emek gerektirir; ama bu emek uzun vadede karşılığını verir.
-Düzenli veriye ve tidyverse'deki paketlerin sağladığı düzenli araçlara sahip olduğunuzda, veriyi bir temsilden diğerine dönüştürmek için çok daha az zaman harcayacak, böylece önemsediğiniz veri sorularına daha fazla zaman ayırabileceksiniz.
+Bu bölümde R'daki verilerinizi **düzenli veri** (tidy data) adı verilen sisteme göre tutarlı biçimde düzenlemeyi öğreneceksiniz.
+Verilerinizi bu biçime getirmek başlangıçta biraz emek gerektirir; ancak bu emek uzun vadede karşılığını verir.
+Düzenli veriler ve tidyverse paketlerinin sunduğu düzenli araçlar sayesinde verileri bir gösterimden diğerine dönüştürmeye çok daha az, önemsediğiniz veri sorularına ise daha fazla zaman ayırabilirsiniz.
 
-Bu bölümde, önce düzenli verinin tanımını öğrenecek ve bunun basit bir oyuncak veri kümesine nasıl uygulandığını göreceksiniz.
-Ardından, veriyi düzenlemek için kullanacağınız temel araca, pivot işlemine, dalacağız.
-Pivot işlemi, değerlerin hiçbirini değiştirmeden verinizin biçimini değiştirmenizi sağlar.
+Önce düzenli verinin tanımını öğrenecek ve basit bir örnek veri kümesine nasıl uygulandığını göreceksiniz.
+Ardından verileri düzenlemekte kullanacağınız temel araç olan pivot işlemini ele alacağız.
+Pivot işlemi, değerleri değiştirmeden verilerinizin biçimini değiştirmenizi sağlar.
 
-### Ön Koşullar
+### Ön koşullar
 
-Bu bölümde, dağınık veri kümelerinizi düzenlemenize yardımcı olacak bir dizi araç sağlayan tidyr paketine odaklanacağız.
+Bu bölümde dağınık veri kümelerini düzenlemeye yönelik pek çok araç sunan tidyr paketine odaklanacağız.
 tidyr, çekirdek tidyverse'in bir üyesidir.
 
 ```{r}
@@ -34,11 +34,11 @@ library(tidyverse)
 
 Bu bölümden itibaren, `library(tidyverse)`'ün yükleme mesajını bastıracağız.
 
-## Düzenli Veri {#sec-tidy-data}
+## Düzenli veri {#sec-tidy-data}
 
 Aynı temel veriyi birden fazla şekilde temsil edebilirsiniz.
-Aşağıdaki örnek, aynı verinin üç farklı şekilde organize edilmiş halini gösterir.
-Her veri kümesi, dört değişkenin aynı değerlerini gösterir: *country* (ülke), *year* (yıl), *population* (nüfus) ve belgelenmiş TB (tüberküloz) *cases* (vaka) sayısı; ama her veri kümesi değerleri farklı bir şekilde organize eder.
+Aşağıdaki örnek, aynı verinin üç farklı biçimde düzenlenmiş hâlini gösterir.
+Her veri kümesi aynı dört değişkenin değerlerini gösterir: *country* (ülke), *year* (yıl), *population* (nüfus) ve belgelenmiş TB (tüberküloz) *cases* (vaka) sayısı. Ancak her biri bu değerleri farklı biçimde düzenler.
 
 ```{r}
 table1
@@ -48,7 +48,7 @@ table2
 table3
 ```
 
-Bunların hepsi aynı temel verinin temsilleridir; ama kullanımları eşit derecede kolay değildir.
+Bunların hepsi aynı temel verinin gösterimleridir; ancak kullanım kolaylıkları aynı değildir.
 Bunlardan biri, `table1`, tidyverse içinde çalışması çok daha kolay olacaktır; çünkü **düzenlidir** (tidy).
 
 Bir veri kümesini düzenli yapan, birbiriyle ilişkili üç kural vardır:
@@ -77,9 +77,9 @@ Verinizin düzenli olmasını neden sağlamalısınız?
 İki temel avantajı vardır:
 
 1.  Veriyi saklamak için tutarlı bir yol seçmenin genel bir avantajı vardır.
-    Tutarlı bir veri yapınız varsa, onunla çalışan araçları öğrenmek daha kolaydır; çünkü bu araçların altında yatan bir örüntü birliği vardır.
+    Tutarlı bir veri yapınız varsa onunla çalışan araçları öğrenmek daha kolaydır; çünkü bu araçlar ortak bir örüntüyü izler.
 
-2.  Değişkenleri sütunlara yerleştirmenin özel bir avantajı vardır; çünkü bu, R'ın vektörleştirilmiş doğasının parlamasını sağlar.
+2.  Değişkenleri sütunlara yerleştirmenin özel bir avantajı vardır; bu düzen, R'ın vektörleştirilmiş yapısından en iyi biçimde yararlanmayı sağlar.
     @sec-mutate ve @sec-summarize bölümlerinde öğrendiğiniz gibi, çoğu yerleşik R fonksiyonu değer vektörleriyle çalışır.
     Bu, düzenli veriyi dönüştürmeyi özellikle doğal hissettirir.
 
@@ -126,34 +126,34 @@ ggplot(table1, aes(x = year, y = cases)) +
 
     a.  Ülke başına, yıl başına TB vaka sayısını çıkarın.
     b.  Ülke başına, yıl başına karşılık gelen nüfusu çıkarın.
-    c.  Vaka sayısını nüfusa bölün ve 10000 ile çarpın.
+    c.  Vaka sayısını nüfusa bölün ve 10.000 ile çarpın.
     d.  Uygun yere geri saklayın.
 
     Bu işlemleri gerçekten gerçekleştirmek için ihtiyaç duyacağınız fonksiyonların hepsini henüz öğrenmediniz; ama yine de ihtiyaç duyacağınız dönüşümleri düşünebilmelisiniz.
 
-## Veriyi Uzatma {#sec-pivoting}
+## Veriyi uzatma {#sec-pivoting}
 
-Düzenli veri ilkeleri o kadar bariz görünebilir ki, hiç düzenli olmayan bir veri kümesiyle karşılaşıp karşılaşmayacağınızı merak edebilirsiniz.
-Ama ne yazık ki gerçek verilerin çoğu düzenli değildir.
+Düzenli veri ilkeleri o kadar açık görünebilir ki düzenli olmayan bir veri kümesiyle karşılaşıp karşılaşmayacağınızı merak edebilirsiniz.
+Ne yazık ki gerçek verilerin çoğu düzenli değildir.
 Bunun iki temel nedeni vardır:
 
-1.  Veri genellikle analiz dışında bir hedefi kolaylaştırmak için organize edilir.
-    Örneğin, verinin analiz değil, veri girişi kolay olsun diye yapılandırılması yaygındır.
+1.  Veriler genellikle analiz dışındaki bir amacı kolaylaştıracak biçimde düzenlenir.
+    Örneğin verilerin, analizi değil veri girişini kolaylaştıracak biçimde yapılandırılması yaygındır.
 
 2.  Çoğu insan düzenli veri ilkelerine aşina değildir ve veriyle çalışarak çok fazla zaman geçirmediğiniz sürece bunları kendi kendinize türetmek zordur.
 
 Bu, gerçek analizlerin çoğunun en azından biraz düzenleme gerektireceği anlamına gelir.
 İşe, temeldeki değişkenlerin ve gözlemlerin ne olduğunu anlayarak başlayacaksınız.
 Bazen bu kolaydır; diğer zamanlarda veriyi ilk oluşturan kişilere danışmanız gerekecektir.
-Ardından, verinizi; değişkenlerin sütunlarda, gözlemlerin satırlarda olduğu düzenli bir forma **pivot** edeceksiniz.
+Ardından verilerinizi, değişkenlerin sütunlarda ve gözlemlerin satırlarda bulunduğu düzenli bir biçime **pivotlayacaksınız**.
 
 tidyr, veriyi pivotlamak için iki fonksiyon sağlar: `pivot_longer()` ve `pivot_wider()`.
 En yaygın durum olduğu için önce `pivot_longer()` ile başlayacağız.
 Birkaç örneğe dalalım.
 
-### Sütun Adlarındaki Veri {#sec-billboard}
+### Sütun adlarındaki veriler {#sec-billboard}
 
-`billboard` veri kümesi, 2000 yılındaki şarkıların billboard sıralamasını kaydeder:
+`billboard` veri kümesi, şarkıların 2000 yılındaki Billboard sıralamalarını içerir:
 
 ```{r}
 billboard
@@ -203,7 +203,7 @@ billboard |>
   )
 ```
 
-Satır sayısı artık çok daha düşük; bu da `NA` içeren pek çok satırın atıldığını gösteriyor.
+Satır sayısı artık çok daha azdır; bu da `NA` içeren pek çok satırın atıldığını gösterir.
 
 Bir şarkı 76 haftadan daha uzun süre ilk 100'de kalırsa ne olacağını da merak edebilirsiniz.
 Bu veriden anlayamayız; ama veri kümesine `wk77`, `wk78`, ... gibi ek sütunlar eklenebileceğini tahmin edebilirsiniz.
@@ -236,9 +236,9 @@ Kod aşağıda gösterilmiştir ve sonuç @fig-billboard-ranks'te yer almaktadı
 #|   bir çizgi grafiği.
 #| fig-alt: |
 #|   X ekseninde hafta, y ekseninde sıralama olan ve her çizginin bir
-#|   şarkıyı temsil ettiği bir çizgi grafiği. Çoğu şarkı yüksek bir
-#|   sıralamada başlıyor, hızla düşük bir sıralamaya hızlanıyor ve
-#|   ardından tekrar geriliyor gibi görünmektedir. Hafta >20 ve
+#|   şarkıyı temsil ettiği bir çizgi grafiği. Çoğu şarkı listeye üst
+#|   sıralardan giriyor, hızla alt sıralara düşüyor ve ardından düşüşünü
+#|   sürdürür gibi görünmektedir. Hafta >20 ve
 #|   sıralama >50 olan bölgede şaşırtıcı derecede az sayıda parça
 #|   bulunmaktadır.
 billboard_longer |>
@@ -247,12 +247,12 @@ billboard_longer |>
   scale_y_reverse()
 ```
 
-### Pivot İşlemi Nasıl Çalışır?
+### Pivot işlemi nasıl çalışır?
 
-Verimizi yeniden şekillendirmek için pivot işlemini nasıl kullanabileceğimizi gördüğümüze göre, pivot işleminin veriye ne yaptığına dair biraz sezgi kazanmak için biraz zaman ayıralım.
+Verilerimizi yeniden biçimlendirmek için pivot işlemini nasıl kullanabileceğimizi gördük. Şimdi bu işlemin verilere ne yaptığını sezgisel olarak anlamaya çalışalım.
 Neler olduğunu görmeyi kolaylaştırmak için çok basit bir veri kümesiyle başlayalım.
 `id`'leri A, B ve C olan üç hastamız olduğunu ve her hastadan iki kan basıncı ölçümü aldığımızı varsayalım.
-Veriyi, küçük tibble'ları elle oluşturmak için kullanışlı bir fonksiyon olan `tribble()` ile oluşturacağız:
+Verileri, küçük `tibble`'ları elle oluşturmayı kolaylaştıran `tribble()` fonksiyonuyla oluşturacağız:
 
 ```{r}
 df <- tribble(
@@ -264,7 +264,7 @@ df <- tribble(
 ```
 
 Yeni veri kümemizin üç değişkene sahip olmasını istiyoruz: `id` (zaten mevcut), `measurement` (sütun adları) ve `value` (hücre değerleri).
-Bunu başarmak için, `df`'yi daha uzun bir şekilde pivotlamamız gerekir:
+Bunu başarmak için `df`'yi daha uzun biçime pivotlamamız gerekir:
 
 ```{r}
 df |>
@@ -313,28 +313,29 @@ Bunların, orijinal veri kümesindeki her satır için bir kez tekrarlanması ge
 knitr::include_graphics("diagrams/tidy-data/column-names.png", dpi = 270)
 ```
 
-Hücre değerleri de, adı `values_to` tarafından tanımlanan yeni bir değişkendeki değerler haline gelir.
-Satır satır çözülürler.
+Hücre değerleri de adı `values_to` tarafından belirlenen yeni bir değişkenin değerleri hâline gelir.
+Bu değerler satır sırasıyla açılır.
 @fig-pivot-values bu süreci gösterir.
 
 ```{r}
 #| label: fig-pivot-values
 #| echo: false
 #| fig-cap: |
-#|   Değerlerin sayısı korunur (tekrarlanmaz), ama satır satır çözülür.
+#|   Değerlerin sayısı korunur (tekrarlanmaz), ancak değerler satır
+#|   sırasıyla açılır.
 #| fig-alt: |
 #|   `pivot_longer()`'ın veriyi nasıl dönüştürdüğünü gösteren bir
 #|   diyagram; hücre değerlerinin (kan basıncı ölçümleri) yeni bir
 #|   `value` sütunundaki değerler haline nasıl geldiğini vurgulamak
-#|   amacıyla renk kullanılmıştır. Satır satır çözülürler, böylece
+#|   amacıyla renk kullanılmıştır. Değerler satır sırasıyla açılır; böylece
 #|   orijinal satırlar olan (100,120), sonra (140,115), sonra
 #|   (120,125), 100'den 125'e uzanan bir sütun haline gelir.
 knitr::include_graphics("diagrams/tidy-data/cell-values.png", dpi = 270)
 ```
 
-### Sütun Adlarında Birden Fazla Değişken
+### Sütun adlarında birden fazla değişken
 
-Sütun adlarına sıkıştırılmış birden fazla bilgi parçasına sahip olduğunuzda ve bunları ayrı yeni değişkenlerde saklamak istediğinizde daha zorlu bir durum ortaya çıkar.
+Sütun adlarına sıkıştırılmış birden fazla bilgi parçasını ayrı yeni değişkenlerde saklamak istediğinizde daha zorlu bir durumla karşılaşırsınız.
 Örneğin, yukarıda gördüğünüz `table1` ve benzerlerinin kaynağı olan `who2` veri kümesini ele alalım:
 
 ```{r}
@@ -349,7 +350,7 @@ Her sütun adı, `_` ile ayrılmış üç parçadan oluşur.
 İlk parça, `sp`/`rel`/`ep`, teşhis için kullanılan yöntemi tanımlar; ikinci parça, `m`/`f`, `gender`'dır (bu veri kümesinde ikili bir değişken olarak kodlanmıştır); üçüncü parça, `014`/`1524`/`2534`/`3544`/`4554`/`5564`/`65`, `age` aralığıdır (örneğin `014`, 0-14'ü temsil eder).
 
 Yani bu durumda, `who2`'de kaydedilmiş altı bilgi parçası vardır: ülke ve yıl (zaten sütun); teşhis yöntemi, cinsiyet kategorisi ve yaş aralığı kategorisi (diğer sütun adlarında bulunur); ve o kategorideki hasta sayısı (hücre değerleri).
-Bu altı bilgi parçasını altı ayrı sütunda organize etmek için, `names_to` için bir sütun adları vektörüyle, orijinal değişken adlarını parçalara ayırmak için `names_sep` yönergeleriyle ve `values_to` için bir sütun adıyla birlikte `pivot_longer()`'ı kullanırız:
+Bu altı bilgi parçasını altı ayrı sütunda düzenlemek için `pivot_longer()` kullanırız. `names_to` argümanına bir sütun adları vektörü, özgün değişken adlarını parçalara ayırmak için `names_sep` argümanına ayırıcı ve `values_to` argümanına da bir sütun adı veririz:
 
 ```{r}
 who2 |>
@@ -385,7 +386,7 @@ Bunun iki adımda (önce pivotlama, sonra ayırma) gerçekleştiğini hayal edeb
 knitr::include_graphics("diagrams/tidy-data/multiple-names.png", dpi = 270)
 ```
 
-### Sütun Başlıklarında Hem Veri Hem Değişken Adları
+### Sütun başlıklarında hem veri hem değişken adları
 
 Karmaşıklıktaki bir sonraki adım, sütun adlarının değişken değerleri ile değişken adlarının bir karışımını içerdiği durumdur.
 Örneğin, `household` veri kümesini ele alalım:
@@ -396,7 +397,7 @@ household
 
 Bu veri kümesi, en fazla iki çocuğun adları ve doğum tarihleriyle birlikte beş aile hakkında veri içerir.
 Bu veri kümesindeki yeni zorluk, sütun adlarının iki değişkenin adlarını (`dob`, `name`) ve bir başkasının değerlerini (`child`, 1 veya 2 değerleriyle) içermesidir.
-Bu sorunu çözmek için yine `names_to`'ya bir vektör sağlamamız gerekir; ama bu sefer özel `".value"` sentinel'ini kullanırız; bu bir değişkenin adı değil, `pivot_longer()`'a farklı bir şey yapmasını söyleyen benzersiz bir değerdir.
+Bu sorunu çözmek için `names_to` argümanına yine bir vektör veririz; ancak bu kez özel `".value"` değerini kullanırız. Bu, bir değişken adı değil, `pivot_longer()` fonksiyonuna farklı davranmasını söyleyen özel bir işarettir.
 Bu, pivotlanan sütun adının ilk bileşenini çıktıda bir değişken adı olarak kullanmak için olağan `values_to` argümanının üzerine yazar.
 
 ```{r}
@@ -409,7 +410,7 @@ household |>
   )
 ```
 
-Girdinin şekli, açık eksik değişkenlerin oluşturulmasını zorladığından (örneğin, yalnızca bir çocuğu olan aileler için), yine `values_drop_na = TRUE` kullanırız.
+Girdinin biçimi açık eksik değerlerin oluşmasını zorunlu kıldığı için (örneğin yalnızca bir çocuğu olan ailelerde) yine `values_drop_na = TRUE` kullanırız.
 
 @fig-pivot-names-and-values temel fikri daha basit bir örnekle gösterir.
 `names_to` içinde `".value"` kullandığınızda, girdideki sütun adları çıktıda hem değerlere hem değişken adlarına katkıda bulunur.
@@ -422,7 +423,7 @@ Girdinin şekli, açık eksik değişkenlerin oluşturulmasını zorladığında
 #|   bileşene ayırır: ilk kısım çıktı sütun adını (`x` veya `y`)
 #|   belirler, ikinci kısım ise `num` sütununun değerini belirler.
 #| fig-alt: |
-#|   Özel ".value" sentinel'inin nasıl çalıştığını göstermek için renk
+#|   Özel ".value" değerinin nasıl çalıştığını göstermek için renk
 #|   kullanan bir diyagram. Girdide "x_1", "x_2", "y_1" ve "y_2" adları
 #|   vardır ve ilk bileşeni ("x", "y") bir değişken adı olarak,
 #|   ikincisini ("1", "2") ise yeni bir "num" sütununun değeri olarak
@@ -430,11 +431,11 @@ Girdinin şekli, açık eksik değişkenlerin oluşturulmasını zorladığında
 knitr::include_graphics("diagrams/tidy-data/names-and-values.png", dpi = 270)
 ```
 
-## Veriyi Genişletme
+## Veriyi genişletme
 
 Şimdiye kadar, değerlerin sütun adlarında sona erdiği yaygın problem sınıfını çözmek için `pivot_longer()`'ı kullandık.
-Şimdi, veri kümelerini sütunları artırıp satırları azaltarak **daha geniş** (wider) hale getiren ve bir gözlem birden fazla satıra yayıldığında yardımcı olan `pivot_wider()`'a pivotluyoruz (HA HA).
-Bu, gerçek hayattaki verilerde daha az sıklıkla ortaya çıkıyor gibi görünüyor; ama hükümet verileriyle uğraşırken çok fazla karşımıza çıkıyor gibi görünüyor.
+Şimdi, sütun sayısını artırıp satır sayısını azaltarak veri kümelerini **genişleten** (wider) ve bir gözlem birden fazla satıra yayıldığında işe yarayan `pivot_wider()` yönünde pivot ediyoruz (HA HA).
+Bu durum gerçek yaşam verilerinde daha seyrek, kamu verilerinde ise oldukça sık karşımıza çıkar.
 
 Hasta deneyimleri hakkında veri toplayan, Medicare ve Medicaid Hizmetleri Merkezleri'nden bir veri kümesi olan `cms_patient_experience`'a bakarak başlayacağız:
 
@@ -442,7 +443,7 @@ Hasta deneyimleri hakkında veri toplayan, Medicare ve Medicaid Hizmetleri Merke
 cms_patient_experience
 ```
 
-İncelenen temel birim bir organizasyondur; ama her organizasyon altı satıra yayılmıştır, anket organizasyonunda alınan her ölçüm için bir satır vardır.
+İncelenen temel birim bir kuruluştur; ancak her kuruluş altı satıra yayılmıştır ve ankette kuruluş için alınan her ölçüme bir satır düşer.
 `distinct()`'i kullanarak `measure_cd` ve `measure_title` için değerlerin tam kümesini görebiliriz:
 
 ```{r}
@@ -450,7 +451,7 @@ cms_patient_experience |>
   distinct(measure_cd, measure_title)
 ```
 
-Bu sütunların hiçbiri özellikle harika değişken adları olmayacak: `measure_cd`, değişkenin anlamına dair ipucu vermez ve `measure_title` boşluklar içeren uzun bir cümledir.
+Bu sütunların ikisi de iyi bir değişken adı oluşturmaz: `measure_cd` değişkenin anlamına ilişkin ipucu vermez, `measure_title` ise boşluklar içeren uzun bir cümledir.
 Şimdilik yeni sütun adlarımız için kaynak olarak `measure_cd`'yi kullanacağız; ama gerçek bir analizde hem kısa hem anlamlı kendi değişken adlarınızı oluşturmak isteyebilirsiniz.
 
 `pivot_wider()`, `pivot_longer()`'ın tersi bir arayüze sahiptir: yeni sütun adları seçmek yerine, değerleri (`values_from`) ve sütun adını (`names_from`) tanımlayan mevcut sütunları sağlamamız gerekir:
@@ -463,7 +464,7 @@ cms_patient_experience |>
   )
 ```
 
-Çıktı tam olarak doğru görünmüyor; hâlâ her organizasyon için birden fazla satırımız var gibi görünüyor.
+Çıktı tam olarak doğru görünmüyor; hâlâ her kuruluş için birden fazla satır var gibi görünüyor.
 Bunun nedeni, `pivot_wider()`'a hangi sütunun veya sütunların her satırı benzersiz şekilde tanımlayan değerlere sahip olduğunu da söylememiz gerekmesidir; bu durumda bunlar `"org"` ile başlayan değişkenlerdir:
 
 ```{r}
@@ -477,7 +478,7 @@ cms_patient_experience |>
 
 Bu, aradığımız çıktıyı bize verir.
 
-### `pivot_wider()` Nasıl Çalışır?
+### `pivot_wider()` nasıl çalışır?
 
 `pivot_wider()`'ın nasıl çalıştığını anlamak için, yine çok basit bir veri kümesiyle başlayalım.
 Bu sefer `id`'leri A ve B olan iki hastamız var; hasta A üzerinde üç, hasta B üzerinde iki kan basıncı ölçümümüz var:
@@ -568,21 +569,21 @@ df |>
   filter(n > 1)
 ```
 
-Ardından, verinizde neyin yanlış gittiğini anlamak ve altta yatan hasarı onarmak ya da her satır ve sütun değeri kombinasyonunun yalnızca tek bir satıra sahip olmasını sağlamak için gruplama ve özetleme becerilerinizi kullanmak size kalmıştır.
+Ardından verilerinizde neyin yanlış gittiğini bulmak ve temel sorunu düzeltmek ya da her satır-sütun değeri birleşiminin yalnızca bir satıra karşılık gelmesini sağlamak için gruplama ve özetleme becerilerinizi kullanmanız gerekir.
 
 ## Özet
 
 Bu bölümde düzenli veri hakkında bilgi edindiniz: değişkenleri sütunlarda, gözlemleri satırlarda olan veri.
 Düzenli veri, tidyverse'de çalışmayı kolaylaştırır; çünkü çoğu fonksiyon tarafından anlaşılan tutarlı bir yapıdır; ana zorluk, veriyi hangi yapıda alırsanız alın, onu düzenli bir formata dönüştürmektir.
 Bu amaçla, size pek çok düzensiz veri kümesini düzenlemenizi sağlayan `pivot_longer()` ve `pivot_wider()` hakkında bilgi edindiniz.
-Burada sunduğumuz örnekler, `vignette("pivot", package = "tidyr")`'dan seçilmiştir, bu yüzden bu bölümün size yardımcı olmadığı bir sorunla karşılaşırsanız, bir sonraki denemek için o vignette iyi bir yerdir.
+Burada sunduğumuz örnekler `vignette("pivot", package = "tidyr")` belgesinden seçilmiştir. Bu bölümün çözemediği bir sorunla karşılaşırsanız söz konusu vinyet, bakmanız gereken iyi bir sonraki kaynaktır.
 
-Bir başka zorluk da, belirli bir veri kümesi için, daha uzun mu yoksa daha geniş versiyonun mu "düzenli" olduğunu etiketlemenin imkansız olabilmesidir.
+Bir başka zorluk da belirli bir veri kümesinin uzun veya geniş sürümünden hangisinin "düzenli" olduğunu belirlemenin bazen olanaksız olmasıdır.
 Bu, kısmen düzenli verinin tanımımızın bir yansımasıdır; düzenli verinin her sütunda bir değişkene sahip olduğunu söyledik, ama bir değişkenin ne olduğunu gerçekte tanımlamadık (ve bunu yapmak şaşırtıcı derecede zordur).
-Pragmatik olmak ve bir değişkenin analizinizi en kolay yapan şey olduğunu söylemek tamamen sorun değildir.
-Bu yüzden bir hesaplamayı nasıl yapacağınızı bulmakta takılırsanız, verinizin organizasyonunu değiştirmeyi düşünün; gerektiğinde düzensizleştirmekten, dönüştürmekten ve yeniden düzenlemekten korkmayın!
+Pragmatik davranıp değişkeni, analizinizi en kolay hâle getiren şey olarak tanımlamakta hiçbir sakınca yoktur.
+Dolayısıyla bir hesaplamayı nasıl yapacağınızı bulamıyorsanız verilerinizin düzenini değiştirmeyi düşünün; gerektiğinde verileri düzensizleştirmekten, dönüştürmekten ve yeniden düzenlemekten çekinmeyin!
 
 Bu bölümden keyif aldıysanız ve altta yatan teori hakkında daha fazla bilgi edinmek istiyorsanız, Journal of Statistical Software'de yayınlanan [Tidy Data](https://www.jstatsoft.org/article/view/v059i10) makalesinde tarih ve teorik temeller hakkında daha fazla bilgi edinebilirsiniz.
 
-Artık önemli miktarda R kodu yazdığınıza göre, kodunuzu dosyalara ve dizinlere organize etme konusunda daha fazla bilgi edinme zamanı geldi.
-Bir sonraki bölümde, betiklerin ve projelerin avantajları ve hayatınızı kolaylaştırmak için sağladıkları pek çok araçtan bazıları hakkında her şeyi öğreneceksiniz.
+Artık önemli miktarda R kodu yazdığınıza göre kodunuzu dosya ve dizinlerde düzenleme konusunda daha fazla bilgi edinme zamanı geldi.
+Bir sonraki bölümde scriptlerin ve projelerin avantajlarını, ayrıca yaşamınızı kolaylaştıran araçlarından bazılarını öğreneceksiniz.

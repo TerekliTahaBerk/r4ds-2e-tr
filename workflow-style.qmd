@@ -1,20 +1,20 @@
-# İş Akışı: Stil {#sec-workflow-style}
+# İş akışı: stil {#sec-workflow-style}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-İyi bir kodlama stili, doğru noktalama işaretleri gibidir: onsuz da idare edebilirsiniz, amaonsuzişlerinokunmasıkesinlikledahakolaylaşır.
+İyi bir kodlama stili, doğru noktalama işaretleri gibidir: onsuz da idare edebilirsiniz amakesinlikleokumayıçokkolaylaştırır.
 Çok yeni bir programcı olsanız bile, kod stiliniz üzerinde çalışmak iyi bir fikirdir.
-Tutarlı bir stil kullanmak, başkalarının (gelecekteki-siz dahil!) çalışmanızı okumasını kolaylaştırır ve özellikle başka birinden yardım almanız gerektiğinde önemlidir.
+Tutarlı bir stil kullanmak, başkalarının (gelecekteki siz de dahil!) çalışmanızı okumasını kolaylaştırır ve özellikle birinden yardım almanız gerektiğinde önem kazanır.
 Bu bölüm, bu kitap boyunca kullanılan [tidyverse stil rehberinin](https://style.tidyverse.org) en önemli noktalarını tanıtacaktır.
 
-Kodunuzu stilize etmek başlangıçta biraz sıkıcı gelecektir; ama bunu pratik ettikçe kısa sürede ikinci doğanız haline gelecektir.
-Ayrıca, Lorenz Walthert'in [**styler**](https://styler.r-lib.org) paketi gibi, mevcut kodu hızlıca yeniden stilize etmek için harika araçlar da vardır.
-`install.packages("styler")` ile kurduktan sonra, onu kullanmanın kolay bir yolu RStudio'nun **komut paleti**dir (command palette).
-Komut paleti, herhangi bir yerleşik RStudio komutunu ve paketler tarafından sağlanan pek çok eklentiyi kullanmanızı sağlar.
-Cmd/Ctrl + Shift + P'ye basarak paleti açın, ardından styler'ın sunduğu tüm kısayolları görmek için "styler" yazın.
+Kodunuzu biçimlendirmek başlangıçta biraz sıkıcı gelebilir; ancak pratik yaptıkça kısa sürede doğal bir alışkanlığa dönüşür.
+Ayrıca Lorenz Walthert'in [**styler**](https://styler.r-lib.org) paketi gibi, mevcut kodu hızla yeniden biçimlendiren harika araçlar vardır.
+Paketi `install.packages("styler")` ile kurduktan sonra kullanmanın kolay yollarından biri RStudio'nun **Command Palette** (Komut Paleti) özelliğidir.
+Command Palette, RStudio'da yerleşik bütün komutlara ve paketlerin sağladığı pek çok eklentiye erişmenizi sağlar.
+Cmd/Ctrl + Shift + P tuşlarına basarak paleti açın, ardından styler'ın sunduğu bütün kısayolları görmek için `styler` yazın.
 @fig-styler sonuçları gösterir.
 
 ```{r}
@@ -22,11 +22,11 @@ Cmd/Ctrl + Shift + P'ye basarak paleti açın, ardından styler'ın sunduğu tü
 #| echo: false
 #| out-width: null
 #| fig-cap: |
-#|   RStudio'nun komut paleti, yalnızca klavyeyi kullanarak her RStudio
+#|   RStudio'nun Command Palette özelliği, yalnızca klavyeyi kullanarak her RStudio
 #|   komutuna kolayca erişmenizi sağlar.
 #| fig-alt: |
-#|   "styler" yazıldıktan sonra komut paletini gösteren ve paketin
-#|   sağladığı dört stilizasyon aracını gösteren bir ekran görüntüsü.
+#|   "styler" yazıldıktan sonra Command Palette'i ve paketin sağladığı
+#|   dört kod biçimlendirme aracını gösteren ekran görüntüsü.
 knitr::include_graphics("screenshots/rstudio-palette.png")
 ```
 
@@ -39,7 +39,7 @@ library(tidyverse)
 library(nycflights13)
 ```
 
-## İsimler
+## Adlar
 
 İsimler hakkında @sec-whats-in-a-name bölümünde kısaca konuştuk.
 Değişken adlarının (`<-` ile ve `mutate()` ile oluşturulanların) yalnızca küçük harfler, sayılar ve `_` kullanması gerektiğini unutmayın.
@@ -54,12 +54,12 @@ short_flights <- flights |> filter(air_time < 60)
 SHORTFLIGHTS <- flights |> filter(air_time < 60)
 ```
 
-Genel bir kural olarak, hızlı yazılabilen kısa ve öz isimler yerine, anlaşılması kolay uzun ve açıklayıcı isimleri tercih etmek daha iyidir.
-Kısa isimler, kod yazarken görece az zaman kazandırır (özellikle otomatik tamamlama onları yazmanızı bitirmenize yardımcı olacağı için); ama eski koda geri döndüğünüzde ve gizemli bir kısaltmayı çözmek zorunda kaldığınızda zaman alıcı olabilir.
+Genel bir kural olarak hızlı yazılan kısa adlar yerine, anlaşılması kolay, uzun ve açıklayıcı adları tercih etmek daha iyidir.
+Kısa adlar kod yazarken çok az zaman kazandırır; özellikle otomatik tamamlama zaten yazmayı hızlandırır. Buna karşılık eski bir koda döndüğünüzde anlaşılması güç bir kısaltmayı çözmek epey zaman alabilir.
 
-İlişkili şeyler için bir sürü isminiz varsa, tutarlı olmak için elinizden geleni yapın.
-Önceki bir kuralı unuttuğunuzda tutarsızlıkların ortaya çıkması kolaydır, bu yüzden geri dönüp bir şeyleri yeniden adlandırmanız gerekirse kendinizi kötü hissetmeyin.
-Genel olarak, bir tema üzerinde varyasyon oluşturan bir sürü değişkeniniz varsa, onlara ortak bir sonek yerine ortak bir önek vermeniz daha iyidir; çünkü otomatik tamamlama en iyi bir değişkenin başında çalışır.
+Birbiriyle ilişkili çok sayıda nesneye ad verirken olabildiğince tutarlı davranın.
+Daha önce benimsediğiniz bir kuralı unutunca tutarsızlıklar kolayca ortaya çıkabilir; bu yüzden geriye dönüp bazı şeyleri yeniden adlandırmanız gerekirse üzülmeyin.
+Genel olarak aynı temanın çeşitlemeleri olan çok sayıda değişkeniniz varsa ortak bir son ek yerine ortak bir ön ek kullanmak daha iyidir; çünkü otomatik tamamlama en iyi değişken adının başlangıcında çalışır.
 
 ## Boşluklar
 
@@ -74,8 +74,8 @@ z <- (a + b)^2 / d
 z<-( a + b ) ^ 2/d
 ```
 
-Normal fonksiyon çağrılarında parantezlerin içine veya dışına boşluk koymayın.
-Türkçedeki gibi, virgülden sonra her zaman bir boşluk koyun.
+Normal fonksiyon çağrılarında fonksiyon adıyla açma parantezi arasına veya parantezlerin içine boşluk koymayın.
+Türkçe yazımda olduğu gibi virgülden sonra her zaman bir boşluk bırakın.
 
 ```{r}
 #| eval: false
@@ -102,10 +102,10 @@ flights |>
   )
 ```
 
-## Pipe'lar {#sec-pipes}
+## Pipe operatörü {#sec-pipes}
 
 `|>`'ın önünde her zaman bir boşluk olmalı ve genellikle bir satırdaki son şey olmalıdır.
-Bu, yeni adımlar eklemeyi, mevcut adımları yeniden düzenlemeyi, bir adımın içindeki öğeleri değiştirmeyi ve sol taraftaki fiillere göz gezdirerek 10.000 fitlik bir genel bakış elde etmeyi kolaylaştırır.
+Bu düzen; yeni adımlar eklemeyi, var olan adımları yeniden sıralamayı, bir adımdaki öğeleri değiştirmeyi ve soldaki fiillere göz gezdirerek kodu kuşbakışı görmeyi kolaylaştırır.
 
 ```{r}
 #| eval: false
@@ -118,7 +118,7 @@ flights |>
 flights|>filter(!is.na(arr_delay), !is.na(tailnum))|>count(dest)
 ```
 
-Pipe'ladığınız fonksiyonun adlandırılmış argümanları varsa (`mutate()` veya `summarize()` gibi), her argümanı yeni bir satıra koyun.
+Pipe ile aktardığınız fonksiyonun adlandırılmış argümanları varsa (`mutate()` veya `summarize()` gibi), her argümanı ayrı bir satıra yazın.
 Fonksiyonun adlandırılmış argümanları yoksa (`select()` veya `filter()` gibi), sığmadığı sürece her şeyi tek bir satırda tutun; sığmıyorsa her argümanı kendi satırına koymalısınız.
 
 ```{r}
@@ -139,7 +139,7 @@ flights |>
   summarize(delay = mean(arr_delay, na.rm = TRUE), n = n())
 ```
 
-Pipeline'ın ilk adımından sonra, her satırı iki boşlukla girintileyin.
+İşlem hattının ilk adımından sonra her satırı iki boşlukla girintileyin.
 RStudio, bir `|>`'ı takip eden satır sonundan sonra boşlukları sizin için otomatik olarak ekleyecektir.
 Her argümanı kendi satırına koyuyorsanız, fazladan iki boşlukla daha girintileyin.
 `)`'nin kendi satırında olduğundan ve fonksiyon adının yatay konumuyla eşleşecek şekilde girintisiz olduğundan emin olun.
@@ -171,8 +171,8 @@ flights|>
   )
 ```
 
-Pipeline'ınız kolayca tek bir satıra sığıyorsa bu kurallardan bazılarını es geçmeniz sorun değildir.
-Ama kolektif deneyimimize göre, kısa kod parçalarının zamanla uzaması yaygındır, bu yüzden genellikle ihtiyacınız olan tüm dikey alanla başlayarak uzun vadede zaman kazanırsınız.
+İşlem hattınız tek bir satıra rahatça sığıyorsa bu kuralların bazılarını es geçebilirsiniz.
+Ancak ortak deneyimimize göre kısa kod parçaları zamanla çoğunlukla uzar. Bu nedenle ihtiyaç duyacağınız dikey boşluğu baştan ayırmak uzun vadede zaman kazandırır.
 
 ```{r}
 #| eval: false
@@ -187,16 +187,16 @@ df |>
   )
 ```
 
-Son olarak, çok uzun pipe'lar yazmaktan kaçının; diyelim ki 10-15 satırdan uzun olanlardan.
-Bunları daha küçük alt görevlere bölmeye ve her göreve bilgilendirici bir isim vermeye çalışın.
-İsimler, okuyucunun neler olduğunu anlamasına yardımcı olacak ve ara sonuçların beklendiği gibi olduğunu kontrol etmeyi kolaylaştıracaktır.
-Bir şeye bilgilendirici bir isim verebildiğiniz her durumda, ona bilgilendirici bir isim vermelisiniz; örneğin, verinin yapısını temelden değiştirdiğinizde, mesela pivot işleminden veya özetlemeden sonra.
+Son olarak, örneğin 10-15 satırı aşan çok uzun işlem hatları yazmaktan kaçının.
+Bunları daha küçük alt görevlere bölmeye ve her göreve açıklayıcı bir ad vermeye çalışın.
+Bu adlar, okuyucunun neler olduğunu anlamasına yardımcı olur ve ara sonuçların beklendiği gibi olup olmadığını denetlemeyi kolaylaştırır.
+Örneğin pivot veya özetleme işleminden sonra verinin yapısını kökten değiştirdiğinizde, ara sonuca açıklayıcı bir ad verin.
 İlk seferde doğru yapacağınızı beklemeyin!
-Bu, iyi isimler alabilecek ara durumlar varsa uzun pipeline'ları bölmek anlamına gelir.
+Bu da uygun biçimde adlandırılabilecek ara durumlar varsa uzun işlem hatlarını bölmek anlamına gelir.
 
 ## ggplot2
 
-Pipe'a uygulanan aynı temel kurallar ggplot2'ye de uygulanır; `+`'ı tıpkı `|>` gibi ele alın.
+Pipe operatörüne uygulanan temel kurallar ggplot2 için de geçerlidir; `+` işaretini `|>` gibi ele alın.
 
 ```{r}
 #| eval: false
@@ -234,9 +234,9 @@ flights |>
 `|>`'dan `+`'a geçişe dikkat edin.
 Bu geçişin gerekli olmamasını dilerdik; ama ne yazık ki ggplot2, pipe keşfedilmeden önce yazılmıştı.
 
-## Bölümlendirme Yorumları
+## Bölüm yorumları
 
-Betikleriniz uzadıkça, dosyanızı yönetilebilir parçalara bölmek için **bölümlendirme** (sectioning) yorumlarını kullanabilirsiniz:
+Scriptleriniz uzadıkça dosyanızı yönetilebilir parçalara ayırmak için **bölüm yorumlarını** kullanabilirsiniz:
 
 ```{r}
 #| eval: false
@@ -252,15 +252,15 @@ RStudio, bu başlıkları oluşturmak için bir klavye kısayolu sağlar (Cmd/Ct
 #| echo: false
 #| out-width: null
 #| fig-cap: |
-#|   Betiğinize bölümlendirme yorumları ekledikten sonra, betik
-#|   editörünün sol alt köşesindeki kod gezinme aracını kullanarak
+#|   Scriptinize bölüm yorumları ekledikten sonra script editörünün
+#|   sol alt köşesindeki kod gezinme aracını kullanarak
 #|   bunlara kolayca gidebilirsiniz.
 knitr::include_graphics("screenshots/rstudio-nav.png")
 ```
 
 ## Alıştırmalar
 
-1.  Aşağıdaki pipeline'ları yukarıdaki yönergeleri izleyerek yeniden stilize edin.
+1.  Aşağıdaki işlem hatlarını yukarıdaki yönergeleri izleyerek yeniden biçimlendirin.
 
     ```{r}
     #| eval: false
@@ -276,7 +276,7 @@ knitr::include_graphics("screenshots/rstudio-nav.png")
 
 Bu bölümde, kod stilinin en önemli ilkelerini öğrendiniz.
 Bunlar başlangıçta keyfi bir kurallar dizisi gibi hissettirebilir (çünkü öyleler!); ama zamanla, daha fazla kod yazdıkça ve daha fazla kişiyle kod paylaştıkça, tutarlı bir stilin ne kadar önemli olduğunu göreceksiniz.
-Ve styler paketini de unutmayın: kötü stillendirilmiş kodun kalitesini hızlıca artırmanın harika bir yolu.
+styler paketini de unutmayın: kötü biçimlendirilmiş kodun kalitesini hızla artırmanın harika bir yoludur.
 
 Bir sonraki bölümde, veri bilimi araçlarına geri dönerek düzenli veri (tidy data) hakkında bilgi edineceğiz.
 Düzenli veri, tidyverse boyunca kullanılan, veri çerçevelerinizi düzenlemenin tutarlı bir yoludur.

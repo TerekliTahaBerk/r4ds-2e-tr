@@ -1,30 +1,30 @@
-# A field guide to base R {#sec-base-r}
+# Temel R için bir alan kılavuzu {#sec-base-r}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## Giriş
 
-To finish off the programming section, we're going to give you a quick tour of the most important base R functions that we don't otherwise discuss in the book.
-These tools are particularly useful as you do more programming and will help you read code you'll encounter in the wild.
+Programlama kısmını tamamlamak için kitapta başka bir yerde ele almadığımız en önemli temel R fonksiyonlarını kısaca tanıtacağız.
+Bu araçlar daha fazla programlama yaptıkça özellikle kullanışlı olacak ve doğal ortamında karşılaşacağınız kodları okumanıza yardımcı olacaktır.
 
-This is a good place to remind you that the tidyverse is not the only way to solve data science problems.
-We teach the tidyverse in this book because tidyverse packages share a common design philosophy, increasing the consistency across functions, and making each new function or package a little easier to learn and use.
-It's not possible to use the tidyverse without using base R, so we've actually already taught you a **lot** of base R functions: from `library()` to load packages, to `sum()` and `mean()` for numeric summaries, to the factor, date, and POSIXct data types, and of course all the basic operators like `+`, `-`, `/`, `*`, `|`, `&`, and `!`.
-What we haven't focused on so far is base R workflows, so we will highlight a few of those in this chapter.
+Veri bilimi problemlerini çözmenin tek yolunun tidyverse olmadığını hatırlatmak için burası iyi bir yerdir.
+Bu kitapta tidyverse'i öğretiyoruz; çünkü tidyverse paketleri ortak bir tasarım felsefesini paylaşarak fonksiyonlar arasındaki tutarlılığı artırır ve her yeni fonksiyon ya da paketi öğrenip kullanmayı biraz kolaylaştırır.
+Temel R'ı kullanmadan tidyverse'i kullanmak mümkün değildir; dolayısıyla size aslında birçok temel R fonksiyonunu zaten öğrettik: Paketleri yükleyen `library()`, sayısal özetler için `sum()` ve `mean()`, faktör, tarih ve POSIXct veri türleri ve elbette `+`, `-`, `/`, `*`, `|`, `&` ve `!` gibi tüm temel işleçler.
+Şimdiye kadar temel R iş akışlarına odaklanmadık; bu nedenle bu bölümde bunlardan birkaçını öne çıkaracağız.
 
-After you read this book, you'll learn other approaches to the same problems using base R, data.table, and other packages.
-You'll undoubtedly encounter these other approaches when you start reading R code written by others, particularly if you're using Stack Overflow.
-It's 100% okay to write code that uses a mix of approaches, and don't let anyone tell you otherwise!
+Bu kitabı okuduktan sonra aynı problemlere temel R, data.table ve diğer paketleri kullanan başka yaklaşımlar öğreneceksiniz.
+Başkalarının yazdığı R kodlarını okumaya başladığınızda, özellikle Stack Overflow kullanıyorsanız bu diğer yaklaşımlarla kuşkusuz karşılaşacaksınız.
+Yaklaşımların karışımını kullanan kod yazmak kesinlikle uygundur; kimsenin size aksini söylemesine izin vermeyin!
 
-In this chapter, we'll focus on four big topics: subsetting with `[`, subsetting with `[[` and `$`, the apply family of functions, and `for` loops.
-To finish off, we'll briefly discuss two essential plotting functions.
+Bu bölümde dört büyük konuya odaklanacağız: `[` ile alt kümeleme, `[[` ve `$` ile alt kümeleme, apply fonksiyon ailesi ve `for` döngüleri.
+Son olarak iki temel grafik fonksiyonunu kısaca ele alacağız.
 
-### Prerequisites
+### Ön koşullar
 
-This package focuses on base R so doesn't have any real prerequisites, but we'll load the tidyverse in order to explain some of the differences.
+Bu bölüm temel R'a odaklandığı için gerçek bir ön koşulu yoktur; ancak bazı farkları açıklamak amacıyla tidyverse'i yükleyeceğiz.
 
 ```{r}
 #| label: setup
@@ -32,75 +32,75 @@ This package focuses on base R so doesn't have any real prerequisites, but we'll
 library(tidyverse)
 ```
 
-## Selecting multiple elements with `[` {#sec-subset-many}
+## `[` ile birden çok öğe seçme {#sec-subset-many}
 
-`[` is used to extract sub-components from vectors and data frames, and is called like `x[i]` or `x[i, j]`.
-In this section, we'll introduce you to the power of `[`, first showing you how you can use it with vectors, then how the same principles extend in a straightforward way to two-dimensional (2d) structures like data frames.
-We'll then help you cement that knowledge by showing how various dplyr verbs are special cases of `[`.
+`[`, vektörlerden ve veri çerçevelerinden alt bileşenler çıkarmak için kullanılır ve `x[i]` ya da `x[i, j]` biçiminde çağrılır.
+Bu kısımda önce vektörlerle nasıl kullanabileceğinizi, ardından aynı ilkelerin veri çerçeveleri gibi iki boyutlu yapılara nasıl doğrudan genişlediğini göstererek `[` işlecinin gücünü tanıtacağız.
+Sonra çeşitli dplyr fiillerinin `[` işlecinin özel durumları olduğunu göstererek bu bilgiyi pekiştirmenize yardımcı olacağız.
 
-### Subsetting vectors
+### Vektörleri alt kümeleme
 
-There are five main types of things that you can subset a vector with, i.e., that can be the `i` in `x[i]`:
+Bir vektörü alt kümelemek için kullanabileceğiniz, yani `x[i]` içindeki `i` olabilecek beş temel tür vardır:
 
-1.  **A vector of positive integers**.
-    Subsetting with positive integers keeps the elements at those positions:
+1.  **Pozitif tam sayılar vektörü**.
+    Pozitif tam sayılarla alt kümeleme, bu konumlardaki öğeleri korur:
 
     ```{r}
-    x <- c("one", "two", "three", "four", "five")
+    x <- c("bir", "iki", "üç", "dört", "beş")
     x[c(3, 2, 5)]
     ```
 
-    By repeating a position, you can actually make a longer output than input, making the term "subsetting" a bit of a misnomer.
+    Bir konumu yineleyerek girdiden daha uzun bir çıktı oluşturabilirsiniz; bu da “alt kümeleme” terimini biraz yanıltıcı kılar.
 
     ```{r}
     x[c(1, 1, 5, 5, 5, 2)]
     ```
 
-2.  **A vector of negative integers**.
-    Negative values drop the elements at the specified positions:
+2.  **Negatif tam sayılar vektörü**.
+    Negatif değerler belirtilen konumlardaki öğeleri çıkarır:
 
     ```{r}
     x[c(-1, -3, -5)]
     ```
 
-3.  **A logical vector**.
-    Subsetting with a logical vector keeps all values corresponding to a `TRUE` value.
-    This is most often useful in conjunction with the comparison functions.
+3.  **Mantıksal vektör**.
+    Mantıksal vektörle alt kümeleme, `TRUE` değerine karşılık gelen tüm değerleri korur.
+    Bu en çok karşılaştırma fonksiyonlarıyla birlikte kullanıldığında yararlıdır.
 
     ```{r}
     x <- c(10, 3, NA, 5, 8, 1, NA)
 
-    # All non-missing values of x
+    # x'in eksik olmayan tüm değerleri
     x[!is.na(x)]
 
-    # All even (or missing!) values of x
+    # x'in tüm çift (ya da eksik!) değerleri
     x[x %% 2 == 0]
     ```
 
-    Unlike `filter()`, `NA` indices will be included in the output as `NA`s.
+    `filter()` fonksiyonundan farklı olarak `NA` dizinleri çıktıya `NA` olarak dahil edilir.
 
-4.  **A character vector**.
-    If you have a named vector, you can subset it with a character vector:
+4.  **Karakter vektörü**.
+    Adlandırılmış bir vektörünüz varsa onu karakter vektörüyle alt kümelerine ayırabilirsiniz:
 
     ```{r}
     x <- c(abc = 1, def = 2, xyz = 5)
     x[c("xyz", "def")]
     ```
 
-    As with subsetting with positive integers, you can use a character vector to duplicate individual entries.
+    Pozitif tam sayılarla alt kümelemede olduğu gibi tek tek girdileri çoğaltmak için karakter vektörü kullanabilirsiniz.
 
-5.  **Nothing**.
-    The final type of subsetting is nothing, `x[]`, which returns the complete `x`.
-    This is not useful for subsetting vectors, but as we'll see shortly, it is useful when subsetting 2d structures like tibbles.
+5.  **Hiçbir şey**.
+    Son alt kümeleme türü, `x` nesnesinin tamamını döndüren boş `x[]` ifadesidir.
+    Vektörleri alt kümelemek için kullanışlı değildir; ancak birazdan göreceğimiz gibi tibble'lar gibi iki boyutlu yapıları alt kümelemek için yararlıdır.
 
-### Subsetting data frames
+### Veri çerçevelerini alt kümeleme
 
-There are quite a few different ways[^base-r-1] that you can use `[` with a data frame, but the most important way is to select rows and columns independently with `df[rows, cols]`. Here `rows` and `cols` are vectors as described above.
-For example, `df[rows, ]` and `df[, cols]` select just rows or just columns, using the empty subset to preserve the other dimension.
+`[` işlecini bir veri çerçevesiyle kullanmanın epey farklı yolu vardır[^base-r-1]; ancak en önemli kullanım, `df[rows, cols]` ile satır ve sütunları birbirinden bağımsız seçmektir. Burada `rows` ve `cols`, yukarıda açıklanan türde vektörlerdir.
+Örneğin `df[rows, ]` ve `df[, cols]`, diğer boyutu korumak için boş alt küme kullanarak yalnızca satırları ya da sütunları seçer.
 
-[^base-r-1]: Read <https://adv-r.hadley.nz/subsetting.html#subset-multiple> to see how you can also subset a data frame like it is a 1d object and how you can subset it with a matrix.
+[^base-r-1]: Bir veri çerçevesini tek boyutlu bir nesne gibi veya matrisle nasıl alt kümeleyebileceğinizi görmek için <https://adv-r.hadley.nz/subsetting.html#subset-multiple> adresini okuyun.
 
-Here are a couple of examples:
+İşte birkaç örnek:
 
 ```{r}
 df <- tibble(
@@ -109,24 +109,24 @@ df <- tibble(
   z = runif(3)
 )
 
-# Select first row and second column
+# İlk satırı ve ikinci sütunu seç
 df[1, 2]
 
-# Select all rows and columns x and y
+# Tüm satırlarla x ve y sütunlarını seç
 df[, c("x" , "y")]
 
-# Select rows where `x` is greater than 1 and all columns
+# `x` değerinin 1'den büyük olduğu satırlarla tüm sütunları seç
 df[df$x > 1, ]
 ```
 
-We'll come back to `$` shortly, but you should be able to guess what `df$x` does from the context: it extracts the `x` variable from `df`.
-We need to use it here because `[` doesn't use tidy evaluation, so you need to be explicit about the source of the `x` variable.
+`$` işlecine birazdan döneceğiz; ancak `df$x` ifadesinin ne yaptığını bağlamdan tahmin edebilmelisiniz: `x` değişkenini `df` içinden çıkarır.
+`[` tidy evaluation kullanmadığından burada onu kullanmamız gerekir; dolayısıyla `x` değişkeninin kaynağını açıkça belirtmelisiniz.
 
-There's an important difference between tibbles and data frames when it comes to `[`.
-In this book, we've mainly used tibbles, which *are* data frames, but they tweak some behaviors to make your life a little easier.
-In most places, you can use "tibble" and "data frame" interchangeably, so when we want to draw particular attention to R's built-in data frame, we'll write `data.frame`.
-If `df` is a `data.frame`, then `df[, cols]` will return a vector if `cols` selects a single column and a data frame if it selects more than one column.
-If `df` is a tibble, then `[` will always return a tibble.
+`[` söz konusu olduğunda tibble'larla veri çerçeveleri arasında önemli bir fark vardır.
+Bu kitapta çoğunlukla veri çerçevesi *olan*, ancak yaşamınızı biraz kolaylaştırmak için bazı davranışları değiştiren tibble'ları kullandık.
+Çoğu yerde “tibble” ve “veri çerçevesi” ifadelerini birbirinin yerine kullanabilirsiniz; dolayısıyla R'ın yerleşik veri çerçevesine özellikle dikkat çekmek istediğimizde `data.frame` yazacağız.
+`df` bir `data.frame` ise `df[, cols]`, `cols` tek sütun seçtiğinde vektör, birden çok sütun seçtiğinde veri çerçevesi döndürür.
+`df` bir tibble ise `[` her zaman tibble döndürür.
 
 ```{r}
 df1 <- data.frame(x = 1:3)
@@ -136,17 +136,17 @@ df2 <- tibble(x = 1:3)
 df2[, "x"]
 ```
 
-One way to avoid this ambiguity with `data.frame`s is to explicitly specify `drop = FALSE`:
+`data.frame` nesnelerinde bu belirsizlikten kaçınmanın bir yolu `drop = FALSE` ayarını açıkça belirtmektir:
 
 ```{r}
 df1[, "x" , drop = FALSE]
 ```
 
-### dplyr equivalents
+### dplyr karşılıkları
 
-Several dplyr verbs are special cases of `[`:
+Birçok dplyr fiili `[` işlecinin özel durumudur:
 
--   `filter()` is equivalent to subsetting the rows with a logical vector, taking care to exclude missing values:
+-   `filter()`, eksik değerleri dışarıda bırakmaya dikkat ederek satırları mantıksal bir vektörle alt kümelemeye eşdeğerdir:
 
     ```{r}
     #| results: false
@@ -157,37 +157,37 @@ Several dplyr verbs are special cases of `[`:
     )
     df |> filter(x > 1)
 
-    # same as
+    # Aşağıdakiyle aynı
     df[!is.na(df$x) & df$x > 1, ]
     ```
 
-    Another common technique in the wild is to use `which()` for its side-effect of dropping missing values: `df[which(df$x > 1), ]`.
+    Doğal ortamında karşınıza çıkan kodlarda bir başka yaygın teknik, eksik değerleri çıkarma yan etkisi için `which()` kullanmaktır: `df[which(df$x > 1), ]`.
 
--   `arrange()` is equivalent to subsetting the rows with an integer vector, usually created with `order()`:
+-   `arrange()`, satırları genellikle `order()` ile oluşturulan tam sayı vektörüyle alt kümelemeye eşdeğerdir:
 
     ```{r}
     #| results: false
     df |> arrange(x, y)
 
-    # same as
+    # Aşağıdakiyle aynı
     df[order(df$x, df$y), ]
     ```
 
-    You can use `order(decreasing = TRUE)` to sort all columns in descending order or `-rank(col)` to sort columns in decreasing order individually.
+    Tüm sütunları azalan sırada sıralamak için `order(decreasing = TRUE)`, sütunları ayrı ayrı azalan sırada sıralamak için `-rank(col)` kullanabilirsiniz.
 
--   Both `select()` and `relocate()` are similar to subsetting the columns with a character vector:
+-   Hem `select()` hem `relocate()`, sütunları karakter vektörüyle alt kümelemeye benzer:
 
     ```{r}
     #| results: false
     df |> select(x, z)
 
-    # same as
+    # Aşağıdakiyle aynı
     df[, c("x", "z")]
     ```
 
-Base R also provides a function that combines the features of `filter()` and `select()`[^base-r-2] called `subset()`:
+Temel R ayrıca `filter()` ve `select()` fonksiyonlarının özelliklerini birleştiren `subset()` adlı bir fonksiyon sağlar[^base-r-2]:
 
-[^base-r-2]: But it doesn't handle grouped data frames differently and it doesn't support selection helper functions like `starts_with()`.
+[^base-r-2]: Ancak gruplanmış veri çerçevelerini farklı biçimde ele almaz ve `starts_with()` gibi seçim yardımcılarını desteklemez.
 
 ```{r}
 df |> 
@@ -197,32 +197,32 @@ df |>
 
 ```{r}
 #| results: false
-# same as
+# Aşağıdakiyle aynı
 df |> subset(x > 1, c(y, z))
 ```
 
-This function was the inspiration for much of dplyr's syntax.
+Bu fonksiyon dplyr sözdiziminin büyük bölümüne esin kaynağı olmuştur.
 
-### Exercises
+### Alıştırmalar
 
-1.  Create functions that take a vector as input and return:
+1.  Girdi olarak bir vektör alan ve aşağıdakileri döndüren fonksiyonlar oluşturun:
 
-    a.  The elements at even-numbered positions.
-    b.  Every element except the last value.
-    c.  Only even values (and no missing values).
+    a.  Çift numaralı konumlardaki öğeler.
+    b.  Son değer dışındaki tüm öğeler.
+    c.  Yalnızca çift değerler (eksik değer olmadan).
 
-2.  Why is `x[-which(x > 0)]` not the same as `x[x <= 0]`?
-    Read the documentation for `which()` and do some experiments to figure it out.
+2.  `x[-which(x > 0)]` neden `x[x <= 0]` ile aynı değildir?
+    Bunu anlamak için `which()` belgelerini okuyun ve bazı denemeler yapın.
 
-## Selecting a single element with `$` and `[[` {#sec-subset-one}
+## `$` ve `[[` ile tek bir öğe seçme {#sec-subset-one}
 
-`[`, which selects many elements, is paired with `[[` and `$`, which extract a single element.
-In this section, we'll show you how to use `[[` and `$` to pull columns out of data frames, discuss a couple more differences between `data.frames` and tibbles, and emphasize some important differences between `[` and `[[` when used with lists.
+Birden çok öğe seçen `[`, tek bir öğe çıkaran `[[` ve `$` ile eşleşir.
+Bu kısımda veri çerçevelerinden sütun çıkarmak için `[[` ve `$` kullanmayı gösterecek, `data.frames` nesneleriyle tibble'lar arasındaki birkaç farkı daha ele alacak ve listelerle kullanıldıklarında `[` ile `[[` arasındaki bazı önemli farkları vurgulayacağız.
 
-### Data frames
+### Veri çerçeveleri
 
-`[[` and `$` can be used to extract columns out of a data frame.
-`[[` can access by position or by name, and `$` is specialized for access by name:
+`[[` ve `$`, bir veri çerçevesinden sütun çıkarmak için kullanılabilir.
+`[[` konuma ya da ada göre erişebilir; `$` ise ada göre erişim için özelleşmiştir:
 
 ```{r}
 tb <- tibble(
@@ -230,26 +230,26 @@ tb <- tibble(
   y = c(10, 4, 1, 21)
 )
 
-# by position
+# Konuma göre
 tb[[1]]
 
-# by name
+# Ada göre
 tb[["x"]]
 tb$x
 ```
 
-They can also be used to create new columns, the base R equivalent of `mutate()`:
+Ayrıca `mutate()` fonksiyonunun temel R karşılığı olarak yeni sütunlar oluşturmak için de kullanılabilirler:
 
 ```{r}
 tb$z <- tb$x + tb$y
 tb
 ```
 
-There are several other base R approaches to creating new columns including with `transform()`, `with()`, and `within()`.
-Hadley collected a few examples at <https://gist.github.com/hadley/1986a273e384fb2d4d752c18ed71bedf>.
+Yeni sütunlar oluşturmak için `transform()`, `with()` ve `within()` dahil başka temel R yaklaşımları da vardır.
+Hadley birkaç örneği <https://gist.github.com/hadley/1986a273e384fb2d4d752c18ed71bedf> adresinde toplamıştır.
 
-Using `$` directly is convenient when performing quick summaries.
-For example, if you just want to find the size of the biggest diamond or the possible values of `cut`, there's no need to use `summarize()`:
+Hızlı özetler yaparken `$` işlecini doğrudan kullanmak elverişlidir.
+Örneğin yalnızca en büyük elmasın boyutunu ya da `cut` değişkeninin olası değerlerini bulmak istiyorsanız `summarize()` kullanmanıza gerek yoktur:
 
 ```{r}
 max(diamonds$carat)
@@ -257,9 +257,9 @@ max(diamonds$carat)
 levels(diamonds$cut)
 ```
 
-dplyr also provides an equivalent to `[[`/`$` that we didn't mention in @sec-data-transform: `pull()`.
-`pull()` takes either a variable name or variable position and returns just that column.
-That means we could rewrite the above code to use the pipe:
+dplyr ayrıca @sec-data-transform bölümünde değinmediğimiz bir `[[`/`$` karşılığı sağlar: `pull()`.
+`pull()` bir değişken adı ya da konumu alır ve yalnızca o sütunu döndürür.
+Bu, yukarıdaki kodu pipe operatörünü kullanacak biçimde yeniden yazabileceğimiz anlamına gelir:
 
 ```{r}
 diamonds |> pull(carat) |> max()
@@ -267,10 +267,10 @@ diamonds |> pull(carat) |> max()
 diamonds |> pull(cut) |> levels()
 ```
 
-### Tibbles
+### Tibble'lar
 
-There are a couple of important differences between tibbles and base `data.frame`s when it comes to `$`.
-Data frames match the prefix of any variable names (so-called **partial matching**) and don't complain if a column doesn't exist:
+`$` söz konusu olduğunda tibble'larla temel `data.frame` nesneleri arasında birkaç önemli fark vardır.
+Veri çerçeveleri herhangi bir değişken adının önekiyle (**kısmi eşleşme** denen davranışla) eşleşir ve bir sütun yoksa şikâyet etmez:
 
 ```{r}
 df <- data.frame(x1 = 1)
@@ -278,7 +278,7 @@ df$x
 df$z
 ```
 
-Tibbles are more strict: they only ever match variable names exactly and they will generate a warning if the column you are trying to access doesn't exist:
+Tibble'lar daha katıdır: Değişken adlarıyla yalnızca tam olarak eşleşir ve erişmeye çalıştığınız sütun yoksa uyarı üretirler:
 
 ```{r}
 tb <- tibble(x1 = 1)
@@ -287,24 +287,24 @@ tb$x
 tb$z
 ```
 
-For this reason we sometimes joke that tibbles are lazy and surly: they do less and complain more.
+Bu nedenle bazen tibble'ların tembel ve huysuz olduklarıyla ilgili şaka yaparız: Daha az iş yapar, daha çok şikâyet ederler.
 
-### Lists
+### Listeler
 
-`[[` and `$` are also really important for working with lists, and it's important to understand how they differ from `[`.
-Let's illustrate the differences with a list named `l`:
+`[[` ve `$` listelerle çalışmak için de çok önemlidir; `[` işlecinden nasıl farklı olduklarını anlamak gerekir.
+Farkları `l` adlı bir listeyle gösterelim:
 
 ```{r}
 l <- list(
   a = 1:3, 
-  b = "a string", 
+  b = "bir karakter dizisi",
   c = pi, 
   d = list(-1, -5)
 )
 ```
 
--   `[` extracts a sub-list.
-    It doesn't matter how many elements you extract, the result will always be a list.
+-   `[` bir alt liste çıkarır.
+    Kaç öğe çıkardığınız önemli değildir; sonuç her zaman liste olur.
 
     ```{r}
     str(l[1:2])
@@ -314,10 +314,10 @@ l <- list(
     str(l[4])
     ```
 
-    Like with vectors, you can subset with a logical, integer, or character vector.
+    Vektörlerde olduğu gibi mantıksal, tam sayı ya da karakter vektörüyle alt kümeleme yapabilirsiniz.
 
--   `[[` and `$` extract a single component from a list.
-    They remove a level of hierarchy from the list.
+-   `[[` ve `$` bir listeden tek bir bileşen çıkarır.
+    Listeden bir hiyerarşi düzeyini kaldırırlar.
 
     ```{r}
     str(l[[1]])
@@ -327,82 +327,81 @@ l <- list(
     str(l$a)
     ```
 
-The difference between `[` and `[[` is particularly important for lists because `[[` drills down into the list while `[` returns a new, smaller list.
-To help you remember the difference, take a look at the unusual pepper shaker shown in @fig-pepper.
-If this pepper shaker is your list `pepper`, then, `pepper[1]` is a pepper shaker containing a single pepper packet.
-`pepper[2]` would look the same, but would contain the second packet.
-`pepper[1:2]` would be a pepper shaker containing two pepper packets.
-`pepper[[1]]` would extract the pepper packet itself.
+`[` ile `[[` arasındaki fark listeler için özellikle önemlidir; çünkü `[[` listenin içine inerken `[` yeni ve daha küçük bir liste döndürür.
+Farkı hatırlamanıza yardımcı olması için @fig-pepper içindeki sıra dışı karabiberliğe bakın.
+Bu karabiberlik `pepper` listenizse `pepper[1]`, tek bir karabiber paketi içeren karabiberliktir.
+`pepper[2]` aynı görünür ancak ikinci paketi içerir.
+`pepper[1:2]` iki karabiber paketi içeren karabiberlik olur.
+`pepper[[1]]` ise karabiber paketinin kendisini çıkarır.
 
 ```{r}
 #| label: fig-pepper
 #| echo: false
 #| out-width: "100%"
 #| fig-cap: |
-#|   (Left) A pepper shaker that Hadley once found in his hotel room.
-#|   (Middle) `pepper[1]`.
-#|   (Right) `pepper[[1]]`
+#|   (Solda) Hadley'nin bir zamanlar otel odasında bulduğu karabiberlik.
+#|   (Ortada) `pepper[1]`.
+#|   (Sağda) `pepper[[1]]`.
 #| fig-alt: |
-#|   Three photos. On the left is a photo of a glass pepper shaker. Instead of 
-#|   the pepper shaker containing pepper, it contains a single packet of pepper.
-#|   In the middle is a photo of a single packet of pepper. On the right is a 
-#|   photo of the contents of a packet of pepper.
+#|   Üç fotoğraf. Solda cam bir karabiberlik vardır. Karabiberlik, dökme
+#|   karabiber yerine tek bir karabiber paketi içerir. Ortada tek bir karabiber
+#|   paketinin, sağda ise paketin içindeki karabiberin fotoğrafı bulunur.
 knitr::include_graphics("diagrams/pepper.png")
 ```
 
-This same principle applies when you use 1d `[` with a data frame: `df["x"]` returns a one-column data frame and `df[["x"]]` returns a vector.
+Aynı ilke `[` işlecini veri çerçevesiyle tek boyutlu kullandığınızda da geçerlidir: `df["x"]` tek sütunlu bir veri çerçevesi, `df[["x"]]` ise vektör döndürür.
 
-### Exercises
+### Alıştırmalar
 
-1.  What happens when you use `[[` with a positive integer that's bigger than the length of the vector?
-    What happens when you subset with a name that doesn't exist?
+1.  `[[` işlecini vektörün uzunluğundan büyük pozitif bir tam sayıyla kullandığınızda ne olur?
+    Var olmayan bir adla alt kümeleme yaptığınızda ne olur?
 
-2.  What would `pepper[[1]][1]` be?
-    What about `pepper[[1]][[1]]`?
+2.  `pepper[[1]][1]` ne olur?
+    Peki ya `pepper[[1]][[1]]`?
 
-## Apply family
+## Apply ailesi
 
-In @sec-iteration, you learned tidyverse techniques for iteration like `dplyr::across()` and the map family of functions.
-In this section, you'll learn about their base equivalents, the **apply family**.
-In this context apply and map are synonyms because another way of saying "map a function over each element of a vector" is "apply a function over each element of a vector".
-Here we'll give you a quick overview of this family so you can recognize them in the wild.
+@sec-iteration bölümünde `dplyr::across()` ve map fonksiyon ailesi gibi tidyverse iterasyon tekniklerini öğrendiniz.
+Bu kısımda bunların temel R karşılıkları olan **apply ailesini** öğreneceksiniz.
+Bu bağlamda apply ve map eş anlamlıdır; çünkü “bir fonksiyonu vektörün her öğesine eşlemek”, “bir fonksiyonu vektörün her öğesine uygulamak” demenin başka bir yoludur.
+Doğal ortamında karşılaştığınızda tanıyabilmeniz için burada bu aileyi kısaca tanıtacağız.
 
-The most important member of this family is `lapply()`, which is very similar to `purrr::map()`[^base-r-3].
-In fact, because we haven't used any of `map()`'s more advanced features, you can replace every `map()` call in @sec-iteration with `lapply()`.
+Bu ailenin en önemli üyesi, `purrr::map()` fonksiyonuna çok benzeyen `lapply()` fonksiyonudur[^base-r-3].
+Hatta `map()` fonksiyonunun gelişmiş özelliklerinden hiçbirini kullanmadığımız için @sec-iteration bölümündeki her `map()` çağrısını `lapply()` ile değiştirebilirsiniz.
 
-[^base-r-3]: It just lacks convenient features like progress bars and reporting which element caused the problem if there's an error.
+[^base-r-3]: Yalnızca ilerleme çubukları ve hata durumunda probleme hangi öğenin neden olduğunu bildirme gibi kullanışlı özelliklerden yoksundur.
 
-There's no exact base R equivalent to `across()` but you can get close by using `[` with `lapply()`.
-This works because under the hood, data frames are lists of columns, so calling `lapply()` on a data frame applies the function to each column.
+`across()` fonksiyonunun tam bir temel R karşılığı yoktur; ancak `[` ile `lapply()` kullanarak benzer bir sonuç elde edebilirsiniz.
+Bu çalışır; çünkü perde arkasında veri çerçeveleri sütun listeleridir. Dolayısıyla bir veri çerçevesinde `lapply()` çağırmak fonksiyonu her sütuna uygular.
 
 ```{r}
 df <- tibble(a = 1, b = 2, c = "a", d = "b", e = 4)
 
-# First find numeric columns
+# Önce sayısal sütunları bul
 num_cols <- sapply(df, is.numeric)
 num_cols
 
-# Then transform each column with lapply() then replace the original values
+# Ardından her sütunu lapply() ile dönüştürüp özgün değerleri değiştir
 df[, num_cols] <- lapply(df[, num_cols, drop = FALSE], \(x) x * 2)
 df
 ```
 
-The code above uses a new function, `sapply()`.
-It's similar to `lapply()` but it always tries to simplify the result, hence the `s` in its name, here producing a logical vector instead of a list.
-We don't recommend using it for programming, because the simplification can fail and give you an unexpected type, but it's usually fine for interactive use.
-purrr has a similar function called `map_vec()` that we didn't mention in @sec-iteration.
+Yukarıdaki kod yeni bir fonksiyon, `sapply()`, kullanır.
+`lapply()` fonksiyonuna benzer; ancak sonucu her zaman sadeleştirmeye çalışır, adındaki `s` buradan gelir. Burada liste yerine mantıksal vektör üretir.
+Sadeleştirme başarısız olup beklenmedik bir tür verebileceğinden programlamada kullanmanızı önermiyoruz; ancak etkileşimli kullanım için genellikle uygundur.
+purrr'ın @sec-iteration bölümünde değinmediğimiz `map_vec()` adlı benzer bir fonksiyonu vardır.
 
-Base R provides a stricter version of `sapply()` called `vapply()`, short for **v**ector apply.
-It takes an additional argument that specifies the expected type, ensuring that simplification occurs the same way regardless of the input.
-For example, we could replace the `sapply()` call above with this `vapply()` where we specify that we expect `is.numeric()` to return a logical vector of length 1:
+Temel R, `sapply()` fonksiyonunun **v**ector apply ifadesinin kısaltması olan daha katı `vapply()` sürümünü sağlar.
+Beklenen türü belirten ek bir argüman alarak girdiden bağımsız biçimde sadeleştirmenin aynı yolla gerçekleşmesini güvence altına alır.
+Örneğin yukarıdaki `sapply()` çağrısını, `is.numeric()` fonksiyonunun 1 uzunluğunda mantıksal vektör döndürmesini beklediğimizi belirttiğimiz bu `vapply()` çağrısıyla değiştirebiliriz:
 
 ```{r}
 vapply(df, is.numeric, logical(1))
 ```
 
-The distinction between `sapply()` and `vapply()` is really important when they're inside a function (because it makes a big difference to the function's robustness to unusual inputs), but it doesn't usually matter in data analysis.
+`sapply()` ile `vapply()` arasındaki ayrım bir fonksiyonun içindeyken çok önemlidir (çünkü fonksiyonun olağan dışı girdilere karşı sağlamlığında büyük fark yaratır), ancak veri analizinde genellikle önemli değildir.
 
-Another important member of the apply family is `tapply()` which computes a single grouped summary:
+Apply ailesinin bir başka önemli üyesi, tek bir gruplanmış özet hesaplayan `tapply()` fonksiyonudur:
 
 ```{r}
 diamonds |> 
@@ -412,35 +411,35 @@ diamonds |>
 tapply(diamonds$price, diamonds$cut, mean)
 ```
 
-Unfortunately `tapply()` returns its results in a named vector which requires some gymnastics if you want to collect multiple summaries and grouping variables into a data frame (it's certainly possible to not do this and just work with free floating vectors, but in our experience that just delays the work).
-If you want to see how you might use `tapply()` or other base techniques to perform other grouped summaries, Hadley has collected a few techniques [in a gist](https://gist.github.com/hadley/c430501804349d382ce90754936ab8ec).
+Ne yazık ki `tapply()` sonuçlarını adlandırılmış vektörde döndürür; birden çok özeti ve gruplama değişkenini bir veri çerçevesinde toplamak isterseniz biraz uğraşmanız gerekir. (Bunu yapmayıp bağımsız vektörlerle çalışmak elbette mümkündür; ancak deneyimlerimize göre bu yalnızca işi erteler.)
+Başka gruplanmış özetler oluşturmak için `tapply()` veya diğer temel R tekniklerini nasıl kullanabileceğinizi görmek isterseniz Hadley birkaç tekniği [bir gist içinde](https://gist.github.com/hadley/c430501804349d382ce90754936ab8ec) toplamıştır.
 
-The final member of the apply family is the titular `apply()`, which works with matrices and arrays.
-In particular, watch out for `apply(df, 2, something)`, which is a slow and potentially dangerous way of doing `lapply(df, something)`.
-This rarely comes up in data science because we usually work with data frames and not matrices.
+Apply ailesinin son üyesi, matrisler ve dizilerle çalışan ve aileye adını veren `apply()` fonksiyonudur.
+Özellikle `lapply(df, something)` işlemini yapmanın yavaş ve potansiyel olarak tehlikeli bir yolu olan `apply(df, 2, something)` kullanımına dikkat edin.
+Genellikle matrislerle değil veri çerçeveleriyle çalıştığımız için bu, veri biliminde nadiren karşımıza çıkar.
 
-## `for` loops
+## `for` döngüleri
 
-`for` loops are the fundamental building block of iteration that both the apply and map families use under the hood.
-`for` loops are powerful and general tools that are important to learn as you become a more experienced R programmer.
-The basic structure of a `for` loop looks like this:
+`for` döngüleri hem apply hem map ailelerinin perde arkasında kullandığı temel iterasyon yapı taşıdır.
+`for` döngüleri, daha deneyimli bir R programcısı olurken öğrenmeniz önemli olan güçlü ve genel araçlardır.
+Bir `for` döngüsünün temel yapısı şöyledir:
 
 ```{r}
 #| eval: false
 for (element in vector) {
-  # do something with element
+  # element ile bir işlem yap
 }
 ```
 
-The most straightforward use of `for` loops is to achieve the same effect as `walk()`: call some function with a side-effect on each element of a list.
-For example, in @sec-save-database instead of using `walk()`:
+`for` döngülerinin en doğrudan kullanımı `walk()` ile aynı etkiyi elde etmektir: Bir listenin her öğesinde yan etkisi olan bir fonksiyon çağırmak.
+Örneğin @sec-save-database bölümünde `walk()` kullanmak yerine:
 
 ```{r}
 #| eval: false
 paths |> walk(append_file)
 ```
 
-We could have used a `for` loop:
+Bir `for` döngüsü kullanabilirdik:
 
 ```{r}
 #| eval: false
@@ -449,27 +448,27 @@ for (path in paths) {
 }
 ```
 
-Things get a little trickier if you want to save the output of the `for` loop, for example reading all of the excel files in a directory like we did in @sec-iteration:
+`for` döngüsünün çıktısını kaydetmek isterseniz işler biraz zorlaşır; örneğin @sec-iteration bölümünde yaptığımız gibi bir dizindeki tüm Excel dosyalarını okumak:
 
 ```{r}
 paths <- dir("data/gapminder", pattern = "\\.xlsx$", full.names = TRUE)
 files <- map(paths, readxl::read_excel)
 ```
 
-There are a few different techniques that you can use, but we recommend being explicit about what the output is going to look like upfront.
-In this case, we're going to want a list the same length as `paths`, which we can create with `vector()`:
+Kullanabileceğiniz birkaç farklı teknik vardır; ancak çıktının nasıl görüneceğini baştan açıkça belirtmenizi öneririz.
+Bu durumda `paths` ile aynı uzunlukta bir liste isteyeceğiz; bunu `vector()` ile oluşturabiliriz:
 
 ```{r}
 files <- vector("list", length(paths))
 ```
 
-Then instead of iterating over the elements of `paths`, we'll iterate over their indices, using `seq_along()` to generate one index for each element of paths:
+Ardından `paths` öğeleri üzerinde iterasyon yapmak yerine her öğe için bir dizin üretmek üzere `seq_along()` kullanarak dizinleri üzerinde iterasyon yapacağız:
 
 ```{r}
 seq_along(paths)
 ```
 
-Using the indices is important because it allows us to link to each position in the input with the corresponding position in the output:
+Dizinleri kullanmak önemlidir; çünkü girdideki her konumu çıktıdaki karşılık gelen konuma bağlamamızı sağlar:
 
 ```{r}
 for (i in seq_along(paths)) {
@@ -477,13 +476,13 @@ for (i in seq_along(paths)) {
 }
 ```
 
-To combine the list of tibbles into a single tibble you can use `do.call()` + `rbind()`:
+Tibble listesini tek bir tibble'da birleştirmek için `do.call()` + `rbind()` kullanabilirsiniz:
 
 ```{r}
 do.call(rbind, files)
 ```
 
-Rather than making a list and saving the results as we go, a simpler approach is to build up the data frame piece-by-piece:
+Liste oluşturup sonuçları ilerledikçe kaydetmek yerine veri çerçevesini parça parça oluşturmak daha basit bir yaklaşımdır:
 
 ```{r}
 out <- NULL
@@ -492,16 +491,16 @@ for (path in paths) {
 }
 ```
 
-We recommend avoiding this pattern because it can become very slow when the vector is very long.
-This is the source of the persistent canard that `for` loops are slow: they're not, but iteratively growing a vector is.
+Vektör çok uzun olduğunda oldukça yavaşlayabildiği için bu örüntüden kaçınmanızı öneririz.
+`for` döngülerinin yavaş olduğuna ilişkin kalıcı söylentinin kaynağı budur: Döngüler yavaş değildir, ancak bir vektörü iterasyonla büyütmek yavaştır.
 
-## Plots
+## Grafikler
 
-Many R users who don't otherwise use the tidyverse prefer ggplot2 for plotting due to helpful features like sensible defaults, automatic legends, and a modern look.
-However, base R plotting functions can still be useful because they're so concise --- it takes very little typing to do a basic exploratory plot.
+tidyverse'i başka türlü kullanmayan birçok R kullanıcısı, mantıklı varsayılanlar, otomatik göstergeler ve modern görünüm gibi kullanışlı özellikleri nedeniyle grafik çizmek için ggplot2'yi tercih eder.
+Ancak temel R grafik fonksiyonları çok kısa oldukları için yine de kullanışlı olabilir; temel bir keşif grafiği çizmek için çok az yazmak yeterlidir.
 
-There are two main types of base plot you'll see in the wild: scatterplots and histograms, produced with `plot()` and `hist()` respectively.
-Here's a quick example from the diamonds dataset:
+Doğal ortamında karşınıza çıkan kodlarda iki temel R grafik türü görürsünüz: Sırasıyla `plot()` ve `hist()` ile üretilen dağılım grafikleri ve histogramlar.
+İşte diamonds veri kümesinden kısa bir örnek:
 
 ```{r}
 #| dev: png
@@ -509,27 +508,26 @@ Here's a quick example from the diamonds dataset:
 #| fig-asp: 1
 #| layout-ncol: 2
 #| fig-alt: |
-#|   On the left, histogram of carats of diamonds, ranging from 0 to 5 carats.
-#|   The distribution is unimodal and right-skewed. On the right, scatter 
-#|   plot of price vs. carat of diamonds, showing a positive relationship 
-#|   that fans out as both price and carat increases. The scatter plot 
-#|   shows very few diamonds bigger than 3 carats compared to diamonds between 
-#|   0 to 3 carats.
-# Left
+#|   Solda elmasların 0 ile 5 arasında değişen karat değerlerinin histogramı
+#|   vardır. Dağılım tek modlu ve sağa çarpıktır. Sağda elmasların fiyat ve karat
+#|   değerleri arasındaki pozitif ilişkiyi gösteren dağılım grafiği vardır;
+#|   fiyat ve karat arttıkça ilişki yelpaze gibi açılır. 0 ile 3 karat arasındaki
+#|   elmaslara kıyasla 3 karattan büyük çok az elmas görünür.
+# Sol
 hist(diamonds$carat)
 
-# Right
+# Sağ
 plot(diamonds$carat, diamonds$price)
 ```
 
-Note that base plotting functions work with vectors, so you need to pull columns out of the data frame using `$` or some other technique.
+Temel R grafik fonksiyonlarının vektörlerle çalıştığına dikkat edin; dolayısıyla sütunları `$` ya da başka bir teknikle veri çerçevesinden çıkarmanız gerekir.
 
-## Summary
+## Özet
 
-In this chapter, we've shown you a selection of base R functions useful for subsetting and iteration.
-Compared to approaches discussed elsewhere in the book, these functions tend to have more of a "vector" flavor than a "data frame" flavor because base R functions tend to take individual vectors, rather than a data frame and some column specification.
-This often makes life easier for programming and so becomes more important as you write more functions and begin to write your own packages.
+Bu bölümde alt kümeleme ve iterasyon için kullanışlı bazı temel R fonksiyonlarını gösterdik.
+Kitabın başka yerlerinde ele alınan yaklaşımlarla karşılaştırıldığında bu fonksiyonlar “veri çerçevesi” yaklaşımından çok “vektör” yaklaşımına sahiptir; çünkü temel R fonksiyonları genellikle veri çerçevesi ve bazı sütun belirtimleri yerine tek tek vektörler alır.
+Bu, programlama sırasında yaşamı çoğu zaman kolaylaştırır; dolayısıyla daha fazla fonksiyon yazdıkça ve kendi paketlerinizi oluşturmaya başladıkça önem kazanır.
 
-This chapter concludes the programming section of the book.
-You've made a solid start on your journey to becoming not just a data scientist who uses R, but a data scientist who can *program* in R.
-We hope these chapters have sparked your interest in programming and that you're looking forward to learning more outside of this book.
+Bu bölüm kitabın programlama kısmını tamamlar.
+Yalnızca R kullanan değil, R'da *programlama yapabilen* bir veri bilimci olma yolculuğunuza sağlam bir başlangıç yaptınız.
+Bu bölümlerin programlamaya ilginizi artırdığını ve kitabın dışında daha fazlasını öğrenmeyi sabırsızlıkla beklediğinizi umuyoruz.

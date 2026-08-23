@@ -1,33 +1,31 @@
-# İkinci Baskıya Önsöz {.unnumbered}
+# İkinci baskıya önsöz {.unnumbered}
 
-"Veri Bilimi için R" kitabının ikinci baskısına hoş geldiniz! Bu baskı, ilk edisyonun kapsamlı bir şekilde yeniden ele alınmış halidir: 
-Artık yararlı olmadığını düşündüğümüz içerikleri çıkardık, ilk baskıda yer vermeyi dilediğimiz yeni konuları ekledik ve metni olduğu kadar kodları da güncel **en iyi uygulamaları** (best practices) yansıtacak şekilde revize ettik.
-Ayrıca, aramıza yeni bir yazarın katılmasından büyük heyecan duyuyoruz: Tanınmış bir veri bilimi eğitmeni ve Posit (eski adıyla RStudio) şirketindeki meslektaşımız olan Mine Çetinkaya-Rundel, bu edisyonda bizlere eşlik ediyor.
+“Veri Bilimi için R” kitabının ikinci baskısına hoş geldiniz!
+Bu baskıda ilk baskıyı baştan sona yeniden ele aldık: Artık yararlı bulmadığımız içerikleri çıkardık, ilk baskıya eklemiş olmayı dilediğimiz yeni konuları ekledik ve metinle kodları, en iyi uygulamalardaki değişiklikleri yansıtacak şekilde genel olarak güncelledik.
+Ayrıca Mine Çetinkaya-Rundel'i yeni ortak yazarımız olarak aramızda görmekten büyük heyecan duyuyoruz. Kendisi tanınmış bir veri bilimi eğitmeni ve Posit'teki (eski adıyla RStudio) meslektaşlarımızdan biridir.
 
-Yapılan en köklü değişikliklerin kısa bir özeti aşağıdadır:
+En büyük değişikliklerin kısa bir özeti şöyle:
 
--   Kitabın ilk bölümü "Bütünsel Bakış" (Whole game) olarak yeniden adlandırıldı.
-    Bu bölümün amacı, biz detaylara derinlemesine dalmadan önce size veri biliminin "bütünsel bakışı" hakkında genel bir çerçeve sunmaktı.
+-   Kitabın ilk kısmının adı “Bütünsel bakış” olarak değiştirildi.
+    Bu kısmın amacı, ayrıntılara dalmadan önce size veri bilimi sürecinin bütününe ilişkin genel bir çerçeve sunmaktır.
 
--   Kitabın ikinci bölümü "Görselleştirme" (Visualize) adını taşımaktadır. 
-    Bu bölüm, ilk baskıya kıyasla veri görselleştirme araçlarını ve en iyi uygulama yöntemlerini çok daha kapsamlı bir şekilde ele almaktadır. 
-    Tüm ayrıntılara ulaşmak için en iyi kaynak hâlâ [ggplot2 book](http://ggplot2-book.org/) olsa da, R4DS artık en önemli tekniklerin çok daha büyük bir kısmını kapsamaktadır.
+-   Kitabın ikinci kısmının adı “Görselleştirme”.
+    Bu kısım, veri görselleştirme araçlarını ve en iyi uygulamaları ilk baskıya kıyasla çok daha kapsamlı biçimde ele alıyor.
+    Tüm ayrıntılar için en iyi kaynak hâlâ [ggplot2 kitabı](http://ggplot2-book.org/), ancak R4DS artık en önemli tekniklerin çok daha büyük bir bölümünü kapsıyor.
 
--   Kitabın üçüncü bölümü artık "Dönüştürme" (Transform) adını taşıyor; ayrıca sayılar, mantıksal vektörler ve eksik değerler üzerine yeni bölümler eklendi. 
-    Bu konular daha önce veri dönüştürme bölümünün birer parçasıydı, ancak tüm detaylarıyla ele alınabilmeleri için çok daha geniş bir alana ihtiyaç duyuldu.
+-   Kitabın üçüncü kısmının adı artık “Dönüştürme”; ayrıca bu kısma sayılar, mantıksal vektörler ve eksik değerler hakkında yeni bölümler eklendi.
+    Bu konular daha önce veri dönüştürme bölümünün içinde ele alınıyordu, ancak tüm ayrıntıları kapsayabilmek için çok daha fazla yere ihtiyaç vardı.
 
--   Kitabın dördüncü bölümü "Aktarma" (Import) olarak adlandırılmıştır.
-    Bu kısım; düz metin dosyalarını okumanın ötesine geçerek elektronik tablolarla çalışma, veritabanlarından veri çekme, büyük veri (big data) ile çalışma, hiyerarşik verileri tablo yapısına dönüştürme (rectangling) ve web kazıma (web scraping) gibi konuları kapsayan tamamen yeni bir bölüm dizisinden oluşmaktadır.
+-   Kitabın dördüncü kısmının adı “Aktarma”.
+    Bu, düz metin dosyalarını okumanın ötesine geçerek hesap çizelgeleriyle çalışmayı, veritabanlarından veri almayı, büyük verilerle çalışmayı, hiyerarşik verileri tablo biçimine dönüştürmeyi ve web sitelerinden veri kazımayı ele alan yepyeni bir bölüm dizisidir.
 
--   Kitabın "Programlama" (Program) bölümü yerini koruyor; ancak fonksiyon yazımı ve iterasyonun (döngüsel işlemler) en önemli noktalarına odaklanacak şekilde baştan aşağı yeniden yazıldı.
+-   “Programlama” kısmı yerini koruyor, ancak fonksiyon yazımının ve iterasyonun en önemli yönlerine odaklanacak şekilde baştan sona yeniden yazıldı.
+    Fonksiyon yazma konusu artık tidyverse fonksiyonlarının nasıl sarmalanacağını, başka bir deyişle *tidy evaluation* güçlükleriyle nasıl başa çıkılacağını da ayrıntılı olarak ele alıyor; çünkü bu işlem son birkaç yılda hem çok daha kolay hem de daha önemli hâle geldi.
+    Ayrıca doğal ortamında karşınıza çıkabilecek R kodlarında göreceğiniz önemli temel R fonksiyonları hakkında yeni bir bölüm ekledik.
 
--   Fonksiyon yazımı konusu, artık tidyverse fonksiyonlarını sarmalamaya (tidy evaluation zorluklarının üstesinden gelmeye) dair detayları da içeriyor;
-    zira bu süreç son birkaç yılda hem çok daha kolaylaştı hem de daha büyük bir önem kazandı. 
-    Ayrıca, gerçek hayattaki (wild-caught) R kodlarında karşınıza çıkma olasılığı yüksek olan önemli temel R (base R) fonksiyonlarına dair yeni bir bölüm ekledik.
+-   Modelleme kısmı kitaptan çıkarıldı.
+    Modellemenin hakkını bütünüyle verecek kadar yerimiz hiçbir zaman olmadı, üstelik artık bu konuda çok daha iyi kaynaklar var.
+    Genel olarak [tidymodels](https://www.tidymodels.org/) paketlerini kullanmanızı ve Max Kuhn ile Julia Silge'nin yazdığı [Tidy Modeling with R](https://www.tmwr.org/) kitabını okumanızı öneriyoruz.
 
--   Modelleme (Modeling) kısmı kitaptan kaldırıldı. 
-    Modelleme konusunu tüm boyutlarıyla ele almak için hiçbir zaman yeterli alanımız olmamıştı, üstelik artık bu konuda başvurulabilecek çok daha nitelikli kaynaklar mevcut. 
-    Genel olarak [tidymodels](https://www.tidymodels.org/) paketlerini kullanmanızı ve Max Kuhn ile Julia Silge tarafından kaleme alınan [Tidy Modeling with R](https://www.tmwr.org/) kitabını okumanızı öneriyoruz.
-
--   "İletişim" (Communicate) bölümü yerini koruyor; ancak R Markdown yerine [Quarto](https://quarto.org/) platformunu öne çıkaracak şekilde kapsamlı bir güncellemeden geçti. 
-    Kitabın bu edisyonu da Quarto ile kaleme alındı ve bu platformun geleceğin aracı olduğu oldukça aşikâr.
+-   “İletişim” kısmı yerini koruyor, ancak R Markdown yerine [Quarto'yu](https://quarto.org/) öne çıkaracak şekilde baştan sona güncellendi.
+    Kitabın bu baskısı Quarto ile yazıldı ve Quarto'nun geleceğin aracı olduğu açık.

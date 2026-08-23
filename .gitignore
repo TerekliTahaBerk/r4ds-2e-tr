@@ -6,6 +6,7 @@ _main.rds
 _book
 *.md
 !CODE_OF_CONDUCT.md
+!TRANSLATION_GLOSSARY.md
 /*.html
 !plausible.html
 search_index.json

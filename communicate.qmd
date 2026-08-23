@@ -5,8 +5,8 @@
 source("_common.R")
 ```
 
-Şimdiye kadar, verinizi R'a aktarmak, analiz için uygun bir forma düzenlemek ve ardından dönüştürme ile görselleştirme yoluyla verinizi anlamak için gereken araçları öğrendiniz.
-Ancak analiziniz ne kadar başarılı olursa olsun, onu başkalarına açıklayamadığınız sürece hiçbir önemi yoktur: sonuçlarınızı **iletmeniz** (communicate) gerekir.
+Şimdiye kadar verilerinizi R'a aktarmak, çözümlemeye uygun bir biçimde düzenlemek ve ardından dönüştürme ile görselleştirme yoluyla anlamak için gereken araçları öğrendiniz.
+Ancak çözümlemeniz ne kadar başarılı olursa olsun onu başkalarına açıklayamadığınız sürece hiçbir önemi yoktur: Sonuçlarınızı **iletmeniz** gerekir.
 
 ```{r}
 #| label: fig-ds-communicate
@@ -26,9 +26,9 @@ knitr::include_graphics("diagrams/data-science/communicate.png", dpi = 270)
 
 -   @sec-quarto bölümünde, düz metni, kodu ve sonuçları bütünleştiren bir araç olan Quarto hakkında bilgi edineceksiniz.
     Quarto'yu hem analistten analiste hem de analistten karar vericiye iletişim için kullanabilirsiniz.
-    Quarto formatlarının gücü sayesinde, aynı belgeyi her iki amaç için de kullanabilirsiniz.
+    Quarto biçimlerinin gücü sayesinde aynı belgeyi her iki amaç için de kullanabilirsiniz.
 
--   @sec-quarto-formats bölümünde, Quarto kullanarak üretebileceğiniz gösterge panelleri (dashboards), web siteleri ve kitaplar dahil olmak üzere pek çok farklı çıktı türü hakkında biraz bilgi edineceksiniz.
+-   @sec-quarto-formats bölümünde Quarto ile üretebileceğiniz gösterge panelleri, web siteleri ve kitaplar dahil birçok farklı çıktı türünü kısaca öğreneceksiniz.
 
-Bu bölümler ağırlıklı olarak iletişimin teknik mekaniğine odaklanır; düşüncelerinizi diğer insanlara iletmenin gerçekten zor sorunlarına değil.
-Bununla birlikte, iletişim hakkında pek çok başka harika kitap var; bunlara her bölümün sonunda sizi yönlendireceğiz.
+Bu bölümler düşüncelerinizi diğer insanlara iletmenin gerçekten zor sorunlarından çok iletişimin teknik işleyişine odaklanır.
+Bununla birlikte iletişim hakkında başka birçok harika kitap vardır; her bölümün sonunda sizi bunlara yönlendireceğiz.

@@ -6,8 +6,8 @@
 source("_common.R")
 ```
 
-Kitabın bu bölümünde, programlama becerilerinizi geliştireceksiniz.
-Programlama, tüm veri bilimi çalışmaları için gereken, süreçlerin tamamını kesen bir beceridir: veri bilimi yapmak için bir bilgisayar kullanmanız gerekir; bunu kafanızda veya kalem kağıtla yapamazsınız.
+Kitabın bu kısmında programlama becerilerinizi geliştireceksiniz.
+Programlama, tüm veri bilimi çalışmalarını baştan sona kapsayan bir beceridir: Veri bilimi yapmak için bilgisayar kullanmanız gerekir; bunu zihninizde ya da kalem ve kâğıtla yapamazsınız.
 
 ```{r}
 #| label: fig-ds-program
@@ -17,35 +17,35 @@ Programlama, tüm veri bilimi çalışmaları için gereken, süreçlerin tamam�
 #|   Programlama, diğer tüm bileşenlerin içinde yüzdüğü sudur.
 #| fig-alt: |
 #|   Veri bilimi sürecine dair modelimiz; programlama (yani içe aktarma,
-#|   düzenleme, dönüştürme, görselleştirme, modelleme ve iletişim kurma
-#|   -kısacası her şey-) mavi renkle vurgulanmıştır.
+#|   düzenleme, dönüştürme, görselleştirme, modelleme ve iletişim kurma,
+#|   kısacası her şey) mavi renkle vurgulanmıştır.
 knitr::include_graphics("diagrams/data-science/program.png", dpi = 270)
 ```
 
 Programlama kod üretir ve kod bir iletişim aracıdır.
-Kod, açıkçası, bilgisayara ne yapmasını istediğinizi söyler.
-Ama aynı zamanda diğer insanlara da anlam iletir.
+Kod elbette bilgisayara ne yapmasını istediğinizi söyler.
+Ancak aynı zamanda diğer insanlara da anlam iletir.
 Kodu bir iletişim aracı olarak düşünmek önemlidir; çünkü yaptığınız her proje temelde işbirlikçidir.
-Başka insanlarla çalışmıyor olsanız bile, kesinlikle gelecekteki-siz ile çalışıyor olacaksınız!
-Açık kod yazmak önemlidir, çünkü böylece başkaları (gelecekteki-siz dahil) bir analizi neden o şekilde ele aldığınızı anlayabilir.
+Başka insanlarla çalışmıyor olsanız bile gelecekteki hâlinizle kesinlikle çalışacaksınız!
+Açık ve anlaşılır kod yazmak önemlidir; böylece başkaları (gelecekteki hâliniz dahil) bir analizi neden o şekilde ele aldığınızı anlayabilir.
 Bu da programlamada daha iyi olmanın, aynı zamanda iletişimde daha iyi olmayı da gerektirdiği anlamına gelir.
-Zamanla, kodunuzun yalnızca yazması değil, başkalarının okuması da daha kolay hale gelmesini istersiniz.
+Zamanla kodunuzun yalnızca yazılmasının değil, başkaları tarafından okunmasının da kolaylaşmasını istersiniz.
 
 Aşağıdaki üç bölümde, programlama becerilerinizi geliştirecek yetenekler öğreneceksiniz:
 
 1.  Kopyala-yapıştır güçlü bir araçtır; ancak bunu ikiden fazla kez yapmaktan kaçınmalısınız.
     Kodda kendinizi tekrar etmek tehlikelidir, çünkü kolayca hatalara ve tutarsızlıklara yol açabilir.
-    Bunun yerine, @sec-functions bölümünde, tekrarlanan tidyverse kodunu kolayca yeniden kullanılabilecek şekilde dışarı çıkarmanızı sağlayan **fonksiyonları** nasıl yazacağınızı öğreneceksiniz.
+    Bunun yerine @sec-functions bölümünde, yinelenen tidyverse kodunu kolayca yeniden kullanılabilecek biçimde ayırmanızı sağlayan **fonksiyonları** nasıl yazacağınızı öğreneceksiniz.
 
 2.  Fonksiyonlar tekrarlanan kodu dışarı çıkarır; ancak genellikle aynı işlemleri farklı girdiler üzerinde tekrarlamanız gerekir.
-    Benzer şeyleri tekrar tekrar yapmanızı sağlayan **iterasyon (iteration)** araçlarına ihtiyacınız vardır.
+    Benzer şeyleri tekrar tekrar yapmanızı sağlayan **iterasyon** araçlarına ihtiyacınız vardır.
     Bu araçlar arasında, @sec-iteration bölümünde öğreneceğiniz for döngüleri ve fonksiyonel programlama yer alır.
 
 3.  Başkaları tarafından yazılmış kodları okudukça, tidyverse kullanmayan kodlarla da daha sık karşılaşacaksınız.
-    @sec-base-r bölümünde, gerçek hayattaki kodlarda karşınıza çıkacak en önemli temel R (base R) fonksiyonlarından bazılarını öğreneceksiniz.
+    @sec-base-r bölümünde, doğal ortamında karşınıza çıkacak kodlardaki en önemli temel R fonksiyonlarından bazılarını öğreneceksiniz.
 
 Bu bölümlerin amacı, size veri bilimi için ihtiyaç duyduğunuz asgari programlama bilgisini öğretmektir.
-Buradaki materyale hakim olduktan sonra, programlama becerilerinize yatırım yapmaya devam etmenizi şiddetle tavsiye ederiz.
+Buradaki materyale hâkim olduktan sonra programlama becerilerinize yatırım yapmayı sürdürmenizi önemle öneririz.
 Yardımcı olabileceğini düşündüğümüz iki kitap yazdık.
 Garrett Grolemund'un kaleme aldığı [*Hands on Programming with R*](https://rstudio-education.github.io/hopr/), R'ı bir programlama dili olarak tanıtır ve R ilk programlama diliniz ise başlamak için harika bir yerdir.
-Hadley Wickham'ın kaleme aldığı [*Advanced R*](https://adv-r.hadley.nz/), R programlama dilinin ayrıntılarına derinlemesine iner; mevcut bir programlama deneyiminiz varsa başlamak için, bu bölümlerdeki fikirleri özümsedikten sonra ise atılacak harika bir sonraki adım için uygun bir kaynaktır.
+Hadley Wickham'ın kaleme aldığı [*Advanced R*](https://adv-r.hadley.nz/), R programlama dilinin ayrıntılarını derinlemesine ele alır; programlama deneyiminiz varsa başlamak için, bu bölümlerdeki fikirleri özümsedikten sonra da ilerlemek için harika bir kaynaktır.

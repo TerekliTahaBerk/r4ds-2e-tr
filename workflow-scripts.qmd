@@ -1,18 +1,18 @@
-# İş Akışı: Scriptler {#sec-workflow-scripts-projects}
+# İş akışı: scriptler {#sec-workflow-scripts-projects}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-Bu bölüm, kodunuzu organize etmek için iki temel araçla sizi tanıştıracaktır: scriptler ve projeler.
+Bu bölümde kodunuzu düzenlemek için kullanılan iki temel araçla tanışacaksınız: scriptler ve projeler.
 
 ## Scriptler
 
 Şimdiye kadar kod çalıştırmak için konsolu kullandınız.
-Bu, başlamak için harika bir yer; ama daha karmaşık ggplot2 grafikleri ve daha uzun dplyr pipeline'ları oluşturdukça oldukça sıkışık hale geldiğini fark edeceksiniz.
+Burası başlangıç için harika bir yerdir; ancak daha karmaşık ggplot2 grafikleri ve daha uzun dplyr işlem hatları oluşturdukça alanın kısa sürede dar geldiğini fark edersiniz.
 Kendinize çalışmak için daha fazla alan sağlamak için script editörünü kullanın.
-File menüsüne tıklayıp New File'ı, ardından R script'i seçerek veya Cmd/Ctrl + Shift + N klavye kısayolunu kullanarak açın.
+`File` menüsünden `New File` ve ardından `R Script` seçeneklerini seçerek ya da Cmd/Ctrl + Shift + N klavye kısayolunu kullanarak editörü açın.
 Şimdi @fig-rstudio-script'teki gibi dört panel göreceksiniz.
 Script editörü, kodunuzla denemeler yapmak için harika bir yerdir.
 Bir şeyi değiştirmek istediğinizde, tüm kodu yeniden yazmanız gerekmez; scripti düzenleyip yeniden çalıştırabilirsiniz.
@@ -25,13 +25,13 @@ Ve işe yarayan ve istediğinizi yapan bir kod yazdığınızda, daha sonra kola
 #| fig-cap: |
 #|   Script editörünü açmak, IDE'nin sol üstüne yeni bir panel ekler.
 #| fig-alt: |
-#|   Editör, Konsol ve Çıktı'nın vurgulandığı RStudio IDE'si.
+#|   Editor, Console ve Output panellerinin vurgulandığı RStudio IDE'si.
 knitr::include_graphics("diagrams/rstudio/script.png", dpi = 270)
 ```
 
-### Kod Çalıştırma
+### Kod çalıştırma
 
-Script editörü, karmaşık ggplot2 grafikleri veya uzun dplyr manipülasyon dizileri oluşturmak için mükemmel bir yerdir.
+Script editörü, karmaşık ggplot2 grafikleri veya uzun dplyr işlem dizileri oluşturmak için mükemmel bir yerdir.
 Script editörünü etkili bir şekilde kullanmanın anahtarı, en önemli klavye kısayollarından birini ezberlemektir: Cmd/Ctrl + Enter.
 Bu, konsoldaki mevcut R ifadesini çalıştırır.
 Örneğin, aşağıdaki kodu ele alalım.
@@ -58,13 +58,13 @@ Bunu düzenli olarak yapmak, kodunuzun tüm önemli kısımlarını scriptte yak
 
 Scriptinize her zaman ihtiyaç duyduğunuz paketlerle başlamanızı öneririz.
 Bu şekilde, kodunuzu başkalarıyla paylaşırsanız, hangi paketleri kurmaları gerektiğini kolayca görebilirler.
-Ancak, paylaştığınız bir scriptte asla `install.packages()`'ı dahil etmemeniz gerektiğini unutmayın.
-Dikkatli olmazlarsa bilgisayarlarında bir şeyi değiştirecek bir script devretmek düşüncesizliktir!
+Ancak paylaştığınız bir scripte asla `install.packages()` eklememeniz gerektiğini unutmayın.
+Dikkatli davranmadıklarında bilgisayarlarında değişiklik yapacak bir scripti başkasına vermek düşüncesizce olur!
 
 Sonraki bölümlerde çalışırken, script editöründe başlamanızı ve klavye kısayollarınızı pratik etmenizi şiddetle öneririz.
 Zamanla, kodu bu şekilde konsola göndermek o kadar doğal hale gelecek ki, bunu düşünmeyeceksiniz bile.
 
-### RStudio Tanılamaları
+### RStudio tanılamaları
 
 Script editöründe, RStudio sözdizimi hatalarını kırmızı dalgalı bir çizgi ve kenar çubuğunda bir çarpı işaretiyle vurgular:
 
@@ -105,13 +105,13 @@ RStudio ayrıca olası sorunlar hakkında da sizi bilgilendirecektir:
 knitr::include_graphics("screenshots/rstudio-diagnostic-warn.png")
 ```
 
-### Kaydetme ve Adlandırma
+### Kaydetme ve adlandırma
 
 RStudio, çıktığınızda script editörünün içeriğini otomatik olarak kaydeder ve yeniden açtığınızda otomatik olarak yeniden yükler.
-Yine de, Untitled1, Untitled2, Untitled3 ve benzerlerinden kaçınmak ve bunun yerine scriptlerinizi kaydedip onlara bilgilendirici isimler vermek iyi bir fikirdir.
+Yine de Untitled1, Untitled2, Untitled3 gibi adlardan kaçınmak; scriptlerinizi kaydedip onlara açıklayıcı adlar vermek iyi bir fikirdir.
 
 Dosyalarınızı `code.R` veya `myscript.R` olarak adlandırmak cazip gelebilir; ama dosyanız için bir isim seçmeden önce biraz daha derin düşünmelisiniz.
-Dosya adlandırma için üç önemli ilke şöyledir:
+Dosya adlandırmayla ilgili üç önemli ilke şunlardır:
 
 1.  Dosya adları **makine** tarafından okunabilir olmalıdır: boşluklardan, sembollerden ve özel karakterlerden kaçının. Dosyaları ayırt etmek için büyük/küçük harf duyarlılığına güvenmeyin.
 2.  Dosya adları **insan** tarafından okunabilir olmalıdır: dosyanın içinde ne olduğunu açıklamak için dosya adlarını kullanın.
@@ -131,11 +131,11 @@ run-first.r
 temp.txt
 ```
 
-Burada çeşitli sorunlar var: önce hangi dosyanın çalıştırılacağını bulmak zor, dosya adları boşluk içeriyor, aynı isme ama farklı büyük/küçük harfe sahip iki dosya var (`finalreport` ile `FinalReport`[^workflow-scripts-1]) ve bazı isimler içeriklerini tanımlamıyor (`run-first` ve `temp`).
+Burada çeşitli sorunlar vardır: Önce hangi dosyanın çalıştırılacağını bulmak zordur; dosya adlarında boşluklar bulunur; aynı ada sahip ancak büyük/küçük harfleri farklı iki dosya vardır (`finalreport` ve `FinalReport`[^workflow-scripts-1]); bazı adlar da içeriği açıklamaz (`run-first` ve `temp`).
 
-[^workflow-scripts-1]: İsimde "final" kullanarak kaderi zorladığınızdan bahsetmiyorum bile 😆 Piled Higher and Deeper çizgi romanının [bununla ilgili eğlenceli bir şeridi](https://phdcomics.com/comics/archive.php?comicid=1531) var.
+[^workflow-scripts-1]: Dosya adında "final" kullanarak kaderi zorladığınızdan söz etmiyorum bile 😆 *Piled Higher and Deeper* adlı çizgi romanda [bununla ilgili eğlenceli bir bant](https://phdcomics.com/comics/archive.php?comicid=1531) var.
 
-Aynı dosya kümesini adlandırmanın ve organize etmenin daha iyi bir yolu:
+Aynı dosya kümesini adlandırmanın ve düzenlemenin daha iyi bir yolu şöyledir:
 
 ```         
 01-load-data.R
@@ -151,7 +151,7 @@ report-draft-notes.txt
 
 Anahtar scriptleri numaralandırmak, onları hangi sırayla çalıştıracağınızı açık hale getirir ve tutarlı bir adlandırma şeması, neyin değiştiğini görmeyi kolaylaştırır.
 Ayrıca, şekiller benzer şekilde etiketlenmiştir, raporlar dosya adlarına dahil edilen tarihlerle ayırt edilir ve `temp`, içeriğini daha iyi tanımlamak için `report-draft-notes` olarak yeniden adlandırılmıştır.
-Bir dizinde çok sayıda dosyanız varsa, organizasyonu bir adım daha ileri götürüp farklı dosya türlerini (scriptler, şekiller vb.) farklı dizinlere yerleştirmeniz önerilir.
+Bir dizinde çok sayıda dosyanız varsa düzeni bir adım ileri götürüp farklı dosya türlerini (scriptler, şekiller vb.) ayrı dizinlere yerleştirmeniz önerilir.
 
 ## Projeler
 
@@ -161,21 +161,21 @@ Bir gün, dış dünyadan veriyi R'a getirmeniz ve sayısal sonuçları ile şek
 
 Bu gerçek hayat durumlarıyla başa çıkmak için iki karar vermeniz gerekir:
 
-1.  Doğruluğun kaynağı nedir?
+1.  Tek doğruluk kaynağı nedir?
     Neler olduğuna dair kalıcı kaydınız olarak neyi saklayacaksınız?
 
-2.  Analiziniz nerede yaşıyor?
+2.  Analiziniz nerede bulunuyor?
 
-### Doğruluğun Kaynağı Nedir?
+### Tek doğruluk kaynağı nedir?
 
 Yeni başlayan biri olarak, analiziniz boyunca oluşturduğunuz tüm nesneleri içermesi için mevcut Environment'ınıza güvenmeniz sorun değildir.
-Ancak, daha büyük projeler üzerinde çalışmayı veya başkalarıyla iş birliği yapmayı kolaylaştırmak için doğruluğun kaynağınız R scriptleri olmalıdır.
+Ancak daha büyük projelerde çalışmayı ve başkalarıyla iş birliği yapmayı kolaylaştırmak için tek doğruluk kaynağınız R scriptleri olmalıdır.
 R scriptlerinizle (ve veri dosyalarınızla), ortamı yeniden oluşturabilirsiniz.
 Yalnızca ortamınızla, R scriptlerinizi yeniden oluşturmak çok daha zordur: ya hafızanızdan çok fazla kod yeniden yazmak zorunda kalırsınız (bu süreçte kaçınılmaz olarak hatalar yaparsınız) ya da R geçmişinizi dikkatlice kazmanız gerekir.
 
-R scriptlerinizi analiziniz için doğruluğun kaynağı olarak tutmaya yardımcı olmak için, RStudio'ya oturumlar arasında çalışma alanınızı korumamasını söylemenizi şiddetle öneririz.
-Bunu, `usethis::use_blank_slate()`'i çalıştırarak[^workflow-scripts-2] veya @fig-blank-slate'te gösterilen seçenekleri taklit ederek yapabilirsiniz. Bu, size kısa vadede biraz acı verecektir; çünkü artık RStudio'yu yeniden başlattığınızda, geçen sefer çalıştırdığınız kodu hatırlamayacak, ne oluşturduğunuz nesneler ne de okuduğunuz veri kümeleri kullanıma hazır olmayacaktır.
-Ama bu kısa vadeli acı, sizi uzun vadeli ıstıraptan kurtarır; çünkü tüm önemli prosedürleri kodunuzda yakalamaya zorlar.
+R scriptlerini analizinizin tek doğruluk kaynağı olarak tutabilmek için RStudio'ya çalışma alanınızı oturumlar arasında korumamasını söylemenizi özellikle öneririz.
+Bunu `usethis::use_blank_slate()` çalıştırarak[^workflow-scripts-2] veya @fig-blank-slate'te gösterilen ayarları uygulayarak yapabilirsiniz. Bu karar kısa vadede biraz sıkıntı yaratır: RStudio'yu yeniden başlattığınızda önceki oturumda çalıştırdığınız kodu hatırlamaz; oluşturduğunuz nesneler ve okuduğunuz veri kümeleri kullanıma hazır olmaz.
+Ancak bu kısa vadeli sıkıntı sizi uzun vadeli sorunlardan kurtarır; çünkü bütün önemli işlemleri kodunuzda kaydetmeye zorlar.
 Önemli bir hesaplamanın yalnızca sonuçlarını ortamınızda sakladığınızı, hesaplamanın kendisini kodunuzda saklamadığınızı üç ay sonra keşfetmekten daha kötü bir şey yoktur.
 
 [^workflow-scripts-2]: usethis kurulu değilse, `install.packages("usethis")` ile kurabilirsiniz.
@@ -184,8 +184,8 @@ Ama bu kısa vadeli acı, sizi uzun vadeli ıstıraptan kurtarır; çünkü tüm
 #| label: fig-blank-slate
 #| echo: false
 #| fig-cap: |
-#|   RStudio oturumunuza her zaman temiz bir sayfayla başlamak için bu
-#|   seçenekleri RStudio seçeneklerinizde kopyalayın.
+#|   RStudio oturumuna her zaman temiz bir çalışma alanıyla başlamak için
+#|   RStudio ayarlarında bu seçenekleri kullanın.
 #| fig-alt: |
 #|   "Restore .RData into workspace at startup" seçeneğinin
 #|   işaretlenmediği RStudio Global Options penceresi. Ayrıca, "Save
@@ -200,7 +200,7 @@ Editördeki kodunuzun önemli kısımlarını yakaladığınızdan emin olmak i�
 1.  R'ı yeniden başlatmak için Cmd/Ctrl + Shift + 0/F10'a basın.
 2.  Mevcut scripti yeniden çalıştırmak için Cmd/Ctrl + Shift + S'ye basın.
 
-Bu örüntüyü kolektif olarak haftada yüzlerce kez kullanıyoruz.
+Bu örüntüyü hepimiz haftada yüzlerce kez kullanıyoruz.
 
 Alternatif olarak, klavye kısayollarını kullanmıyorsanız, Session \> Restart R'a gidip ardından mevcut scriptinizi vurgulayıp yeniden çalıştırabilirsiniz.
 
@@ -213,7 +213,7 @@ Bir sonraki dönüşünüzde, tam olarak bıraktığınız yerde olacaksınız.
 Bu, temiz bir sayfayla başlamak için R'ı düzenli olarak yeniden başlatmayı daha da önemli hale getirir.
 :::
 
-### Analiziniz Nerede Yaşıyor?
+### Analiziniz nerede bulunuyor?
 
 R'ın **çalışma dizini** (working directory) diye güçlü bir kavramı vardır.
 R, yüklemesini istediğiniz dosyaları burada arar ve kaydetmesini istediğiniz dosyaları buraya koyar.
@@ -236,12 +236,12 @@ getwd()
 #> [1] "/Users/hadley/Documents/r4ds"
 ```
 
-Bu R oturumunda, mevcut çalışma dizini ("ev" olarak düşünün), hadley'nin Documents klasöründe, r4ds adlı bir alt klasördedir.
+Bu R oturumunda geçerli çalışma dizini (bunu "ev" olarak düşünebilirsiniz), Hadley'nin Documents klasöründeki r4ds alt klasörüdür.
 Bu kodu çalıştırdığınızda farklı bir sonuç döndürecektir; çünkü bilgisayarınızın dizin yapısı Hadley'ninkinden farklıdır!
 
 Yeni başlayan bir R kullanıcısı olarak, çalışma dizininizin ev dizininiz, belgeler dizininiz veya bilgisayarınızdaki başka herhangi bir garip dizin olmasına izin vermeniz sorun değildir.
 Ama kitapta bir avuçtan fazla bölümü geride bıraktınız ve artık yeni başlayan biri değilsiniz.
-Çok yakında, projelerinizi dizinlere organize etme ve bir proje üzerinde çalışırken R'ın çalışma dizinini ilgili dizine ayarlama konusunda gelişmelisiniz.
+Artık projelerinizi dizinlerde düzenlemeye ve bir proje üzerinde çalışırken R'ın çalışma dizinini ilgili dizine ayarlamaya geçmelisiniz.
 
 Çalışma dizinini R içinden ayarlayabilirsiniz; ama **bunu** **önermiyoruz**:
 
@@ -253,7 +253,7 @@ setwd("/path/to/my/CoolProject")
 Daha iyi bir yol var; sizi ayrıca R çalışmanızı bir uzman gibi yönetme yoluna da sokan bir yol.
 Bu yol, **RStudio** **projesi**dir.
 
-### RStudio Projeleri
+### RStudio projeleri
 
 Belirli bir projeyle ilişkili tüm dosyaları (girdi verisi, R scriptleri, analitik sonuçlar ve şekiller) tek bir dizinde bir arada tutmak, o kadar akıllıca ve yaygın bir uygulamadır ki, RStudio bunun için **projeler** aracılığıyla yerleşik destek sunar.
 Kitabın geri kalanında çalışırken kullanmanız için bir proje oluşturalım.
@@ -265,7 +265,7 @@ File \> New Project'e tıklayın, ardından @fig-new-project'te gösterilen adı
 #| fig-cap: |
 #|   Yeni proje oluşturmak için: (üstte) önce New Directory'ye
 #|   tıklayın, sonra (ortada) New Project'e tıklayın, sonra (altta)
-#|   dizin (proje) adını doldurun, evi için iyi bir alt dizin seçin ve
+#|   dizin (proje) adını girin, proje için uygun bir üst dizin seçin ve
 #|   Create Project'e tıklayın.
 #| fig-alt: |
 #|   New Project menüsünün üç ekran görüntüsü. İlk ekran görüntüsünde,
@@ -312,22 +312,22 @@ write_csv(diamonds, "data/diamonds.csv")
 RStudio'dan çıkın.
 Projenizle ilişkili klasörü inceleyin --- `.Rproj` dosyasına dikkat edin.
 Projeyi yeniden açmak için o dosyaya çift tıklayın.
-Bıraktığınız yere geri döndüğünüze dikkat edin: aynı çalışma dizini ve komut geçmişi, ve üzerinde çalıştığınız tüm dosyalar hâlâ açık.
+Bıraktığınız yere döndüğünüze dikkat edin: çalışma dizini ve komut geçmişi aynıdır, üzerinde çalıştığınız bütün dosyalar da hâlâ açıktır.
 Ancak yukarıdaki talimatlarımızı izlediğiniz için, temiz bir sayfayla başladığınızı garanti eden tamamen taze bir ortamınız olacak.
 
-Favori işletim-sistemine-özgü yönteminizle, bilgisayarınızda `diamonds.png`'yi arayın ve PNG'yi bulacaksınız (şaşırtıcı değil), ama *onu oluşturan scripti de* (`diamonds.R`).
+İşletim sisteminizde tercih ettiğiniz yöntemle bilgisayarınızda `diamonds.png` dosyasını arayın. PNG dosyasını bulmanız şaşırtıcı değildir; ancak *onu oluşturan scripti* (`diamonds.R`) de bulursunuz.
 Bu muazzam bir kazanç!
 Bir gün, bir şekli yeniden oluşturmak veya sadece nereden geldiğini anlamak isteyeceksiniz.
 Şekilleri titizlikle **R koduyla** dosyalara kaydeder ve asla fareyle veya panoyla kaydetmezseniz, eski çalışmaları kolayca yeniden üretebileceksiniz!
 
-### Göreceli ve Mutlak Yollar
+### Göreli ve mutlak yollar
 
-Bir projenin içindeyken, her zaman yalnızca göreceli yolları kullanmalı, mutlak yolları kullanmamalısınız.
+Bir projenin içindeyken her zaman göreli yollar kullanmalı, mutlak yollar kullanmamalısınız.
 Aradaki fark nedir?
-Göreceli bir yol, çalışma dizinine, yani projenin evine görecelidir.
+Göreli bir yol, çalışma dizinine, yani projenin ana dizinine göre tanımlanır.
 Hadley yukarıda `data/diamonds.csv` yazdığında, bu `/Users/hadley/Documents/r4ds/data/diamonds.csv` için bir kısayoldu.
 Ama önemli olan şu ki, Mine bu kodu kendi bilgisayarında çalıştırsaydı, `/Users/Mine/Documents/r4ds/data/diamonds.csv`'ye işaret ederdi.
-Göreceli yolların önemli olmasının nedeni budur: R proje klasörü nerede son bulursa bulsun çalışırlar.
+Göreli yolların önemli olmasının nedeni budur: R proje klasörü nereye taşınırsa taşınsın çalışırlar.
 
 Mutlak yollar, çalışma dizininizden bağımsız olarak aynı yere işaret eder.
 İşletim sisteminize bağlı olarak biraz farklı görünürler.
@@ -337,7 +337,7 @@ Scriptlerinizde mutlak yolları **asla** kullanmamalısınız; çünkü paylaşm
 İşletim sistemleri arasında bir başka önemli fark daha var: yolun bileşenlerini nasıl ayırdığınız.
 Mac ve Linux eğik çizgi kullanır (örneğin, `data/diamonds.csv`), Windows ise ters eğik çizgi kullanır (örneğin, `data\diamonds.csv`).
 R her iki türle de çalışabilir (şu anda hangi platformu kullandığınız fark etmeksizin); ama ne yazık ki ters eğik çizgiler R için özel bir anlam taşır ve yolda tek bir ters eğik çizgi elde etmek için iki ters eğik çizgi yazmanız gerekir!
-Bu hayatı sinir bozucu hale getirir, bu yüzden her zaman ileri eğik çizgilerle Linux/Mac stilini kullanmanızı öneririz.
+Bu durum işleri gereksiz yere zorlaştırır; bu yüzden her zaman düz eğik çizgi kullanan Linux/Mac biçimini öneririz.
 
 ## Alıştırmalar
 
@@ -349,15 +349,15 @@ Bu hayatı sinir bozucu hale getirir, bu yüzden her zaman ileri eğik çizgiler
 
 ## Özet
 
-Bu bölümde, R kodunuzu scriptlerde (dosyalarda) ve projelerde (dizinlerde) nasıl organize edeceğinizi öğrendiniz.
+Bu bölümde R kodunuzu scriptlerde (dosyalarda) ve projelerde (dizinlerde) nasıl düzenleyeceğinizi öğrendiniz.
 Kod stili gibi, bu da başlangıçta angarya gibi hissettirebilir.
-Ama birden fazla proje boyunca daha fazla kod biriktirdikçe, önceden yapılan biraz organizasyonun ileride size ne kadar zaman kazandırabileceğini takdir etmeyi öğreneceksiniz.
+Ancak birden fazla projede kod biriktirdikçe başlangıçta kurulan küçük bir düzenin ileride ne kadar zaman kazandırdığını göreceksiniz.
 
 Özetle, scriptler ve projeler size gelecekte işinize yarayacak sağlam bir iş akışı sağlar:
 
 -   Her veri analizi projesi için bir RStudio projesi oluşturun.
 -   Scriptlerinizi (bilgilendirici isimlerle) projede kaydedin, düzenleyin, parça parça veya bütün olarak çalıştırın. Scriptlerinizde her şeyi yakaladığınızdan emin olmak için R'ı sık sık yeniden başlatın.
--   Yalnızca göreceli yolları kullanın, mutlak yolları değil.
+-   Yalnızca göreli yolları kullanın; mutlak yolları kullanmayın.
 
 Böylece ihtiyacınız olan her şey tek bir yerde ve üzerinde çalıştığınız diğer tüm projelerden düzgünce ayrılmış olur.
 

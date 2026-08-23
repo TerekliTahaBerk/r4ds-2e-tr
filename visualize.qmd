@@ -5,9 +5,9 @@
 source("_common.R")
 ```
 
-Kitabın ilk bölümünü okuduktan sonra, veri bilimi yapmanın en önemli araçlarını (en azından yüzeysel olarak) anlamış oldunuz.
-Şimdi ayrıntılara dalmaya başlama zamanı.
-Kitabın bu bölümünde, veri görselleştirmeyi çok daha derinlemesine öğreneceksiniz.
+Kitabın ilk kısmını okuduktan sonra veri biliminin en önemli araçlarını, en azından genel hatlarıyla, öğrenmiş oldunuz.
+Şimdi ayrıntılara inme zamanı.
+Kitabın bu kısmında veri görselleştirmeyi çok daha derinlemesine ele alacağız.
 
 ```{r}
 #| label: fig-ds-visualize
@@ -20,17 +20,17 @@ Kitabın bu bölümünde, veri görselleştirmeyi çok daha derinlemesine öğre
 knitr::include_graphics("diagrams/data-science/visualize.png", dpi = 270)
 ```
 
-Her bölüm, veri görselleştirmesi oluşturmanın bir veya birkaç yönünü ele alır.
+Her bölüm, veri görselleştirme oluşturmanın bir veya birkaç yönünü ele alır.
 
--   @sec-layers bölümünde, grafiklerin katmanlı grameri (layered grammar of graphics) hakkında bilgi edineceksiniz.
+-   @sec-layers bölümünde grafik gramerinin katmanlı yapısını öğreneceksiniz.
 
 -   @sec-exploratory-data-analysis bölümünde, veriye dair ilginç sorular sorup yanıtlamak için görselleştirmeyi merakınız ve şüpheciliğinizle birleştireceksiniz.
 
--   Son olarak, @sec-communication bölümünde, keşifçi grafiklerinizi nasıl alıp bir üst seviyeye taşıyacağınızı ve bunları açıklayıcı grafiklere -analizinize yeni bakan birinin neler olup bittiğini mümkün olduğunca hızlı ve kolay anlamasına yardımcı olan grafiklere- nasıl dönüştüreceğinizi öğreneceksiniz.
+-   Son olarak @sec-communication bölümünde keşif amaçlı grafiklerinizi geliştirip açıklayıcı grafiklere nasıl dönüştüreceğinizi öğreneceksiniz. Açıklayıcı grafikler, analizinizi ilk kez gören birinin neler olup bittiğini olabildiğince hızlı ve kolay anlamasına yardımcı olur.
 
 Bu üç bölüm, görselleştirme dünyasına adım atmanızı sağlar; ancak öğrenilecek çok daha fazla şey vardır.
-Daha fazlasını öğrenmek için kesinlikle en iyi kaynak ggplot2 kitabıdır: [*ggplot2: Elegant graphics for data analysis*](https://ggplot2-book.org/).
-Bu kitap, altta yatan teoriyi çok daha derinlemesine ele alır ve pratik problemleri çözmek için tek tek parçaları nasıl birleştireceğinize dair çok daha fazla örnek sunar.
-Bir başka harika kaynak da ggplot2 uzantıları galerisidir: <https://exts.ggplot2.tidyverse.org/gallery/>.
-Bu site, ggplot2'yi yeni geom'lar ve scale'lerle genişleten pek çok paketi listeler.
+Daha fazlasını öğrenebileceğiniz en iyi kaynak ggplot2 kitabıdır: [*ggplot2: Elegant graphics for data analysis*](https://ggplot2-book.org/).
+Bu kitap, temel kuramı çok daha ayrıntılı ele alır ve uygulamadaki sorunları çözmek için tek tek parçaların nasıl birleştirileceğine ilişkin çok daha fazla örnek sunar.
+Bir başka harika kaynak da [ggplot2 uzantıları galerisidir](https://exts.ggplot2.tidyverse.org/gallery/).
+Bu site, ggplot2'yi yeni geom'lar ve ölçeklerle genişleten pek çok paketi listeler.
 ggplot2 ile yapılması zor görünen bir şeyi yapmaya çalışıyorsanız, başlamak için harika bir yerdir.

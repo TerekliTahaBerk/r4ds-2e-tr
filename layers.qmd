@@ -10,16 +10,16 @@ source("_common.R")
 @sec-data-visualization bölümünde, yalnızca saçılım grafikleri, çubuk grafikler ve kutu grafikleri yapmaktan çok daha fazlasını öğrendiniz.
 ggplot2 ile *herhangi* bir grafik türü yapmak için kullanabileceğiniz bir temel öğrendiniz.
 
-Bu bölümde, grafiklerin katmanlı gramerini öğrenirken bu temeli genişleteceksiniz.
-Estetik eşlemelere, geometrik nesnelere ve facet'lere daha derinlemesine dalarak başlayacağız.
-Ardından, ggplot2'nin bir grafik oluştururken arka planda yaptığı istatistiksel dönüşümleri öğreneceksiniz.
+Bu bölümde katmanlı grafik gramerini öğrenerek bu temeli genişleteceksiniz.
+Estetik eşlemeleri, geometrik nesneleri ve panelleri daha ayrıntılı inceleyerek başlayacağız.
+Ardından ggplot2'nin grafik oluştururken arka planda gerçekleştirdiği istatistiksel dönüşümleri öğreneceksiniz.
 Bu dönüşümler, bir çubuk grafikteki çubukların yükseklikleri veya bir kutu grafikteki medyanlar gibi, çizilecek yeni değerleri hesaplamak için kullanılır.
 Ayrıca, geom'ların grafiklerinizde nasıl gösterildiğini değiştiren konum ayarlamaları hakkında da bilgi edineceksiniz.
 Son olarak, koordinat sistemlerini kısaca tanıtacağız.
 
-Bu katmanların her biri için her tek fonksiyonu ve seçeneği ele almayacağız; ama ggplot2'nin sağladığı en önemli ve yaygın olarak kullanılan işlevselliği size adım adım göstereceğiz ve ggplot2'yi genişleten paketlerle de sizi tanıştıracağız.
+Her katmana ilişkin bütün fonksiyonları ve seçenekleri ele almayacağız. Bunun yerine ggplot2'nin en önemli ve yaygın özelliklerini adım adım gösterecek, ayrıca ggplot2'yi genişleten paketleri tanıtacağız.
 
-### Ön Koşullar
+### Ön koşullar
 
 Bu bölüm ggplot2'ye odaklanır.
 Bu bölümde kullanılan veri kümelerine, yardım sayfalarına ve fonksiyonlara erişmek için, şu kodu çalıştırarak tidyverse'i yükleyin:
@@ -30,7 +30,7 @@ Bu bölümde kullanılan veri kümelerine, yardım sayfalarına ve fonksiyonlara
 library(tidyverse)
 ```
 
-## Estetik Eşlemeler
+## Estetik eşlemeler
 
 > "Bir resmin en büyük değeri, bizi asla beklemediğimiz bir şeyi fark etmeye zorladığı andır." --- John Tukey
 
@@ -53,7 +53,7 @@ mpg
     Kategorik bir değişken.
 
 Çeşitli araç `class`'ları için `displ` ile `hwy` arasındaki ilişkiyi görselleştirerek başlayalım.
-Bunu, sayısal değişkenlerin `x` ve `y` estetiklerine, kategorik değişkenin ise `color` veya `shape` gibi bir estetiğe eşlendiği bir saçılım grafiğiyle yapabiliriz.
+Bunu, sayısal değişkenleri `x` ve `y` estetiklerine; kategorik değişkeni ise `color` veya `shape` gibi bir estetiğe eşleyen saçılım grafiğiyle yapabiliriz.
 
 ```{r}
 #| layout-ncol: 2
@@ -66,7 +66,7 @@ Bunu, sayısal değişkenlerin `x` ve `y` estetiklerine, kategorik değişkenin 
 #|   Sağdaki grafikte class, shape estetiğine eşlenmiş, bu da suv hariç
 #|   her sınıf için farklı çizim karakteri şekilleriyle sonuçlanmış.
 #|   Her grafikte, color veya shape ile class değişkeninin düzeyleri
-#|   arasındaki eşlemeyi gösteren bir açıklama kutusu var.
+#|   arasındaki eşlemeyi gösteren bir gösterge var.
 # Sol
 ggplot(mpg, aes(x = displ, y = hwy, color = class)) +
   geom_point()
@@ -83,7 +83,7 @@ ggplot(mpg, aes(x = displ, y = hwy, shape = class)) +
 >
 > 2: Removed 62 rows containing missing values (`geom_point()`).
 
-ggplot2 varsayılan olarak aynı anda yalnızca altı şekil kullanacağından, shape estetiğini kullandığınızda ek gruplar çizilmeyecektir.
+ggplot2 varsayılan olarak aynı anda yalnızca altı şekil kullanabildiğinden `shape` estetiğine eşlenen ek gruplar çizilmez.
 İkinci uyarı bununla ilgilidir -- veri kümesinde 62 SUV var ve bunlar çizilmiyor.
 
 Benzer şekilde, `class`'ı sırasıyla noktaların boyutunu ve saydamlığını kontrol eden `size` veya `alpha` estetiklerine de eşleyebiliriz.
@@ -99,7 +99,7 @@ Benzer şekilde, `class`'ı sırasıyla noktaların boyutunu ve saydamlığını
 #|   Sağdaki grafikte class, alpha estetiğine eşlenmiş, bu da her sınıf
 #|   için farklı alpha (saydamlık) düzeyleriyle sonuçlanmış. Her
 #|   grafikte, size veya alpha düzeyi ile class değişkeninin düzeyleri
-#|   arasındaki eşlemeyi gösteren bir açıklama kutusu var.
+#|   arasındaki eşlemeyi gösteren bir gösterge var.
 # Sol
 ggplot(mpg, aes(x = displ, y = hwy, size = class)) +
   geom_point()
@@ -115,10 +115,10 @@ Bunların ikisi de uyarı üretir:
 
 Sırasız kesikli (kategorik) bir değişkeni (`class`) sıralı bir estetiğe (`size` veya `alpha`) eşlemek genellikle iyi bir fikir değildir; çünkü aslında var olmayan bir sıralamayı ima eder.
 
-Bir estetiği eşledikten sonra, ggplot2 gerisiyle ilgilenir.
-Estetikle kullanmak için mantıklı bir scale seçer ve düzeyler ile değerler arasındaki eşlemeyi açıklayan bir açıklama kutusu oluşturur.
-x ve y estetikleri için ggplot2 bir açıklama kutusu oluşturmaz; ama tik işaretleri ve bir etiket içeren bir eksen çizgisi oluşturur.
-Eksen çizgisi, bir açıklama kutusuyla aynı bilgiyi sağlar; konumlar ile değerler arasındaki eşlemeyi açıklar.
+Bir estetiği eşledikten sonra gerisini ggplot2 halleder.
+Estetiğe uygun bir ölçek seçer ve düzeylerle değerler arasındaki eşlemeyi açıklayan bir gösterge oluşturur.
+ggplot2, `x` ve `y` estetikleri için gösterge yerine eksen çizgisi, işaretler ve etiket oluşturur.
+Eksen, göstergeyle aynı bilgiyi sağlar: Konumlarla değerler arasındaki eşlemeyi açıklar.
 
 Görünümü belirlemek için bir değişken eşlemesine güvenmek yerine, geom'unuzun görsel özelliklerini geom fonksiyonunuzun bir argümanı olarak (`aes()`'in *dışında*) elle de ayarlayabilirsiniz.
 Örneğin, grafiğimizdeki tüm noktaları mavi yapabiliriz:
@@ -178,7 +178,7 @@ ggplot(shapes, aes(x, y)) +
 ```
 
 Şimdiye kadar, bir nokta geom'u kullanırken bir saçılım grafiğinde eşleyebileceğimiz veya ayarlayabileceğimiz estetikleri tartıştık.
-Olası tüm estetik eşlemeler hakkında daha fazla bilgiyi <https://ggplot2.tidyverse.org/articles/ggplot2-specs.html> adresindeki estetik spesifikasyonları vignette'inde öğrenebilirsiniz.
+Olası estetik eşlemeler hakkında daha fazla bilgiyi [estetik özellikler vinyetinde](https://ggplot2.tidyverse.org/articles/ggplot2-specs.html) bulabilirsiniz.
 
 Bir grafik için kullanabileceğiniz belirli estetikler, veriyi temsil etmek için kullandığınız geom'a bağlıdır.
 Sonraki bölümde geom'lara daha derinlemesine dalıyoruz.
@@ -194,7 +194,7 @@ Sonraki bölümde geom'lara daha derinlemesine dalıyoruz.
     #| fig-alt: |
     #|   Araçların otoyol yakıt verimliliğine karşı motor hacminin,
     #|   negatif bir ilişki gösteren saçılım grafiği. Tüm noktalar
-    #|   kırmızı ve açıklama kutusu, "blue" kelimesine eşlenen kırmızı
+    #|   kırmızı ve gösterge, "blue" kelimesine eşlenen kırmızı
     #|   bir nokta gösteriyor.
     ggplot(mpg) + 
       geom_point(aes(x = displ, y = hwy, color = "blue"))
@@ -207,7 +207,7 @@ Sonraki bölümde geom'lara daha derinlemesine dalıyoruz.
 4.  Bir estetiği, `aes(color = displ < 5)` gibi bir değişken adı dışında bir şeye eşlerseniz ne olur?
     x ve y'yi de belirtmeniz gerekeceğini unutmayın.
 
-## Geometrik Nesneler {#sec-geometric-objects}
+## Geometrik nesneler {#sec-geometric-objects}
 
 Bu iki grafik nasıl benzer?
 
@@ -229,10 +229,10 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_smooth()
 ```
 
-Her iki grafik de aynı x değişkenini, aynı y değişkenini içerir ve ikisi de aynı veriyi tanımlar.
+Her iki grafik de aynı `x` ve `y` değişkenlerini içerir ve aynı verileri gösterir.
 Ama grafikler aynı değildir.
 Her grafik, veriyi temsil etmek için farklı bir geometrik nesne, geom, kullanır.
-Soldaki grafik nokta geom'unu kullanır; sağdaki grafik ise, veriye uydurulmuş düzgün bir çizgi olan smooth geom'unu kullanır.
+Soldaki grafik nokta geom'unu, sağdaki grafik ise verilere uydurulmuş pürüzsüz bir çizgi olan smooth geom'unu kullanır.
 
 Grafiğinizdeki geom'u değiştirmek için, `ggplot()`'a eklediğiniz geom fonksiyonunu değiştirin.
 Örneğin, yukarıdaki grafikleri yapmak için şu kodu kullanabilirsiniz:
@@ -250,10 +250,10 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
 
 ggplot2'deki her geom fonksiyonu, geom katmanında yerel olarak veya `ggplot()` katmanında global olarak tanımlanan bir `mapping` argümanı alır.
 Ancak her estetik her geom ile çalışmaz.
-Bir noktanın şeklini ayarlayabilirsiniz, ama bir çizginin "şeklini" ayarlayamazsınız.
+Bir noktanın şeklini ayarlayabilirsiniz ancak bir çizginin "şeklini" ayarlayamazsınız.
 Denerseniz, ggplot2 o estetik eşlemesini sessizce yok sayar.
-Öte yandan, bir çizginin linetype'ını *ayarlayabilirsiniz*.
-`geom_smooth()`, linetype'a eşlediğiniz değişkenin her benzersiz değeri için farklı bir linetype'a sahip farklı bir çizgi çizecektir.
+Öte yandan bir çizginin `linetype` estetiğini *ayarlayabilirsiniz*.
+`geom_smooth()`, `linetype` estetiğine eşlediğiniz değişkenin her benzersiz değeri için farklı çizgi tipinde ayrı bir çizgi çizer.
 
 ```{r}
 #| message: false
@@ -262,7 +262,7 @@ Denerseniz, ggplot2 o estetik eşlemesini sessizce yok sayar.
 #| fig-alt: |
 #|   Araçların otoyol yakıt verimliliğine karşı motor hacminin iki
 #|   grafiği. Veri, düzgün eğrilerle temsil ediliyor. Solda, hepsi aynı
-#|   linetype'a sahip üç düzgün eğri. Sağda, her tahrik tipi için
+#|   çizgi tipine sahip üç düzgün eğri. Sağda, her tahrik tipi için
 #|   farklı çizgi tiplerine (düz, kesikli veya uzun kesikli) sahip üç
 #|   düzgün eğri. Her iki grafikte de, düzgün eğrilerin etrafında güven
 #|   aralıkları da gösteriliyor.
@@ -276,7 +276,7 @@ ggplot(mpg, aes(x = displ, y = hwy, linetype = drv)) +
 ```
 
 Burada `geom_smooth()`, araçları, aracın tahrik sistemini tanımlayan `drv` değerlerine göre üç çizgiye ayırır.
-Bir çizgi, `4` değerine sahip tüm noktaları; bir çizgi, `f` değerine sahip tüm noktaları; bir çizgi de `r` değerine sahip tüm noktaları tanımlar.
+Çizgilerden biri `4`, biri `f`, diğeri de `r` değerine sahip bütün noktaları temsil eder.
 Burada `4`, dört çeker; `f`, önden çekiş; `r` ise arkadan itiş anlamına gelir.
 
 Bu garip geliyorsa, çizgileri ham verinin üzerine bindirip ardından her şeyi `drv`'ye göre renklendirerek bunu daha netleştirebiliriz.
@@ -299,8 +299,8 @@ Bu grafiğin aynı grafikte iki geom içerdiğine dikkat edin.
 `geom_smooth()` gibi pek çok geom, birden fazla veri satırını göstermek için tek bir geometrik nesne kullanır.
 Bu geom'lar için, birden fazla nesne çizmek üzere `group` estetiğini kategorik bir değişkene ayarlayabilirsiniz.
 ggplot2, gruplama değişkeninin her benzersiz değeri için ayrı bir nesne çizecektir.
-Pratikte, bir estetiği kesikli bir değişkene her eşlediğinizde (`linetype` örneğindeki gibi) ggplot2 bu geom'lar için veriyi otomatik olarak gruplandırır.
-Bu özelliğe güvenmek kullanışlıdır; çünkü `group` estetiğinin tek başına geom'lara bir açıklama kutusu veya ayırt edici özellikler eklemesi yoktur.
+Uygulamada, bir estetiği kesikli bir değişkene eşlediğinizde (`linetype` örneğindeki gibi) ggplot2 bu geom'lara ait verileri otomatik olarak gruplandırır.
+Bu davranış kullanışlıdır; çünkü `group` estetiği tek başına geom'lara gösterge veya ayırt edici bir görsel özellik eklemez.
 
 ```{r}
 #| layout-ncol: 3
@@ -348,7 +348,7 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
 
 Aynı fikri, her katman için farklı `data` belirtmek üzere kullanabilirsiniz.
 Burada, iki koltuklu araçları vurgulamak için kırmızı noktaları ve içi boş daireleri kullanıyoruz.
-`geom_point()`'teki yerel data argümanı, yalnızca o katman için `ggplot()`'taki global data argümanının üzerine yazar.
+`geom_point()` içindeki yerel `data` argümanı, yalnızca o katmanda `ggplot()` içindeki genel `data` argümanını geçersiz kılar.
 
 ```{r}
 #| message: false
@@ -370,13 +370,13 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
 
 Geom'lar, ggplot2'nin temel yapı taşlarıdır.
 Geom'unu değiştirerek grafiğinizin görünümünü tamamen dönüştürebilirsiniz ve farklı geom'lar verinizin farklı özelliklerini ortaya çıkarabilir.
-Örneğin, aşağıdaki histogram ve yoğunluk grafiği, otoyol yakıt tüketiminin dağılımının iki modlu ve sağa çarpık olduğunu ortaya çıkarırken, kutu grafiği iki potansiyel aykırı değeri ortaya çıkarır.
+Örneğin aşağıdaki histogram ve yoğunluk grafiği, otoyol yakıt verimliliği dağılımının iki modlu ve sağa çarpık olduğunu; kutu grafiği ise iki olası aykırı değeri gösterir.
 
 ```{r}
 #| layout-ncol: 3
 #| fig-width: 3
 #| fig-alt: |
-#|   Üç grafik: otoyol yakıt tüketiminin histogramı, yoğunluk grafiği
+#|   Üç grafik: otoyol yakıt verimliliğinin histogramı, yoğunluk grafiği
 #|   ve kutu grafiği.
 # Sol
 ggplot(mpg, aes(x = hwy)) +
@@ -400,7 +400,7 @@ Aşağıdaki grafikte yalnızca yeni bir geom (`geom_density_ridges()`) kullanma
 #| fig-asp: 0.33
 #| fig-alt:
 #|   Arkadan itişli, önden çekişli ve dört çekerli araçlar için ayrı
-#|   ayrı çizilmiş otoyol yakıt tüketimi yoğunluk eğrileri. Dağılım,
+#|   ayrı çizilmiş otoyol yakıt verimliliği yoğunluk eğrileri. Dağılım,
 #|   arkadan itişli ve dört çekerli araçlar için iki modlu ve kabaca
 #|   simetriktir; önden çekişli araçlar için tek modlu ve sağa
 #|   çarpıktır.
@@ -481,49 +481,49 @@ Herhangi bir tek geom hakkında daha fazla bilgi edinmek için yardımı kullan�
       geom_point(aes(color = drv))
     ```
 
-## Facet'ler
+## Paneller
 
-@sec-data-visualization bölümünde, bir grafiği kategorik bir değişkene dayalı olarak verinin bir alt kümesini gösteren alt grafiklere bölen `facet_wrap()` ile facet'leme hakkında bilgi edindiniz.
+@sec-data-visualization bölümünde `facet_wrap()` ile panellere ayırmayı öğrendiniz. Bu fonksiyon, grafiği kategorik değişkenin her düzeyi için verilerin bir alt kümesini gösteren alt grafiklere böler.
 
 ```{r}
 #| fig-alt: |
 #|   Araçların otoyol yakıt verimliliğine karşı motor hacminin,
-#|   silindir sayısına göre facet'lenmiş ve facet'leri iki satıra
+#|   silindir sayısına göre panellere ayrılmış ve panelleri iki satıra
 #|   yayılan bir saçılım grafiği.
 ggplot(mpg, aes(x = displ, y = hwy)) + 
   geom_point() + 
   facet_wrap(~cyl)
 ```
 
-Grafiğinizi iki değişkenin kombinasyonuyla facet'lemek için `facet_wrap()`'ten `facet_grid()`'e geçin.
+Grafiğinizi iki değişkenin birleşimine göre panellere ayırmak için `facet_wrap()` yerine `facet_grid()` kullanın.
 `facet_grid()`'in ilk argümanı da bir formüldür; ama şimdi çift taraflı bir formüldür: `rows ~ cols`.
 
 ```{r}
 #| fig-alt: |
 #|   Araçların otoyol yakıt verimliliğine karşı motor hacminin,
 #|   satırlar boyunca silindir sayısına, sütunlar boyunca ise tahrik
-#|   sistemi türüne göre facet'lenmiş bir saçılım grafiği. Bu, 12
-#|   facet'ten oluşan 4x3'lük bir ızgarayla sonuçlanır. Bu
-#|   facet'lerden bazılarının hiç gözlemi yoktur: 5 silindir ve dört
+#|   sistemi türüne göre panellere ayrılmış bir saçılım grafiği. Bu, 12
+#|   panelden oluşan 4x3'lük bir ızgarayla sonuçlanır. Bu
+#|   panellerden bazılarının hiç gözlemi yoktur: 5 silindir ve dört
 #|   çeker, 4 veya 5 silindir ve önden çekiş.
 ggplot(mpg, aes(x = displ, y = hwy)) + 
   geom_point() + 
   facet_grid(drv ~ cyl)
 ```
 
-Varsayılan olarak facet'lerin her biri, x ve y eksenleri için aynı scale ve aralığı paylaşır.
-Bu, veriyi facet'ler arasında karşılaştırmak istediğinizde yararlıdır; ama her facet içindeki ilişkiyi daha iyi görselleştirmek istediğinizde kısıtlayıcı olabilir.
-Bir facet'leme fonksiyonundaki `scales` argümanını `"free_x"` olarak ayarlamak, sütunlar arasında farklı x ekseni scale'lerine izin verir; `"free_y"` satırlar arasında farklı y ekseni scale'lerine izin verir; `"free"` ise her ikisine de izin verir.
+Varsayılan olarak bütün paneller `x` ve `y` eksenlerinde aynı ölçeği ve aralığı paylaşır.
+Bu, verileri paneller arasında karşılaştırırken yararlıdır; ancak her paneldeki ilişkiyi ayrı ayrı görmek istediğinizde kısıtlayıcı olabilir.
+Panelleme fonksiyonundaki `scales` argümanını `"free_x"` olarak ayarlamak sütunlar arasında farklı `x` ölçeklerine, `"free_y"` satırlar arasında farklı `y` ölçeklerine, `"free"` ise her ikisine izin verir.
 
 ```{r}
 #| fig-alt: |
 #|   Araçların otoyol yakıt verimliliğine karşı motor hacminin,
 #|   satırlar boyunca silindir sayısına, sütunlar boyunca ise tahrik
-#|   sistemi türüne göre facet'lenmiş bir saçılım grafiği. Bu, 12
-#|   facet'ten oluşan 4x3'lük bir ızgarayla sonuçlanır. Bu
-#|   facet'lerden bazılarının hiç gözlemi yoktur: 5 silindir ve dört
-#|   çeker, 4 veya 5 silindir ve önden çekiş. Bir satırdaki facet'ler
-#|   aynı y-scale'ini, bir sütundaki facet'ler ise aynı x-scale'ini
+#|   sistemi türüne göre panellere ayrılmış bir saçılım grafiği. Bu, 12
+#|   panelden oluşan 4x3'lük bir ızgarayla sonuçlanır. Bu
+#|   panellerden bazılarının hiç gözlemi yoktur: 5 silindir ve dört
+#|   çeker, 4 veya 5 silindir ve önden çekiş. Bir satırdaki paneller
+#|   aynı y ölçeğini, bir sütundaki paneller ise aynı x ölçeğini
 #|   paylaşır.
 ggplot(mpg, aes(x = displ, y = hwy)) + 
   geom_point() + 
@@ -532,7 +532,7 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
 
 ### Alıştırmalar
 
-1.  Sürekli bir değişken üzerinde facet'lerseniz ne olur?
+1.  Sürekli bir değişkene göre panellere ayırırsanız ne olur?
 
 2.  Yukarıdaki grafikte `facet_grid(drv ~ cyl)` ile boş hücreler ne anlama gelir?
     Aşağıdaki kodu çalıştırın.
@@ -558,7 +558,7 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
       facet_grid(. ~ cyl)
     ```
 
-4.  Bu bölümdeki ilk facet'lenmiş grafiği ele alın:
+4.  Bu bölümde panellere ayrılmış ilk grafiği ele alın:
 
     ```{r}
     #| fig-show: hide
@@ -567,7 +567,7 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
       facet_wrap(~ cyl, nrow = 2)
     ```
 
-    Color estetiği yerine facet'leme kullanmanın avantajları nelerdir?
+    `color` estetiği yerine panellere ayırmanın avantajları nelerdir?
     Dezavantajları nelerdir?
     Daha büyük bir veri kümeniz olsaydı denge nasıl değişebilirdi?
 
@@ -577,8 +577,8 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
     Bireysel panellerin düzenini başka hangi seçenekler kontrol eder?
     `facet_grid()` neden `nrow` ve `ncol` argümanlarına sahip değildir?
 
-6.  Aşağıdaki grafiklerden hangisi, farklı tahrik sistemlerine sahip araçlar arasında motor hacmini (`displ`) karşılaştırmayı daha kolay hale getirir?
-    Bu, bir facet'leme değişkenini satırlar veya sütunlar boyunca ne zaman yerleştireceğiniz hakkında ne söylüyor?
+6.  Aşağıdaki grafiklerden hangisi, farklı tahrik sistemlerine sahip araçların motor hacmini (`displ`) karşılaştırmayı kolaylaştırır?
+    Bu sonuç, panelleme değişkenini hangi durumda satırlara veya sütunlara yerleştirmeniz gerektiği hakkında ne söylüyor?
 
     ```{r}
     #| fig-show: hide
@@ -593,7 +593,7 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
     ```
 
 7.  Aşağıdaki grafiği `facet_grid()` yerine `facet_wrap()` kullanarak yeniden oluşturun.
-    Facet etiketlerinin konumları nasıl değişir?
+    Panel etiketlerinin konumları nasıl değişir?
 
     ```{r}
     #| fig-show: hide
@@ -602,7 +602,7 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
       facet_grid(drv ~ .)
     ```
 
-## İstatistiksel Dönüşümler
+## İstatistiksel dönüşümler
 
 `geom_bar()` veya `geom_col()` ile çizilen temel bir çubuk grafiği ele alalım.
 Aşağıdaki grafik, `diamonds` veri kümesindeki toplam elmas sayısını `cut`'a göre gruplandırılmış olarak gösterir.
@@ -619,14 +619,14 @@ ggplot(diamonds, aes(x = cut)) +
 ```
 
 Grafik, x ekseninde `diamonds`'tan bir değişken olan `cut`'ı gösterir.
-Y ekseninde ise count'u gösterir; ama count, `diamonds`'ta bir değişken değildir!
-Count nereden geliyor?
+Y ekseninde ise `count` gösterilir; ancak `count`, `diamonds` içinde bir değişken değildir!
+Peki `count` nereden gelir?
 Saçılım grafikleri gibi pek çok grafik, veri kümenizin ham değerlerini çizer.
 Çubuk grafikler gibi diğer grafikler ise çizilecek yeni değerler hesaplar:
 
--   Çubuk grafikler, histogramlar ve frekans poligonları verinizi kutulara (bin) ayırır ve ardından kutu sayımlarını, yani her kutuya düşen nokta sayısını çizer.
+-   Çubuk grafikler, histogramlar ve frekans poligonları verilerinizi aralıklara (bins) ayırır ve ardından her aralığa düşen nokta sayısını çizer.
 
--   Smoother'lar verinize bir model uydurur ve ardından modelden gelen tahminleri çizer.
+-   Pürüzsüzleştiriciler verilere bir model uydurur ve modelin tahminlerini çizer.
 
 -   Kutu grafikleri, dağılımın beş sayı özetini hesaplar ve ardından bu özeti özel olarak biçimlendirilmiş bir kutu olarak gösterir.
 
@@ -657,7 +657,7 @@ Bir geom'un hangi stat'ı kullandığını, `stat` argümanının varsayılan de
 `stat_count()`, `geom_bar()` ile aynı sayfada belgelenmiştir.
 Aşağı kaydırırsanız, "Computed variables" adlı bölüm, iki yeni değişken hesapladığını açıklar: `count` ve `prop`.
 
-Her geom'un bir varsayılan stat'ı vardır; ve her stat'ın bir varsayılan geom'u vardır.
+Her geom'un varsayılan bir stat'ı, her stat'ın da varsayılan bir geom'u vardır.
 Bu, genellikle altta yatan istatistiksel dönüşümü dert etmeden geom'ları kullanabileceğiniz anlamına gelir.
 Ancak, bir stat'ı açıkça kullanmanız gerekebilecek üç neden vardır:
 
@@ -689,7 +689,7 @@ Ancak, bir stat'ı açıkça kullanmanız gerekebilecek üç neden vardır:
       geom_bar()
     ```
 
-    Stat tarafından hesaplanabilecek olası değişkenleri bulmak için, `geom_bar()`'ın yardımında "computed variables" başlıklı bölüme bakın.
+    Stat tarafından hesaplanabilecek değişkenleri görmek için `geom_bar()` yardım sayfasındaki "Computed variables" bölümüne bakın.
 
 3.  Kodunuzdaki istatistiksel dönüşüme daha fazla dikkat çekmek isteyebilirsiniz.
     Örneğin, hesapladığınız özete dikkat çekmek için, her benzersiz x değeri için y değerlerini özetleyen `stat_summary()`'yi kullanabilirsiniz:
@@ -742,7 +742,7 @@ Her stat bir fonksiyondur, bu yüzden her zamanki gibi yardım alabilirsiniz, ö
       geom_bar()
     ```
 
-## Konum Ayarlamaları
+## Konum ayarlamaları
 
 Çubuk grafiklerle ilişkili bir sihir parçası daha var.
 Bir çubuk grafiği `color` estetiğini veya, daha kullanışlı olarak, `fill` estetiğini kullanarak renklendirebilirsiniz:
@@ -764,7 +764,7 @@ ggplot(mpg, aes(x = drv, fill = drv)) +
   geom_bar()
 ```
 
-Fill estetiğini `class` gibi başka bir değişkene eşlerseniz ne olduğuna dikkat edin: çubuklar otomatik olarak yığılır.
+`fill` estetiğini `class` gibi başka bir değişkene eşlediğinizde çubukların otomatik olarak yığıldığına dikkat edin.
 Her renkli dikdörtgen, `drv` ve `class`'ın bir kombinasyonunu temsil eder.
 
 ```{r}
@@ -806,7 +806,7 @@ Yığılmış bir çubuk grafiği istemiyorsanız, diğer üç seçenekten birin
       geom_bar(fill = NA, position = "identity")
     ```
 
-    Identity konum ayarlaması, varsayılan olduğu noktalar gibi 2d geom'lar için daha kullanışlıdır.
+    Identity konum ayarlaması, varsayılan olarak bu ayarı kullanan noktalar gibi iki boyutlu geom'larda daha yararlıdır.
 
 -   `position = "fill"`, yığma gibi çalışır; ama her yığılmış çubuk kümesini aynı yükseklikte yapar.
     Bu, oranları gruplar arasında karşılaştırmayı kolaylaştırır.
@@ -854,24 +854,24 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
 ```
 
 `hwy` ve `displ`'in temeldeki değerleri yuvarlanmıştır, bu yüzden noktalar bir ızgara üzerinde görünür ve pek çok nokta birbirinin üzerine biner.
-Bu soruna **aşırı çizim** (overplotting) denir.
+Bu soruna **üst üste çizim** (overplotting) denir.
 Bu düzenleme, verinin dağılımını görmeyi zorlaştırır.
 Veri noktaları grafiğe eşit şekilde mi yayılmış, yoksa 109 değer içeren, `hwy` ve `displ`'in özel bir kombinasyonu mu var?
 
-Konum ayarlamasını "jitter" olarak ayarlayarak bu ızgaralanmayı önleyebilirsiniz.
+Konum ayarlamasını `"jitter"` olarak ayarlayarak bu ızgara görünümünü önleyebilirsiniz.
 `position = "jitter"`, her noktaya küçük miktarda rastgele gürültü ekler.
 Bu, noktaları birbirinden ayırır; çünkü iki noktanın aynı miktarda rastgele gürültü alma olasılığı düşüktür.
 
 ```{r}
 #| fig-alt: |
 #|   Araçların otoyol yakıt verimliliğine karşı motor hacminin
-#|   jitter'lanmış bir saçılım grafiği. Grafik negatif bir ilişki
+#|   noktalarına jitter uygulanmış bir saçılım grafiği. Grafik negatif bir ilişki
 #|   gösteriyor.
 ggplot(mpg, aes(x = displ, y = hwy)) + 
   geom_point(position = "jitter")
 ```
 
-Rastgelelik eklemek, grafiğinizi iyileştirmenin garip bir yolu gibi görünüyor; ama grafiğinizi küçük ölçeklerde daha az doğru yaparken, büyük ölçeklerde *daha* açıklayıcı hale getirir.
+Rastgelelik eklemek grafiği iyileştirmenin tuhaf bir yolu gibi görünebilir; ancak küçük ölçekte doğruluğu biraz azaltırken büyük ölçekte grafiği *daha* açıklayıcı hâle getirir.
 Bu çok kullanışlı bir işlem olduğundan, ggplot2, `geom_point(position = "jitter")` için bir kısayolla birlikte gelir: `geom_jitter()`.
 
 Bir konum ayarlaması hakkında daha fazla bilgi edinmek için, her ayarlamayla ilişkili yardım sayfasına bakın: `?position_dodge`, `?position_fill`, `?position_identity`, `?position_jitter` ve `?position_stack`.
@@ -898,14 +898,14 @@ Bir konum ayarlaması hakkında daha fazla bilgi edinmek için, her ayarlamayla 
       geom_point(position = "identity")
     ```
 
-3.  `geom_jitter()`'a hangi parametreler jitter miktarını kontrol eder?
+3.  `geom_jitter()` fonksiyonunda jitter miktarını hangi argümanlar denetler?
 
 4.  `geom_jitter()`'ı `geom_count()` ile karşılaştırıp karşıtlaştırın.
 
 5.  `geom_boxplot()`'un varsayılan konum ayarlaması nedir?
     Bunu gösteren bir `mpg` veri kümesi görselleştirmesi oluşturun.
 
-## Koordinat Sistemleri
+## Koordinat sistemleri
 
 Koordinat sistemleri muhtemelen ggplot2'nin en karmaşık parçasıdır.
 Varsayılan koordinat sistemi, x ve y konumlarının her noktanın yerini belirlemek için bağımsız olarak hareket ettiği Kartezyen koordinat sistemidir.
@@ -913,7 +913,7 @@ Zaman zaman yardımcı olan iki koordinat sistemi daha vardır.
 
 -   `coord_quickmap()`, coğrafi haritalar için en boy oranını doğru şekilde ayarlar.
     ggplot2 ile mekansal veri çiziyorsanız bu çok önemlidir.
-    Bu kitapta haritaları tartışacak alanımız yok, ama *ggplot2: Elegant graphics for data analysis* kitabının [Maps bölümünde](https://ggplot2-book.org/maps.html) daha fazla bilgi edinebilirsiniz.
+    Bu kitapta haritaları ele alacak alanımız yok; ancak *ggplot2: Elegant graphics for data analysis* kitabının [Maps bölümünde](https://ggplot2-book.org/maps.html) daha fazla bilgi bulabilirsiniz.
 
     ```{r}
     #| layout-ncol: 2
@@ -972,9 +972,9 @@ Zaman zaman yardımcı olan iki koordinat sistemi daha vardır.
       coord_fixed()
     ```
 
-## Katmanlı Grafik Grameri
+## Katmanlı grafik grameri
 
-@sec-ggplot2-calls içinde öğrendiğiniz grafik şablonunu, konum ayarlamaları, istatistikler, koordinat sistemleri ve facetleme ekleyerek genişletebiliriz:
+@sec-ggplot2-calls içinde öğrendiğiniz grafik şablonunu konum ayarlamaları, istatistikler, koordinat sistemleri ve panelleme ekleyerek genişletebiliriz:
 
 ```
 ggplot(data = <VERİ>) +
@@ -987,15 +987,15 @@ ggplot(data = <VERİ>) +
   <FACET_FONKSİYONU>
 ```
 
-Yeni şablonumuz, şablonda görünen köşeli parantez içindeki kelimeler olan yedi parametre alır.
+Yeni şablonumuz, şablonda açılı parantezler içinde görünen yedi parametre alır.
 Pratikte, bir grafik oluşturmak için nadiren yedi parametrenin tamamını sağlamanız gerekir; çünkü ggplot2, veri, eşlemeler ve geom fonksiyonu dışındaki her şey için kullanışlı varsayılanlar sağlar.
 
 Şablondaki yedi parametre, grafikler oluşturmak için biçimsel bir sistem olan grafik gramerini oluşturur.
-Grafik grameri, *herhangi bir* grafiği; bir veri kümesi, bir geom, bir eşlemeler kümesi, bir stat, bir konum ayarlaması, bir koordinat sistemi, bir facetleme şeması ve bir temanın kombinasyonu olarak benzersiz bir şekilde tanımlayabileceğiniz içgörüsüne dayanır.
+Grafik grameri, *herhangi bir* grafiğin veri kümesi, geom, eşleme kümesi, stat, konum ayarlaması, koordinat sistemi, panelleme şeması ve tema birleşimiyle benzersiz biçimde tanımlanabileceği içgörüsüne dayanır.
 
-Bunun nasıl çalıştığını görmek için, temel bir grafiği sıfırdan nasıl oluşturabileceğinizi düşünün: bir veri kümesiyle başlayabilir ve ardından onu (bir stat ile) görüntülemek istediğiniz bilgiye dönüştürebilirsiniz.
-Sonra, dönüştürülmüş verideki her gözlemi temsil etmek için geometrik bir nesne seçebilirsiniz.
-Ardından, verideki değişkenleri temsil etmek için geom'ların estetik özelliklerini kullanabilirsiniz.
+Bunun nasıl çalıştığını görmek için temel bir grafiği sıfırdan nasıl oluşturabileceğinizi düşünün. Bir veri kümesiyle başlayıp onu bir stat aracılığıyla göstermek istediğiniz bilgiye dönüştürebilirsiniz.
+Sonra dönüştürülmüş verilerdeki her gözlemi temsil edecek geometrik nesneyi seçebilirsiniz.
+Ardından verilerdeki değişkenleri temsil etmek için geom'ların estetik özelliklerini kullanabilirsiniz.
 Her değişkenin değerlerini bir estetiğin düzeylerine eşlersiniz.
 Bu adımlar @fig-visualization-grammar içinde gösterilmiştir.
 Ardından, x ve y değişkenlerinin değerlerini görüntülemek için nesnelerin konumunu (kendisi de bir estetik özellik olan) kullanarak geom'ları yerleştireceğiniz bir koordinat sistemi seçersiniz.
@@ -1015,19 +1015,19 @@ Ardından, x ve y değişkenlerinin değerlerini görüntülemek için nesneleri
 knitr::include_graphics("images/visualization-grammar.png")
 ```
 
-Bu noktada, tam bir grafiğiniz olurdu; ama geom'ların koordinat sistemi içindeki konumlarını daha da ayarlayabilir (bir konum ayarlaması) veya grafiği alt grafiklere bölebilirdiniz (facetleme).
-Ayrıca, her ek katmanın bir veri kümesi, bir geom, bir eşlemeler kümesi, bir stat ve bir konum ayarlaması kullandığı, bir veya daha fazla ek katman ekleyerek grafiği genişletebilirdiniz.
+Bu noktada eksiksiz bir grafiğiniz olur. Yine de geom'ların koordinat sistemi içindeki konumlarını bir konum ayarlamasıyla değiştirebilir veya grafiği panellere bölebilirsiniz.
+Ayrıca her biri bir veri kümesi, geom, eşleme kümesi, stat ve konum ayarlaması kullanan bir veya daha fazla katman ekleyerek grafiği genişletebilirsiniz.
 
 Hayal ettiğiniz *herhangi bir* grafiği oluşturmak için bu yöntemi kullanabilirdiniz.
 Başka bir deyişle, bu bölümde öğrendiğiniz kod şablonunu yüz binlerce benzersiz grafik oluşturmak için kullanabilirsiniz.
 
-ggplot2'nin teorik temelleri hakkında daha fazla bilgi edinmek isterseniz, ggplot2 teorisini ayrıntılı olarak açıklayan bilimsel makale olan "[The Layered Grammar of Graphics](https://vita.had.co.nz/papers/layered-grammar.pdf)"i okumaktan keyif alabilirsiniz.
+ggplot2'nin kuramsal temelleri hakkında daha fazla bilgi edinmek isterseniz kuramı ayrıntılı olarak açıklayan [*The Layered Grammar of Graphics*](https://vita.had.co.nz/papers/layered-grammar.pdf) makalesini okuyabilirsiniz.
 
 ## Özet
 
-Bu bölümde, basit bir grafik oluşturmak için estetikler ve geometrilerle başlayarak, grafiği alt kümelere bölmek için facet'ler, geom'ların nasıl hesaplandığını anlamak için istatistikler, geom'lar aksi takdirde üst üste binebildiğinde konumun ince ayrıntılarını kontrol etmek için konum ayarlamaları ve `x` ile `y`'nin ne anlama geldiğini kökten değiştirmenizi sağlayan koordinat sistemleriyle başlayan katmanlı grafik gramerini öğrendiniz.
-Henüz değinmediğimiz bir katman tema'dır; onu @sec-themes içinde tanıtacağız.
+Bu bölümde katmanlı grafik gramerini öğrendiniz. Basit bir grafik oluşturmak için estetikler ve geometrilerle başladık; grafiği alt kümelere bölmek için panelleri, geom'ların nasıl hesaplandığını anlamak için istatistikleri, üst üste binmeleri denetlemek için konum ayarlamalarını ve `x` ile `y` konumlarının anlamını kökten değiştiren koordinat sistemlerini ele aldık.
+Henüz değinmediğimiz katman temadır; onu @sec-themes bölümünde tanıtacağız.
 
-Tam ggplot2 işlevselliğine genel bir bakış elde etmek için çok kullanışlı iki kaynak, ggplot2 kopya kağıdı (<https://posit.co/resources/cheatsheets> adresinde bulabilirsiniz) ve ggplot2 paket web sitesidir ([https://ggplot2.tidyverse.org](https://ggplot2.tidyverse.org/)).
+ggplot2 işlevlerinin genel görünümü için iki yararlı kaynak vardır: [ggplot2 hızlı başvuru sayfası](https://posit.co/resources/cheatsheets) ve [ggplot2 paket sitesi](https://ggplot2.tidyverse.org/).
 
 Bu bölümden çıkarmanız gereken önemli bir ders, ggplot2 tarafından sağlanmayan bir geom'a ihtiyaç duyduğunuzu hissettiğinizde, başkasının o geom'u sunan bir ggplot2 uzantı paketi oluşturarak sorununuzu çoktan çözmüş olup olmadığını araştırmanın her zaman iyi bir fikir olduğudur.

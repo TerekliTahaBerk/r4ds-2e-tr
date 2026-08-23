@@ -1,48 +1,48 @@
-# İş Akışı: Yardım Almak {#sec-workflow-getting-help}
+# İş akışı: yardım almak {#sec-workflow-getting-help}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-Bu kitap bir ada değildir; R'da ustalaşmanızı sağlayacak tek bir kaynak yoktur.
-Bu kitapta açıklanan teknikleri kendi verinize uygulamaya başladıkça, yakında bizim yanıtlamadığımız sorularla karşılaşacaksınız.
-Bu bölüm, nasıl yardım alacağınıza ve öğrenmeye devam etmenize yardımcı olacak birkaç ipucunu açıklar.
+Bu kitap tek başına yeterli değildir; R'da ustalaşmanızı sağlayacak tek bir kaynak yoktur.
+Kitapta açıklanan teknikleri kendi verilerinize uygulamaya başladığınızda burada yanıtlamadığımız sorularla karşılaşacaksınız.
+Bu bölüm, yardım almanızı ve öğrenmeyi sürdürmenizi kolaylaştıracak birkaç ipucu sunar.
 
-## Google Sizin Dostunuzdur
+## Google dostunuzdur
 
 Takılırsanız, Google ile başlayın.
 Genellikle bir sorguya "R" eklemek, onu ilgili sonuçlara sınırlamak için yeterlidir: arama yararlı değilse, bu genellikle R'a özgü herhangi bir sonuç bulunmadığı anlamına gelir.
-Ayrıca, "tidyverse" veya "ggplot2" gibi paket adları eklemek, sonuçları size daha tanıdık gelecek kodlara daraltmaya da yardımcı olur; örneğin, "R'da nasıl boxplot yapılır" ile "ggplot2 ile R'da nasıl boxplot yapılır" karşılaştırın.
+Ayrıca "tidyverse" veya "ggplot2" gibi paket adları eklemek, sonuçları size daha tanıdık gelecek kodlarla sınırlandırabilir. Örneğin "R'da kutu grafiği nasıl yapılır" ile "ggplot2 kullanarak R'da kutu grafiği nasıl yapılır" sorgularını karşılaştırın.
 Google, hata mesajları için özellikle kullanışlıdır.
 Bir hata mesajı alırsanız ve ne anlama geldiği hakkında hiçbir fikriniz yoksa, onu Google'da aramayı deneyin!
-Muhtemelen geçmişte başka biri de bundan kafası karışmıştır ve web'in bir yerinde yardım bulunacaktır.
+Geçmişte başka birinin de aynı konuda kafası karışmış olması ve internette bir çözüm bulunması kuvvetle muhtemeldir.
 (Hata mesajı İngilizce değilse, `Sys.setenv(LANGUAGE = "en")` çalıştırın ve kodu yeniden çalıştırın; İngilizce hata mesajları için yardım bulma olasılığınız daha yüksektir.)
 
 Google yardımcı olmazsa, [Stack Overflow](https://stackoverflow.com)'u deneyin.
-R kullanan soru ve cevaplarla aramanızı sınırlamak için `[R]` dahil ederek, mevcut bir cevap aramaya biraz zaman ayırarak başlayın.
+Aramayı R kullanan soru ve yanıtlarla sınırlandırmak için sorguya `[R]` ekleyin ve önce mevcut yanıtları araştırmaya biraz zaman ayırın.
 
-## Bir Reprex Oluşturma
+## Bir reprex oluşturma
 
-Google aramanız yararlı bir şey bulamazsa, minimal **repr**oducible **ex**ample'ın (asgari yeniden üretilebilir örnek) kısaltması olan bir **reprex** hazırlamak gerçekten iyi bir fikirdir.
+Google aramanız yararlı bir sonuç vermezse *minimal* **repr**oducible **ex**ample (en küçük yeniden üretilebilir örnek) ifadesinin kısaltması olan bir **reprex** hazırlamak çok iyi bir fikirdir.
 İyi bir reprex, diğer insanların size yardım etmesini kolaylaştırır ve çoğu zaman onu hazırlama sürecinde sorunu kendi kendinize çözersiniz.
 Bir reprex oluşturmanın iki kısmı vardır:
 
 -   İlk olarak, kodunuzu yeniden üretilebilir hale getirmeniz gerekir.
-    Bu, her şeyi yakalamanız gerektiği anlamına gelir; yani herhangi bir `library()` çağrısını dahil etmeli ve gerekli tüm nesneleri oluşturmalısınız.
+    Bunun için her şeyi kaydetmeniz, yani bütün `library()` çağrılarını ekleyip gerekli nesnelerin tümünü oluşturmanız gerekir.
     Bunu yaptığınızdan emin olmanın en kolay yolu reprex paketini kullanmaktır.
 
--   İkinci olarak, onu minimal hale getirmeniz gerekir.
+-   İkinci olarak örneği olabildiğince küçük hâle getirmeniz gerekir.
     Sorununuzla doğrudan ilgili olmayan her şeyi ayıklayın.
     Bu genellikle gerçek hayatta karşılaştığınızdan çok daha küçük ve basit bir R nesnesi oluşturmayı, hatta yerleşik veri kullanmayı içerir.
 
 Bu çok iş gibi geliyor!
 Ve öyle olabilir; ama harika bir karşılığı var:
 
--   Zamanın %80'inde, mükemmel bir reprex oluşturmak sorununuzun kaynağını ortaya çıkarır.
-    Kendi kendine yeten, minimal bir örnek yazma sürecinin kendi sorunuzu yanıtlamanıza ne kadar sık olanak tanıdığı şaşırtıcıdır.
+-   Vakaların %80'inde iyi hazırlanmış bir reprex sorunun kaynağını ortaya çıkarır.
+    Kendi kendine yeten küçük bir örnek yazarken sorunuzun yanıtını ne kadar sık bulduğunuza şaşırabilirsiniz.
 
--   Diğer %20'lik zamanda ise, sorununuzun özünü, başkalarının kolayca üzerinde oynayabileceği bir şekilde yakalamış olacaksınız.
+-   Kalan %20'de ise sorunun özünü, başkalarının kolayca deneyebileceği bir biçimde yakalamış olursunuz.
     Bu, yardım alma şansınızı önemli ölçüde artırır!
 
 Bir reprex'i elle oluştururken, yanlışlıkla bir şeyi kaçırmak kolaydır; bu da kodunuzun başka birinin bilgisayarında çalıştırılamayacağı anlamına gelir.
@@ -61,7 +61,7 @@ Ardından, varsayılan çıktının GitHub için biçimlendirildiği `reprex()`'
 reprex::reprex()
 ```
 
-RStudio'daysanız RStudio'nun Viewer'ında, değilse varsayılan tarayıcınızda güzelce oluşturulmuş bir HTML önizlemesi görüntülenecektir.
+RStudio kullanıyorsanız `Viewer` panelinde, kullanmıyorsanız varsayılan tarayıcınızda düzgün biçimlendirilmiş bir HTML önizlemesi gösterilir.
 Reprex otomatik olarak panonuza kopyalanır (RStudio Server veya Cloud'da bunu kendiniz kopyalamanız gerekecektir):
 
 ````         
@@ -72,7 +72,7 @@ mean(y)
 ```
 ````
 
-Bu metin, Markdown adı verilen özel bir şekilde biçimlendirilmiştir; Stack Overflow veya GitHub gibi sitelere yapıştırılabilir ve bu siteler onu otomatik olarak kod gibi görünecek şekilde oluşturur.
+Bu metin Markdown adı verilen özel bir biçimi kullanır. Stack Overflow veya GitHub gibi sitelere yapıştırıldığında otomatik olarak kod görünümünde işlenir.
 Bu Markdown'ın GitHub'da oluşturulduğunda neye benzeyeceği aşağıdadır:
 
 ```{r}
@@ -93,15 +93,15 @@ Başka herkes bunu kopyalayıp yapıştırabilir ve hemen çalıştırabilir.
 2.  **Veri**yi dahil etmenin en kolay yolu, onu yeniden oluşturmak için gereken R kodunu üretmek üzere `dput()`'u kullanmaktır.
     Örneğin, `mtcars` veri kümesini R'da yeniden oluşturmak için şu adımları izleyin:
 
-    1.  R'da `dput(mtcars)`'ı çalıştırın
-    2.  Çıktıyı kopyalayın
+    1.  R'da `dput(mtcars)` çalıştırın.
+    2.  Çıktıyı kopyalayın.
     3.  reprex'te, `mtcars <-` yazın, ardından yapıştırın.
 
     Sorunu hâlâ ortaya çıkaran, verinizin mümkün olan en küçük alt kümesini kullanmaya çalışın.
 
 3.  **Kod**unuzun başkaları için okunması kolay olmasını sağlamak için biraz zaman ayırın:
 
-    -   Boşluklar kullandığınızdan ve değişken adlarınızın kısa ama bilgilendirici olduğundan emin olun.
+    -   Boşluk kullandığınızdan ve değişken adlarınızın kısa ancak açıklayıcı olduğundan emin olun.
 
     -   Sorununuzun nerede olduğunu belirtmek için yorumlar kullanın.
 
@@ -109,22 +109,22 @@ Başka herkes bunu kopyalayıp yapıştırabilir ve hemen çalıştırabilir.
 
     Kodunuz ne kadar kısaysa, anlaşılması ve düzeltilmesi o kadar kolay olur.
 
-Taze bir R oturumu başlatıp scriptinizi kopyalayıp yapıştırarak gerçekten yeniden üretilebilir bir örnek oluşturduğunuzu kontrol ederek bitirin.
+Son olarak yeni bir R oturumu başlatıp scriptinizi kopyalayarak ve yapıştırarak örneğin gerçekten yeniden üretilebilir olduğunu doğrulayın.
 
-Reprex oluşturmak önemsiz bir iş değildir ve iyi, gerçekten minimal reprexler oluşturmayı öğrenmek biraz pratik gerektirecektir.
-Ancak, kodu içeren sorular sormayı öğrenmek ve onu yeniden üretilebilir hale getirmek için zaman harcamak, R'ı öğrenip onda ustalaştıkça karşılığını vermeye devam edecektir.
+Reprex oluşturmak kolay değildir; iyi ve gerçekten küçük reprexler hazırlamayı öğrenmek biraz pratik gerektirir.
+Ancak kod içeren sorular sormayı öğrenmek ve kodu yeniden üretilebilir hâle getirmeye zaman ayırmak, R'da ilerledikçe karşılığını vermeyi sürdürecektir.
 
-## Kendinize Yatırım Yapmak
+## Kendinize yatırım yapmak
 
 Ayrıca, sorunlar ortaya çıkmadan önce kendinizi çözmeye hazırlamak için biraz zaman ayırmalısınız.
 Her gün R öğrenmeye biraz zaman ayırmak, uzun vadede büyük bir karşılık verecektir.
-Bir yol, tidyverse ekibinin [tidyverse blog'unda](https://www.tidyverse.org/blog/) neler yaptığını takip etmektir.
-R topluluğunu daha geniş çapta takip etmek için, [R Weekly](https://rweekly.org)'yi okumanızı öneririz: bu, her hafta R topluluğundaki en ilginç haberleri bir araya getiren bir topluluk çabasıdır.
+Bunun bir yolu, tidyverse ekibinin [tidyverse blogunda](https://www.tidyverse.org/blog/) neler yaptığını izlemektir.
+R topluluğunu daha geniş ölçekte takip etmek için [R Weekly](https://rweekly.org) bültenini okumanızı öneririz. Bu topluluk girişimi, R dünyasındaki en ilginç haberleri her hafta bir araya getirir.
 
 ## Özet
 
-Bu bölüm, kitabın Bütünsel Bakış (Whole Game) bölümünü tamamlıyor.
+Bu bölüm, kitabın Bütünsel bakış (Whole Game) kısmını tamamlıyor.
 Artık veri bilimi sürecinin en önemli kısımlarını gördünüz: görselleştirme, dönüştürme, düzenleme ve aktarma.
 Artık tüm sürece dair bütünsel bir bakış açınız var ve küçük parçaların ayrıntılarına girmeye başlıyoruz.
 
-Kitabın bir sonraki bölümü olan Görselleştirme, grafik grameri ve ggplot2 ile veri görselleştirmeleri oluşturma konusuna daha derinlemesine dalar, şimdiye kadar öğrendiğiniz araçları keşifçi veri analizi yapmak için nasıl kullanacağınızı gösterir ve iletişim için grafik oluşturmaya dair iyi uygulamaları tanıtır.
+Kitabın bir sonraki kısmı olan Görselleştirme; grafik gramerini ve ggplot2 ile veri görselleştirmeyi daha ayrıntılı ele alır, şimdiye kadar öğrendiğiniz araçlarla keşifçi veri analizinin nasıl yapılacağını gösterir ve iletişim amaçlı grafik oluşturmaya yönelik iyi uygulamaları tanıtır.

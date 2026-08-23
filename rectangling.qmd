@@ -1,24 +1,24 @@
-# Hierarchical data {#sec-rectangling}
+# Hiyerarşik veriler {#sec-rectangling}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## Giriş
 
-In this chapter, you'll learn the art of data **rectangling**: taking data that is fundamentally hierarchical, or tree-like, and converting it into a rectangular data frame made up of rows and columns.
-This is important because hierarchical data is surprisingly common, especially when working with data that comes from the web.
+Bu bölümde verileri **dikdörtgensel hâle getirme** sanatını öğreneceksiniz: Temelde hiyerarşik ya da ağaç benzeri verileri alıp satır ve sütunlardan oluşan dikdörtgensel bir veri çerçevesine dönüştürme.
+Bu önemlidir; çünkü özellikle web'den gelen verilerle çalışırken hiyerarşik veriler şaşırtıcı derecede yaygındır.
 
-To learn about rectangling, you'll need to first learn about lists, the data structure that makes hierarchical data possible.
-Then you'll learn about two crucial tidyr functions: `tidyr::unnest_longer()` and `tidyr::unnest_wider()`.
-We'll then show you a few case studies, applying these simple functions again and again to solve real problems.
-We'll finish off by talking about JSON, the most frequent source of hierarchical datasets and a common format for data exchange on the web.
+Dikdörtgensel hâle getirmeyi öğrenmek için önce hiyerarşik verileri mümkün kılan veri yapısını, yani listeleri öğrenmeniz gerekir.
+Ardından iki önemli tidyr fonksiyonunu öğreneceksiniz: `tidyr::unnest_longer()` ve `tidyr::unnest_wider()`.
+Daha sonra gerçek problemleri çözmek için bu basit fonksiyonları tekrar tekrar uyguladığımız birkaç örnek olay göstereceğiz.
+Son olarak hiyerarşik veri kümelerinin en yaygın kaynağı ve web'de veri alışverişi için sık kullanılan bir biçim olan JSON'u ele alacağız.
 
-### Prerequisites
+### Ön koşullar
 
-In this chapter, we'll use many functions from tidyr, a core member of the tidyverse.
-We'll also use repurrrsive to provide some interesting datasets for rectangling practice, and we'll finish by using jsonlite to read JSON files into R lists.
+Bu bölümde tidyverse'in temel üyelerinden tidyr'ın birçok fonksiyonunu kullanacağız.
+Dikdörtgensel hâle getirme alıştırmaları için ilginç veri kümeleri sağlayan repurrrsive paketinden de yararlanacak, son olarak JSON dosyalarını R listelerine okumak için jsonlite kullanacağız.
 
 ```{r}
 #| label: setup
@@ -28,46 +28,46 @@ library(repurrrsive)
 library(jsonlite)
 ```
 
-## Lists
+## Listeler
 
-So far you've worked with data frames that contain simple vectors like integers, numbers, characters, date-times, and factors.
-These vectors are simple because they're homogeneous: every element is of the same data type.
-If you want to store elements of different types in the same vector, you'll need a **list**, which you create with `list()`:
+Şimdiye kadar tam sayı, ondalıklı sayı, karakter, tarih-saat ve faktör gibi basit vektörleri içeren veri çerçeveleriyle çalıştınız.
+Bu vektörler homojen oldukları, yani her öğeleri aynı veri türünde olduğu için basittir.
+Farklı türlerdeki öğeleri aynı vektörde saklamak isterseniz `list()` ile oluşturacağınız bir **listeye** ihtiyacınız vardır:
 
 ```{r}
 x1 <- list(1:4, "a", TRUE)
 x1
 ```
 
-It's often convenient to name the components, or **children**, of a list, which you can do in the same way as naming the columns of a tibble:
+Bir listenin bileşenlerini ya da **çocuklarını** adlandırmak çoğu zaman kullanışlıdır; bunu bir tibble'ın sütunlarını adlandırdığınız gibi yapabilirsiniz:
 
 ```{r}
 x2 <- list(a = 1:2, b = 1:3, c = 1:4)
 x2
 ```
 
-Even for these very simple lists, printing takes up quite a lot of space.
-A useful alternative is `str()`, which generates a compact display of the **str**ucture, de-emphasizing the contents:
+Bu çok basit listeler bile yazdırıldığında oldukça fazla yer kaplar.
+Kullanışlı bir seçenek, içeriği geri plana atıp yapının (**str**ucture) kısa bir gösterimini üreten `str()` fonksiyonudur:
 
 ```{r}
 str(x1)
 str(x2)
 ```
 
-As you can see, `str()` displays each child of the list on its own line.
-It displays the name, if present, then an abbreviation of the type, then the first few values.
+Gördüğünüz gibi `str()` listenin her çocuğunu ayrı bir satırda gösterir.
+Varsa önce adı, ardından türün kısaltmasını ve ilk birkaç değeri görüntüler.
 
-### Hierarchy
+### Hiyerarşi
 
-Lists can contain any type of object, including other lists.
-This makes them suitable for representing hierarchical (tree-like) structures:
+Listeler, başka listeler dahil her tür nesneyi içerebilir.
+Bu özellik onları hiyerarşik (ağaç benzeri) yapıları temsil etmeye uygun kılar:
 
 ```{r}
 x3 <- list(list(1, 2), list(3, 4))
 str(x3)
 ```
 
-This is notably different to `c()`, which generates a flat vector:
+Bu, düz bir vektör üreten `c()` fonksiyonundan belirgin biçimde farklıdır:
 
 ```{r}
 c(c(1, 2), c(3, 4))
@@ -76,28 +76,28 @@ x4 <- c(list(1, 2), list(3, 4))
 str(x4)
 ```
 
-As lists get more complex, `str()` gets more useful, as it lets you see the hierarchy at a glance:
+Listeler karmaşıklaştıkça hiyerarşiyi bir bakışta görmenizi sağlayan `str()` daha da kullanışlı hâle gelir:
 
 ```{r}
 x5 <- list(1, list(2, list(3, list(4, list(5)))))
 str(x5)
 ```
 
-As lists get even larger and more complex, `str()` eventually starts to fail, and you'll need to switch to `View()`[^rectangling-1].
-@fig-view-collapsed shows the result of calling `View(x5)`. The viewer starts by showing just the top level of the list, but you can interactively expand any of the components to see more, as in @fig-view-expand-1. RStudio will also show you the code you need to access that element, as in @fig-view-expand-2. We'll come back to how this code works in @sec-subset-one.
+Listeler daha da büyüyüp karmaşıklaştıkça `str()` sonunda yetersiz kalır ve `View()` fonksiyonuna geçmeniz gerekir[^rectangling-1].
+@fig-view-collapsed, `View(x5)` çağrısının sonucunu gösterir. Görüntüleyici başlangıçta yalnızca listenin en üst düzeyini gösterir; ancak @fig-view-expand-1 içinde olduğu gibi daha fazlasını görmek için bileşenleri etkileşimli olarak genişletebilirsiniz. RStudio, @fig-view-expand-2 içinde olduğu gibi bu öğeye erişmek için gereken kodu da gösterir. Bu kodun nasıl çalıştığına @sec-subset-one bölümünde geri döneceğiz.
 
-[^rectangling-1]: This is an RStudio feature.
+[^rectangling-1]: Bu bir RStudio özelliğidir.
 
 ```{r}
 #| label: fig-view-collapsed
 #| fig.cap: >
-#|   The RStudio view lets you interactively explore a complex list.  
-#|   The viewer opens showing only the top level of the list.
+#|   RStudio görünümü, karmaşık bir listeyi etkileşimli olarak incelemenizi sağlar.
+#|   Görüntüleyici açıldığında yalnızca listenin en üst düzeyini gösterir.
 #| fig.alt: >
-#|   A screenshot of RStudio showing the list-viewer. It shows the
-#|   two children of x5: the first child is a double vector and the
-#|   second child is a list. A rightward facing triangle indicates that the
-#|   second child itself has children but you can't see them.
+#|   RStudio'daki liste görüntüleyicisini gösteren bir ekran görüntüsü. x5'in
+#|   iki çocuğunu gösterir: İlk çocuk double vektörü, ikinci çocuk ise listedir.
+#|   Sağa bakan üçgen, ikinci çocuğun da çocukları olduğunu ancak bunların henüz
+#|   görünmediğini belirtir.
 #| echo: false
 #| out-width: NULL
 knitr::include_graphics("screenshots/View-1.png", dpi = 220)
@@ -106,12 +106,12 @@ knitr::include_graphics("screenshots/View-1.png", dpi = 220)
 ```{r}
 #| label: fig-view-expand-1
 #| fig.cap: >
-#|   Clicking on the rightward facing triangle expands that component
-#|   of the list so that you can also see its children.
+#|   Sağa bakan üçgene tıklamak listenin bu bileşenini genişleterek çocuklarını
+#|   da görmenizi sağlar.
 #| fig.alt: >
-#|   Another screenshot of the list-viewer having expand the second
-#|   child of x5. It also has two children, a double vector and another
-#|   list.
+#|   x5'in ikinci çocuğu genişletilmiş liste görüntüleyicisinin başka bir ekran
+#|   görüntüsü. Bu çocuğun da bir double vektörü ve başka bir liste olmak üzere
+#|   iki çocuğu vardır.
 #| echo: false
 #| out-width: NULL
 knitr::include_graphics("screenshots/View-2.png", dpi = 220)
@@ -120,25 +120,25 @@ knitr::include_graphics("screenshots/View-2.png", dpi = 220)
 ```{r}
 #| label: fig-view-expand-2
 #| fig.cap: >
-#|   You can repeat this operation as many times as needed to get to the 
-#|   data you're interested in. Note the bottom-left corner: if you click
-#|   an element of the list, RStudio will give you the subsetting code
-#|   needed to access it, in this case `x5[[2]][[2]][[2]]`.
+#|   İlgilendiğiniz verilere ulaşmak için bu işlemi gerektiği kadar
+#|   yineleyebilirsiniz. Sol alt köşeye dikkat edin: Listenin bir öğesine
+#|   tıklarsanız RStudio ona erişmek için gereken alt kümeleme kodunu verir;
+#|   bu örnekte `x5[[2]][[2]][[2]]`.
 #| fig.alt: >
-#|   Another screenshot, having expanded the grandchild of x5 to see its
-#|   two children, again a double vector and a list.
+#|   x5'in torunu genişletildikten sonraki başka bir ekran görüntüsü; yine bir
+#|   double vektörü ve bir liste olan iki çocuğu gösterir.
 #| echo: false
 #| out-width: NULL
 knitr::include_graphics("screenshots/View-3.png", dpi = 220)
 ```
 
-### List-columns
+### Liste sütunları
 
-Lists can also live inside a tibble, where we call them list-columns.
-List-columns are useful because they allow you to place objects in a tibble that wouldn't usually belong in there.
-In particular, list-columns are used a lot in the [tidymodels](https://www.tidymodels.org) ecosystem, because they allow you to store things like model outputs or resamples in a data frame.
+Listeler bir tibble'ın içinde de bulunabilir; bunlara liste sütunları denir.
+Liste sütunları, normalde bir tibble içinde yer alamayacak nesneleri tibble'a koymanızı sağladığı için kullanışlıdır.
+Özellikle model çıktıları veya yeniden örneklemeler gibi nesneleri bir veri çerçevesinde saklamaya olanak tanıdıklarından [tidymodels](https://www.tidymodels.org) ekosisteminde çok kullanılırlar.
 
-Here's a simple example of a list-column:
+İşte basit bir liste sütunu örneği:
 
 ```{r}
 df <- tibble(
@@ -149,30 +149,30 @@ df <- tibble(
 df
 ```
 
-There's nothing special about lists in a tibble; they behave like any other column:
+Bir tibble içindeki listelerin özel bir yanı yoktur; diğer sütunlar gibi davranırlar:
 
 ```{r}
 df |> 
   filter(x == 1)
 ```
 
-Computing with list-columns is harder, but that's because computing with lists is harder in general; we'll come back to that in @sec-iteration.
-In this chapter, we'll focus on unnesting list-columns out into regular variables so you can use your existing tools on them.
+Liste sütunlarıyla hesaplama yapmak daha zordur; çünkü genel olarak listelerle hesaplama yapmak daha zordur. Bu konuya @sec-iteration bölümünde geri döneceğiz.
+Bu bölümde, var olan araçlarınızı kullanabilmeniz için liste sütunlarını iç içe yapıdan çıkarıp sıradan değişkenlere dönüştürmeye odaklanacağız.
 
-The default print method just displays a rough summary of the contents.
-The list column could be arbitrarily complex, so there's no good way to print it.
-If you want to see it, you'll need to pull out just the one list-column and apply one of the techniques that you've learned above, like `df |> pull(z) |> str()` or `df |> pull(z) |> View()`.
+Varsayılan yazdırma yöntemi içeriğin yalnızca kaba bir özetini gösterir.
+Liste sütunu istenildiği kadar karmaşık olabileceğinden onu yazdırmanın iyi bir yolu yoktur.
+Görmek isterseniz yalnızca ilgili liste sütununu çıkarmanız ve yukarıda öğrendiğiniz tekniklerden birini uygulamanız gerekir; örneğin `df |> pull(z) |> str()` veya `df |> pull(z) |> View()`.
 
 ::: callout-note
-## Base R
+## Temel R
 
-It's possible to put a list in a column of a `data.frame`, but it's a lot fiddlier because `data.frame()` treats a list as a list of columns:
+Bir listeyi `data.frame` sütununa koymak mümkündür; ancak `data.frame()` listeyi bir sütun listesi olarak ele aldığı için bu işlem çok daha uğraştırıcıdır:
 
 ```{r}
 data.frame(x = list(1:3, 3:5))
 ```
 
-You can force `data.frame()` to treat a list as a list of rows by wrapping it in list `I()`, but the result doesn't print particularly well:
+Listeyi `I()` içine alarak `data.frame()` fonksiyonunu onu satır listesi olarak ele almaya zorlayabilirsiniz; ancak sonuç pek iyi yazdırılmaz:
 
 ```{r}
 data.frame(
@@ -181,18 +181,18 @@ data.frame(
 )
 ```
 
-It's easier to use list-columns with tibbles because `tibble()` treats lists like vectors and the print method has been designed with lists in mind.
+`tibble()` listeleri vektör gibi ele aldığından ve yazdırma yöntemi listeler düşünülerek tasarlandığından tibble'larla liste sütunlarını kullanmak daha kolaydır.
 :::
 
-## Unnesting
+## İç içe yapıdan çıkarma
 
-Now that you've learned the basics of lists and list-columns, let's explore how you can turn them back into regular rows and columns.
-Here we'll use very simple sample data so you can get the basic idea; in the next section we'll switch to real data.
+Listelerin ve liste sütunlarının temellerini öğrendiğinize göre bunları nasıl yeniden sıradan satır ve sütunlara dönüştürebileceğinizi inceleyelim.
+Temel fikri anlayabilmeniz için burada çok basit örnek veriler kullanacağız; sonraki kısımda gerçek verilere geçeceğiz.
 
-List-columns tend to come in two basic forms: named and unnamed.
-When the children are **named**, they tend to have the same names in every row.
-For example, in `df1`, every element of list-column `y` has two elements named `a` and `b`.
-Named list-columns naturally unnest into columns: each named element becomes a new named column.
+Liste sütunları iki temel biçimde karşımıza çıkar: adlandırılmış ve adlandırılmamış.
+Çocuklar **adlandırılmış** olduğunda genellikle her satırda aynı adlara sahip olurlar.
+Örneğin `df1` içinde `y` liste sütununun her öğesinde `a` ve `b` adlı iki öğe vardır.
+Adlandırılmış liste sütunları doğal olarak sütunlara açılır: Her adlandırılmış öğe yeni bir adlandırılmış sütun olur.
 
 ```{r}
 df1 <- tribble(
@@ -203,9 +203,9 @@ df1 <- tribble(
 )
 ```
 
-When the children are **unnamed**, the number of elements tends to vary from row-to-row.
-For example, in `df2`, the elements of list-column `y` are unnamed and vary in length from one to three.
-Unnamed list-columns naturally unnest into rows: you'll get one row for each child.
+Çocuklar **adlandırılmamış** olduğunda öğe sayısı genellikle satırdan satıra değişir.
+Örneğin `df2` içinde `y` liste sütununun öğeleri adlandırılmamıştır ve uzunlukları bir ile üç arasında değişir.
+Adlandırılmamış liste sütunları doğal olarak satırlara açılır: Her çocuk için bir satır elde edersiniz.
 
 ```{r}
 df2 <- tribble(
@@ -216,20 +216,20 @@ df2 <- tribble(
 )
 ```
 
-tidyr provides two functions for these two cases: `unnest_wider()` and `unnest_longer()`.
-The following sections explain how they work.
+tidyr bu iki durum için iki fonksiyon sağlar: `unnest_wider()` ve `unnest_longer()`.
+Aşağıdaki kısımlar bunların nasıl çalıştığını açıklar.
 
 ### `unnest_wider()`
 
-When each row has the same number of elements with the same names, like `df1`, it's natural to put each component into its own column with `unnest_wider()`:
+`df1` örneğindeki gibi her satırda aynı adlara sahip aynı sayıda öğe olduğunda, `unnest_wider()` ile her bileşeni kendi sütununa koymak doğaldır:
 
 ```{r}
 df1 |> 
   unnest_wider(y)
 ```
 
-By default, the names of the new columns come exclusively from the names of the list elements, but you can use the `names_sep` argument to request that they combine the column name and the element name.
-This is useful for disambiguating repeated names.
+Varsayılan olarak yeni sütunların adları yalnızca liste öğelerinin adlarından gelir; ancak sütun adıyla öğe adını birleştirmek için `names_sep` argümanını kullanabilirsiniz.
+Bu, yinelenen adlardaki belirsizliği gidermek için kullanışlıdır.
 
 ```{r}
 df1 |> 
@@ -238,15 +238,15 @@ df1 |>
 
 ### `unnest_longer()`
 
-When each row contains an unnamed list, it's most natural to put each element into its own row with `unnest_longer()`:
+Her satır adlandırılmamış bir liste içerdiğinde, `unnest_longer()` ile her öğeyi kendi satırına koymak en doğal yaklaşımdır:
 
 ```{r}
 df2 |> 
   unnest_longer(y)
 ```
 
-Note how `x` is duplicated for each element inside of `y`: we get one row of output for each element inside the list-column.
-But what happens if one of the elements is empty, as in the following example?
+`x` değerinin `y` içindeki her öğe için yinelendiğine dikkat edin: Liste sütunundaki her öğe için bir çıktı satırı elde ederiz.
+Peki aşağıdaki örnekte olduğu gibi öğelerden biri boşsa ne olur?
 
 ```{r}
 df6 <- tribble(
@@ -258,13 +258,13 @@ df6 <- tribble(
 df6 |> unnest_longer(y)
 ```
 
-We get zero rows in the output, so the row effectively disappears.
-If you want to preserve that row, adding `NA` in `y`, set `keep_empty = TRUE`.
+Çıktıda sıfır satır elde ettiğimiz için ilgili satır fiilen kaybolur.
+Bu satırı `y` içine `NA` ekleyerek korumak istiyorsanız `keep_empty = TRUE` ayarını kullanın.
 
-### Inconsistent types
+### Tutarsız türler
 
-What happens if you unnest a list-column that contains different types of vector?
-For example, take the following dataset where the list-column `y` contains two numbers, a character, and a logical, which can't normally be mixed in a single column.
+Farklı vektör türleri içeren bir liste sütununu iç içe yapıdan çıkarırsanız ne olur?
+Örneğin `y` liste sütununun normalde tek bir sütunda karıştırılamayacak iki sayı, bir karakter ve bir mantıksal değer içerdiği aşağıdaki veri kümesini ele alın.
 
 ```{r}
 df4 <- tribble(
@@ -274,46 +274,46 @@ df4 <- tribble(
 )
 ```
 
-`unnest_longer()` always keeps the set of columns unchanged, while changing the number of rows.
-So what happens?
-How does `unnest_longer()` produce five rows while keeping everything in `y`?
+`unnest_longer()` satır sayısını değiştirirken sütun kümesini her zaman aynı tutar.
+Öyleyse ne olur?
+`unnest_longer()` her şeyi `y` içinde tutarken nasıl beş satır üretir?
 
 ```{r}
 df4 |> 
   unnest_longer(y)
 ```
 
-As you can see, the output contains a list-column, but every element of the list-column contains a single element.
-Because `unnest_longer()` can't find a common type of vector, it keeps the original types in a list-column.
-You might wonder if this breaks the commandment that every element of a column must be the same type.
-It doesn't: every element is a list, even though the contents are of different types.
+Gördüğünüz gibi çıktı bir liste sütunu içerir; ancak liste sütununun her öğesinde tek bir öğe vardır.
+`unnest_longer()` ortak bir vektör türü bulamadığından özgün türleri bir liste sütununda tutar.
+Bunun, bir sütunun her öğesinin aynı türde olması gerektiği kuralını çiğneyip çiğnemediğini merak edebilirsiniz.
+Çiğnemez: İçerikleri farklı türlerde olsa da her öğe bir listedir.
 
-Dealing with inconsistent types is challenging and the details depend on the precise nature of the problem and your goals, but you'll most likely need tools from @sec-iteration.
+Tutarsız türlerle uğraşmak zordur ve ayrıntılar problemin niteliğine ve hedeflerinize bağlıdır; ancak büyük olasılıkla @sec-iteration bölümündeki araçlara ihtiyacınız olacaktır.
 
-### Other functions
+### Diğer fonksiyonlar
 
-tidyr has a few other useful rectangling functions that we're not going to cover in this book:
+tidyr'ın bu kitapta ele almayacağımız birkaç kullanışlı dikdörtgensel hâle getirme fonksiyonu daha vardır:
 
--   `unnest_auto()` automatically picks between `unnest_longer()` and `unnest_wider()` based on the structure of the list-column. It's great for rapid exploration, but ultimately it's a bad idea because it doesn't force you to understand how your data is structured, and makes your code harder to understand.
--   `unnest()` expands both rows and columns. It's useful when you have a list-column that contains a 2d structure like a data frame, which you don't see in this book, but you might encounter if you use the [tidymodels](https://www.tmwr.org/base-r.html#combining-base-r-models-and-the-tidyverse) ecosystem.
+-   `unnest_auto()`, liste sütununun yapısına göre `unnest_longer()` ile `unnest_wider()` arasında otomatik olarak seçim yapar. Hızlı keşif için iyidir; ancak verilerinizin nasıl yapılandığını anlamanızı zorunlu kılmadığı ve kodunuzu anlamayı güçleştirdiği için sonuçta iyi bir fikir değildir.
+-   `unnest()` hem satırları hem sütunları genişletir. Veri çerçevesi gibi iki boyutlu bir yapı içeren liste sütununuz olduğunda kullanışlıdır. Bu kitapta böyle bir yapı görmeyeceksiniz, ancak [tidymodels](https://www.tmwr.org/base-r.html#combining-base-r-models-and-the-tidyverse) ekosistemini kullanırsanız karşılaşabilirsiniz.
 
-These functions are good to know about as you might encounter them when reading other people's code or tackling rarer rectangling challenges yourself.
+Başkalarının kodunu okurken veya daha seyrek karşılaşılan dikdörtgensel hâle getirme problemlerini çözerken karşınıza çıkabileceklerinden bu fonksiyonları bilmek yararlıdır.
 
-### Exercises
+### Alıştırmalar
 
-1.  What happens when you use `unnest_wider()` with unnamed list-columns like `df2`?
-    What argument is now necessary?
-    What happens to missing values?
+1.  `unnest_wider()` fonksiyonunu `df2` gibi adlandırılmamış liste sütunlarıyla kullandığınızda ne olur?
+    Artık hangi argüman gereklidir?
+    Eksik değerlere ne olur?
 
-2.  What happens when you use `unnest_longer()` with named list-columns like `df1`?
-    What additional information do you get in the output?
-    How can you suppress that extra detail?
+2.  `unnest_longer()` fonksiyonunu `df1` gibi adlandırılmış liste sütunlarıyla kullandığınızda ne olur?
+    Çıktıda hangi ek bilgiyi alırsınız?
+    Bu ek ayrıntıyı nasıl gizleyebilirsiniz?
 
-3.  From time-to-time you encounter data frames with multiple list-columns with aligned values.
-    For example, in the following data frame, the values of `y` and `z` are aligned (i.e. `y` and `z` will always have the same length within a row, and the first value of `y` corresponds to the first value of `z`).
-    What happens if you apply two `unnest_longer()` calls to this data frame?
-    How can you preserve the relationship between `x` and `y`?
-    (Hint: carefully read the docs).
+3.  Zaman zaman değerleri hizalanmış birden çok liste sütunu içeren veri çerçeveleriyle karşılaşırsınız.
+    Örneğin aşağıdaki veri çerçevesinde `y` ve `z` değerleri hizalanmıştır (yani bir satır içinde `y` ve `z` her zaman aynı uzunluğa sahiptir ve `y`'nin ilk değeri `z`'nin ilk değerine karşılık gelir).
+    Bu veri çerçevesine iki `unnest_longer()` çağrısı uygularsanız ne olur?
+    `x` ile `y` arasındaki ilişkiyi nasıl koruyabilirsiniz?
+    (İpucu: Belgeleri dikkatle okuyun.)
 
     ```{r}
     df4 <- tribble(
@@ -323,35 +323,35 @@ These functions are good to know about as you might encounter them when reading 
     )
     ```
 
-## Case studies
+## Örnek olaylar
 
-The main difference between the simple examples we used above and real data is that real data typically contains multiple levels of nesting that require multiple calls to `unnest_longer()` and/or `unnest_wider()`.
-To show that in action, this section works through three real rectangling challenges using datasets from the repurrrsive package.
+Yukarıda kullandığımız basit örneklerle gerçek veriler arasındaki temel fark, gerçek verilerin genellikle birden çok `unnest_longer()` ve/veya `unnest_wider()` çağrısı gerektiren çok düzeyli iç içe yapılar içermesidir.
+Bunu uygulamada göstermek için bu kısımda repurrrsive paketindeki veri kümelerini kullanarak üç gerçek dikdörtgensel hâle getirme problemini çözeceğiz.
 
-### Very wide data
+### Çok geniş veriler
 
-We'll start with `gh_repos`.
-This is a list that contains data about a collection of GitHub repositories retrieved using the GitHub API. It's a very deeply nested list so it's difficult to show the structure in this book; we recommend exploring a little on your own with `View(gh_repos)` before we continue.
+`gh_repos` ile başlayacağız.
+Bu, GitHub API kullanılarak alınan bir GitHub deposu koleksiyonu hakkında veriler içeren bir listedir. Çok derin iç içe geçmiş bir liste olduğundan yapısını bu kitapta göstermek zordur; devam etmeden önce `View(gh_repos)` ile kendi başınıza biraz incelemenizi öneririz.
 
-`gh_repos` is a list, but our tools work with list-columns, so we'll begin by putting it into a tibble.
-We call this column `json` for reasons we'll get to later.
+`gh_repos` bir listedir, ancak araçlarımız liste sütunlarıyla çalışır; bu nedenle işe onu bir tibble'a koyarak başlayacağız.
+Daha sonra açıklayacağımız nedenlerle bu sütuna `json` adını veriyoruz.
 
 ```{r}
 repos <- tibble(json = gh_repos)
 repos
 ```
 
-This tibble contains 6 rows, one row for each child of `gh_repos`.
-Each row contains an unnamed list with either 26 or 30 rows.
-Since these are unnamed, we'll start with `unnest_longer()` to put each child in its own row:
+Bu tibble, `gh_repos` listesinin her çocuğu için bir tane olmak üzere 6 satır içerir.
+Her satır 26 ya da 30 öğeli adlandırılmamış bir liste içerir.
+Bunlar adlandırılmamış olduğundan her çocuğu kendi satırına koymak için `unnest_longer()` ile başlayacağız:
 
 ```{r}
 repos |> 
   unnest_longer(json)
 ```
 
-At first glance, it might seem like we haven't improved the situation: while we have more rows (176 instead of 6) each element of `json` is still a list.
-However, there's an important difference: now each element is a **named** list so we can use `unnest_wider()` to put each element into its own column:
+İlk bakışta durumu iyileştirmemişiz gibi görünebilir: Daha fazla satırımız olsa da (6 yerine 176) `json` sütununun her öğesi hâlâ bir listedir.
+Ancak önemli bir fark vardır: Artık her öğe **adlandırılmış** bir listedir; dolayısıyla her öğeyi kendi sütununa koymak için `unnest_wider()` kullanabiliriz:
 
 ```{r}
 repos |> 
@@ -359,8 +359,8 @@ repos |>
   unnest_wider(json) 
 ```
 
-This has worked but the result is a little overwhelming: there are so many columns that tibble doesn't even print all of them!
-We can see them all with `names()`; and here we look at the first 10:
+Bu işe yaradı, ancak sonuç biraz bunaltıcıdır: O kadar çok sütun vardır ki tibble hepsini yazdırmaz bile!
+Tümünü `names()` ile görebiliriz; burada ilk 10'una bakıyoruz:
 
 ```{r}
 repos |> 
@@ -370,7 +370,7 @@ repos |>
   head(10)
 ```
 
-Let's pull out a few that look interesting:
+İlginç görünen birkaçını seçelim:
 
 ```{r}
 repos |> 
@@ -379,9 +379,9 @@ repos |>
   select(id, full_name, owner, description)
 ```
 
-You can use this to work back to understand how `gh_repos` was structured: each child was a GitHub user containing a list of up to 30 GitHub repositories that they created.
+Bundan yola çıkarak `gh_repos` listesinin nasıl yapılandırıldığını anlayabilirsiniz: Her çocuk, oluşturduğu en fazla 30 GitHub deposunun listesini içeren bir GitHub kullanıcısıdır.
 
-`owner` is another list-column, and since it contains a named list, we can use `unnest_wider()` to get at the values:
+`owner` başka bir liste sütunudur ve adlandırılmış bir liste içerdiğinden değerlere erişmek için `unnest_wider()` kullanabiliriz:
 
 ```{r}
 #| error: true
@@ -392,8 +392,8 @@ repos |>
   unnest_wider(owner)
 ```
 
-Uh oh, this list column also contains an `id` column and we can't have two `id` columns in the same data frame.
-As suggested, lets use `names_sep` to resolve the problem:
+Eyvah, bu liste sütunu da bir `id` sütunu içeriyor ve aynı veri çerçevesinde iki `id` sütunu bulunamaz.
+Önerildiği gibi sorunu çözmek için `names_sep` kullanalım:
 
 ```{r}
 repos |> 
@@ -403,27 +403,27 @@ repos |>
   unnest_wider(owner, names_sep = "_")
 ```
 
-This gives another wide dataset, but you can get the sense that `owner` appears to contain a lot of additional data about the person who "owns" the repository.
+Bu da başka bir geniş veri kümesi üretir; ancak `owner` sütununun depoya “sahip olan” kişi hakkında çok sayıda ek veri içerdiğini anlayabilirsiniz.
 
-### Relational data
+### İlişkisel veriler
 
-Nested data is sometimes used to represent data that we'd usually spread across multiple data frames.
-For example, take `got_chars` which contains data about characters that appear in the Game of Thrones books and TV series.
-Like `gh_repos` it's a list, so we start by turning it into a list-column of a tibble:
+İç içe veriler bazen normalde birden çok veri çerçevesine dağıtacağımız verileri temsil etmek için kullanılır.
+Örneğin Game of Thrones kitaplarında ve televizyon dizisinde yer alan karakterler hakkında veriler içeren `got_chars` nesnesini ele alın.
+`gh_repos` gibi bu da bir listedir; dolayısıyla onu bir tibble'ın liste sütununa dönüştürerek başlarız:
 
 ```{r}
 chars <- tibble(json = got_chars)
 chars
 ```
 
-The `json` column contains named elements, so we'll start by widening it:
+`json` sütunu adlandırılmış öğeler içerdiğinden onu genişleterek başlayacağız:
 
 ```{r}
 chars |> 
   unnest_wider(json)
 ```
 
-And selecting a few columns to make it easier to read:
+Okumayı kolaylaştırmak için birkaç sütun seçelim:
 
 ```{r}
 characters <- chars |> 
@@ -432,7 +432,7 @@ characters <- chars |>
 characters
 ```
 
-This dataset contains also many list-columns:
+Bu veri kümesi çok sayıda liste sütunu da içerir:
 
 ```{r}
 chars |> 
@@ -440,8 +440,8 @@ chars |>
   select(id, where(is.list))
 ```
 
-Let's explore the `titles` column.
-It's an unnamed list-column, so we'll unnest it into rows:
+`titles` sütununu inceleyelim.
+Bu, adlandırılmamış bir liste sütunu olduğundan onu satırlara açacağız:
 
 ```{r}
 chars |> 
@@ -450,8 +450,8 @@ chars |>
   unnest_longer(titles)
 ```
 
-You might expect to see this data in its own table because it would be easy to join to the characters data as needed.
-Let's do that, which requires little cleaning: removing the rows containing empty strings and renaming `titles` to `title` since each row now only contains a single title.
+Gerektiğinde karakter verileriyle kolayca birleştirilebileceği için bu verileri kendi tablosunda görmeyi bekleyebilirsiniz.
+Bunu yapalım. Küçük bir temizlik gerekir: Boş karakter dizileri içeren satırları kaldırmak ve artık her satırda yalnızca tek bir unvan bulunduğu için `titles` sütununu `title` olarak yeniden adlandırmak.
 
 ```{r}
 titles <- chars |> 
@@ -463,27 +463,27 @@ titles <- chars |>
 titles
 ```
 
-You could imagine creating a table like this for each of the list-columns, then using joins to combine them with the character data as you need it.
+Her liste sütunu için buna benzer bir tablo oluşturduğunuzu, ardından gerektiğinde bunları karakter verileriyle birleştirdiğinizi düşünebilirsiniz.
 
-### Deeply nested
+### Derin iç içe yapılar
 
-We'll finish off these case studies with a list-column that's very deeply nested and requires repeated rounds of `unnest_wider()` and `unnest_longer()` to unravel: `gmaps_cities`.
-This is a two column tibble containing five city names and the results of using Google's [geocoding API](https://developers.google.com/maps/documentation/geocoding) to determine their location:
+Bu örnek olayları, çok derin iç içe geçmiş ve çözülmesi için `unnest_wider()` ile `unnest_longer()` fonksiyonlarının art arda kullanılmasını gerektiren `gmaps_cities` liste sütunuyla bitireceğiz.
+Bu, beş şehir adını ve konumlarını belirlemek için Google'ın [coğrafi kodlama API'sinin](https://developers.google.com/maps/documentation/geocoding) kullanılmasından elde edilen sonuçları içeren iki sütunlu bir tibble'dır:
 
 ```{r}
 gmaps_cities
 ```
 
-`json` is a list-column with internal names, so we start with an `unnest_wider()`:
+`json`, iç adlara sahip bir liste sütunudur; bu nedenle `unnest_wider()` ile başlarız:
 
 ```{r}
 gmaps_cities |> 
   unnest_wider(json)
 ```
 
-This gives us the `status` and the `results`.
-We'll drop the status column since they're all `OK`; in a real analysis, you'd also want to capture all the rows where `status != "OK"` and figure out what went wrong.
-`results` is an unnamed list, with either one or two elements (we'll see why shortly) so we'll unnest it into rows:
+Bu bize `status` ve `results` sütunlarını verir.
+Tüm değerler `OK` olduğu için durum sütununu kaldıracağız; gerçek bir çözümlemede `status != "OK"` olan tüm satırları da yakalamak ve neyin yanlış gittiğini belirlemek istersiniz.
+`results` bir ya da iki öğeli adlandırılmamış bir listedir (nedenini birazdan göreceğiz); bu nedenle onu satırlara açacağız:
 
 ```{r}
 gmaps_cities |> 
@@ -492,7 +492,7 @@ gmaps_cities |>
   unnest_longer(results)
 ```
 
-Now `results` is a named list, so we'll use `unnest_wider()`:
+Artık `results` adlandırılmış bir liste olduğundan `unnest_wider()` kullanacağız:
 
 ```{r}
 locations <- gmaps_cities |> 
@@ -503,10 +503,10 @@ locations <- gmaps_cities |>
 locations
 ```
 
-Now we can see why two cities got two results: Washington matched both Washington state and Washington, DC, and Arlington matched Arlington, Virginia and Arlington, Texas.
+Artık iki şehrin neden ikişer sonuç verdiğini görebiliriz: Washington hem Washington eyaletiyle hem Washington, DC ile; Arlington ise Arlington, Virginia ve Arlington, Teksas ile eşleşmiştir.
 
-There are a few different places we could go from here.
-We might want to determine the exact location of the match, which is stored in the `geometry` list-column:
+Buradan ilerleyebileceğimiz birkaç farklı yön vardır.
+`geometry` liste sütununda saklanan eşleşmenin tam konumunu belirlemek isteyebiliriz:
 
 ```{r}
 locations |> 
@@ -514,8 +514,8 @@ locations |>
   unnest_wider(geometry)
 ```
 
-That gives us new `bounds` (a rectangular region) and `location` (a point).
-We can unnest `location` to see the latitude (`lat`) and longitude (`lng`):
+Bu bize yeni `bounds` (dikdörtgensel bir bölge) ve `location` (bir nokta) sütunlarını verir.
+Enlemi (`lat`) ve boylamı (`lng`) görmek için `location` sütununu açabiliriz:
 
 ```{r}
 locations |> 
@@ -524,18 +524,18 @@ locations |>
   unnest_wider(location)
 ```
 
-Extracting the bounds requires a few more steps:
+Sınırları çıkarmak birkaç adım daha gerektirir:
 
 ```{r}
 locations |> 
   select(city, formatted_address, geometry) |> 
   unnest_wider(geometry) |> 
-  # focus on the variables of interest
+  # İlgilenilen değişkenlere odaklan
   select(!location:viewport) |>
   unnest_wider(bounds)
 ```
 
-We then rename `southwest` and `northeast` (the corners of the rectangle) so we can use `names_sep` to create short but evocative names:
+Ardından kısa ama açıklayıcı adlar oluşturmak üzere `names_sep` kullanabilmek için `southwest` ve `northeast` (dikdörtgenin köşeleri) sütunlarını yeniden adlandırırız:
 
 ```{r}
 locations |> 
@@ -547,9 +547,9 @@ locations |>
   unnest_wider(c(ne, sw), names_sep = "_") 
 ```
 
-Note how we unnest two columns simultaneously by supplying a vector of variable names to `unnest_wider()`.
+`unnest_wider()` fonksiyonuna bir değişken adları vektörü vererek iki sütunu aynı anda açtığımıza dikkat edin.
 
-Once you've discovered the path to get to the components you're interested in, you can extract them directly using another tidyr function, `hoist()`:
+İlgilendiğiniz bileşenlere ulaşan yolu keşfettikten sonra başka bir tidyr fonksiyonu olan `hoist()` ile bunları doğrudan çıkarabilirsiniz:
 
 ```{r}
 #| results: false
@@ -564,22 +564,22 @@ locations |>
   )
 ```
 
-If these case studies have whetted your appetite for more real-life rectangling, you can see a few more examples in `vignette("rectangling", package = "tidyr")`.
+Bu örnek olaylar gerçek yaşamdan daha fazla dikdörtgensel hâle getirme örneği görme isteğinizi artırdıysa `vignette("rectangling", package = "tidyr")` içinde birkaç örnek daha bulabilirsiniz.
 
-### Exercises
+### Alıştırmalar
 
-1.  Roughly estimate when `gh_repos` was created.
-    Why can you only roughly estimate the date?
+1.  `gh_repos` nesnesinin ne zaman oluşturulduğunu kabaca tahmin edin.
+    Tarihi neden yalnızca kabaca tahmin edebilirsiniz?
 
-2.  The `owner` column of `gh_repos` contains a lot of duplicated information because each owner can have many repos.
-    Can you construct an `owners` data frame that contains one row for each owner?
-    (Hint: does `distinct()` work with `list-cols`?)
+2.  Her sahip birden çok depoya sahip olabildiğinden `gh_repos` nesnesinin `owner` sütunu çok sayıda yinelenen bilgi içerir.
+    Her sahip için bir satır içeren bir `owners` veri çerçevesi oluşturabilir misiniz?
+    (İpucu: `distinct()` liste sütunlarıyla çalışır mı?)
 
-3.  Follow the steps used for `titles` to create similar tables for the aliases, allegiances, books, and TV series for the Game of Thrones characters.
+3.  Game of Thrones karakterlerinin takma adları, bağlılıkları, kitapları ve televizyon dizileri için benzer tablolar oluşturmak üzere `titles` için kullanılan adımları izleyin.
 
-4.  Explain the following code line-by-line.
-    Why is it interesting?
-    Why does it work for `got_chars` but might not work in general?
+4.  Aşağıdaki kodu satır satır açıklayın.
+    Neden ilginçtir?
+    Neden `got_chars` için çalışır da genel durumda çalışmayabilir?
 
     ```{r}
     #| results: false
@@ -594,64 +594,64 @@ If these case studies have whetted your appetite for more real-life rectangling,
       unnest_longer(value)
     ```
 
-5.  In `gmaps_cities`, what does `address_components` contain?
-    Why does the length vary between rows?
-    Unnest it appropriately to figure it out.
-    (Hint: `types` always appears to contain two elements. Does `unnest_wider()` make it easier to work with than `unnest_longer()`?)
+5.  `gmaps_cities` içinde `address_components` ne içerir?
+    Uzunluğu neden satırlar arasında değişir?
+    Bunu anlamak için uygun biçimde iç içe yapıdan çıkarın.
+    (İpucu: `types` her zaman iki öğe içeriyor gibi görünür. `unnest_wider()` onunla çalışmayı `unnest_longer()` fonksiyonundan daha kolay hâle getirir mi?)
     .
 
 ## JSON
 
-All of the case studies in the previous section were sourced from wild-caught JSON.
-JSON is short for **j**ava**s**cript **o**bject **n**otation and is the way that most web APIs return data.
-It's important to understand it because while JSON and R's data types are pretty similar, there isn't a perfect 1-to-1 mapping, so it's good to understand a bit about JSON if things go wrong.
+Önceki kısımdaki örnek olayların tümü gerçek ortamdan alınmış JSON verilerinden geliyordu.
+JSON, **J**ava**S**cript **O**bject **N**otation ifadesinin kısaltmasıdır ve çoğu web API'sinin veri döndürme biçimidir.
+JSON ile R'ın veri türleri oldukça benzer olsa da aralarında kusursuz bire bir eşleme bulunmadığından JSON'u anlamak önemlidir; bir şeyler ters gittiğinde JSON hakkında biraz bilgi sahibi olmak yararlıdır.
 
-### Data types
+### Veri türleri
 
-JSON is a simple format designed to be easily read and written by machines, not humans.
-It has six key data types.
-Four of them are scalars:
+JSON, insanlar tarafından değil makinelerce kolayca okunup yazılmak üzere tasarlanmış basit bir biçimdir.
+Altı temel veri türüne sahiptir.
+Bunların dördü skalerdir:
 
--   The simplest type is a null (`null`) which plays the same role as `NA` in R. It represents the absence of data.
--   A **string** is much like a string in R, but must always use double quotes.
--   A **number** is similar to R's numbers: they can use integer (e.g., 123), decimal (e.g., 123.45), or scientific (e.g., 1.23e3) notation. JSON doesn't support `Inf`, `-Inf`, or `NaN`.
--   A **boolean** is similar to R's `TRUE` and `FALSE`, but uses lowercase `true` and `false`.
+-   En basit tür, R'daki `NA` ile aynı rolü oynayan null (`null`) değeridir. Verinin yokluğunu temsil eder.
+-   **Karakter dizisi**, R'daki karakter dizisine çok benzer; ancak her zaman çift tırnak kullanmalıdır.
+-   **Sayı**, R'daki sayılara benzer: Tam sayı (ör. 123), ondalık (ör. 123.45) veya bilimsel (ör. 1.23e3) gösterim kullanabilir. JSON `Inf`, `-Inf` veya `NaN` değerlerini desteklemez.
+-   **Boole değeri**, R'daki `TRUE` ve `FALSE` değerlerine benzer; ancak küçük harfli `true` ve `false` kullanır.
 
-JSON's strings, numbers, and booleans are pretty similar to R's character, numeric, and logical vectors.
-The main difference is that JSON's scalars can only represent a single value.
-To represent multiple values you need to use one of the two remaining types: arrays and objects.
+JSON'daki karakter dizileri, sayılar ve Boole değerleri R'daki karakter, sayısal ve mantıksal vektörlere oldukça benzerdir.
+Temel fark, JSON skalerlerinin yalnızca tek bir değeri temsil edebilmesidir.
+Birden çok değeri temsil etmek için kalan iki türden birini kullanmanız gerekir: diziler ve nesneler.
 
-Both arrays and objects are similar to lists in R; the difference is whether or not they're named.
-An **array** is like an unnamed list, and is written with `[]`.
-For example `[1, 2, 3]` is an array containing 3 numbers, and `[null, 1, "string", false]` is an array that contains a null, a number, a string, and a boolean.
-An **object** is like a named list, and is written with `{}`.
-The names (keys in JSON terminology) are strings, so must be surrounded by quotes.
-For example, `{"x": 1, "y": 2}` is an object that maps `x` to 1 and `y` to 2.
+Hem diziler hem nesneler R'daki listelere benzer; aralarındaki fark adlandırılmış olup olmamalarıdır.
+Bir **dizi**, adlandırılmamış liste gibidir ve `[]` ile yazılır.
+Örneğin `[1, 2, 3]` üç sayı içeren bir dizidir; `[null, 1, "string", false]` ise bir null, bir sayı, bir karakter dizisi ve bir Boole değeri içeren dizidir.
+Bir **nesne**, adlandırılmış liste gibidir ve `{}` ile yazılır.
+Adlar (JSON terminolojisinde anahtarlar) karakter dizileridir; dolayısıyla tırnak içine alınmalıdır.
+Örneğin `{"x": 1, "y": 2}`, `x` değerini 1'e ve `y` değerini 2'ye eşleyen bir nesnedir.
 
-Note that JSON doesn't have any native way to represent dates or date-times, so they're often stored as strings, and you'll need to use `readr::parse_date()` or `readr::parse_datetime()` to turn them into the correct data structure.
-Similarly, JSON's rules for representing floating point numbers in JSON are a little imprecise, so you'll also sometimes find numbers stored in strings.
-Apply `readr::parse_double()` as needed to get the correct variable type.
+JSON'un tarihleri veya tarih-saatleri temsil etmek için yerleşik bir yolu olmadığını unutmayın. Bu nedenle bunlar çoğunlukla karakter dizisi olarak saklanır ve doğru veri yapısına dönüştürmek için `readr::parse_date()` ya da `readr::parse_datetime()` kullanmanız gerekir.
+Benzer biçimde JSON'un kayan noktalı sayıları temsil etme kuralları biraz belirsizdir; bu nedenle bazen karakter dizilerinde saklanan sayılarla da karşılaşırsınız.
+Doğru değişken türünü elde etmek için gerektiğinde `readr::parse_double()` uygulayın.
 
 ### jsonlite
 
-To convert JSON into R data structures, we recommend the jsonlite package, by Jeroen Ooms.
-We'll use only two jsonlite functions: `read_json()` and `parse_json()`.
-In real life, you'll use `read_json()` to read a JSON file from disk.
-For example, the repurrsive package also provides the source for `gh_user` as a JSON file and you can read it with `read_json()`:
+JSON'u R veri yapılarına dönüştürmek için Jeroen Ooms'un jsonlite paketini öneriyoruz.
+Yalnızca iki jsonlite fonksiyonunu kullanacağız: `read_json()` ve `parse_json()`.
+Gerçek yaşamda diskten bir JSON dosyası okumak için `read_json()` kullanırsınız.
+Örneğin repurrrsive paketi `gh_user` nesnesinin kaynağını bir JSON dosyası olarak da sağlar ve bunu `read_json()` ile okuyabilirsiniz:
 
 ```{r}
-# A path to a json file inside the package:
+# Paketin içindeki bir JSON dosyasının yolu:
 gh_users_json()
 
-# Read it with read_json()
+# read_json() ile oku
 gh_users2 <- read_json(gh_users_json())
 
-# Check it's the same as the data we were using previously
+# Daha önce kullandığımız verilerle aynı olduğunu denetle
 identical(gh_users, gh_users2)
 ```
 
-In this book, we'll also use `parse_json()`, since it takes a string containing JSON, which makes it good for generating simple examples.
-To get started, here are three simple JSON datasets, starting with a number, then putting a few numbers in an array, then putting that array in an object:
+Bu kitapta JSON içeren bir karakter dizisini kabul ettiği ve bu nedenle basit örnekler üretmeye uygun olduğu için `parse_json()` fonksiyonunu da kullanacağız.
+Başlangıç olarak üç basit JSON veri kümesi görelim: Önce bir sayı, sonra bir dizi içine yerleştirilmiş birkaç sayı ve son olarak bir nesne içine yerleştirilmiş bu dizi:
 
 ```{r}
 str(parse_json('1'))
@@ -659,14 +659,14 @@ str(parse_json('[1, 2, 3]'))
 str(parse_json('{"x": [1, 2, 3]}'))
 ```
 
-jsonlite has another important function called `fromJSON()`.
-We don't use it here because it performs automatic simplification (`simplifyVector = TRUE`).
-This often works well, particularly in simple cases, but we think you're better off doing the rectangling yourself so you know exactly what's happening and can more easily handle the most complicated nested structures.
+jsonlite'ın `fromJSON()` adlı önemli bir fonksiyonu daha vardır.
+Otomatik sadeleştirme (`simplifyVector = TRUE`) yaptığı için burada onu kullanmıyoruz.
+Bu yaklaşım özellikle basit durumlarda çoğunlukla iyi çalışır; ancak tam olarak ne olduğunu bilmeniz ve en karmaşık iç içe yapıları daha kolay ele alabilmeniz için dikdörtgensel hâle getirme işlemini kendiniz yapmanızın daha iyi olduğunu düşünüyoruz.
 
-### Starting the rectangling process
+### Dikdörtgensel hâle getirme sürecini başlatma
 
-In most cases, JSON files contain a single top-level array, because they're designed to provide data about multiple "things", e.g., multiple pages, or multiple records, or multiple results.
-In this case, you'll start your rectangling with `tibble(json)` so that each element becomes a row:
+JSON dosyaları çoğu durumda tek bir üst düzey dizi içerir; çünkü birden çok “şey” (örneğin birden çok sayfa, kayıt ya da sonuç) hakkında veri sağlamak üzere tasarlanmışlardır.
+Bu durumda her öğenin bir satır olması için dikdörtgensel hâle getirmeye `tibble(json)` ile başlarsınız:
 
 ```{r}
 json <- '[
@@ -680,8 +680,8 @@ df |>
   unnest_wider(json)
 ```
 
-In rarer cases, the JSON file consists of a single top-level JSON object, representing one "thing".
-In this case, you'll need to kick off the rectangling process by wrapping it in a list, before you put it in a tibble.
+Daha seyrek durumlarda JSON dosyası tek bir “şeyi” temsil eden, üst düzey tek bir JSON nesnesinden oluşur.
+Bu durumda dikdörtgensel hâle getirme sürecini başlatmak için nesneyi tibble'a koymadan önce bir liste içine almanız gerekir.
 
 ```{r}
 json <- '{
@@ -701,7 +701,7 @@ df |>
   unnest_wider(results)
 ```
 
-Alternatively, you can reach inside the parsed JSON and start with the bit that you actually care about:
+Alternatif olarak ayrıştırılmış JSON'un içine erişip doğrudan ilgilendiğiniz bölümle başlayabilirsiniz:
 
 ```{r}
 df <- tibble(results = parse_json(json)$results)
@@ -709,10 +709,10 @@ df |>
   unnest_wider(results)
 ```
 
-### Exercises
+### Alıştırmalar
 
-1.  Rectangle the `df_col` and `df_row` below.
-    They represent the two ways of encoding a data frame in JSON.
+1.  Aşağıdaki `df_col` ve `df_row` nesnelerini dikdörtgensel hâle getirin.
+    Bunlar bir veri çerçevesini JSON'da kodlamanın iki yolunu temsil eder.
 
     ```{r}
     json_col <- parse_json('
@@ -733,12 +733,12 @@ df |>
     df_row <- tibble(json = json_row)
     ```
 
-## Summary
+## Özet
 
-In this chapter, you learned what lists are, how you can generate them from JSON files, and how to turn them into rectangular data frames.
-Surprisingly we only need two new functions: `unnest_longer()` to put list elements into rows and `unnest_wider()` to put list elements into columns.
-It doesn't matter how deeply nested the list-column is; all you need to do is repeatedly call these two functions.
+Bu bölümde listelerin ne olduğunu, JSON dosyalarından nasıl üretilebileceğini ve dikdörtgensel veri çerçevelerine nasıl dönüştürüleceğini öğrendiniz.
+Şaşırtıcı biçimde yalnızca iki yeni fonksiyona ihtiyacımız vardır: Liste öğelerini satırlara koymak için `unnest_longer()`, sütunlara koymak için `unnest_wider()`.
+Liste sütununun ne kadar derin iç içe geçtiği önemli değildir; yapmanız gereken tek şey bu iki fonksiyonu art arda çağırmaktır.
 
-JSON is the most common data format returned by web APIs.
-What happens if the website doesn't have an API, but you can see data you want on the website?
-That's the topic of the next chapter: web scraping, extracting data from HTML webpages.
+JSON, web API'lerinin döndürdüğü en yaygın veri biçimidir.
+Peki web sitesinin bir API'si yoksa ancak istediğiniz verileri sitede görebiliyorsanız ne olur?
+Bu, bir sonraki bölümün konusudur: web kazıma, yani HTML web sayfalarından veri çıkarma.

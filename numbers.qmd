@@ -1,24 +1,24 @@
-# Numbers {#sec-numbers}
+# Sayılar {#sec-numbers}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## Giriş
 
-Numeric vectors are the backbone of data science, and you've already used them a bunch of times earlier in the book.
-Now it's time to systematically survey what you can do with them in R, ensuring that you're well situated to tackle any future problem involving numeric vectors.
+Sayısal vektörler veri biliminin belkemiğidir ve kitabın önceki bölümlerinde onları birçok kez kullandınız.
+Şimdi R'da sayısal vektörlerle neler yapabileceğinizi sistematik biçimde inceleyerek gelecekte karşılaşacağınız sayısal sorunlar için sağlam bir temel oluşturma zamanı.
 
-We'll start by giving you a couple of tools to make numbers if you have strings, and then going into a little more detail of `count()`.
-Then we'll dive into various numeric transformations that pair well with `mutate()`, including more general transformations that can be applied to other types of vectors, but are often used with numeric vectors.
-We'll finish off by covering the summary functions that pair well with `summarize()` and show you how they can also be used with `mutate()`.
+Karakter dizilerinden sayı üretmeye yarayan birkaç araçla başlayacak, ardından `count()` fonksiyonunu biraz daha ayrıntılı ele alacağız.
+Sonra `mutate()` ile iyi çalışan çeşitli sayısal dönüştürmeleri inceleyeceğiz. Bunların arasında başka vektör türlerine de uygulanabilen, ancak çoğunlukla sayısal vektörlerle kullanılan genel dönüştürmeler de yer alacak.
+Son olarak `summarize()` ile birlikte kullanılan özet fonksiyonlarını ele alacak ve bunların `mutate()` ile nasıl kullanılabileceğini göstereceğiz.
 
-### Prerequisites
+### Ön koşullar
 
-This chapter mostly uses functions from base R, which are available without loading any packages.
-But we still need the tidyverse because we'll use these base R functions inside of tidyverse functions like `mutate()` and `filter()`.
-Like in the last chapter, we'll use real examples from nycflights13, as well as toy examples made with `c()` and `tribble()`.
+Bu bölümde çoğunlukla herhangi bir paket yüklemeden kullanılabilen temel R fonksiyonlarından yararlanacağız.
+Ancak bu fonksiyonları `mutate()` ve `filter()` gibi tidyverse fonksiyonlarının içinde kullanacağımız için tidyverse'e yine de ihtiyacımız var.
+Önceki bölümde olduğu gibi nycflights13 paketinden gerçek örneklerin yanı sıra `c()` ve `tribble()` ile oluşturulan küçük örnekleri kullanacağız.
 
 ```{r}
 #| label: setup
@@ -27,48 +27,48 @@ library(tidyverse)
 library(nycflights13)
 ```
 
-## Making numbers
+## Sayı oluşturma
 
-In most cases, you'll get numbers already recorded in one of R's numeric types: integer or double.
-In some cases, however, you'll encounter them as strings, possibly because you've created them by pivoting from column headers or because something has gone wrong in your data import process.
+Çoğu durumda sayılar, R'ın sayısal türlerinden biri olan integer veya double biçiminde kaydedilmiş olarak gelir.
+Ancak bazen sütun başlıklarını pivotlayarak oluşturduğunuz ya da veri içe aktarma sırasında bir sorun yaşandığı için sayılarla karakter dizisi biçiminde karşılaşabilirsiniz.
 
-readr provides two useful functions for parsing strings into numbers: `parse_double()` and `parse_number()`.
-Use `parse_double()` when you have numbers that have been written as strings:
+readr, karakter dizilerini sayıya ayrıştırmak için iki yararlı fonksiyon sunar: `parse_double()` ve `parse_number()`.
+Karakter dizisi biçiminde yazılmış sayılarınız varsa `parse_double()` kullanın:
 
 ```{r}
 x <- c("1.2", "5.6", "1e3")
 parse_double(x)
 ```
 
-Use `parse_number()` when the string contains non-numeric text that you want to ignore.
-This is particularly useful for currency data and percentages:
+Karakter dizisi, yok saymak istediğiniz sayısal olmayan metinler içeriyorsa `parse_number()` kullanın.
+Bu fonksiyon özellikle para birimleri ve yüzdeler için yararlıdır:
 
 ```{r}
 x <- c("$1,234", "USD 3,513", "59%")
 parse_number(x)
 ```
 
-## Counts {#sec-counts}
+## Sayımlar {#sec-counts}
 
-It's surprising how much data science you can do with just counts and a little basic arithmetic, so dplyr strives to make counting as easy as possible with `count()`.
-This function is great for quick exploration and checks during analysis:
+Yalnızca sayımlar ve biraz temel aritmetikle ne kadar çok veri bilimi yapabileceğiniz şaşırtıcıdır. Bu nedenle dplyr, `count()` ile sayma işlemini olabildiğince kolaylaştırır.
+Bu fonksiyon analiz sırasında hızlı keşifler ve denetimler yapmak için idealdir:
 
 ```{r}
 flights |> count(dest)
 ```
 
-(Despite the advice in @sec-workflow-style, we usually put `count()` on a single line because it's usually used at the console for a quick check that a calculation is working as expected.)
+(@sec-workflow-style bölümündeki öneriye rağmen `count()` çağrısını genellikle tek satıra yazarız; çünkü çoğunlukla bir hesaplamanın beklendiği gibi çalıştığını konsolda hızla denetlemek için kullanılır.)
 
-If you want to see the most common values, add `sort = TRUE`:
+En yaygın değerleri görmek istiyorsanız `sort = TRUE` ekleyin:
 
 ```{r}
 flights |> count(dest, sort = TRUE)
 ```
 
-And remember that if you want to see all the values, you can use `|> View()` or `|> print(n = Inf)`.
+Tüm değerleri görmek için `|> View()` veya `|> print(n = Inf)` kullanabileceğinizi unutmayın.
 
-You can perform the same computation "by hand" with `group_by()`, `summarize()` and `n()`.
-This is useful because it allows you to compute other summaries at the same time:
+Aynı hesaplamayı `group_by()`, `summarize()` ve `n()` ile "elle" yapabilirsiniz.
+Bu yaklaşım başka özetleri de aynı anda hesaplamanızı sağladığı için kullanışlıdır:
 
 ```{r}
 flights |> 
@@ -79,18 +79,18 @@ flights |>
   )
 ```
 
-`n()` is a special summary function that doesn't take any arguments and instead accesses information about the "current" group.
-This means that it only works inside dplyr verbs:
+`n()`, argüman almayan ve bunun yerine "geçerli" grup hakkındaki bilgilere erişen özel bir özet fonksiyonudur.
+Bu nedenle yalnızca dplyr fiillerinin içinde çalışır:
 
 ```{r}
 #| error: true
 n()
 ```
 
-There are a couple of variants of `n()` and `count()` that you might find useful:
+`n()` ve `count()` fonksiyonlarının yararlı olabilecek birkaç çeşidi vardır:
 
--   `n_distinct(x)` counts the number of distinct (unique) values of one or more variables.
-    For example, we could figure out which destinations are served by the most carriers:
+-   `n_distinct(x)`, bir veya daha fazla değişkendeki farklı (benzersiz) değerlerin sayısını hesaplar.
+    Örneğin en fazla hava yolu şirketinin hizmet verdiği varış noktalarını bulabiliriz:
 
     ```{r}
     flights |> 
@@ -99,8 +99,8 @@ There are a couple of variants of `n()` and `count()` that you might find useful
       arrange(desc(carriers))
     ```
 
--   A weighted count is a sum.
-    For example you could "count" the number of miles each plane flew:
+-   Ağırlıklı sayım aslında bir toplamdır.
+    Örneğin her uçağın uçtuğu mil sayısını "sayabilirsiniz":
 
     ```{r}
     flights |> 
@@ -108,15 +108,15 @@ There are a couple of variants of `n()` and `count()` that you might find useful
       summarize(miles = sum(distance))
     ```
 
-    Weighted counts are a common problem so `count()` has a `wt` argument that does the same thing:
+    Ağırlıklı sayımlar sık kullanıldığı için `count()` aynı işlemi yapan bir `wt` argümanına sahiptir:
 
     ```{r}
     #| results: false
     flights |> count(tailnum, wt = distance)
     ```
 
--   You can count missing values by combining `sum()` and `is.na()`.
-    In the `flights` dataset this represents flights that are cancelled:
+-   `sum()` ve `is.na()` fonksiyonlarını birleştirerek eksik değerleri sayabilirsiniz.
+    `flights` veri kümesinde bu değerler iptal edilen uçuşları temsil eder:
 
     ```{r}
     flights |> 
@@ -124,65 +124,65 @@ There are a couple of variants of `n()` and `count()` that you might find useful
       summarize(n_cancelled = sum(is.na(dep_time))) 
     ```
 
-### Exercises
+### Alıştırmalar
 
-1.  How can you use `count()` to count the number of rows with a missing value for a given variable?
-2.  Expand the following calls to `count()` to instead use `group_by()`, `summarize()`, and `arrange()`:
+1.  Belirli bir değişkende eksik değer bulunan satırların sayısını `count()` ile nasıl hesaplayabilirsiniz?
+2.  Aşağıdaki `count()` çağrılarını `group_by()`, `summarize()` ve `arrange()` kullanacak biçimde genişletin:
     1.  `flights |> count(dest, sort = TRUE)`
 
     2.  `flights |> count(tailnum, wt = distance)`
 
-## Numeric transformations
+## Sayısal dönüştürmeler
 
-Transformation functions work well with `mutate()` because their output is the same length as the input.
-The vast majority of transformation functions are already built into base R.
-It's impractical to list them all so this section will show the most useful ones.
-As an example, while R provides all the trigonometric functions that you might dream of, we don't list them here because they're rarely needed for data science.
+Dönüştürme fonksiyonlarının çıktısı girdileriyle aynı uzunlukta olduğundan bu fonksiyonlar `mutate()` ile iyi çalışır.
+Dönüştürme fonksiyonlarının büyük çoğunluğu temel R'da yerleşik olarak bulunur.
+Hepsini listelemek kullanışlı olmayacağından bu bölümde en yararlı olanları göstereceğiz.
+Örneğin R aklınıza gelebilecek tüm trigonometrik fonksiyonları sunsa da veri biliminde nadiren gerektikleri için bunları burada listelemiyoruz.
 
-### Arithmetic and recycling rules {#sec-recycling}
+### Aritmetik ve geri dönüşüm kuralları {#sec-recycling}
 
-We introduced the basics of arithmetic (`+`, `-`, `*`, `/`, `^`) in @sec-workflow-basics and have used them a bunch since.
-These functions don't need a huge amount of explanation because they do what you learned in grade school.
-But we need to briefly talk about the **recycling rules** which determine what happens when the left and right hand sides have different lengths.
-This is important for operations like `flights |> mutate(air_time = air_time / 60)` because there are 336,776 numbers on the left of `/` but only one on the right.
+Aritmetiğin temellerini (`+`, `-`, `*`, `/`, `^`) @sec-workflow-basics bölümünde tanıttık ve o zamandan beri birçok kez kullandık.
+Bu fonksiyonlar okulda öğrendiğiniz biçimde çalıştıkları için ayrıntılı açıklama gerektirmez.
+Ancak sol ve sağ tarafın uzunlukları farklı olduğunda ne olacağını belirleyen **geri dönüşüm kurallarından** (recycling rules) kısaca söz etmemiz gerekir.
+Örneğin `flights |> mutate(air_time = air_time / 60)` işleminde `/` işaretinin solunda 336.776, sağında ise yalnızca bir sayı bulunduğundan bu kurallar önemlidir.
 
-R handles mismatched lengths by **recycling,** or repeating, the short vector.
-We can see this in operation more easily if we create some vectors outside of a data frame:
+R, kısa vektörü tekrarlayarak, yani **geri dönüştürerek**, eşleşmeyen uzunlukları ele alır.
+Bir veri çerçevesinin dışında birkaç vektör oluşturursak bu işlemi daha kolay görebiliriz:
 
 ```{r}
 x <- c(1, 2, 10, 20)
 x / 5
-# is shorthand for
+# şunun kısaltmasıdır
 x / c(5, 5, 5, 5)
 ```
 
-Generally, you only want to recycle single numbers (i.e. vectors of length 1), but R will recycle any shorter length vector.
-It usually (but not always) gives you a warning if the longer vector isn't a multiple of the shorter:
+Genellikle yalnızca tek sayıları, yani uzunluğu 1 olan vektörleri geri dönüştürmek istersiniz; ancak R daha kısa olan her vektörü geri dönüştürür.
+Uzun vektörün uzunluğu kısa vektörün uzunluğunun katı değilse R genellikle, ancak her zaman değil, bir uyarı verir:
 
 ```{r}
 x * c(1, 2)
 x * c(1, 2, 3)
 ```
 
-These recycling rules are also applied to logical comparisons (`==`, `<`, `<=`, `>`, `>=`, `!=`) and can lead to a surprising result if you accidentally use `==` instead of `%in%` and the data frame has an unfortunate number of rows.
-For example, take this code which attempts to find all flights in January and February:
+Bu geri dönüşüm kuralları mantıksal karşılaştırmalara (`==`, `<`, `<=`, `>`, `>=`, `!=`) da uygulanır. Yanlışlıkla `%in%` yerine `==` kullanırsanız ve veri çerçevesinin satır sayısı talihsiz bir değerse şaşırtıcı sonuçlar ortaya çıkabilir.
+Örneğin Ocak ve Şubat aylarındaki tüm uçuşları bulmaya çalışan şu kodu ele alalım:
 
 ```{r}
 flights |> 
   filter(month == c(1, 2))
 ```
 
-The code runs without error, but it doesn't return what you want.
-Because of the recycling rules it finds flights in odd numbered rows that departed in January and flights in even numbered rows that departed in February.
-And unfortunately there's no warning because `flights` has an even number of rows.
+Kod hata vermeden çalışır; ancak istediğiniz sonucu döndürmez.
+Geri dönüşüm kuralları nedeniyle tek numaralı satırlarda Ocak ayında, çift numaralı satırlarda ise Şubat ayında kalkan uçuşları bulur.
+Ne yazık ki `flights` çift sayıda satıra sahip olduğundan herhangi bir uyarı da verilmez.
 
-To protect you from this type of silent failure, most tidyverse functions use a stricter form of recycling that only recycles single values.
-Unfortunately that doesn't help here, or in many other cases, because the key computation is performed by the base R function `==`, not `filter()`.
+Bu tür sessiz hatalardan korunmanız için çoğu tidyverse fonksiyonu, yalnızca tek değerleri geri dönüştüren daha katı kurallar kullanır.
+Ne yazık ki temel hesaplamayı `filter()` değil temel R operatörü `==` gerçekleştirdiğinden bu önlem burada ve benzer birçok durumda işe yaramaz.
 
-### Minimum and maximum
+### En küçük ve en büyük değerler
 
-The arithmetic functions work with pairs of variables.
-Two closely related functions are `pmin()` and `pmax()`, which when given two or more variables will return the smallest or largest value in each row:
+Aritmetik fonksiyonlar değişken çiftleriyle çalışır.
+Bunlarla yakından ilişkili `pmin()` ve `pmax()` fonksiyonları, iki veya daha fazla değişken verildiğinde her satırdaki en küçük veya en büyük değeri döndürür:
 
 ```{r}
 df <- tribble(
@@ -199,8 +199,8 @@ df |>
   )
 ```
 
-Note that these are different to the summary functions `min()` and `max()` which take multiple observations and return a single value.
-You can tell that you've used the wrong form when all the minimums and all the maximums have the same value:
+Bu fonksiyonların, birden fazla gözlem alıp tek bir değer döndüren `min()` ve `max()` özet fonksiyonlarından farklı olduğuna dikkat edin.
+Tüm en küçük ve en büyük değerler aynı çıktığında yanlış fonksiyonu kullandığınızı anlayabilirsiniz:
 
 ```{r}
 df |> 
@@ -210,17 +210,17 @@ df |>
   )
 ```
 
-### Modular arithmetic
+### Modüler aritmetik
 
-Modular arithmetic is the technical name for the type of math you did before you learned about decimal places, i.e. division that yields a whole number and a remainder.
-In R, `%/%` does integer division and `%%` computes the remainder:
+Modüler aritmetik, ondalık sayıları öğrenmeden önce yaptığınız türden matematiğin teknik adıdır; yani bölümün tam sayı, kalanın ise ayrıca elde edildiği bölme işlemidir.
+R'da `%/%` tam sayı bölmesi yapar, `%%` ise kalanı hesaplar:
 
 ```{r}
 1:10 %/% 3
 1:10 %% 3
 ```
 
-Modular arithmetic is handy for the `flights` dataset, because we can use it to unpack the `sched_dep_time` variable into `hour` and `minute`:
+Modüler aritmetik `flights` veri kümesi için kullanışlıdır; çünkü `sched_dep_time` değişkenini `hour` ve `minute` bileşenlerine ayırmak için kullanabiliriz:
 
 ```{r}
 flights |> 
@@ -231,22 +231,21 @@ flights |>
   )
 ```
 
-We can combine that with the `mean(is.na(x))` trick from @sec-logical-summaries to see how the proportion of cancelled flights varies over the course of the day.
-The results are shown in @fig-prop-cancelled.
+İptal edilen uçuşların oranının gün boyunca nasıl değiştiğini görmek için bunu @sec-logical-summaries bölümündeki `mean(is.na(x))` yöntemiyle birleştirebiliriz.
+Sonuçlar @fig-prop-cancelled üzerinde gösterilmiştir.
 
 ```{r}
 #| label: fig-prop-cancelled
 #| fig-cap: | 
-#|   A line plot with scheduled departure hour on the x-axis, and proportion
-#|   of cancelled flights on the y-axis. Cancellations seem to accumulate
-#|   over the course of the day until 8pm, very late flights are much
-#|   less likely to be cancelled.
+#|   X ekseninde planlanan kalkış saatinin, y ekseninde iptal edilen
+#|   uçuşların oranının bulunduğu bir çizgi grafik. İptaller gün boyunca
+#|   saat 20.00'ye kadar birikiyor; çok geç saatlerdeki uçuşların iptal
+#|   edilme olasılığı çok daha düşük görünüyor.
 #| fig-alt: |
-#|   A line plot showing how proportion of cancelled flights changes over
-#|   the course of the day. The proportion starts low at around 0.5% at
-#|   5am, then steadily increases over the course of the day until peaking
-#|   at 4% at 7pm. The proportion of cancelled flights then drops rapidly
-#|   getting down to around 1% by midnight.
+#|   İptal edilen uçuşların oranının gün boyunca nasıl değiştiğini gösteren
+#|   bir çizgi grafik. Oran saat 05.00'te yaklaşık %0,5 ile düşük başlıyor,
+#|   gün boyunca düzenli biçimde artarak saat 19.00'da %4 ile zirveye
+#|   ulaşıyor. Ardından hızla düşerek gece yarısında yaklaşık %1'e iniyor.
 flights |> 
   group_by(hour = sched_dep_time %/% 100) |> 
   summarize(prop_cancelled = mean(is.na(dep_time)), n = n()) |> 
@@ -256,43 +255,43 @@ flights |>
   geom_point(aes(size = n))
 ```
 
-### Logarithms
+### Logaritmalar
 
-Logarithms are an incredibly useful transformation for dealing with data that ranges across multiple orders of magnitude and converting exponential growth to linear growth.
-In R, you have a choice of three logarithms: `log()` (the natural log, base e), `log2()` (base 2), and `log10()` (base 10).
-We recommend using `log2()` or `log10()`.
-`log2()` is easy to interpret because a difference of 1 on the log scale corresponds to doubling on the original scale and a difference of -1 corresponds to halving; whereas `log10()` is easy to back-transform because (e.g.) 3 is 10\^3 = 1000.
-The inverse of `log()` is `exp()`; to compute the inverse of `log2()` or `log10()` you'll need to use `2^` or `10^`.
+Logaritmalar, birçok büyüklük mertebesine yayılan verilerle çalışmak ve üstel büyümeyi doğrusal büyümeye dönüştürmek için son derece yararlı bir dönüşümdür.
+R'da üç logaritma seçeneği vardır: `log()` (e tabanında doğal logaritma), `log2()` (2 tabanında) ve `log10()` (10 tabanında).
+`log2()` veya `log10()` kullanmanızı öneririz.
+Logaritmik ölçekte 1 birimlik fark özgün ölçekte iki katına, -1 birimlik fark ise yarıya karşılık geldiğinden `log2()` kolay yorumlanır. Öte yandan, örneğin 3 değeri 10\^3 = 1000 olduğundan `log10()` ters dönüşümü kolaylaştırır.
+`log()` fonksiyonunun tersi `exp()` fonksiyonudur; `log2()` veya `log10()` fonksiyonunun tersini hesaplamak için `2^` ya da `10^` kullanmanız gerekir.
 
-### Rounding {#sec-rounding}
+### Yuvarlama {#sec-rounding}
 
-Use `round(x)` to round a number to the nearest integer:
+Bir sayıyı en yakın tam sayıya yuvarlamak için `round(x)` kullanın:
 
 ```{r}
 round(123.456)
 ```
 
-You can control the precision of the rounding with the second argument, `digits`.
-`round(x, digits)` rounds to the nearest `10^-n` so `digits = 2` will round to the nearest 0.01.
-This definition is useful because it implies `round(x, -3)` will round to the nearest thousand, which indeed it does:
+Yuvarlama hassasiyetini ikinci argüman olan `digits` ile belirleyebilirsiniz.
+`round(x, digits)`, en yakın `10^-n` değerine yuvarlar; dolayısıyla `digits = 2`, en yakın 0,01'e yuvarlama yapar.
+Bu tanım, `round(x, -3)` ifadesinin en yakın binliğe yuvarlayacağını gösterir ve gerçekten de böyle çalışır:
 
 ```{r}
-round(123.456, 2)  # two digits
-round(123.456, 1)  # one digit
-round(123.456, -1) # round to nearest ten
-round(123.456, -2) # round to nearest hundred
+round(123.456, 2)  # iki basamak
+round(123.456, 1)  # bir basamak
+round(123.456, -1) # en yakın onluğa yuvarla
+round(123.456, -2) # en yakın yüzlüğe yuvarla
 ```
 
-There's one weirdness with `round()` that seems surprising at first glance:
+`round()` fonksiyonunun ilk bakışta şaşırtıcı görünen bir özelliği vardır:
 
 ```{r}
 round(c(1.5, 2.5))
 ```
 
-`round()` uses what's known as "round half to even" or Banker's rounding: if a number is half way between two integers, it will be rounded to the **even** integer.
-This is a good strategy because it keeps the rounding unbiased: half of all 0.5s are rounded up, and half are rounded down.
+`round()`, "yarımı çifte yuvarlama" veya bankacı yuvarlaması olarak bilinen yöntemi kullanır: bir sayı iki tam sayının tam ortasındaysa **çift** tam sayıya yuvarlanır.
+Bu yöntem yuvarlamayı yansız tuttuğu için iyi bir stratejidir: 0,5 ile biten değerlerin yarısı yukarı, yarısı aşağı yuvarlanır.
 
-`round()` is paired with `floor()` which always rounds down and `ceiling()` which always rounds up:
+`round()` fonksiyonuna, her zaman aşağı yuvarlayan `floor()` ve her zaman yukarı yuvarlayan `ceiling()` eşlik eder:
 
 ```{r}
 x <- 123.456
@@ -301,85 +300,85 @@ floor(x)
 ceiling(x)
 ```
 
-These functions don't have a `digits` argument, so you can instead scale down, round, and then scale back up:
+Bu fonksiyonlarda `digits` argümanı yoktur; bunun yerine değeri küçültüp yuvarladıktan sonra yeniden büyütebilirsiniz:
 
 ```{r}
-# Round down to nearest two digits
+# En yakın iki ondalık basamağa aşağı yuvarla
 floor(x / 0.01) * 0.01
-# Round up to nearest two digits
+# En yakın iki ondalık basamağa yukarı yuvarla
 ceiling(x / 0.01) * 0.01
 ```
 
-You can use the same technique if you want to `round()` to a multiple of some other number:
+Başka bir sayının katına yuvarlamak istediğinizde de aynı yöntemi kullanabilirsiniz:
 
 ```{r}
-# Round to nearest multiple of 4
+# 4'ün en yakın katına yuvarla
 round(x / 4) * 4
 
-# Round to nearest 0.25
+# En yakın 0,25'e yuvarla
 round(x / 0.25) * 0.25
 ```
 
-### Cutting numbers into ranges
+### Sayıları aralıklara ayırma
 
-Use `cut()`[^numbers-1] to break up (aka bin) a numeric vector into discrete buckets:
+Sayısal bir vektörü kesikli aralıklara ayırmak (binning) için `cut()`[^numbers-1] kullanın:
 
-[^numbers-1]: ggplot2 provides some helpers for common cases in `cut_interval()`, `cut_number()`, and `cut_width()`.
-    ggplot2 is an admittedly weird place for these functions to live, but they are useful as part of histogram computation and were written before any other parts of the tidyverse existed.
+[^numbers-1]: ggplot2, yaygın durumlar için `cut_interval()`, `cut_number()` ve `cut_width()` yardımcılarını sunar.
+    Bu fonksiyonların ggplot2 içinde bulunması kuşkusuz biraz tuhaftır; ancak histogram hesaplamalarında kullanışlıdırlar ve tidyverse'in diğer bileşenlerinden önce yazılmışlardır.
 
 ```{r}
 x <- c(1, 2, 5, 10, 15, 20)
 cut(x, breaks = c(0, 5, 10, 15, 20))
 ```
 
-The breaks don't need to be evenly spaced:
+Kesme noktalarının eşit aralıklı olması gerekmez:
 
 ```{r}
 cut(x, breaks = c(0, 5, 10, 100))
 ```
 
-You can optionally supply your own `labels`.
-Note that there should be one less `labels` than `breaks`.
+İsterseniz kendi `labels` değerlerinizi belirtebilirsiniz.
+`labels` sayısının `breaks` sayısından bir eksik olması gerektiğine dikkat edin.
 
 ```{r}
 cut(x, 
   breaks = c(0, 5, 10, 15, 20), 
-  labels = c("sm", "md", "lg", "xl")
+  labels = c("küçük", "orta", "büyük", "çok büyük")
 )
 ```
 
-Any values outside of the range of the breaks will become `NA`:
+Kesme noktalarının belirlediği aralığın dışında kalan değerler `NA` olur:
 
 ```{r}
 y <- c(NA, -10, 5, 10, 30)
 cut(y, breaks = c(0, 5, 10, 15, 20))
 ```
 
-See the documentation for other useful arguments like `right` and `include.lowest`, which control if the intervals are `[a, b)` or `(a, b]` and if the lowest interval should be `[a, b]`.
+Aralıkların `[a, b)` mı yoksa `(a, b]` mi olacağını ve en düşük aralığın `[a, b]` biçiminde kapsanıp kapsanmayacağını belirleyen `right` ve `include.lowest` gibi diğer yararlı argümanlar için belgelere bakın.
 
-### Cumulative and rolling aggregates {#sec-cumulative-and-rolling-aggregates}
+### Birikimli ve hareketli toplulaştırmalar {#sec-cumulative-and-rolling-aggregates}
 
-Base R provides `cumsum()`, `cumprod()`, `cummin()`, `cummax()` for running, or cumulative, sums, products, mins and maxes.
-dplyr provides `cummean()` for cumulative means.
-Cumulative sums tend to come up the most in practice:
+Temel R; hareketli veya birikimli toplam, çarpım, en küçük ve en büyük değerler için `cumsum()`, `cumprod()`, `cummin()` ve `cummax()` fonksiyonlarını sunar.
+dplyr ise birikimli ortalamalar için `cummean()` sağlar.
+Uygulamada en sık birikimli toplamlarla karşılaşılır:
 
 ```{r}
 x <- 1:10
 cumsum(x)
 ```
 
-If you need more complex rolling or sliding aggregates, try the [slider](https://slider.r-lib.org/) package.
+Daha karmaşık hareketli veya kayan toplulaştırmalara ihtiyacınız varsa [slider](https://slider.r-lib.org/) paketini deneyin.
 
-### Exercises
+### Alıştırmalar
 
-1.  Explain in words what each line of the code used to generate @fig-prop-cancelled does.
+1.  @fig-prop-cancelled grafiğini oluşturmak için kullanılan kodun her satırının ne yaptığını sözcüklerle açıklayın.
 
-2.  What trigonometric functions does R provide?
-    Guess some names and look up the documentation.
-    Do they use degrees or radians?
+2.  R hangi trigonometrik fonksiyonları sunar?
+    Bazı adları tahmin edin ve belgelerde arayın.
+    Bu fonksiyonlar derece mi yoksa radyan mı kullanır?
 
-3.  Currently `dep_time` and `sched_dep_time` are convenient to look at, but hard to compute with because they're not really continuous numbers.
-    You can see the basic problem by running the code below: there's a gap between each hour.
+3.  Şu anda `dep_time` ve `sched_dep_time` değişkenlerini okumak kolay, ancak gerçekte sürekli sayılar olmadıkları için bunlarla hesaplama yapmak zordur.
+    Aşağıdaki kodu çalıştırdığınızda temel sorunu görebilirsiniz: her saat arasında bir boşluk vardır.
 
     ```{r}
     #| eval: false
@@ -389,32 +388,32 @@ If you need more complex rolling or sliding aggregates, try the [slider](https:/
       geom_point()
     ```
 
-    Convert them to a more truthful representation of time (either fractional hours or minutes since midnight).
+    Bunları zamanı daha doğru temsil eden bir biçime dönüştürün: kesirli saatler veya gece yarısından itibaren geçen dakikalar.
 
-4.  Round `dep_time` and `arr_time` to the nearest five minutes.
+4.  `dep_time` ve `arr_time` değerlerini en yakın beş dakikaya yuvarlayın.
 
-## General transformations
+## Genel dönüştürmeler
 
-The following sections describe some general transformations which are often used with numeric vectors, but can be applied to all other column types.
+Aşağıdaki bölümlerde çoğunlukla sayısal vektörlerle kullanılan, ancak diğer tüm sütun türlerine de uygulanabilen bazı genel dönüştürmeleri ele alacağız.
 
-### Ranks
+### Sıralar
 
-dplyr provides a number of ranking functions inspired by SQL, but you should always start with `dplyr::min_rank()`.
-It uses the typical method for dealing with ties, e.g., 1st, 2nd, 2nd, 4th.
+dplyr, SQL'den esinlenen çeşitli sıralama fonksiyonları sunar; ancak işe her zaman `dplyr::min_rank()` ile başlamalısınız.
+Bu fonksiyon eşitlikleri ele almak için yaygın yöntemi kullanır: örneğin 1., 2., 2., 4.
 
 ```{r}
 x <- c(1, 5, 5, 17, 22, NA)
 min_rank(x)
 ```
 
-Note that the smallest values get the lowest ranks; use `desc(x)` to give the largest values the smallest ranks:
+En küçük değerlerin en düşük sıra numaralarını aldığına dikkat edin. En büyük değerlere en düşük sıra numaralarını vermek için `desc(x)` kullanın:
 
 ```{r}
 min_rank(desc(x))
 ```
 
-If `min_rank()` doesn't do what you need, look at the variants `dplyr::row_number()`, `dplyr::dense_rank()`, `dplyr::percent_rank()`, and `dplyr::cume_dist()`.
-See the documentation for details.
+`min_rank()` ihtiyacınızı karşılamıyorsa `dplyr::row_number()`, `dplyr::dense_rank()`, `dplyr::percent_rank()` ve `dplyr::cume_dist()` çeşitlerini inceleyin.
+Ayrıntılar için belgelere bakın.
 
 ```{r}
 df <- tibble(x = x)
@@ -427,11 +426,11 @@ df |>
   )
 ```
 
-You can achieve many of the same results by picking the appropriate `ties.method` argument to base R's `rank()`; you'll probably also want to set `na.last = "keep"` to keep `NA`s as `NA`.
+Temel R'ın `rank()` fonksiyonunda uygun `ties.method` argümanını seçerek aynı sonuçların çoğunu elde edebilirsiniz. `NA` değerlerini `NA` olarak korumak için büyük olasılıkla `na.last = "keep"` de kullanmak isteyeceksiniz.
 
-`row_number()` can also be used without any arguments when inside a dplyr verb.
-In this case, it'll give the number of the "current" row.
-When combined with `%%` or `%/%` this can be a useful tool for dividing data into similarly sized groups:
+`row_number()`, bir dplyr fiilinin içinde argümansız da kullanılabilir.
+Bu durumda "geçerli" satırın numarasını verir.
+`%%` veya `%/%` ile birleştirildiğinde verileri benzer büyüklükte gruplara ayırmak için kullanışlı bir araç olur:
 
 ```{r}
 df <- tibble(id = 1:10)
@@ -444,10 +443,10 @@ df |>
   )
 ```
 
-### Offsets
+### Kaydırmalar
 
-`dplyr::lead()` and `dplyr::lag()` allow you to refer to the values just before or just after the "current" value.
-They return a vector of the same length as the input, padded with `NA`s at the start or end:
+`dplyr::lead()` ve `dplyr::lag()`, "geçerli" değerin hemen öncesindeki veya sonrasındaki değerlere başvurmanızı sağlar.
+Girdiyle aynı uzunlukta, başına veya sonuna `NA` değerleri eklenmiş bir vektör döndürürler:
 
 ```{r}
 x <- c(2, 5, 11, 11, 19, 35)
@@ -455,25 +454,25 @@ lag(x)
 lead(x)
 ```
 
--   `x - lag(x)` gives you the difference between the current and previous value.
+-   `x - lag(x)`, geçerli değer ile önceki değer arasındaki farkı verir.
 
     ```{r}
     x - lag(x)
     ```
 
--   `x == lag(x)` tells you when the current value changes.
+-   `x == lag(x)`, geçerli değerin ne zaman değiştiğini gösterir.
 
     ```{r}
     x == lag(x)
     ```
 
-You can lead or lag by more than one position by using the second argument, `n`.
+İkinci argüman olan `n` ile birden fazla konum ileri veya geri gidebilirsiniz.
 
-### Consecutive identifiers
+### Ardışık tanımlayıcılar
 
-Sometimes you want to start a new group every time some event occurs.
-For example, when you're looking at website data, it's common to want to break up events into sessions, where you begin a new session after a gap of more than `x` minutes since the last activity.
-For example, imagine you have the times when someone visited a website:
+Bazen belirli bir olay her gerçekleştiğinde yeni bir grup başlatmak istersiniz.
+Örneğin web sitesi verilerini incelerken olayları oturumlara ayırmak ve son etkinliğin üzerinden `x` dakikadan fazla zaman geçtiğinde yeni bir oturum başlatmak yaygın bir gereksinimdir.
+Bir kişinin web sitesini ziyaret ettiği zamanlara sahip olduğunuzu düşünün:
 
 ```{r}
 events <- tibble(
@@ -482,7 +481,7 @@ events <- tibble(
 
 ```
 
-And you've computed the time between each event, and figured out if there's a gap that's big enough to qualify:
+Her olay arasındaki süreyi hesapladığınızı ve yeni bir grup oluşturacak kadar büyük bir boşluk bulunup bulunmadığını belirlediğinizi varsayalım:
 
 ```{r}
 events <- events |> 
@@ -493,8 +492,8 @@ events <- events |>
 events
 ```
 
-But how do we go from that logical vector to something that we can `group_by()`?
-`cumsum()`, from @sec-cumulative-and-rolling-aggregates, comes to the rescue as gap, i.e. `has_gap` is `TRUE`, will increment `group` by one (@sec-numeric-summaries-of-logicals):
+Peki bu mantıksal vektörü `group_by()` ile kullanabileceğimiz bir değere nasıl dönüştürebiliriz?
+@sec-cumulative-and-rolling-aggregates bölümündeki `cumsum()` yardımımıza yetişir: bir boşluk olduğunda, yani `has_gap` değeri `TRUE` olduğunda `group` değeri bir artar (@sec-numeric-summaries-of-logicals):
 
 ```{r}
 events |> mutate(
@@ -502,8 +501,8 @@ events |> mutate(
 )
 ```
 
-Another approach for creating grouping variables is `consecutive_id()`, which starts a new group every time one of its arguments changes.
-For example, inspired by [this stackoverflow question](https://stackoverflow.com/questions/27482712), imagine you have a data frame with a bunch of repeated values:
+Gruplama değişkenleri oluşturmanın başka bir yolu, argümanlarından biri her değiştiğinde yeni bir grup başlatan `consecutive_id()` fonksiyonudur.
+Örneğin [bu Stack Overflow sorusundan](https://stackoverflow.com/questions/27482712) esinlenerek çok sayıda yinelenen değer içeren bir veri çerçeveniz olduğunu düşünün:
 
 ```{r}
 df <- tibble(
@@ -512,7 +511,7 @@ df <- tibble(
 )
 ```
 
-If you want to keep the first row from each repeated `x`, you could use `group_by()`, `consecutive_id()`, and `slice_head()`:
+Yinelenen her `x` grubunun ilk satırını korumak için `group_by()`, `consecutive_id()` ve `slice_head()` kullanabilirsiniz:
 
 ```{r}
 df |> 
@@ -520,24 +519,24 @@ df |>
   slice_head(n = 1)
 ```
 
-### Exercises
+### Alıştırmalar
 
-1.  Find the 10 most delayed flights using a ranking function.
-    How do you want to handle ties?
-    Carefully read the documentation for `min_rank()`.
+1.  Bir sıralama fonksiyonu kullanarak en çok geciken 10 uçuşu bulun.
+    Eşitlikleri nasıl ele almak istiyorsunuz?
+    `min_rank()` belgelerini dikkatle okuyun.
 
-2.  Which plane (`tailnum`) has the worst on-time record?
+2.  Zamanında kalkış/varış performansı en kötü olan uçak (`tailnum`) hangisidir?
 
-3.  What time of day should you fly if you want to avoid delays as much as possible?
+3.  Gecikmelerden olabildiğince kaçınmak istiyorsanız günün hangi saatinde uçmalısınız?
 
-4.  What does `flights |> group_by(dest) |> filter(row_number() < 4)` do?
-    What does `flights |> group_by(dest) |> filter(row_number(dep_delay) < 4)` do?
+4.  `flights |> group_by(dest) |> filter(row_number() < 4)` ne yapar?
+    Peki `flights |> group_by(dest) |> filter(row_number(dep_delay) < 4)` ne yapar?
 
-5.  For each destination, compute the total minutes of delay.
-    For each flight, compute the proportion of the total delay for its destination.
+5.  Her varış noktası için toplam gecikme süresini dakika cinsinden hesaplayın.
+    Her uçuşun, varış noktasına ait toplam gecikmedeki payını hesaplayın.
 
-6.  Delays are typically temporally correlated: even once the problem that caused the initial delay has been resolved, later flights are delayed to allow earlier flights to leave.
-    Using `lag()`, explore how the average flight delay for an hour is related to the average delay for the previous hour.
+6.  Gecikmeler genellikle zaman içinde ilişkilidir: ilk gecikmeye neden olan sorun çözüldükten sonra bile önceki uçuşların kalkabilmesi için sonraki uçuşlar gecikir.
+    `lag()` kullanarak bir saatteki ortalama uçuş gecikmesinin önceki saatin ortalama gecikmesiyle nasıl ilişkili olduğunu araştırın.
 
     ```{r}
     #| results: false
@@ -552,41 +551,42 @@ df |>
       filter(n > 5)
     ```
 
-7.  Look at each destination.
-    Can you find flights that are suspiciously fast (i.e. flights that represent a potential data entry error)?
-    Compute the air time of a flight relative to the shortest flight to that destination.
-    Which flights were most delayed in the air?
+7.  Her varış noktasını inceleyin.
+    Kuşkulu derecede hızlı, yani olası bir veri girişi hatasını temsil eden uçuşlar bulabilir misiniz?
+    Bir uçuşun havada geçirdiği süreyi, o varış noktasına yapılan en kısa uçuşa göre hesaplayın.
+    Havada en çok geciken uçuşlar hangileridir?
 
-8.  Find all destinations that are flown by at least two carriers.
-    Use those destinations to come up with a relative ranking of the carriers based on their performance for the same destination.
+8.  En az iki hava yolu şirketinin uçtuğu tüm varış noktalarını bulun.
+    Aynı varış noktasındaki performanslarına göre hava yolu şirketlerinin göreli bir sıralamasını oluşturmak için bu varış noktalarını kullanın.
 
-## Numeric summaries
+## Sayısal özetler
 
-Just using the counts, means, and sums that we've introduced already can get you a long way, but R provides many other useful summary functions.
-Here is a selection that you might find useful.
+Şimdiye kadar tanıttığımız sayım, ortalama ve toplamları kullanmak bile sizi oldukça ileri götürür; ancak R başka birçok yararlı özet fonksiyonu da sunar.
+Aşağıda yararlı bulabileceğiniz bazılarını seçtik.
 
-### Center
+### Merkez
 
-So far, we've mostly used `mean()` to summarize the center of a vector of values.
-As we've seen in @sec-sample-size, because the mean is the sum divided by the count, it is sensitive to even just a few unusually high or low values.
-An alternative is to use the `median()`, which finds a value that lies in the "middle" of the vector, i.e. 50% of the values are above it and 50% are below it.
-Depending on the shape of the distribution of the variable you're interested in, mean or median might be a better measure of center.
-For example, for symmetric distributions we generally report the mean while for skewed distributions we usually report the median.
+Şimdiye kadar bir değer vektörünün merkezini özetlemek için çoğunlukla `mean()` kullandık.
+@sec-sample-size bölümünde gördüğümüz gibi ortalama, toplamın gözlem sayısına bölünmesiyle hesaplandığından yalnızca birkaç olağandışı yüksek veya düşük değere bile duyarlıdır.
+Bir alternatif, vektörün "ortasında" bulunan değeri, yani değerlerin %50'sinin üstünde ve %50'sinin altında kaldığı değeri bulan `median()` fonksiyonudur.
+İlgilendiğiniz değişkenin dağılımına bağlı olarak ortalama veya medyan daha iyi bir merkez ölçüsü olabilir.
+Örneğin simetrik dağılımlarda genellikle ortalamayı, çarpık dağılımlarda ise medyanı bildiririz.
 
-@fig-mean-vs-median compares the mean vs. the median departure delay (in minutes) for each destination.
-The median delay is always smaller than the mean delay because flights sometimes leave multiple hours late, but never leave multiple hours early.
+@fig-mean-vs-median, her varış noktası için ortalama ve medyan kalkış gecikmesini dakika cinsinden karşılaştırır.
+Uçuşlar bazen saatlerce geç kalkar, ancak hiçbir zaman saatlerce erken kalkmaz; bu nedenle medyan gecikme her zaman ortalama gecikmeden küçüktür.
 
 ```{r}
 #| label: fig-mean-vs-median
 #| fig-cap: |
-#|   A scatterplot showing the differences of summarizing daily departure
-#|   delay with median instead of mean.
+#|   Günlük kalkış gecikmesini ortalama yerine medyanla özetlemenin
+#|   oluşturduğu farkları gösteren bir saçılım grafiği.
 #| fig-alt: |
-#|   All points fall below a 45° line, meaning that the median delay is
-#|   always less than the mean delay. Most points are clustered in a 
-#|   dense region of mean [0, 20] and median [-5, 5]. As the mean delay
-#|   increases, the spread of the median also increases. There are two
-#|   outlying points with mean ~60, median ~30, and mean ~85, median ~55.
+#|   Tüm noktalar 45° çizgisinin altında yer alır; bu da medyan gecikmenin
+#|   her zaman ortalama gecikmeden küçük olduğunu gösterir. Noktaların çoğu
+#|   ortalamanın [0, 20], medyanın [-5, 5] aralığında olduğu yoğun bölgede
+#|   kümelenmiştir. Ortalama gecikme arttıkça medyanın yayılımı da artar.
+#|   Ortalama ~60, medyan ~30 ve ortalama ~85, medyan ~55 olan iki aykırı
+#|   nokta vardır.
 flights |>
   group_by(year, month, day) |>
   summarize(
@@ -600,20 +600,20 @@ flights |>
   geom_point()
 ```
 
-You might also wonder about the **mode**, or the most common value.
-This is a summary that only works well for very simple cases (which is why you might have learned about it in high school), but it doesn't work well for many real datasets.
-If the data is discrete, there may be multiple most common values, and if the data is continuous, there might be no most common value because every value is ever so slightly different.
-For these reasons, the mode tends not to be used by statisticians and there's no mode function included in base R[^numbers-2].
+En sık görülen değer olan **modu** da merak edebilirsiniz.
+Bu özet yalnızca çok basit durumlarda iyi çalışır; lisede öğrenmiş olmanızın nedeni de budur. Pek çok gerçek veri kümesinde ise iyi sonuç vermez.
+Veri kesikliyse birden fazla en sık değer olabilir; sürekliyse her değer az da olsa farklı olduğundan en sık değer hiç olmayabilir.
+Bu nedenlerle istatistikçiler modu pek kullanmaz ve temel R'da modu hesaplayan bir fonksiyon bulunmaz[^numbers-2].
 
-[^numbers-2]: The `mode()` function does something quite different!
+[^numbers-2]: `mode()` fonksiyonu bambaşka bir işlem yapar!
 
-### Minimum, maximum, and quantiles {#sec-min-max-summary}
+### En küçük, en büyük değerler ve kantiller {#sec-min-max-summary}
 
-What if you're interested in locations other than the center?
-`min()` and `max()` will give you the largest and smallest values.
-Another powerful tool is `quantile()` which is a generalization of the median: `quantile(x, 0.25)` will find the value of `x` that is greater than 25% of the values, `quantile(x, 0.5)` is equivalent to the median, and `quantile(x, 0.95)` will find the value that's greater than 95% of the values.
+Merkez dışındaki konumlarla ilgileniyorsanız ne yapabilirsiniz?
+`min()` ve `max()` size en küçük ve en büyük değerleri verir.
+Bir başka güçlü araç, medyanın genelleştirilmiş biçimi olan `quantile()` fonksiyonudur: `quantile(x, 0.25)`, `x` içindeki değerlerin %25'inden büyük olan değeri bulur; `quantile(x, 0.5)` medyana eşdeğerdir; `quantile(x, 0.95)` ise değerlerin %95'inden büyük olan değeri bulur.
 
-For the `flights` data, you might want to look at the 95% quantile of delays rather than the maximum, because it will ignore the 5% of most delayed flights which can be quite extreme.
+`flights` verisinde en büyük değer yerine gecikmelerin %95'lik kantiline bakmak isteyebilirsiniz; çünkü bu ölçü, oldukça uç olabilen en gecikmiş %5'lik uçuşları yok sayar.
 
 ```{r}
 flights |>
@@ -625,15 +625,15 @@ flights |>
   )
 ```
 
-### Spread
+### Yayılım
 
-Sometimes you're not so interested in where the bulk of the data lies, but in how it is spread out.
-Two commonly used summaries are the standard deviation, `sd(x)`, and the inter-quartile range, `IQR()`.
-We won't explain `sd()` here since you're probably already familiar with it, but `IQR()` might be new --- it's `quantile(x, 0.75) - quantile(x, 0.25)` and gives you the range that contains the middle 50% of the data.
+Bazen verilerin büyük bölümünün nerede bulunduğundan çok ne kadar yayıldığıyla ilgilenirsiniz.
+Yaygın kullanılan iki özet, standart sapma `sd(x)` ve çeyrekler arası aralık `IQR()` fonksiyonudur.
+Muhtemelen zaten bildiğiniz için `sd()` fonksiyonunu burada açıklamayacağız; ancak `IQR()` sizin için yeni olabilir. `quantile(x, 0.75) - quantile(x, 0.25)` olarak hesaplanır ve verilerin ortadaki %50'sini içeren aralığı verir.
 
-We can use this to reveal a small oddity in the `flights` data.
-You might expect the spread of the distance between origin and destination to be zero, since airports are always in the same place.
-But the code below reveals a data oddity for airport [EGE](https://en.wikipedia.org/wiki/Eagle_County_Regional_Airport):
+Bu ölçüyü `flights` verisindeki küçük bir tuhaflığı ortaya çıkarmak için kullanabiliriz.
+Havalimanları her zaman aynı yerde olduğundan kalkış ve varış noktaları arasındaki mesafenin yayılımının sıfır olmasını bekleyebilirsiniz.
+Ancak aşağıdaki kod [EGE Havalimanı](https://en.wikipedia.org/wiki/Eagle_County_Regional_Airport) için verideki bir tuhaflığı ortaya çıkarır:
 
 ```{r}
 flights |> 
@@ -646,33 +646,31 @@ flights |>
   filter(distance_iqr > 0)
 ```
 
-### Distributions
+### Dağılımlar
 
-It's worth remembering that all of the summary statistics described above are a way of reducing the distribution down to a single number.
-This means that they're fundamentally reductive, and if you pick the wrong summary, you can easily miss important differences between groups.
-That's why it's always a good idea to visualize the distribution before committing to your summary statistics.
+Yukarıda açıklanan tüm özet istatistiklerinin dağılımı tek bir sayıya indirgediğini unutmamak gerekir.
+Bu nedenle özünde bilgi kaybettirirler ve yanlış özeti seçerseniz gruplar arasındaki önemli farkları kolayca gözden kaçırabilirsiniz.
+Bu yüzden özet istatistiklerinize karar vermeden önce dağılımı görselleştirmek her zaman iyi bir fikirdir.
 
-@fig-flights-dist shows the overall distribution of departure delays.
-The distribution is so skewed that we have to zoom in to see the bulk of the data.
-This suggests that the mean is unlikely to be a good summary and we might prefer the median instead.
+@fig-flights-dist, kalkış gecikmelerinin genel dağılımını gösterir.
+Dağılım o kadar çarpıktır ki verilerin büyük bölümünü görebilmek için yakınlaştırmamız gerekir.
+Bu durum, ortalamanın iyi bir özet olma olasılığının düşük olduğunu ve bunun yerine medyanı tercih edebileceğimizi düşündürür.
 
 ```{r}
 #| echo: false
 #| label: fig-flights-dist
 #| fig-cap: |
-#|   (Left) The histogram of the full data is extremely skewed making it
-#|   hard to get any details. (Right) Zooming into delays of less than two
-#|   hours makes it possible to see what's happening with the bulk of the
-#|   observations.
+#|   Solda, tüm verilerin histogramı son derece çarpıktır ve ayrıntıları
+#|   görmeyi zorlaştırır. Sağda, iki saatten kısa gecikmelere yakınlaştırmak
+#|   gözlemlerin büyük bölümünde neler olduğunu görmeyi sağlar.
 #| fig-alt: |
-#|   Two histograms of `dep_delay`. On the left, it's very hard to see
-#|   any pattern except that there's a very large spike around zero, the
-#|   bars rapidly decay in height, and for most of the plot, you can't
-#|   see any bars because they are too short to see. On the right,
-#|   where we've discarded delays of greater than two hours, we can
-#|   see that the spike occurs slightly below zero (i.e. most flights
-#|   leave a couple of minutes early), but there's still a very steep
-#|   decay after that.
+#|   `dep_delay` değişkeninin iki histogramı. Solda, sıfır çevresindeki
+#|   çok büyük tepe dışında herhangi bir örüntü görmek zordur. Çubukların
+#|   yüksekliği hızla azalır ve grafiğin büyük bölümünde görülemeyecek
+#|   kadar kısadır. İki saatten uzun gecikmelerin çıkarıldığı sağdaki
+#|   grafikte tepenin sıfırın biraz altında oluştuğu, yani çoğu uçuşun
+#|   birkaç dakika erken kalktığı görülür; ancak tepenin ardından yine
+#|   çok keskin bir düşüş vardır.
 #| fig-asp: 0.5
 library(patchwork)
 
@@ -688,30 +686,30 @@ delayed120 <- flights |>
 full + delayed120
 ```
 
-It's also a good idea to check that distributions for subgroups resemble the whole.
-In the following plot 365 frequency polygons of `dep_delay`, one for each day, are overlaid.
-The distributions seem to follow a common pattern, suggesting it's fine to use the same summary for each day.
+Alt grupların dağılımlarının bütünün dağılımına benzeyip benzemediğini denetlemek de iyi bir fikirdir.
+Aşağıdaki grafikte her gün için bir tane olmak üzere 365 `dep_delay` frekans poligonu üst üste çizilmiştir.
+Dağılımlar ortak bir örüntü izliyor gibi görünür; bu da her gün için aynı özeti kullanmanın uygun olduğunu düşündürür.
 
 ```{r}
 #| fig-alt: |
-#|   The distribution of `dep_delay` is highly right skewed with a strong
-#|   peak slightly less than 0. The 365 frequency polygons are mostly 
-#|   overlapping forming a thick black band.
+#|   `dep_delay` dağılımı sağa doğru oldukça çarpıktır ve 0'ın biraz
+#|   altında güçlü bir tepeye sahiptir. 365 frekans poligonu büyük ölçüde
+#|   üst üste gelerek kalın siyah bir bant oluşturur.
 flights |>
   filter(dep_delay < 120) |> 
   ggplot(aes(x = dep_delay, group = interaction(day, month))) + 
   geom_freqpoly(binwidth = 5, alpha = 1/5)
 ```
 
-Don't be afraid to explore your own custom summaries specifically tailored for the data that you're working with.
-In this case, that might mean separately summarizing the flights that left early vs. the flights that left late, or given that the values are so heavily skewed, you might try a log-transformation.
-Finally, don't forget what you learned in @sec-sample-size: whenever creating numerical summaries, it's a good idea to include the number of observations in each group.
+Çalıştığınız verilere özel özetler geliştirmekten çekinmeyin.
+Bu örnekte erken ve geç kalkan uçuşları ayrı ayrı özetleyebilir veya değerler son derece çarpık olduğundan logaritmik dönüşüm deneyebilirsiniz.
+Son olarak @sec-sample-size bölümünde öğrendiklerinizi unutmayın: sayısal özetler oluştururken her gruptaki gözlem sayısını eklemek iyi bir fikirdir.
 
-### Positions
+### Konumlar
 
-There's one final type of summary that's useful for numeric vectors, but also works with every other type of value: extracting a value at a specific position: `first(x)`, `last(x)`, and `nth(x, n)`.
+Sayısal vektörler için yararlı olan, ancak diğer tüm değer türleriyle de çalışan son bir özet türü vardır: belirli bir konumdaki değeri `first(x)`, `last(x)` ve `nth(x, n)` ile çıkarmak.
 
-For example, we can find the first, fifth and last departure for each day:
+Örneğin her günün ilk, beşinci ve son kalkışını bulabiliriz:
 
 ```{r}
 flights |> 
@@ -723,13 +721,13 @@ flights |>
   )
 ```
 
-(NB: Because dplyr functions use `_` to separate components of function and arguments names, these functions use `na_rm` instead of `na.rm`.)
+(Not: dplyr fonksiyonları, fonksiyon ve argüman adlarının bileşenlerini ayırmak için `_` kullandığından bu fonksiyonlarda `na.rm` yerine `na_rm` kullanılır.)
 
-If you're familiar with `[`, which we'll come back to in @sec-subset-many, you might wonder if you ever need these functions.
-There are three reasons: the `default` argument allows you to provide a default if the specified position doesn't exist, the `order_by` argument allows you to locally override the order of the rows, and the `na_rm` argument allows you to drop missing values.
+@sec-subset-many bölümünde yeniden ele alacağımız `[` operatörünü biliyorsanız bu fonksiyonlara gerçekten ihtiyaç olup olmadığını merak edebilirsiniz.
+Bunları kullanmanın üç nedeni vardır: belirtilen konum yoksa `default` ile varsayılan bir değer verebilir, `order_by` ile satır sırasını yerel olarak değiştirebilir ve `na_rm` ile eksik değerleri kaldırabilirsiniz.
 
-Extracting values at positions is complementary to filtering on ranks.
-Filtering gives you all variables, with each observation in a separate row:
+Belirli konumlardaki değerleri çıkarmak, sıralara göre filtrelemeyi tamamlayan bir yöntemdir.
+Filtreleme, her gözlem ayrı bir satırda olmak üzere tüm değişkenleri verir:
 
 ```{r}
 flights |> 
@@ -738,37 +736,37 @@ flights |>
   filter(r %in% c(1, max(r)))
 ```
 
-### With `mutate()`
+### `mutate()` ile kullanım
 
-As the names suggest, the summary functions are typically paired with `summarize()`.
-However, because of the recycling rules we discussed in @sec-recycling they can also be paired usefully with `mutate()`, particularly when you want to do some sort of group standardization.
-For example:
+Adlarından anlaşılacağı gibi özet fonksiyonları genellikle `summarize()` ile birlikte kullanılır.
+Ancak @sec-recycling bölümünde ele aldığımız geri dönüşüm kuralları sayesinde, özellikle grup içinde bir tür standartlaştırma yapmak istediğinizde `mutate()` ile de yararlı biçimde kullanılabilirler.
+Örneğin:
 
--   `x / sum(x)` calculates the proportion of a total.
--   `(x - mean(x)) / sd(x)` computes a Z-score (standardized to mean 0 and sd 1).
--   `(x - min(x)) / (max(x) - min(x))` standardizes to range \[0, 1\].
--   `x / first(x)` computes an index based on the first observation.
+-   `x / sum(x)`, toplam içindeki oranı hesaplar.
+-   `(x - mean(x)) / sd(x)`, Z puanını hesaplar; ortalamayı 0, standart sapmayı 1 olacak biçimde standartlaştırır.
+-   `(x - min(x)) / (max(x) - min(x))`, değerleri \[0, 1\] aralığına standartlaştırır.
+-   `x / first(x)`, ilk gözleme dayalı bir endeks hesaplar.
 
-### Exercises
+### Alıştırmalar
 
-1.  Brainstorm at least 5 different ways to assess the typical delay characteristics of a group of flights.
-    When is `mean()` useful?
-    When is `median()` useful?
-    When might you want to use something else?
-    Should you use arrival delay or departure delay?
-    Why might you want to use data from `planes`?
+1.  Bir uçuş grubunun tipik gecikme özelliklerini değerlendirmek için en az beş farklı yöntem düşünün.
+    `mean()` ne zaman yararlıdır?
+    `median()` ne zaman yararlıdır?
+    Ne zaman başka bir ölçü kullanmak isteyebilirsiniz?
+    Varış gecikmesini mi yoksa kalkış gecikmesini mi kullanmalısınız?
+    `planes` verisinden neden yararlanmak isteyebilirsiniz?
 
-2.  Which destinations show the greatest variation in air speed?
+2.  Hava hızında en büyük değişkenliği hangi varış noktaları gösterir?
 
-3.  Create a plot to further explore the adventures of EGE.
-    Can you find any evidence that the airport moved locations?
-    Can you find another variable that might explain the difference?
+3.  EGE'nin macerasını daha ayrıntılı araştırmak için bir grafik oluşturun.
+    Havalimanının konum değiştirdiğine ilişkin bir kanıt bulabilir misiniz?
+    Farkı açıklayabilecek başka bir değişken bulabilir misiniz?
 
-## Summary
+## Özet
 
-You're already familiar with many tools for working with numbers, and after reading this chapter you now know how to use them in R.
-You've also learned a handful of useful general transformations that are commonly, but not exclusively, applied to numeric vectors like ranks and offsets.
-Finally, you worked through a number of numeric summaries, and discussed a few of the statistical challenges that you should consider.
+Sayılarla çalışmaya yönelik birçok aracı zaten biliyordunuz; bu bölümü okuduktan sonra artık bunları R'da nasıl kullanacağınızı da biliyorsunuz.
+Ayrıca sıralar ve kaydırmalar gibi çoğunlukla, ancak yalnızca değil, sayısal vektörlere uygulanan bazı yararlı genel dönüştürmeleri öğrendiniz.
+Son olarak çeşitli sayısal özetleri incelediniz ve göz önünde bulundurmanız gereken bazı istatistiksel güçlükleri ele aldınız.
 
-Over the next two chapters, we'll dive into working with strings with the stringr package.
-Strings are a big topic so they get two chapters, one on the fundamentals of strings and one on regular expressions.
+Sonraki iki bölümde stringr paketiyle karakter dizileri üzerinde çalışmayı derinlemesine inceleyeceğiz.
+Karakter dizileri geniş bir konu olduğu için iki bölüme ayrılmıştır: biri karakter dizilerinin temellerini, diğeri düzenli ifadeleri ele alır.

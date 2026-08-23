@@ -1,26 +1,26 @@
-# Strings {#sec-strings}
+# Karakter dizileri {#sec-strings}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## Giriş
 
-So far, you've used a bunch of strings without learning much about the details.
-Now it's time to dive into them, learn what makes strings tick, and master some of the powerful string manipulation tools you have at your disposal.
+Şimdiye kadar ayrıntılarını pek öğrenmeden birçok karakter dizisi kullandınız.
+Artık bunları derinlemesine inceleme, nasıl çalıştıklarını öğrenme ve elinizdeki güçlü karakter dizisi işleme araçlarında ustalaşma zamanı.
 
-We'll begin with the details of creating strings and character vectors.
-You'll then dive into creating strings from data, then the opposite: extracting strings from data.
-We'll then discuss tools that work with individual letters.
-The chapter finishes with functions that work with individual letters and a brief discussion of where your expectations from English might steer you wrong when working with other languages.
+Karakter dizileri ve karakter vektörleri oluşturmanın ayrıntılarıyla başlayacağız.
+Ardından verilerden karakter dizileri oluşturmayı ve bunun tersini, yani karakter dizilerinden veri çıkarmayı inceleyeceksiniz.
+Sonra tek tek harflerle çalışan araçları ele alacağız.
+Bölümü, İngilizceye dayalı beklentilerinizin başka dillerle çalışırken sizi nerelerde yanıltabileceğini kısaca tartışarak tamamlayacağız.
 
-We'll keep working with strings in the next chapter, where you'll learn more about the power of regular expressions.
+Düzenli ifadelerin gücünü öğreneceğiniz sonraki bölümde karakter dizileriyle çalışmayı sürdüreceğiz.
 
-### Prerequisites
+### Ön koşullar
 
-In this chapter, we'll use functions from the stringr package, which is part of the core tidyverse.
-We'll also use the babynames data since it provides some fun strings to manipulate.
+Bu bölümde temel tidyverse'in bir parçası olan stringr paketindeki fonksiyonları kullanacağız.
+Ayrıca üzerinde çalışması eğlenceli karakter dizileri sunduğu için babynames verilerinden yararlanacağız.
 
 ```{r}
 #| label: setup
@@ -29,31 +29,30 @@ library(tidyverse)
 library(babynames)
 ```
 
-You can quickly tell when you're using a stringr function because all stringr functions start with `str_`.
-This is particularly useful if you use RStudio because typing `str_` will trigger autocomplete, allowing you to jog your memory of the available functions.
+Tüm stringr fonksiyonları `str_` ile başladığından bir stringr fonksiyonu kullandığınızı kolayca anlayabilirsiniz.
+Bu özellik özellikle RStudio'da yararlıdır: `str_` yazdığınızda otomatik tamamlama açılır ve kullanılabilir fonksiyonları hatırlamanıza yardımcı olur.
 
 ```{r}
 #| echo: false
 #| fig-alt: |
-#|   str_c typed into the RStudio console with the autocomplete tooltip shown 
-#|   on top, which lists functions beginning with str_c. The funtion signature 
-#|   and beginning of the man page for the highlighted function from the 
-#|   autocomplete list are shown in a panel to its right.
+#|   RStudio konsoluna str_c yazılmış ve üstte str_c ile başlayan fonksiyonları
+#|   listeleyen otomatik tamamlama ipucu gösterilmiş. Listede vurgulanan
+#|   fonksiyonun imzası ve yardım sayfasının başlangıcı sağdaki panelde yer alıyor.
 knitr::include_graphics("screenshots/stringr-autocomplete.png")
 ```
 
-## Creating a string
+## Karakter dizisi oluşturma
 
-We've created strings in passing earlier in the book but didn't discuss the details.
-Firstly, you can create a string using either single quotes (`'`) or double quotes (`"`).
-There's no difference in behavior between the two, so in the interests of consistency, the [tidyverse style guide](https://style.tidyverse.org/syntax.html#character-vectors) recommends using `"`, unless the string contains multiple `"`.
+Kitabın önceki bölümlerinde karakter dizileri oluşturduk, ancak ayrıntıları ele almadık.
+Bir karakter dizisini tek (`'`) veya çift (`"`) tırnakla oluşturabilirsiniz.
+İkisi arasında davranış farkı yoktur. Bu nedenle [tidyverse stil rehberi](https://style.tidyverse.org/syntax.html#character-vectors), tutarlılık adına karakter dizisi birden fazla `"` içermediği sürece `"` kullanılmasını önerir.
 
 ```{r}
 string1 <- "This is a string"
 string2 <- 'If I want to include a "quote" inside a string, I use single quotes'
 ```
 
-If you forget to close a quote, you'll see `+`, the continuation prompt:
+Tırnağı kapatmayı unutursanız devam istemi olan `+` işaretini görürsünüz:
 
 ```         
 > "This is a string without a closing quote
@@ -62,27 +61,27 @@ If you forget to close a quote, you'll see `+`, the continuation prompt:
 + HELP I'M STUCK IN A STRING
 ```
 
-If this happens to you and you can't figure out which quote to close, press Escape to cancel and try again.
+Bu durumla karşılaşır ve hangi tırnağı kapatmanız gerektiğini bulamazsanız işlemi iptal etmek için Escape tuşuna basıp yeniden deneyin.
 
-### Escapes
+### Kaçış karakterleri
 
-To include a literal single or double quote in a string, you can use `\` to "escape" it:
+Bir karakter dizisine değişmez tek veya çift tırnak eklemek için `\` ile tırnaktan "kaçabilirsiniz":
 
 ```{r}
 double_quote <- "\"" # or '"'
 single_quote <- '\'' # or "'"
 ```
 
-So if you want to include a literal backslash in your string, you'll need to escape it: `"\\"`:
+Dolayısıyla karakter dizisine değişmez bir ters eğik çizgi eklemek için ondan da kaçmanız gerekir: `"\\"`.
 
 ```{r}
 backslash <- "\\"
 ```
 
-Beware that the printed representation of a string is not the same as the string itself because the printed representation shows the escapes (in other words, when you print a string, you can copy and paste the output to recreate that string).
-To see the raw contents of the string, use `str_view()`[^strings-1]:
+Bir karakter dizisinin yazdırılan gösteriminin kendisiyle aynı olmadığına dikkat edin; yazdırılan gösterim kaçış karakterlerini de gösterir. Başka bir deyişle çıktıyı kopyalayıp yapıştırarak aynı karakter dizisini yeniden oluşturabilirsiniz.
+Karakter dizisinin ham içeriğini görmek için `str_view()`[^strings-1] kullanın:
 
-[^strings-1]: Or use the base R function `writeLines()`.
+[^strings-1]: Temel R fonksiyonu `writeLines()` da kullanılabilir.
 
 ```{r}
 x <- c(single_quote, double_quote, backslash)
@@ -90,10 +89,10 @@ x
 str_view(x)
 ```
 
-### Raw strings {#sec-raw-strings}
+### Ham karakter dizileri {#sec-raw-strings}
 
-Creating a string with multiple quotes or backslashes gets confusing quickly.
-To illustrate the problem, let's create a string that contains the contents of the code block where we define the `double_quote` and `single_quote` variables:
+Birden fazla tırnak veya ters eğik çizgi içeren karakter dizileri oluşturmak hızla kafa karıştırıcı hâle gelir.
+Sorunu göstermek için `double_quote` ve `single_quote` değişkenlerini tanımladığımız kod bloğunun içeriğini barındıran bir karakter dizisi oluşturalım:
 
 ```{r}
 tricky <- "double_quote <- \"\\\"\" # or '\"'
@@ -101,10 +100,10 @@ single_quote <- '\\'' # or \"'\""
 str_view(tricky)
 ```
 
-That's a lot of backslashes!
-(This is sometimes called [leaning toothpick syndrome](https://en.wikipedia.org/wiki/Leaning_toothpick_syndrome).) To eliminate the escaping, you can instead use a **raw string**[^strings-2]:
+Ne kadar çok ters eğik çizgi var!
+Bu durum bazen [eğik kürdan sendromu](https://en.wikipedia.org/wiki/Leaning_toothpick_syndrome) olarak adlandırılır. Kaçış karakterlerini ortadan kaldırmak için **ham karakter dizisi**[^strings-2] kullanabilirsiniz:
 
-[^strings-2]: Available in R 4.0.0 and above.
+[^strings-2]: R 4.0.0 ve sonraki sürümlerde kullanılabilir.
 
 ```{r}
 tricky <- r"(double_quote <- "\"" # or '"'
@@ -112,14 +111,14 @@ single_quote <- '\'' # or "'")"
 str_view(tricky)
 ```
 
-A raw string usually starts with `r"(` and finishes with `)"`.
-But if your string contains `)"` you can instead use `r"[]"` or `r"{}"`, and if that's still not enough, you can insert any number of dashes to make the opening and closing pairs unique, e.g., `r"--()--"`, `r"---()---"`, etc. Raw strings are flexible enough to handle any text.
+Ham karakter dizisi genellikle `r"(` ile başlar ve `)"` ile biter.
+Karakter diziniz `)"` içeriyorsa `r"[]"` veya `r"{}"` kullanabilirsiniz. Bu da yeterli olmazsa açılış ve kapanış çiftlerini benzersiz kılmak için istediğiniz sayıda kısa çizgi ekleyebilirsiniz: `r"--()--"`, `r"---()---"` vb. Ham karakter dizileri her türlü metni işleyebilecek kadar esnektir.
 
-### Other special characters
+### Diğer özel karakterler
 
-As well as `"`, `'`, and `\`, there are a handful of other special characters that may come in handy. 
-The most common are `\n`, a new line, and `\t`, tab. You'll also sometimes see strings containing Unicode escapes that start with `\u` or `\U`. 
-This is a way of writing non-English characters that work on all systems. You can see the complete list of other special characters in `?Quotes`.
+`"`, `'` ve `\` dışında yararlı olabilecek birkaç özel karakter daha vardır.
+En yaygın olanları yeni satırı belirten `\n` ve sekmeyi belirten `\t` karakterleridir. Bazen `\u` veya `\U` ile başlayan Unicode kaçışları içeren karakter dizileri de görürsünüz.
+Bunlar İngilizce dışındaki karakterleri tüm sistemlerde çalışacak biçimde yazmanın bir yoludur. Diğer özel karakterlerin tam listesini `?Quotes` yardımında görebilirsiniz.
 
 ```{r}
 x <- c("one\ntwo", "one\ttwo", "\u00b5", "\U0001f604")
@@ -127,15 +126,15 @@ x
 str_view(x)
 ```
 
-Note that `str_view()` uses curly braces for tabs to make them easier to spot[^strings-3].
-One of the challenges of working with text is that there's a variety of ways that white space can end up in the text, so this background helps you recognize that something strange is going on.
+`str_view()` fonksiyonunun sekmeleri daha kolay fark edebilmeniz için süslü parantezlerle gösterdiğine dikkat edin[^strings-3].
+Metinle çalışmanın zorluklarından biri, boşluk karakterlerinin metne birçok farklı biçimde girebilmesidir. Bu arka plan gösterimi, olağandışı bir durum olduğunu fark etmenize yardımcı olur.
 
-[^strings-3]: `str_view()` also uses color to bring tabs, spaces, matches, etc. to your attention.
-    The colors don't currently show up in the book, but you'll notice them when running code interactively.
+[^strings-3]: `str_view()` sekmeleri, boşlukları, eşleşmeleri vb. öne çıkarmak için renk de kullanır.
+    Renkler şu anda kitapta görünmez; ancak kodu etkileşimli çalıştırdığınızda bunları fark edersiniz.
 
-### Exercises
+### Alıştırmalar
 
-1.  Create strings that contain the following values:
+1.  Aşağıdaki değerleri içeren karakter dizileri oluşturun:
 
     1.  `He said "That's amazing!"`
 
@@ -143,86 +142,86 @@ One of the challenges of working with text is that there's a variety of ways tha
 
     3.  `\\\\\\`
 
-2.  Create the string in your R session and print it.
-    What happens to the special "\\u00a0"?
-    How does `str_view()` display it?
-    Can you do a little googling to figure out what this special character is?
+2.  Aşağıdaki karakter dizisini R oturumunuzda oluşturup yazdırın.
+    Özel "\\u00a0" karakterine ne olur?
+    `str_view()` bunu nasıl gösterir?
+    Bu özel karakterin ne olduğunu bulmak için internette kısa bir arama yapabilir misiniz?
 
     ```{r}
     x <- "This\u00a0is\u00a0tricky"
     ```
 
-## Creating many strings from data
+## Verilerden çok sayıda karakter dizisi oluşturma
 
-Now that you've learned the basics of creating a string or two by "hand", we'll go into the details of creating strings from other strings.
-This will help you solve the common problem where you have some text you wrote that you want to combine with strings from a data frame.
-For example, you might combine "Hello" with a `name` variable to create a greeting.
-We'll show you how to do this with `str_c()` and `str_glue()` and how you can use them with `mutate()`.
-That naturally raises the question of what stringr functions you might use with `summarize()`, so we'll finish this section with a discussion of `str_flatten()`, which is a summary function for strings.
+Bir veya iki karakter dizisini "elle" oluşturmanın temellerini öğrendiğinize göre artık başka karakter dizilerinden yeni karakter dizileri oluşturmanın ayrıntılarına geçebiliriz.
+Bu bilgi, yazdığınız sabit bir metni veri çerçevesindeki karakter dizileriyle birleştirme gereksinimini çözmenize yardımcı olur.
+Örneğin bir selamlama oluşturmak için "Merhaba" metnini `name` değişkeniyle birleştirebilirsiniz.
+Bunu `str_c()` ve `str_glue()` ile nasıl yapacağınızı ve bu fonksiyonları `mutate()` ile nasıl kullanacağınızı göstereceğiz.
+Bu da doğal olarak `summarize()` ile hangi stringr fonksiyonlarının kullanılabileceği sorusunu doğurur. Bölümü, karakter dizileri için bir özet fonksiyonu olan `str_flatten()` ile tamamlayacağız.
 
 ### `str_c()`
 
-`str_c()` takes any number of vectors as arguments and returns a character vector:
+`str_c()` istediğiniz sayıda vektörü argüman olarak alır ve bir karakter vektörü döndürür:
 
 ```{r}
 str_c("x", "y")
 str_c("x", "y", "z")
-str_c("Hello ", c("John", "Susan"))
+str_c("Merhaba ", c("John", "Susan"))
 ```
 
-`str_c()` is very similar to the base `paste0()`, but is designed to be used with `mutate()` by obeying the usual tidyverse rules for recycling and propagating missing values:
+`str_c()` temel R'daki `paste0()` fonksiyonuna çok benzer; ancak geri dönüşüm ve eksik değerlerin yayılmasıyla ilgili tidyverse kurallarına uyarak `mutate()` ile kullanılmak üzere tasarlanmıştır:
 
 ```{r}
 df <- tibble(name = c("Flora", "David", "Terra", NA))
-df |> mutate(greeting = str_c("Hi ", name, "!"))
+df |> mutate(greeting = str_c("Merhaba ", name, "!"))
 ```
 
-If you want missing values to display in another way, use `coalesce()` to replace them.
-Depending on what you want, you might use it either inside or outside of `str_c()`:
+Eksik değerleri başka bir biçimde göstermek istiyorsanız bunları `coalesce()` ile değiştirin.
+İstediğiniz sonuca göre bu fonksiyonu `str_c()` çağrısının içinde veya dışında kullanabilirsiniz:
 
 ```{r}
 df |> 
   mutate(
-    greeting1 = str_c("Hi ", coalesce(name, "you"), "!"),
-    greeting2 = coalesce(str_c("Hi ", name, "!"), "Hi!")
+    greeting1 = str_c("Merhaba ", coalesce(name, "size"), "!"),
+    greeting2 = coalesce(str_c("Merhaba ", name, "!"), "Merhaba!")
   )
 ```
 
 ### `str_glue()` {#sec-glue}
 
-If you are mixing many fixed and variable strings with `str_c()`, you'll notice that you type a lot of `"`s, making it hard to see the overall goal of the code. An alternative approach is provided by the [glue package](https://glue.tidyverse.org) via `str_glue()`[^strings-4]. You give it a single string that has a special feature: anything inside `{}` will be evaluated like it's outside of the quotes:
+`str_c()` ile çok sayıda sabit ve değişken karakter dizisini karıştırdığınızda çok fazla `"` yazdığınızı ve bunun kodun genel amacını görmeyi zorlaştırdığını fark edersiniz. [glue paketi](https://glue.tidyverse.org), `str_glue()` aracılığıyla alternatif bir yaklaşım sunar[^strings-4]. Bu fonksiyona özel bir niteliği olan tek bir karakter dizisi verirsiniz: `{}` içindeki her şey tırnakların dışındaymış gibi değerlendirilir.
 
-[^strings-4]: If you're not using stringr, you can also access it directly with `glue::glue()`.
+[^strings-4]: stringr kullanmıyorsanız fonksiyona doğrudan `glue::glue()` ile de erişebilirsiniz.
 
 ```{r}
-df |> mutate(greeting = str_glue("Hi {name}!"))
+df |> mutate(greeting = str_glue("Merhaba {name}!"))
 ```
 
-As you can see, `str_glue()` currently converts missing values to the string `"NA"`, unfortunately making it inconsistent with `str_c()`.
+Gördüğünüz gibi `str_glue()` şu anda eksik değerleri `"NA"` karakter dizisine dönüştürür; bu da ne yazık ki `str_c()` ile tutarsızdır.
 
-You also might wonder what happens if you need to include a regular `{` or `}` in your string.
-You're on the right track if you guess you'll need to escape it somehow.
-The trick is that glue uses a slightly different escaping technique: instead of prefixing with special character like `\`, you double up the special characters:
+Karakter dizinize sıradan bir `{` veya `}` eklemeniz gerekirse ne olacağını da merak edebilirsiniz.
+Bunlardan bir biçimde kaçmanız gerektiğini düşündüyseniz doğru yoldasınız.
+Püf noktası, glue paketinin biraz farklı bir kaçış tekniği kullanmasıdır: başına `\` gibi özel bir karakter eklemek yerine özel karakteri iki kez yazarsınız:
 
 ```{r}
-df |> mutate(greeting = str_glue("{{Hi {name}!}}"))
+df |> mutate(greeting = str_glue("{{Merhaba {name}!}}"))
 ```
 
 ### `str_flatten()`
 
-`str_c()` and `str_glue()` work well with `mutate()` because their output is the same length as their inputs.
-What if you want a function that works well with `summarize()`, i.e. something that always returns a single string?
-That's the job of `str_flatten()`[^strings-5]: it takes a character vector and combines each element of the vector into a single string:
+`str_c()` ve `str_glue()` çıktıları girdileriyle aynı uzunlukta olduğu için `mutate()` ile iyi çalışır.
+Her zaman tek bir karakter dizisi döndüren, dolayısıyla `summarize()` ile iyi çalışan bir fonksiyon isterseniz ne yapmalısınız?
+Bu görev `str_flatten()` fonksiyonuna aittir[^strings-5]: bir karakter vektörü alır ve vektörün tüm elemanlarını tek bir karakter dizisinde birleştirir.
 
-[^strings-5]: The base R equivalent is `paste()` used with the `collapse` argument.
+[^strings-5]: Temel R'daki karşılığı, `collapse` argümanıyla kullanılan `paste()` fonksiyonudur.
 
 ```{r}
 str_flatten(c("x", "y", "z"))
 str_flatten(c("x", "y", "z"), ", ")
-str_flatten(c("x", "y", "z"), ", ", last = ", and ")
+str_flatten(c("x", "y", "z"), ", ", last = " ve ")
 ```
 
-This makes it work well with `summarize()`:
+Bu özellik `summarize()` ile iyi çalışmasını sağlar:
 
 ```{r}
 df <- tribble(
@@ -239,9 +238,9 @@ df |>
   summarize(fruits = str_flatten(fruit, ", "))
 ```
 
-### Exercises
+### Alıştırmalar
 
-1.  Compare and contrast the results of `paste0()` with `str_c()` for the following inputs:
+1.  Aşağıdaki girdiler için `paste0()` ve `str_c()` sonuçlarını karşılaştırın:
 
     ```{r}
     #| eval: false
@@ -249,43 +248,43 @@ df |>
     str_c(letters[1:2], letters[1:3])
     ```
 
-2.  What's the difference between `paste()` and `paste0()`?
-    How can you recreate the equivalent of `paste()` with `str_c()`?
+2.  `paste()` ile `paste0()` arasındaki fark nedir?
+    `paste()` fonksiyonunun eşdeğerini `str_c()` ile nasıl oluşturabilirsiniz?
 
-3.  Convert the following expressions from `str_c()` to `str_glue()` or vice versa:
+3.  Aşağıdaki ifadeleri `str_c()` fonksiyonundan `str_glue()` fonksiyonuna veya tersine dönüştürün:
 
-    a.  `str_c("The price of ", food, " is ", price)`
+    a.  `str_c(food, " ürününün fiyatı ", price)`
 
-    b.  `str_glue("I'm {age} years old and live in {country}")`
+    b.  `str_glue("{age} yaşındayım ve {country} ülkesinde yaşıyorum")`
 
     c.  `str_c("\\section{", title, "}")`
 
-## Extracting data from strings
+## Karakter dizilerinden veri çıkarma
 
-It's very common for multiple variables to be crammed together into a single string.
-In this section, you'll learn how to use four tidyr functions to extract them:
+Birden fazla değişkenin tek bir karakter dizisine sıkıştırılması çok yaygındır.
+Bu bölümde bunları çıkarmak için dört tidyr fonksiyonunu nasıl kullanacağınızı öğreneceksiniz:
 
 -   `df |> separate_longer_delim(col, delim)`
 -   `df |> separate_longer_position(col, width)`
 -   `df |> separate_wider_delim(col, delim, names)`
 -   `df |> separate_wider_position(col, widths)`
 
-If you look closely, you can see there's a common pattern here: `separate_`, then `longer` or `wider`, then `_`, then by `delim` or `position`.
-That's because these four functions are composed of two simpler primitives:
+Yakından bakarsanız ortak bir örüntü görebilirsiniz: `separate_`, ardından `longer` veya `wider`, sonra `_`, son olarak `delim` veya `position`.
+Bunun nedeni, bu dört fonksiyonun iki basit temel işlemin bileşiminden oluşmasıdır:
 
--   Just like with `pivot_longer()` and `pivot_wider()`, `_longer` functions make the input data frame longer by creating new rows and `_wider` functions make the input data frame wider by generating new columns.
--   `delim` splits up a string with a delimiter like `", "` or `" "`; `position` splits at specified widths, like `c(3, 5, 2)`.
+-   `pivot_longer()` ve `pivot_wider()` fonksiyonlarında olduğu gibi `_longer` fonksiyonları yeni satırlar oluşturarak girdi veri çerçevesini uzatır; `_wider` fonksiyonlarıysa yeni sütunlar oluşturarak genişletir.
+-   `delim`, karakter dizisini `", "` veya `" "` gibi bir ayraçla; `position` ise `c(3, 5, 2)` gibi belirtilen genişliklerde böler.
 
-We'll return to the last member of this family, `separate_wider_regex()`, in @sec-regular-expressions.
-It's the most flexible of the `wider` functions, but you need to know something about regular expressions before you can use it.
+Bu ailenin son üyesi `separate_wider_regex()` fonksiyonuna @sec-regular-expressions bölümünde döneceğiz.
+Bu, `wider` fonksiyonlarının en esneğidir; ancak kullanabilmek için düzenli ifadeler hakkında bilgi sahibi olmanız gerekir.
 
-The following two sections will give you the basic idea behind these separate functions, first separating into rows (which is a little simpler) and then separating into columns.
-We'll finish off by discussing the tools that the `wider` functions give you to diagnose problems.
+Sonraki iki bölüm, önce satırlara, ardından sütunlara ayırarak bu fonksiyonların temel fikrini gösterecek.
+Son olarak `wider` fonksiyonlarının sorunları tanılamak için sunduğu araçları ele alacağız.
 
-### Separating into rows
+### Satırlara ayırma
 
-Separating a string into rows tends to be most useful when the number of components varies from row to row.
-The most common case is requiring `separate_longer_delim()` to split based on a delimiter:
+Bir karakter dizisini satırlara ayırmak, bileşen sayısı satırdan satıra değiştiğinde en kullanışlıdır.
+En yaygın durum, bir ayraca göre bölmek için `separate_longer_delim()` kullanmaktır:
 
 ```{r}
 df1 <- tibble(x = c("a,b,c", "d,e", "f"))
@@ -293,7 +292,7 @@ df1 |>
   separate_longer_delim(x, delim = ",")
 ```
 
-It's rarer to see `separate_longer_position()` in the wild, but some older datasets do use a very compact format where each character is used to record a value:
+Gerçek verilerde `separate_longer_position()` fonksiyonuna daha az rastlanır; ancak bazı eski veri kümeleri her karakterin bir değeri kaydettiği oldukça sıkışık bir biçim kullanır:
 
 ```{r}
 df2 <- tibble(x = c("1211", "131", "21"))
@@ -301,12 +300,12 @@ df2 |>
   separate_longer_position(x, width = 1)
 ```
 
-### Separating into columns {#sec-string-columns}
+### Sütunlara ayırma {#sec-string-columns}
 
-Separating a string into columns tends to be most useful when there are a fixed number of components in each string, and you want to spread them into columns.
-They are slightly more complicated than their `longer` equivalents because you need to name the columns.
-For example, in this following dataset, `x` is made up of a code, an edition number, and a year, separated by `"."`.
-To use `separate_wider_delim()`, we supply the delimiter and the names in two arguments:
+Bir karakter dizisini sütunlara ayırmak, her dizide sabit sayıda bileşen bulunduğunda ve bunları sütunlara yaymak istediğinizde en kullanışlıdır.
+Sütunları adlandırmanız gerektiğinden bu fonksiyonlar `longer` karşılıklarından biraz daha karmaşıktır.
+Örneğin aşağıdaki veri kümesinde `x`, `"."` ile ayrılmış bir kod, baskı numarası ve yıldan oluşur.
+`separate_wider_delim()` kullanmak için ayracı ve adları iki ayrı argümanda belirtiriz:
 
 ```{r}
 df3 <- tibble(x = c("a10.1.2022", "b10.2.2011", "e15.1.2015"))
@@ -318,7 +317,7 @@ df3 |>
   )
 ```
 
-If a specific piece is not useful you can use an `NA` name to omit it from the results:
+Belirli bir parça yararlı değilse sonuçtan çıkarmak için ad olarak `NA` kullanabilirsiniz:
 
 ```{r}
 df3 |> 
@@ -329,9 +328,9 @@ df3 |>
   )
 ```
 
-`separate_wider_position()` works a little differently because you typically want to specify the width of each column.
-So you give it a named integer vector, where the name gives the name of the new column, and the value is the number of characters it occupies.
-You can omit values from the output by not naming them:
+Her sütunun genişliğini belirtmeniz gerektiğinden `separate_wider_position()` biraz farklı çalışır.
+Fonksiyona, adları yeni sütun adlarını ve değerleri sütunların kapladığı karakter sayısını belirten adlandırılmış bir tam sayı vektörü verirsiniz.
+Değerlere ad vermeyerek onları çıktıdan çıkarabilirsiniz:
 
 ```{r}
 df4 <- tibble(x = c("202215TX", "202122LA", "202325CA")) 
@@ -342,13 +341,13 @@ df4 |>
   )
 ```
 
-### Diagnosing widening problems
+### Genişletme sorunlarını tanılama
 
-`separate_wider_delim()`[^strings-6] requires a fixed and known set of columns.
-What happens if some of the rows don't have the expected number of pieces?
-There are two possible problems, too few or too many pieces, so `separate_wider_delim()` provides two arguments to help: `too_few` and `too_many`. Let's first look at the `too_few` case with the following sample dataset:
+`separate_wider_delim()`[^strings-6] sabit ve bilinen bir sütun kümesi gerektirir.
+Bazı satırlarda beklenen sayıda parça yoksa ne olur?
+Parça sayısının çok az veya çok fazla olması biçiminde iki olası sorun vardır. `separate_wider_delim()` bunları ele almak için `too_few` ve `too_many` argümanlarını sunar. Önce aşağıdaki örnek veri kümesiyle `too_few` durumunu inceleyelim:
 
-[^strings-6]: The same principles apply to `separate_wider_position()` and `separate_wider_regex()`.
+[^strings-6]: Aynı ilkeler `separate_wider_position()` ve `separate_wider_regex()` için de geçerlidir.
 
 ```{r}
 #| error: true
@@ -362,8 +361,8 @@ df |>
   )
 ```
 
-You'll notice that we get an error, but the error gives us some suggestions on how you might proceed.
-Let's start by debugging the problem:
+Bir hata aldığımızı, ancak hata iletisinin nasıl ilerleyebileceğimize ilişkin bazı öneriler sunduğunu göreceksiniz.
+Sorunun hatalarını ayıklayarak başlayalım:
 
 ```{r}
 debug <- df |> 
@@ -376,21 +375,21 @@ debug <- df |>
 debug
 ```
 
-When you use the debug mode, you get three extra columns added to the output: `a_ok`, `a_pieces`, and `a_remainder` (if you separate a variable with a different name, you'll get a different prefix).
-Here, `a_ok` lets you quickly find the inputs that failed:
+Hata ayıklama kipini kullandığınızda çıktıya üç ek sütun eklenir: `a_ok`, `a_pieces` ve `a_remainder`. Farklı adlı bir değişkeni ayırırsanız farklı bir önek elde edersiniz.
+Burada `a_ok`, başarısız girdileri hızla bulmanızı sağlar:
 
 ```{r}
 debug |> filter(!a_ok)
 ```
 
-`a_pieces` tells us how many pieces were found, compared to the expected 3 (the length of `names`).
-`a_remainder` isn't useful when there are too few pieces, but we'll see it again shortly.
+`a_pieces`, beklenen 3 parçaya (`names` uzunluğuna) karşılık kaç parça bulunduğunu gösterir.
+Parça sayısı çok az olduğunda `a_remainder` yararlı değildir; ancak birazdan onu yeniden göreceğiz.
 
-Sometimes looking at this debugging information will reveal a problem with your delimiter strategy or suggest that you need to do more preprocessing before separating.
-In that case, fix the problem upstream and make sure to remove `too_few = "debug"` to ensure that new problems become errors.
+Bazen bu hata ayıklama bilgileri ayraç stratejinizdeki bir sorunu ortaya çıkarır veya ayırmadan önce daha fazla ön işleme yapmanız gerektiğini gösterir.
+Bu durumda sorunu önceki adımlarda düzeltin ve yeni sorunların hata oluşturmasını sağlamak için `too_few = "debug"` ifadesini kaldırmayı unutmayın.
 
-In other cases, you may want to fill in the missing pieces with `NA`s and move on.
-That's the job of `too_few = "align_start"` and `too_few = "align_end"` which allow you to control where the `NA`s should go:
+Bazı durumlarda eksik parçaları `NA` ile doldurup devam etmek isteyebilirsiniz.
+`NA` değerlerinin nereye yerleştirileceğini belirlemenizi sağlayan `too_few = "align_start"` ve `too_few = "align_end"` bunun içindir:
 
 ```{r}
 df |> 
@@ -402,7 +401,7 @@ df |>
   )
 ```
 
-The same principles apply if you have too many pieces:
+Parça sayısı çok fazla olduğunda da aynı ilkeler geçerlidir:
 
 ```{r}
 #| error: true
@@ -416,7 +415,7 @@ df |>
   )
 ```
 
-But now, when we debug the result, you can see the purpose of `a_remainder`:
+Ancak bu kez sonucun hatalarını ayıkladığımızda `a_remainder` sütununun amacını görebiliriz:
 
 ```{r}
 debug <- df |> 
@@ -429,7 +428,7 @@ debug <- df |>
 debug |> filter(!a_ok)
 ```
 
-You have a slightly different set of options for handling too many pieces: you can either silently "drop" any additional pieces or "merge" them all into the final column:
+Çok fazla parçayı ele almak için biraz farklı seçenekleriniz vardır: ek parçaları sessizce "düşürebilir" (`drop`) veya tümünü son sütunda "birleştirebilirsiniz" (`merge`):
 
 ```{r}
 df |> 
@@ -450,22 +449,22 @@ df |>
   )
 ```
 
-## Letters
+## Harfler
 
-In this section, we'll introduce you to functions that allow you to work with the individual letters within a string.
-You'll learn how to find the length of a string, extract substrings, and handle long strings in plots and tables.
+Bu bölümde bir karakter dizisindeki tek tek harflerle çalışmanızı sağlayan fonksiyonları tanıtacağız.
+Bir karakter dizisinin uzunluğunu bulmayı, alt dizileri çıkarmayı ve grafiklerle tablolardaki uzun karakter dizilerini ele almayı öğreneceksiniz.
 
-### Length
+### Uzunluk
 
-`str_length()` tells you the number of letters in the string:
+`str_length()` karakter dizisindeki harf sayısını verir:
 
 ```{r}
 str_length(c("a", "R for data science", NA))
 ```
 
-You could use this with `count()` to find the distribution of lengths of US babynames and then with `filter()` to look at the longest names, which happen to have 15 letters[^strings-7]:
+ABD'deki bebek adlarının uzunluk dağılımını bulmak için bunu `count()` ile, 15 harften oluşan en uzun adları incelemek içinse `filter()` ile kullanabilirsiniz[^strings-7]:
 
-[^strings-7]: Looking at these entries, we'd guess that the babynames data drops spaces or hyphens and truncates after 15 letters.
+[^strings-7]: Bu kayıtlara bakarak babynames verilerinin boşlukları veya kısa çizgileri kaldırdığını ve adları 15 harften sonra kestiğini tahmin edebiliriz.
 
 ```{r}
 babynames |>
@@ -476,29 +475,29 @@ babynames |>
   count(name, wt = n, sort = TRUE)
 ```
 
-### Subsetting
+### Alt kümeleme
 
-You can extract parts of a string using `str_sub(string, start, end)`, where `start` and `end` are the positions where the substring should start and end.
-The `start` and `end` arguments are inclusive, so the length of the returned string will be `end - start + 1`:
+Bir karakter dizisinin parçalarını `str_sub(string, start, end)` ile çıkarabilirsiniz; `start` ve `end`, alt dizinin başlayacağı ve biteceği konumlardır.
+`start` ve `end` konumları sonuca dâhil edildiğinden döndürülen dizinin uzunluğu `end - start + 1` olur:
 
 ```{r}
 x <- c("Apple", "Banana", "Pear")
 str_sub(x, 1, 3)
 ```
 
-You can use negative values to count back from the end of the string: -1 is the last character, -2 is the second to last character, etc.
+Karakter dizisinin sonundan geriye doğru saymak için negatif değerler kullanabilirsiniz: -1 son, -2 sondan ikinci karakterdir vb.
 
 ```{r}
 str_sub(x, -3, -1)
 ```
 
-Note that `str_sub()` won't fail if the string is too short: it will just return as much as possible:
+Karakter dizisi çok kısa olduğunda `str_sub()` fonksiyonunun başarısız olmayacağına dikkat edin; yalnızca mümkün olan kısmı döndürür:
 
 ```{r}
 str_sub("a", 1, 5)
 ```
 
-We could use `str_sub()` with `mutate()` to find the first and last letter of each name:
+Her adın ilk ve son harfini bulmak için `str_sub()` fonksiyonunu `mutate()` ile kullanabiliriz:
 
 ```{r}
 babynames |> 
@@ -508,48 +507,48 @@ babynames |>
   )
 ```
 
-### Exercises
+### Alıştırmalar
 
-1.  When computing the distribution of the length of babynames, why did we use `wt = n`?
-2.  Use `str_length()` and `str_sub()` to extract the middle letter from each baby name. What will you do if the string has an even number of characters?
-3.  Are there any major trends in the length of babynames over time? What about the popularity of first and last letters?
+1.  Bebek adlarının uzunluk dağılımını hesaplarken neden `wt = n` kullandık?
+2.  Her bebek adının ortasındaki harfi çıkarmak için `str_length()` ve `str_sub()` kullanın. Karakter dizisi çift sayıda karakter içeriyorsa ne yapacaksınız?
+3.  Bebek adlarının uzunluğunda zaman içinde belirgin eğilimler var mı? İlk ve son harflerin popülerliği nasıl değişiyor?
 
-## Non-English text {#sec-other-languages}
+## İngilizce dışındaki metinler {#sec-other-languages}
 
-So far, we've focused on English language text which is particularly easy to work with for two reasons.
-Firstly, the English alphabet is relatively simple: there are just 26 letters.
-Secondly (and maybe more importantly), the computing infrastructure we use today was predominantly designed by English speakers.
-Unfortunately, we don't have room for a full treatment of non-English languages.
-Still, we wanted to draw your attention to some of the biggest challenges you might encounter: encoding, letter variations, and locale-dependent functions.
+Şimdiye kadar iki nedenle çalışması özellikle kolay olan İngilizce metinlere odaklandık.
+Birincisi, İngilizce alfabesi görece basittir ve yalnızca 26 harften oluşur.
+İkincisi ve belki de daha önemlisi, bugün kullandığımız bilişim altyapısı ağırlıklı olarak İngilizce konuşan kişiler tarafından tasarlanmıştır.
+Ne yazık ki İngilizce dışındaki dilleri kapsamlı biçimde ele alacak yerimiz yok.
+Yine de karşılaşabileceğiniz en büyük güçlüklerden bazılarına dikkatinizi çekmek istiyoruz: kodlama, harf çeşitleri ve yerel ayara bağlı fonksiyonlar.
 
-### Encoding
+### Kodlama
 
-When working with non-English text, the first challenge is often the **encoding**.
-To understand what's going on, we need to dive into how computers represent strings.
-In R, we can get at the underlying representation of a string using `charToRaw()`:
+İngilizce dışındaki metinlerle çalışırken ilk güçlük çoğunlukla **kodlamadır** (encoding).
+Neler olduğunu anlamak için bilgisayarların karakter dizilerini nasıl temsil ettiğini incelememiz gerekir.
+R'da bir karakter dizisinin temelindeki gösterime `charToRaw()` ile erişebiliriz:
 
 ```{r}
 charToRaw("Hadley")
 ```
 
-Each of these six hexadecimal numbers represents one letter: `48` is H, `61` is a, and so on.
-The mapping from hexadecimal number to character is called the encoding, and in this case, the encoding is called ASCII.
-ASCII does a great job of representing English characters because it's the **American** Standard Code for Information Interchange.
+Bu altı onaltılık sayının her biri bir harfi temsil eder: `48`, H; `61`, a harfidir ve böyle devam eder.
+Onaltılık sayılarla karakterler arasındaki eşlemeye kodlama denir; bu örnekte kullanılan kodlamanın adı ASCII'dir.
+ASCII, **American** Standard Code for Information Interchange (Bilgi Değişimi için Amerikan Standart Kodu) olduğundan İngilizce karakterleri temsil etmede çok başarılıdır.
 
-Things aren't so easy for languages other than English.
-In the early days of computing, there were many competing standards for encoding non-English characters.
-For example, there were two different encodings for Europe: Latin1 (aka ISO-8859-1) was used for Western European languages, and Latin2 (aka ISO-8859-2) was used for Central European languages.
-In Latin1, the byte `b1` is "±", but in Latin2, it's "ą"!
-Fortunately, today there is one standard that is supported almost everywhere: UTF-8.
-UTF-8 can encode just about every character used by humans today and many extra symbols like emojis.
+İngilizce dışındaki dillerde işler bu kadar kolay değildir.
+Bilgisayarların ilk dönemlerinde İngilizce dışındaki karakterleri kodlamak için birbiriyle rekabet eden birçok standart vardı.
+Örneğin Avrupa için iki farklı kodlama kullanılıyordu: Batı Avrupa dilleri için Latin1 (ISO-8859-1), Orta Avrupa dilleri için Latin2 (ISO-8859-2).
+Latin1 kodlamasında `b1` baytı "±", Latin2 kodlamasında ise "ą" karakteridir!
+Neyse ki bugün neredeyse her yerde desteklenen tek bir standart vardır: UTF-8.
+UTF-8, günümüzde insanların kullandığı hemen her karakteri ve emoji gibi birçok ek simgeyi kodlayabilir.
 
-readr uses UTF-8 everywhere.
-This is a good default but will fail for data produced by older systems that don't use UTF-8.
-If this happens, your strings will look weird when you print them.
-Sometimes just one or two characters might be messed up; other times, you'll get complete gibberish.
-For example here are two inline CSVs with unusual encodings[^strings-8]:
+readr her yerde UTF-8 kullanır.
+Bu iyi bir varsayılandır; ancak UTF-8 kullanmayan eski sistemlerin ürettiği verilerde başarısız olur.
+Böyle bir durumda karakter dizileriniz yazdırıldığında tuhaf görünür.
+Bazen yalnızca bir iki karakter bozulur, bazen de tamamen anlamsız bir çıktı elde edersiniz.
+Örneğin aşağıda olağandışı kodlamalara sahip iki satır içi CSV vardır[^strings-8]:
 
-[^strings-8]: Here I'm using the special `\x` to encode binary data directly into a string.
+[^strings-8]: Burada ikili verileri doğrudan karakter dizisine kodlamak için özel `\x` gösterimini kullanıyorum.
 
 ```{r}
 #| eval: false
@@ -563,7 +562,7 @@ read_csv(x2)$text
 #> [1] "\x82\xb1\x82\xf1\x82ɂ\xbf\x82\xcd"
 ```
 
-To read these correctly, you specify the encoding via the `locale` argument:
+Bunları doğru okumak için kodlamayı `locale` argümanıyla belirtirsiniz:
 
 ```{r}
 #| eval: false
@@ -574,33 +573,33 @@ read_csv(x2, locale = locale(encoding = "Shift-JIS"))$text
 #> [1] "こんにちは"
 ```
 
-How do you find the correct encoding?
-If you're lucky, it'll be included somewhere in the data documentation.
-Unfortunately, that's rarely the case, so readr provides `guess_encoding()` to help you figure it out.
-It's not foolproof and works better when you have lots of text (unlike here), but it's a reasonable place to start.
-Expect to try a few different encodings before you find the right one.
+Doğru kodlamayı nasıl bulabilirsiniz?
+Şanslıysanız veri belgelerinde bir yerde belirtilmiştir.
+Ne yazık ki bu nadiren olur; bu nedenle readr kodlamayı bulmanıza yardımcı olmak için `guess_encoding()` fonksiyonunu sunar.
+Bu yöntem kusursuz değildir ve çok miktarda metin olduğunda buradakinden daha iyi çalışır; yine de başlamak için makul bir yerdir.
+Doğru kodlamayı bulmadan önce birkaç farklı seçeneği denemeniz gerekebilir.
 
-Encodings are a rich and complex topic; we've only scratched the surface here.
-If you'd like to learn more, we recommend reading the detailed explanation at <http://kunststube.net/encoding/>.
+Kodlamalar kapsamlı ve karmaşık bir konudur; burada yalnızca yüzeyine değindik.
+Daha fazla bilgi edinmek için <http://kunststube.net/encoding/> adresindeki ayrıntılı açıklamayı okumanızı öneririz.
 
-### Letter variations
+### Harf çeşitleri
 
-Working in languages with accents poses a significant challenge when determining the position of letters (e.g., with `str_length()` and `str_sub()`) as accented letters might be encoded as a single individual character (e.g., ü) or as two characters by combining an unaccented letter (e.g., u) with a diacritic mark (e.g., ¨).
-For example, this code shows two ways of representing ü that look identical:
+Aksan işaretleri kullanan dillerde harflerin konumunu, örneğin `str_length()` ve `str_sub()` ile belirlemek önemli bir güçlük yaratır. Aksanlı bir harf tek bir karakter (örneğin ü) olarak veya aksansız bir harfle (örneğin u) ayırıcı işaretin (örneğin ¨) birleştirilmesiyle iki karakter olarak kodlanabilir.
+Örneğin aşağıdaki kod, aynı görünen ü harfini temsil etmenin iki yolunu gösterir:
 
 ```{r}
 u <- c("\u00fc", "u\u0308")
 str_view(u)
 ```
 
-But both strings differ in length, and their first characters are different:
+Ancak bu iki karakter dizisinin uzunlukları ve ilk karakterleri farklıdır:
 
 ```{r}
 str_length(u)
 str_sub(u, 1, 1)
 ```
 
-Finally, note that a comparison of these strings with `==` interprets these strings as different, while the handy `str_equal()` function in stringr recognizes that both have the same appearance:
+Son olarak bu karakter dizilerini `==` ile karşılaştırmanın onları farklı kabul ettiğine, stringr paketindeki kullanışlı `str_equal()` fonksiyonunun ise aynı görünüme sahip olduklarını tanıdığına dikkat edin:
 
 ```{r}
 u[[1]] == u[[2]]
@@ -608,42 +607,42 @@ u[[1]] == u[[2]]
 str_equal(u[[1]], u[[2]])
 ```
 
-### Locale-dependent functions
+### Yerel ayara bağlı fonksiyonlar
 
-Finally, there are a handful of stringr functions whose behavior depends on your **locale**.
-A locale is similar to a language but includes an optional region specifier to handle regional variations within a language.
-A locale is specified by a lower-case language abbreviation, optionally followed by a `_` and an upper-case region identifier.
-For example, "en" is English, "en_GB" is British English, and "en_US" is American English.
-If you don't already know the code for your language, [Wikipedia](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) has a good list, and you can see which are supported in stringr by looking at `stringi::stri_locale_list()`.
+Son olarak davranışı **yerel ayarınıza** (locale) bağlı olan birkaç stringr fonksiyonu vardır.
+Yerel ayar dile benzer; ancak dil içindeki bölgesel farklılıkları ele almak için isteğe bağlı bir bölge belirteci de içerir.
+Küçük harfli dil kısaltmasıyla belirtilir; bunu isteğe bağlı olarak `_` ve büyük harfli bölge tanımlayıcısı izler.
+Örneğin "en" İngilizceyi, "en_GB" Britanya İngilizcesini, "en_US" ise Amerikan İngilizcesini belirtir.
+Dilinizin kodunu bilmiyorsanız [Wikipedia'da](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) iyi bir liste bulabilir; stringr tarafından desteklenen kodları `stringi::stri_locale_list()` ile görebilirsiniz.
 
-Base R string functions automatically use the locale set by your operating system.
-This means that base R string functions do what you expect for your language, but your code might work differently if you share it with someone who lives in a different country.
-To avoid this problem, stringr defaults to English rules by using the "en" locale and requires you to specify the `locale` argument to override it.
-Fortunately, there are only two sets of functions where the locale really matters: changing case and sorting.
+Temel R karakter dizisi fonksiyonları işletim sisteminizde ayarlanan yerel ayarı otomatik olarak kullanır.
+Bu sayede kendi dilinizde beklediğiniz gibi çalışırlar; ancak kodunuzu başka bir ülkede yaşayan biriyle paylaşırsanız farklı sonuçlar ortaya çıkabilir.
+stringr bu sorunu önlemek için varsayılan olarak "en" yerel ayarıyla İngilizce kurallarını kullanır ve bu davranışı değiştirmek için `locale` argümanını belirtmenizi ister.
+Neyse ki yerel ayarın gerçekten önemli olduğu yalnızca iki fonksiyon grubu vardır: büyük-küçük harf dönüştürme ve sıralama.
 
-The rules for changing cases differ among languages.
-For example, Turkish has two i's: with and without a dot.
-Since they're two distinct letters, they're capitalized differently:
+Büyük-küçük harf dönüştürme kuralları diller arasında değişir.
+Örneğin Türkçede noktalı ve noktasız olmak üzere iki i vardır.
+Bunlar farklı harfler olduğu için büyük harfe de farklı dönüştürülürler:
 
 ```{r}
 str_to_upper(c("i", "ı"))
 str_to_upper(c("i", "ı"), locale = "tr")
 ```
 
-Sorting strings depends on the order of the alphabet, and the order of the alphabet is not the same in every language[^strings-9]!
-Here's an example: in Czech, "ch" is a compound letter that appears after `h` in the alphabet.
+Karakter dizilerini sıralamak alfabenin düzenine bağlıdır ve alfabe sırası her dilde aynı değildir[^strings-9]!
+Örneğin Çekçede "ch", alfabede `h` harfinden sonra gelen birleşik bir harftir.
 
-[^strings-9]: Sorting in languages that don't have an alphabet, like Chinese, is more complicated still.
+[^strings-9]: Çince gibi alfabesi olmayan dillerde sıralama daha da karmaşıktır.
 
 ```{r}
 str_sort(c("a", "c", "ch", "h", "z"))
 str_sort(c("a", "c", "ch", "h", "z"), locale = "cs")
 ```
 
-This also comes up when sorting strings with `dplyr::arrange()`, which is why it also has a `locale` argument.
+Aynı sorun karakter dizilerini `dplyr::arrange()` ile sıralarken de ortaya çıktığından bu fonksiyon da `locale` argümanına sahiptir.
 
-## Summary
+## Özet
 
-In this chapter, you've learned about some of the power of the stringr package: how to create, combine, and extract strings, and about some of the challenges you might face with non-English strings.
-Now it's time to learn one of the most important and powerful tools for working with strings: regular expressions.
-Regular expressions are a very concise but very expressive language for describing patterns within strings and are the topic of the next chapter.
+Bu bölümde stringr paketinin sunduğu olanakların bir bölümünü öğrendiniz: karakter dizileri oluşturmayı, birleştirmeyi ve bunlardan veri çıkarmayı; ayrıca İngilizce dışındaki metinlerde karşılaşabileceğiniz bazı güçlükleri gördünüz.
+Şimdi karakter dizileriyle çalışmanın en önemli ve güçlü araçlarından birini öğrenme zamanı: düzenli ifadeler.
+Karakter dizilerindeki kalıpları tanımlamak için son derece özlü ama ifade gücü yüksek bir dil sunan düzenli ifadeler, sonraki bölümün konusudur.

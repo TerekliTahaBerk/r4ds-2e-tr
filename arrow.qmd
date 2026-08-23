@@ -10,27 +10,27 @@ freeze: true
 source("_common.R")
 ```
 
-## Introduction
+## Giriş
 
-CSV files are designed to be easily read by humans.
-They're a good interchange format because they're very simple and they can be read by every tool under the sun.
-But CSV files aren't very efficient: you have to do quite a lot of work to read the data into R.
-In this chapter, you'll learn about a powerful alternative: the [parquet format](https://parquet.apache.org/), an open standards-based format widely used by big data systems.
+CSV dosyaları insanlar tarafından kolayca okunacak biçimde tasarlanmıştır.
+Çok basit oldukları ve hemen her araç tarafından okunabildikleri için iyi bir veri alışverişi biçimidir.
+Ancak CSV dosyaları pek verimli değildir: Verileri R'a okumak için epey işlem yapmanız gerekir.
+Bu bölümde güçlü bir seçenek olan [Parquet biçimini](https://parquet.apache.org/) öğreneceksiniz. Parquet, açık standartlara dayanan ve büyük veri sistemlerinde yaygın olarak kullanılan bir biçimdir.
 
-We'll pair parquet files with [Apache Arrow](https://arrow.apache.org), a multi-language toolbox designed for efficient analysis and transport of large datasets.
-We'll use Apache Arrow via the [arrow package](https://arrow.apache.org/docs/r/), which provides a dplyr backend allowing you to analyze larger-than-memory datasets using familiar dplyr syntax.
-As an additional benefit, arrow is extremely fast: you'll see some examples later in the chapter.
+Parquet dosyalarını, büyük veri kümelerinin verimli biçimde çözümlenmesi ve taşınması için tasarlanmış çok dilli bir araç takımı olan [Apache Arrow](https://arrow.apache.org) ile birlikte kullanacağız.
+Apache Arrow'u, bildiğiniz dplyr sözdizimiyle belleğe sığmayacak büyüklükteki veri kümelerini çözümlemenizi sağlayan bir dplyr arka ucu sunan [arrow paketi](https://arrow.apache.org/docs/r/) aracılığıyla kullanacağız.
+arrow ayrıca son derece hızlıdır; bölümün ilerleyen kısımlarında bazı örneklerini göreceksiniz.
 
-Both arrow and dbplyr provide dplyr backends, so you might wonder when to use each.
-In many cases, the choice is made for you, as the data is already in a database or in parquet files, and you'll want to work with it as is.
-But if you're starting with your own data (perhaps CSV files), you can either load it into a database or convert it to parquet.
-In general, it's hard to know what will work best, so in the early stages of your analysis we'd encourage you to try both and pick the one that works the best for you.
+Hem arrow hem de dbplyr dplyr arka uçları sunduğundan hangisini ne zaman kullanacağınızı merak edebilirsiniz.
+Çoğu durumda veri zaten bir veritabanında ya da Parquet dosyalarında bulunduğu ve onunla olduğu gibi çalışmak istediğiniz için seçim sizin adınıza yapılmıştır.
+Ancak kendi verilerinizle (örneğin CSV dosyalarıyla) başlıyorsanız bunları bir veritabanına yükleyebilir ya da Parquet'e dönüştürebilirsiniz.
+Genel olarak hangisinin daha iyi çalışacağını önceden bilmek zordur; bu nedenle çözümlemenizin ilk aşamalarında ikisini de denemenizi ve sizin için daha iyi çalışanı seçmenizi öneririz.
 
-(A big thanks to Danielle Navarro who contributed the initial version of this chapter.)
+(Bu bölümün ilk sürümüne katkıda bulunan Danielle Navarro'ya çok teşekkür ederiz.)
 
-### Prerequisites
+### Ön koşullar
 
-In this chapter, we'll continue to use the tidyverse, particularly dplyr, but we'll pair it with the arrow package which is designed specifically for working with large data.
+Bu bölümde tidyverse'i, özellikle de dplyr'ı kullanmayı sürdüreceğiz; ancak onu özellikle büyük verilerle çalışmak için tasarlanmış arrow paketiyle birlikte kullanacağız.
 
 ```{r setup}
 #| message: false
@@ -39,21 +39,21 @@ library(tidyverse)
 library(arrow)
 ```
 
-Later in the chapter, we'll also see some connections between arrow and duckdb, so we'll also need dbplyr and duckdb.
+Bölümün ilerleyen kısımlarında arrow ile duckdb arasındaki bazı bağlantıları da göreceğimizden dbplyr ve duckdb paketlerine de ihtiyacımız olacak.
 
 ```{r}
 library(dbplyr, warn.conflicts = FALSE)
 library(duckdb)
 ```
 
-## Getting the data
+## Verileri edinme
 
-We begin by getting a dataset worthy of these tools: a dataset of item checkouts from Seattle public libraries, available online at [data.seattle.gov/Community/Checkouts-by-Title/tmmm-ytt6](https://data.seattle.gov/Community/Checkouts-by-Title/tmmm-ytt6).
-This dataset contains 41,389,465 rows that tell you how many times each book was checked out each month from April 2005 to October 2022.
+Bu araçlara uygun büyüklükte bir veri kümesi edinerek başlayacağız: [data.seattle.gov/Community/Checkouts-by-Title/tmmm-ytt6](https://data.seattle.gov/Community/Checkouts-by-Title/tmmm-ytt6) adresinde çevrimiçi olarak sunulan Seattle halk kütüphanelerindeki materyal ödünç alma verileri.
+Bu veri kümesi, Nisan 2005'ten Ekim 2022'ye kadar her kitabın her ay kaç kez ödünç alındığını gösteren 41.389.465 satır içerir.
 
-The following code will get you a cached copy of the data.
-The data is a 9GB CSV file, so it will take some time to download.
-I highly recommend using `curl::multi_download()` to get very large files as it's built for exactly this purpose: it gives you a progress bar and it can resume the download if it's interrupted.
+Aşağıdaki kod verilerin önbelleğe alınmış bir kopyasını edinmenizi sağlar.
+Veriler 9 GB büyüklüğünde bir CSV dosyası olduğundan indirme işlemi biraz zaman alacaktır.
+Çok büyük dosyaları almak için özellikle bu amaçla geliştirilmiş `curl::multi_download()` fonksiyonunu kullanmanızı önemle öneririz: Bir ilerleme çubuğu gösterir ve kesintiye uğrayan indirme işlemini sürdürebilir.
 
 ```{r}
 #| eval: !expr "!file.exists('data/seattle-library-checkouts.csv')"
@@ -66,12 +66,12 @@ curl::multi_download(
 )
 ```
 
-## Opening a dataset
+## Bir veri kümesini açma
 
-Let's start by taking a look at the data.
-At 9 GB, this file is large enough that we probably don't want to load the whole thing into memory.
-A good rule of thumb is that you usually want at least twice as much memory as the size of the data, and many laptops top out at 16 GB.
-This means we want to avoid `read_csv()` and instead use the `arrow::open_dataset()`:
+Verilere göz atarak başlayalım.
+9 GB büyüklüğündeki bu dosyanın tamamını büyük olasılıkla belleğe yüklemek istemeyiz.
+Kullanışlı bir genel kural, veri boyutunun en az iki katı kadar belleğe ihtiyaç duymanızdır; birçok dizüstü bilgisayar ise en fazla 16 GB belleğe sahiptir.
+Bu nedenle `read_csv()` fonksiyonundan kaçınıp onun yerine `arrow::open_dataset()` kullanmak istiyoruz:
 
 ```{r open-dataset}
 seattle_csv <- open_dataset(
@@ -81,29 +81,29 @@ seattle_csv <- open_dataset(
 )
 ```
 
-What happens when this code is run?
-`open_dataset()` will scan a few thousand rows to figure out the structure of the dataset.
-The `ISBN` column contains blank values for the first 80,000 rows, so we have to specify the column type to help arrow work out the data structure.
-Once the data has been scanned by `open_dataset()`, it records what it's found and stops; it will only read further rows as you specifically request them.
-This metadata is what we see if we print `seattle_csv`:
+Bu kod çalıştırıldığında ne olur?
+`open_dataset()`, veri kümesinin yapısını belirlemek için birkaç bin satırı tarar.
+`ISBN` sütununun ilk 80.000 satırı boş değerler içerdiğinden arrow'un veri yapısını belirlemesine yardımcı olmak için sütun türünü belirtmemiz gerekir.
+`open_dataset()` verileri taradıktan sonra bulduklarını kaydeder ve durur; diğer satırları yalnızca siz özellikle istediğinizde okur.
+`seattle_csv` nesnesini yazdırdığımızda gördüğümüz bu üst veridir:
 
 ```{r}
 seattle_csv
 ```
 
-The first line in the output tells you that `seattle_csv` is stored locally on-disk as a single CSV file; it will only be loaded into memory as needed.
-The remainder of the output tells you the column type that arrow has imputed for each column.
+Çıktının ilk satırı `seattle_csv` nesnesinin yerel diskte tek bir CSV dosyası olarak saklandığını ve yalnızca gerektiğinde belleğe yükleneceğini söyler.
+Çıktının geri kalanı arrow'un her sütun için çıkarsadığı sütun türünü gösterir.
 
-We can see what's actually in with `glimpse()`.
-This reveals that there are \~41 million rows and 12 columns, and shows us a few values.
+İçinde gerçekte neler bulunduğunu `glimpse()` ile görebiliriz.
+Bu fonksiyon yaklaşık 41 milyon satır ve 12 sütun olduğunu ortaya çıkarır ve bize birkaç değer gösterir.
 
 ```{r glimpse-data}
 #| cache: true
 seattle_csv |> glimpse()
 ```
 
-We can start to use this dataset with dplyr verbs, using `collect()` to force arrow to perform the computation and return some data.
-For example, this code tells us the total number of checkouts per year:
+arrow'u hesaplamayı yapmaya ve bazı verileri döndürmeye zorlamak için `collect()` kullanarak bu veri kümesi üzerinde dplyr fiillerini kullanmaya başlayabiliriz.
+Örneğin bu kod yıllık toplam ödünç alma sayısını verir:
 
 ```{r}
 #| cache: true
@@ -114,54 +114,54 @@ seattle_csv |>
   collect()
 ```
 
-Thanks to arrow, this code will work regardless of how large the underlying dataset is.
-But it's currently rather slow: on Hadley's computer, it took \~10s to run.
-That's not terrible given how much data we have, but we can make it much faster by switching to a better format.
+arrow sayesinde bu kod, temelindeki veri kümesinin büyüklüğünden bağımsız olarak çalışır.
+Ancak şu anda epey yavaştır: Hadley'nin bilgisayarında çalışması yaklaşık 10 saniye sürmüştür.
+Elimizdeki veri miktarı düşünüldüğünde bu süre çok kötü değildir; yine de daha iyi bir biçime geçerek işlemi çok daha hızlı hâle getirebiliriz.
 
-## The parquet format {#sec-parquet}
+## Parquet biçimi {#sec-parquet}
 
-To make this data easier to work with, let's switch to the parquet file format and split it up into multiple files.
-The following sections will first introduce you to parquet and partitioning, and then apply what we learned to the Seattle library data.
+Bu verilerle çalışmayı kolaylaştırmak için Parquet dosya biçimine geçip verileri birden çok dosyaya bölelim.
+Aşağıdaki kısımlarda önce Parquet ve bölümlendirmeyi tanıtacak, ardından öğrendiklerimizi Seattle kütüphanesi verilerine uygulayacağız.
 
-### Advantages of parquet
+### Parquet'in avantajları
 
-Like CSV, parquet is used for rectangular data, but instead of being a text format that you can read with any file editor, it's a custom binary format designed specifically for the needs of big data.
-This means that:
+CSV gibi Parquet de dikdörtgensel veriler için kullanılır; ancak herhangi bir dosya düzenleyiciyle okuyabileceğiniz bir metin biçimi değil, büyük verilerin ihtiyaçları için özel olarak tasarlanmış ikili bir biçimdir.
+Bunun sonucunda:
 
--   Parquet files are usually smaller than the equivalent CSV file.
-    Parquet relies on [efficient encodings](https://parquet.apache.org/docs/file-format/data-pages/encodings/) to keep file size down, and supports file compression.
-    This helps make parquet files fast because there's less data to move from disk to memory.
+-   Parquet dosyaları genellikle eşdeğer CSV dosyasından daha küçüktür.
+    Parquet, dosya boyutunu küçük tutmak için [verimli kodlamalardan](https://parquet.apache.org/docs/file-format/data-pages/encodings/) yararlanır ve dosya sıkıştırmayı destekler.
+    Diskten belleğe taşınacak veri miktarı azaldığı için bu özellik Parquet dosyalarını hızlandırır.
 
--   Parquet files have a rich type system.
-    As we talked about in @sec-col-types, a CSV file does not provide any information about column types.
-    For example, a CSV reader has to guess whether `"08-10-2022"` should be parsed as a string or a date.
-    In contrast, parquet files store data in a way that records the type along with the data.
+-   Parquet dosyaları zengin bir tür sistemine sahiptir.
+    @sec-col-types bölümünde ele aldığımız gibi CSV dosyası sütun türleri hakkında hiçbir bilgi sağlamaz.
+    Örneğin bir CSV okuyucusunun `"08-10-2022"` ifadesini karakter dizisi olarak mı yoksa tarih olarak mı ayrıştıracağını tahmin etmesi gerekir.
+    Buna karşılık Parquet dosyaları, verileri tür bilgisini de kaydedecek biçimde saklar.
 
--   Parquet files are "column-oriented".
-    This means that they're organized column-by-column, much like R's data frame.
-    This typically leads to better performance for data analysis tasks compared to CSV files, which are organized row-by-row.
+-   Parquet dosyaları “sütun yönelimlidir”.
+    Yani R'ın veri çerçevelerine çok benzer biçimde sütun sütun düzenlenirler.
+    Bu yapı, satır satır düzenlenen CSV dosyalarına kıyasla veri çözümleme görevlerinde genellikle daha iyi performans sağlar.
 
--   Parquet files are "chunked", which makes it possible to work on different parts of the file at the same time, and, if you're lucky, to skip some chunks altogether.
+-   Parquet dosyaları “parçalara ayrılmıştır”; bu sayede dosyanın farklı bölümleri üzerinde aynı anda çalışmak ve şanslıysanız bazı parçaları bütünüyle atlamak mümkündür.
 
-There's one primary disadvantage to parquet files: they are no longer "human readable", i.e. if you look at a parquet file using `readr::read_file()`, you'll just see a bunch of gibberish.
+Parquet dosyalarının temel bir dezavantajı vardır: “İnsan tarafından okunabilir” değildirler. Başka bir deyişle bir Parquet dosyasına `readr::read_file()` ile bakarsanız yalnızca anlamsız bir karakter yığını görürsünüz.
 
-### Partitioning
+### Bölümlendirme
 
-As datasets get larger and larger, storing all the data in a single file gets increasingly painful and it's often useful to split large datasets across many files.
-When this structuring is done intelligently, this strategy can lead to significant improvements in performance because many analyses will only require a subset of the files.
+Veri kümeleri büyüdükçe tüm verileri tek bir dosyada saklamak giderek daha zahmetli olur ve büyük veri kümelerini birçok dosyaya bölmek çoğu zaman yararlıdır.
+Bu yapılandırma akıllıca yapıldığında, birçok çözümleme dosyaların yalnızca bir alt kümesini gerektireceği için önemli performans artışları sağlayabilir.
 
-There are no hard and fast rules about how to partition your dataset: the results will depend on your data, access patterns, and the systems that read the data.
-You're likely to need to do some experimentation before you find the ideal partitioning for your situation.
-As a rough guide, arrow suggests that you avoid files smaller than 20MB and larger than 2GB and avoid partitions that produce more than 10,000 files.
-You should also try to partition by variables that you filter by; as you'll see shortly, that allows arrow to skip a lot of work by reading only the relevant files.
+Veri kümenizi nasıl bölümlendireceğinize ilişkin kesin kurallar yoktur: Sonuçlar verilerinize, erişim örüntülerinize ve verileri okuyan sistemlere bağlıdır.
+Durumunuza uygun ideal bölümlendirmeyi bulmadan önce biraz deneme yapmanız gerekebilir.
+Kabaca bir kılavuz olarak arrow, 20 MB'tan küçük ve 2 GB'tan büyük dosyalardan ve 10.000'den fazla dosya üreten bölümlendirmelerden kaçınmanızı önerir.
+Ayrıca süzme işleminde kullandığınız değişkenlere göre bölümlendirme yapmaya çalışmalısınız; birazdan göreceğiniz gibi bu, arrow'un yalnızca ilgili dosyaları okuyarak birçok işlemi atlamasını sağlar.
 
-### Rewriting the Seattle library data
+### Seattle kütüphanesi verilerini yeniden yazma
 
-Let's apply these ideas to the Seattle library data to see how they play out in practice.
-We're going to partition by `CheckoutYear`, since it's likely some analyses will only want to look at recent data and partitioning by year yields 18 chunks of a reasonable size.
+Uygulamada nasıl sonuç verdiklerini görmek için bu fikirleri Seattle kütüphanesi verilerine uygulayalım.
+Bazı çözümlemelerin yalnızca yakın tarihli verilere bakması olası ve yıla göre bölümlendirme makul büyüklükte 18 parça ürettiği için `CheckoutYear` değişkenine göre bölümlendirme yapacağız.
 
-To rewrite the data we define the partition using `dplyr::group_by()` and then save the partitions to a directory with `arrow::write_dataset()`.
-`write_dataset()` has two important arguments: a directory where we'll create the files and the format we'll use.
+Verileri yeniden yazmak için `dplyr::group_by()` ile bölümlendirmeyi tanımlar, ardından `arrow::write_dataset()` ile bölümleri bir dizine kaydederiz.
+`write_dataset()` fonksiyonunun iki önemli argümanı vardır: Dosyaları oluşturacağımız dizin ve kullanacağımız biçim.
 
 ```{r}
 pq_path <- "data/seattle-library-checkouts"
@@ -175,9 +175,9 @@ seattle_csv |>
   write_dataset(path = pq_path, format = "parquet")
 ```
 
-This takes about a minute to run; as we'll see shortly this is an initial investment that pays off by making future operations much much faster.
+Bu işlemin çalışması yaklaşık bir dakika sürer. Birazdan göreceğimiz gibi bu, sonraki işlemleri çok daha hızlı hâle getirerek karşılığını veren bir başlangıç yatırımıdır.
 
-Let's take a look at what we just produced:
+Az önce ürettiklerimize göz atalım:
 
 ```{r show-parquet-files}
 tibble(
@@ -186,23 +186,23 @@ tibble(
 )
 ```
 
-Our single 9GB CSV file has been rewritten into 18 parquet files.
-The file names use a "self-describing" convention used by the [Apache Hive](https://hive.apache.org) project.
-Hive-style partitions name folders with a "key=value" convention, so as you might guess, the `CheckoutYear=2005` directory contains all the data where `CheckoutYear` is 2005.
-Each file is between 100 and 300 MB and the total size is now around 4 GB, a little over half the size of the original CSV file.
-This is as we expect since parquet is a much more efficient format.
+9 GB büyüklüğündeki tek CSV dosyamız 18 Parquet dosyasına yeniden yazıldı.
+Dosya adları [Apache Hive](https://hive.apache.org) projesinin kullandığı “kendini açıklayan” bir adlandırma geleneğini izler.
+Hive tarzı bölümler klasörleri “anahtar=değer” geleneğiyle adlandırır; dolayısıyla tahmin edebileceğiniz gibi `CheckoutYear=2005` dizini `CheckoutYear` değerinin 2005 olduğu tüm verileri içerir.
+Her dosya 100 ile 300 MB arasındadır ve toplam boyut artık yaklaşık 4 GB, yani özgün CSV dosyasının boyutunun yarısından biraz fazladır.
+Parquet çok daha verimli bir biçim olduğu için beklediğimiz sonuç budur.
 
-## Using dplyr with arrow
+## arrow ile dplyr kullanma
 
-Now we've created these parquet files, we'll need to read them in again.
-We use `open_dataset()` again, but this time we give it a directory:
+Bu Parquet dosyalarını oluşturduğumuza göre onları yeniden okumamız gerekiyor.
+Yine `open_dataset()` kullanacağız, ancak bu kez ona bir dizin vereceğiz:
 
 ```{r}
 seattle_pq <- open_dataset(pq_path)
 ```
 
-Now we can write our dplyr pipeline.
-For example, we could count the total number of books checked out in each month for the last five years:
+Artık dplyr işlem hattımızı yazabiliriz.
+Örneğin son beş yılda her ay ödünç alınan toplam kitap sayısını hesaplayabiliriz:
 
 ```{r books-by-year-query}
 query <- seattle_pq |> 
@@ -212,26 +212,26 @@ query <- seattle_pq |>
   arrange(CheckoutYear, CheckoutMonth)
 ```
 
-Writing dplyr code for arrow data is conceptually similar to dbplyr, @sec-import-databases: you write dplyr code, which is automatically transformed into a query that the Apache Arrow C++ library understands, which is then executed when you call `collect()`.
-If we print out the `query` object we can see a little information about what we expect Arrow to return when the execution takes place:
+arrow verileri için dplyr kodu yazmak kavramsal olarak dbplyr kullanımına benzer (@sec-import-databases): Yazdığınız dplyr kodu otomatik olarak Apache Arrow C++ kitaplığının anlayacağı bir sorguya dönüştürülür ve `collect()` çağrıldığında çalıştırılır.
+`query` nesnesini yazdırırsak sorgu çalıştırıldığında Arrow'un döndürmesini beklediğimiz sonuç hakkında bazı bilgiler görebiliriz:
 
 ```{r}
 query
 ```
 
-And we can get the results by calling `collect()`:
+Sonuçları `collect()` çağırarak alabiliriz:
 
 ```{r books-by-year}
 query |> collect()
 ```
 
-Like dbplyr, arrow only understands some R expressions, so you may not be able to write exactly the same code you usually would.
-However, the list of operations and functions supported is fairly extensive and continues to grow; find a complete list of currently supported functions in `?acero`.
+dbplyr gibi arrow da yalnızca bazı R ifadelerini anlar; bu nedenle her zaman yazdığınız kodun aynısını yazamayabilirsiniz.
+Bununla birlikte desteklenen işlemlerin ve fonksiyonların listesi oldukça kapsamlıdır ve büyümeyi sürdürmektedir. Şu anda desteklenen fonksiyonların tam listesini `?acero` içinde bulabilirsiniz.
 
-### Performance {#sec-parquet-fast}
+### Performans {#sec-parquet-fast}
 
-Let's take a quick look at the performance impact of switching from CSV to parquet.
-First, let's time how long it takes to calculate the number of books checked out in each month of 2021, when the data is stored as a single large csv:
+CSV'den Parquet'e geçmenin performans üzerindeki etkisine kısaca bakalım.
+Önce veriler tek bir büyük CSV dosyasında saklanırken 2021'in her ayında ödünç alınan kitap sayısını hesaplamanın ne kadar sürdüğünü ölçelim:
 
 ```{r dataset-performance-csv}
 #| cache: true
@@ -245,7 +245,7 @@ seattle_csv |>
   system.time()
 ```
 
-Now let's use our new version of the dataset in which the Seattle library checkout data has been partitioned into 18 smaller parquet files:
+Şimdi Seattle kütüphanesi ödünç alma verilerinin 18 küçük Parquet dosyasına bölümlendirildiği yeni veri kümesi sürümümüzü kullanalım:
 
 ```{r dataset-performance-multiple-parquet}
 #| cache: true
@@ -259,16 +259,16 @@ seattle_pq |>
   system.time()
 ```
 
-The \~100x speedup in performance is attributable to two factors: the multi-file partitioning, and the format of individual files:
+Performanstaki yaklaşık 100 kat hızlanma iki etmenden kaynaklanır: çok dosyalı bölümlendirme ve tek tek dosyaların biçimi:
 
--   Partitioning improves performance because this query uses `CheckoutYear == 2021` to filter the data, and arrow is smart enough to recognize that it only needs to read 1 of the 18 parquet files.
--   The parquet format improves performance by storing data in a binary format that can be read more directly into memory. The column-wise format and rich metadata means that arrow only needs to read the four columns actually used in the query (`CheckoutYear`, `MaterialType`, `CheckoutMonth`, and `Checkouts`).
+-   Bu sorgu verileri süzmek için `CheckoutYear == 2021` kullandığından ve arrow 18 Parquet dosyasından yalnızca birini okuması gerektiğini anlayacak kadar akıllı olduğundan bölümlendirme performansı artırır.
+-   Parquet biçimi, verileri belleğe daha doğrudan okunabilen ikili bir biçimde saklayarak performansı artırır. Sütun yönelimli biçim ve zengin üst veri sayesinde arrow yalnızca sorguda gerçekten kullanılan dört sütunu (`CheckoutYear`, `MaterialType`, `CheckoutMonth` ve `Checkouts`) okumak zorundadır.
 
-This massive difference in performance is why it pays off to convert large CSVs to parquet!
+Performanstaki bu büyük fark, büyük CSV dosyalarını Parquet'e dönüştürmenin neden karşılığını verdiğini gösterir!
 
-### Using duckdb with arrow
+### arrow ile duckdb kullanma
 
-There's one last advantage of parquet and arrow --- it's very easy to turn an arrow dataset into a DuckDB database (@sec-import-databases) by calling `arrow::to_duckdb()`:
+Parquet ve arrow'un son bir avantajı daha vardır: `arrow::to_duckdb()` çağırarak bir arrow veri kümesini DuckDB veritabanına (@sec-import-databases) dönüştürmek çok kolaydır:
 
 ```{r use-duckdb}
 seattle_pq |> 
@@ -280,20 +280,20 @@ seattle_pq |>
   collect()
 ```
 
-The neat thing about `to_duckdb()` is that the transfer doesn't involve any memory copying, and speaks to the goals of the arrow ecosystem: enabling seamless transitions from one computing environment to another.
+`to_duckdb()` fonksiyonunun güzel yanı, aktarımın bellekte herhangi bir kopyalama gerektirmemesidir. Bu özellik arrow ekosisteminin bir hesaplama ortamından diğerine kesintisiz geçiş sağlama hedefini yansıtır.
 
-### Exercises
+### Alıştırmalar
 
-1.  Figure out the most popular book each year.
-2.  Which author has the most books in the Seattle library system?
-3.  How has checkouts of books vs ebooks changed over the last 10 years?
+1.  Her yılın en popüler kitabını bulun.
+2.  Seattle kütüphane sisteminde en çok kitabı bulunan yazar hangisidir?
+3.  Basılı kitaplarla e-kitapların ödünç alınma sayıları son 10 yılda nasıl değişmiştir?
 
-## Summary
+## Özet
 
-In this chapter, you've been given a taste of the arrow package, which provides a dplyr backend for working with large on-disk datasets.
-It can work with CSV files, and it's much much faster if you convert your data to parquet.
-Parquet is a binary data format that's designed specifically for data analysis on modern computers.
-Far fewer tools can work with parquet files compared to CSV, but its partitioned, compressed, and columnar structure makes it much more efficient to analyze.
+Bu bölümde diskteki büyük veri kümeleriyle çalışmak için bir dplyr arka ucu sunan arrow paketini kısaca tanıdınız.
+arrow CSV dosyalarıyla çalışabilir; verilerinizi Parquet'e dönüştürürseniz çok daha hızlı çalışır.
+Parquet, modern bilgisayarlarda veri çözümleme için özel olarak tasarlanmış ikili bir veri biçimidir.
+CSV'ye kıyasla çok daha az araç Parquet dosyalarıyla çalışabilir; ancak bölümlendirilmiş, sıkıştırılmış ve sütun yönelimli yapısı çözümlemeyi çok daha verimli kılar.
 
-Next up you'll learn about your first non-rectangular data source, which you'll handle using tools provided by the tidyr package.
-We'll focus on data that comes from JSON files, but the general principles apply to tree-like data regardless of its source.
+Sırada ilk dikdörtgensel olmayan veri kaynağınızı öğreneceksiniz; bu verileri tidyr paketinin sağladığı araçlarla işleyeceksiniz.
+JSON dosyalarından gelen verilere odaklanacağız; ancak genel ilkeler kaynağı ne olursa olsun ağaç benzeri veriler için geçerlidir.

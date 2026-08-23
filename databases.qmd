@@ -1,28 +1,28 @@
-# Databases {#sec-import-databases}
+# Veritabanları {#sec-import-databases}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## Giriş
 
-A huge amount of data lives in databases, so it's essential that you know how to access it.
-Sometimes you can ask someone to download a snapshot into a `.csv` for you, but this gets painful quickly: every time you need to make a change you'll have to communicate with another human.
-You want to be able to reach into the database directly to get the data you need, when you need it.
+Çok büyük miktarda veri, veritabanlarında yaşar; dolayısıyla bunlara nasıl erişeceğinizi bilmeniz çok önemlidir.
+Bazen birinden verilerin anlık görüntüsünü sizin için bir `.csv` dosyasına indirmesini isteyebilirsiniz, ancak bu yaklaşım kısa sürede zahmetli hâle gelir: Her değişiklik gerektiğinde başka biriyle iletişim kurmanız gerekir.
+İhtiyaç duyduğunuz verileri, ihtiyaç duyduğunuz anda doğrudan veritabanından alabilmelisiniz.
 
-In this chapter, you'll first learn the basics of the DBI package: how to use it to connect to a database and then retrieve data with a SQL[^databases-1] query.
-**SQL**, short for **s**tructured **q**uery **l**anguage, is the lingua franca of databases, and is an important language for all data scientists to learn.
-That said, we're not going to start with SQL, but instead we'll teach you dbplyr, which can translate your dplyr code to the SQL.
-We'll use that as a way to teach you some of the most important features of SQL.
-You won't become a SQL master by the end of the chapter, but you will be able to identify the most important components and understand what they do.
+Bu bölümde önce DBI paketinin temellerini öğreneceksiniz: Bir veritabanına bağlanmak ve ardından bir SQL[^databases-1] sorgusuyla veri almak için DBI'ı nasıl kullanacağınızı göreceksiniz.
+**SQL**, İngilizce **s**tructured **q**uery **l**anguage (yapılandırılmış sorgu dili) ifadesinin kısaltmasıdır; veritabanlarının ortak dilidir ve tüm veri bilimcilerin öğrenmesi gereken önemli bir dildir.
+Bununla birlikte işe SQL ile başlamayacağız; önce dplyr kodunuzu SQL'e çevirebilen dbplyr'ı öğreteceğiz.
+Bu çeviriyi, SQL'in en önemli özelliklerinden bazılarını öğretmenin bir yolu olarak kullanacağız.
+Bölümün sonunda bir SQL uzmanı olmayacaksınız, ancak en önemli bileşenleri tanıyabilecek ve ne yaptıklarını anlayabileceksiniz.
 
-[^databases-1]: SQL is either pronounced "s"-"q"-"l" or "sequel".
+[^databases-1]: SQL İngilizcede harf harf “ess-cue-ell” ya da “sequel” biçiminde okunur.
 
-### Prerequisites
+### Ön koşullar
 
-In this chapter, we'll introduce DBI and dbplyr.
-DBI is a low-level interface that connects to databases and executes SQL; dbplyr is a high-level interface that translates your dplyr code to SQL queries then executes them with DBI.
+Bu bölümde DBI ve dbplyr paketlerini tanıtacağız.
+DBI, veritabanlarına bağlanıp SQL çalıştıran düşük düzeyli bir arayüzdür; dbplyr ise dplyr kodunuzu SQL sorgularına çevirip bunları DBI ile çalıştıran yüksek düzeyli bir arayüzdür.
 
 ```{r}
 #| label: setup
@@ -32,49 +32,48 @@ library(dbplyr)
 library(tidyverse)
 ```
 
-## Database basics
+## Veritabanı temelleri
 
-At the simplest level, you can think about a database as a collection of data frames, called **tables** in database terminology.
-Like a data frame, a database table is a collection of named columns, where every value in the column is the same type.
-There are three high level differences between data frames and database tables:
+En basit düzeyde bir veritabanını, veritabanı terminolojisinde **tablo** olarak adlandırılan veri çerçevelerinin bir koleksiyonu gibi düşünebilirsiniz.
+Bir veri çerçevesi gibi veritabanı tablosu da adlandırılmış sütunlardan oluşur ve her sütundaki tüm değerler aynı türdedir.
+Veri çerçeveleriyle veritabanı tabloları arasında üç temel fark vardır:
 
--   Database tables are stored on disk and can be arbitrarily large.
-    Data frames are stored in memory, and are fundamentally limited (although that limit is still plenty large for many problems).
+-   Veritabanı tabloları diskte saklanır ve istenildiği kadar büyük olabilir.
+    Veri çerçeveleri bellekte saklanır ve temelde sınırlı boyuttadır (yine de bu sınır pek çok problem için oldukça büyüktür).
 
--   Database tables almost always have indexes.
-    Much like the index of a book, a database index makes it possible to quickly find rows of interest without having to look at every single row.
-    Data frames and tibbles don't have indexes, but data.tables do, which is one of the reasons that they're so fast.
+-   Veritabanı tablolarının neredeyse her zaman dizinleri vardır.
+    Bir kitabın dizini gibi veritabanı dizini de her satıra tek tek bakmadan ilgilenilen satırları hızla bulmayı sağlar.
+    Veri çerçeveleri ve tibble'ların dizinleri yoktur; ancak data.table'ların vardır ve bu da çok hızlı olmalarının nedenlerinden biridir.
 
--   Most classical databases are optimized for rapidly collecting data, not analyzing existing data.
-    These databases are called **row-oriented** because the data is stored row-by-row, rather than column-by-column like R.
-    More recently, there's been much development of **column-oriented** databases that make analyzing the existing data much faster.
+-   Klasik veritabanlarının çoğu mevcut verileri çözümlemek için değil, verileri hızla toplamak için eniyilenmiştir.
+    Veriler R'daki gibi sütun sütun değil, satır satır saklandığından bu veritabanlarına **satır yönelimli** denir.
+    Son yıllarda mevcut verilerin çok daha hızlı çözümlenmesini sağlayan **sütun yönelimli** veritabanları konusunda önemli ilerlemeler kaydedilmiştir.
 
-Databases are run by database management systems (**DBMS**'s for short), which come in three basic forms:
+Veritabanları, üç temel biçimde karşımıza çıkan veritabanı yönetim sistemleri (kısaca **DBMS**) tarafından çalıştırılır:
 
--   **Client-server** DBMS's run on a powerful central server, which you connect to from your computer (the client). They are great for sharing data with multiple people in an organization. Popular client-server DBMS's include PostgreSQL, MariaDB, SQL Server, and Oracle.
--   **Cloud** DBMS's, like Snowflake, Amazon's RedShift, and Google's BigQuery, are similar to client server DBMS's, but they run in the cloud. This means that they can easily handle extremely large datasets and can automatically provide more compute resources as needed.
--   **In-process** DBMS's, like SQLite or duckdb, run entirely on your computer. They're great for working with large datasets where you're the primary user.
+-   **İstemci-sunucu** DBMS'leri, bilgisayarınızdan (istemciden) bağlandığınız güçlü bir merkezî sunucuda çalışır. Bir kuruluştaki birden fazla kişiyle veri paylaşmak için idealdir. Yaygın istemci-sunucu DBMS'leri arasında PostgreSQL, MariaDB, SQL Server ve Oracle bulunur.
+-   Snowflake, Amazon Redshift ve Google BigQuery gibi **bulut** DBMS'leri istemci-sunucu DBMS'lerine benzer, ancak bulutta çalışır. Bu sayede son derece büyük veri kümelerini kolayca işleyebilir ve gerektiğinde otomatik olarak daha fazla hesaplama kaynağı sağlayabilirler.
+-   SQLite veya duckdb gibi **işlem içi** DBMS'ler bütünüyle bilgisayarınızda çalışır. Başlıca kullanıcısının siz olduğunuz büyük veri kümeleriyle çalışmak için idealdir.
 
-## Connecting to a database
+## Bir veritabanına bağlanma
 
-To connect to the database from R, you'll use a pair of packages:
+R'dan bir veritabanına bağlanmak için iki paket kullanacaksınız:
 
--   You'll always use DBI (**d**ata**b**ase **i**nterface) because it provides a set of generic functions that connect to the database, upload data, run SQL queries, etc.
+-   Veritabanına bağlanma, veri yükleme ve SQL sorguları çalıştırma gibi işler için genel fonksiyonlar sağladığından DBI'ı (**d**ata**b**ase **i**nterface) her zaman kullanacaksınız.
 
--   You'll also use a package tailored for the DBMS you're connecting to.
-    This package translates the generic DBI commands into the specifics needed for a given DBMS.
-    There's usually one package for each DBMS, e.g.
-    RPostgres for PostgreSQL and RMariaDB for MySQL.
+-   Ayrıca bağlandığınız DBMS'ye özel bir paket kullanacaksınız.
+    Bu paket, genel DBI komutlarını ilgili DBMS'nin gerektirdiği özel komutlara çevirir.
+    Genellikle her DBMS için bir paket vardır; örneğin PostgreSQL için RPostgres, MySQL için RMariaDB.
 
-If you can't find a specific package for your DBMS, you can usually use the odbc package instead.
-This uses the ODBC protocol supported by many DBMS.
-odbc requires a little more setup because you'll also need to install an ODBC driver and tell the odbc package where to find it.
+DBMS'nize özel bir paket bulamazsanız çoğu zaman bunun yerine odbc paketini kullanabilirsiniz.
+Bu paket, birçok DBMS'nin desteklediği ODBC protokolünü kullanır.
+Bir ODBC sürücüsü kurmanız ve odbc paketine bu sürücünün konumunu bildirmeniz gerektiğinden odbc biraz daha fazla kurulum gerektirir.
 
-Concretely, you create a database connection using `DBI::dbConnect()`.
-The first argument selects the DBMS[^databases-2], then the second and subsequent arguments describe how to connect to it (i.e. where it lives and the credentials that you need to access it).
-The following code shows a couple of typical examples:
+Somut olarak, `DBI::dbConnect()` ile bir veritabanı bağlantısı oluşturursunuz.
+İlk argüman DBMS'yi seçer[^databases-2]; ikinci ve sonraki argümanlarsa ona nasıl bağlanılacağını (yani nerede bulunduğunu ve erişim için gereken kimlik bilgilerini) açıklar.
+Aşağıdaki kod birkaç tipik örnek gösterir:
 
-[^databases-2]: Typically, this is the only function you'll use from the client package, so we recommend using `::` to pull out that one function, rather than loading the complete package with `library()`.
+[^databases-2]: Genellikle istemci paketinden kullanacağınız tek fonksiyon budur. Bu nedenle paketin tamamını `library()` ile yüklemek yerine yalnızca bu fonksiyonu `::` ile çağırmanızı öneririz.
 
 ```{r}
 #| eval: false
@@ -89,54 +88,54 @@ con <- DBI::dbConnect(
 )
 ```
 
-The precise details of the connection vary a lot from DBMS to DBMS so unfortunately we can't cover all the details here.
-This means you'll need to do a little research on your own.
-Typically you can ask the other data scientists in your team or talk to your DBA (**d**ata**b**ase **a**dministrator).
-The initial setup will often take a little fiddling (and maybe some googling) to get it right, but you'll generally only need to do it once.
+Bağlantının ayrıntıları DBMS'den DBMS'ye büyük ölçüde değiştiği için ne yazık ki hepsini burada ele alamıyoruz.
+Bu nedenle kendi başınıza biraz araştırma yapmanız gerekecek.
+Genellikle ekibinizdeki diğer veri bilimcilere danışabilir veya DBA'nızla (**d**ata**b**ase **a**dministrator, veritabanı yöneticisi) konuşabilirsiniz.
+İlk kurulumu doğru yapmak çoğu zaman biraz uğraş (ve belki biraz Google araması) gerektirir, ancak bunu genellikle yalnızca bir kez yaparsınız.
 
-### In this book
+### Bu kitapta
 
-Setting up a client-server or cloud DBMS would be a pain for this book, so we'll instead use an in-process DBMS that lives entirely in an R package: duckdb.
-Thanks to the magic of DBI, the only difference between using duckdb and any other DBMS is how you'll connect to the database.
-This makes it great to teach with because you can easily run this code as well as easily take what you learn and apply it elsewhere.
+Bu kitap için bir istemci-sunucu ya da bulut DBMS'si kurmak zahmetli olacağından, bütünüyle bir R paketi içinde yaşayan işlem içi bir DBMS kullanacağız: duckdb.
+DBI'ın sağladığı soyutlama sayesinde duckdb ile başka bir DBMS'yi kullanmak arasındaki tek fark, veritabanına nasıl bağlandığınızdır.
+Bu özellik duckdb'yi öğretim için çok uygun kılar: Kodu kolayca çalıştırabilir, öğrendiklerinizi de başka ortamlara kolayca uygulayabilirsiniz.
 
-Connecting to duckdb is particularly simple because the defaults create a temporary database that is deleted when you quit R.
-That's great for learning because it guarantees that you'll start from a clean slate every time you restart R:
+Varsayılan ayarlar R'dan çıktığınızda silinen geçici bir veritabanı oluşturduğundan duckdb'ye bağlanmak özellikle kolaydır.
+R'ı her yeniden başlattığınızda temiz bir sayfadan başlamanızı garanti ettiği için bu, öğrenme açısından çok kullanışlıdır:
 
 ```{r}
 con <- DBI::dbConnect(duckdb::duckdb())
 ```
 
-duckdb is a high-performance database that's designed very much for the needs of a data scientist.
-We use it here because it's very easy to get started with, but it's also capable of handling gigabytes of data with great speed.
-If you want to use duckdb for a real data analysis project, you'll also need to supply the `dbdir` argument to make a persistent database and tell duckdb where to save it.
-Assuming you're using a project (@sec-workflow-scripts-projects), it's reasonable to store it in the `duckdb` directory of the current project:
+duckdb, veri bilimcilerin ihtiyaçları gözetilerek tasarlanmış yüksek performanslı bir veritabanıdır.
+Burada onu kullanıyoruz çünkü başlamak çok kolaydır; ayrıca gigabaytlarca veriyi büyük bir hızla işleyebilir.
+duckdb'yi gerçek bir veri analizi projesinde kullanmak istiyorsanız kalıcı bir veritabanı oluşturmak ve duckdb'ye bunu nereye kaydedeceğini söylemek için `dbdir` argümanını da sağlamalısınız.
+Bir proje kullandığınızı varsayarsak (@sec-workflow-scripts-projects), veritabanını geçerli projenin `duckdb` dizininde saklamak mantıklıdır:
 
 ```{r}
 #| eval: false
 con <- DBI::dbConnect(duckdb::duckdb(), dbdir = "duckdb")
 ```
 
-### Load some data {#sec-load-data}
+### Biraz veri yükleme {#sec-load-data}
 
-Since this is a new database, we need to start by adding some data.
-Here we'll add `mpg` and `diamonds` datasets from ggplot2 using `DBI::dbWriteTable()`.
-The simplest usage of `dbWriteTable()` needs three arguments: a database connection, the name of the table to create in the database, and a data frame of data.
+Bu yeni bir veritabanı olduğundan işe biraz veri ekleyerek başlamamız gerekir.
+Burada `DBI::dbWriteTable()` ile ggplot2 paketindeki `mpg` ve `diamonds` veri kümelerini ekleyeceğiz.
+`dbWriteTable()` fonksiyonunun en basit kullanımı üç argüman gerektirir: veritabanı bağlantısı, veritabanında oluşturulacak tablonun adı ve verileri içeren bir veri çerçevesi.
 
 ```{r}
 dbWriteTable(con, "mpg", ggplot2::mpg)
 dbWriteTable(con, "diamonds", ggplot2::diamonds)
 ```
 
-If you're using duckdb in a real project, we highly recommend learning about `duckdb_read_csv()` and `duckdb_register_arrow()`.
-These give you powerful and performant ways to quickly load data directly into duckdb, without having to first load it into R.
-We'll also show off a useful technique for loading multiple files into a database in @sec-save-database.
+duckdb'yi gerçek bir projede kullanıyorsanız `duckdb_read_csv()` ve `duckdb_register_arrow()` fonksiyonlarını öğrenmenizi önemle öneririz.
+Bu fonksiyonlar, verileri önce R'a yüklemek zorunda kalmadan doğrudan duckdb'ye hızlıca aktarmak için güçlü ve yüksek performanslı yöntemler sağlar.
+@sec-save-database bölümünde birden çok dosyayı veritabanına yüklemeye yarayan kullanışlı bir teknik de göstereceğiz.
 
-### DBI basics
+### DBI temelleri
 
-You can check that the data is loaded correctly by using a couple of other DBI functions: `dbListTables()` lists all tables in the database[^databases-3] and `dbReadTable()` retrieves the contents of a table.
+Verilerin doğru yüklendiğini birkaç başka DBI fonksiyonuyla denetleyebilirsiniz: `dbListTables()` veritabanındaki tüm tabloları listeler[^databases-3], `dbReadTable()` ise bir tablonun içeriğini getirir.
 
-[^databases-3]: At least, all the tables that you have permission to see.
+[^databases-3]: En azından görme izniniz olan tüm tabloları.
 
 ```{r}
 dbListTables(con)
@@ -146,9 +145,9 @@ con |>
   as_tibble()
 ```
 
-`dbReadTable()` returns a `data.frame` so we use `as_tibble()` to convert it into a tibble so that it prints nicely.
+`dbReadTable()` bir `data.frame` döndürür; düzgün yazdırılması için bunu `as_tibble()` ile tibble'a dönüştürürüz.
 
-If you already know SQL, you can use `dbGetQuery()` to get the results of running a query on the database:
+SQL'i zaten biliyorsanız veritabanında bir sorgu çalıştırmanın sonuçlarını almak için `dbGetQuery()` kullanabilirsiniz:
 
 ```{r}
 sql <- "
@@ -159,17 +158,17 @@ sql <- "
 as_tibble(dbGetQuery(con, sql))
 ```
 
-If you've never seen SQL before, don't worry!
-You'll learn more about it shortly.
-But if you read it carefully, you might guess that it selects five columns of the diamonds dataset and all the rows where `price` is greater than 15,000.
+SQL'i daha önce hiç görmediyseniz endişelenmeyin!
+Birazdan onun hakkında daha fazlasını öğreneceksiniz.
+Ancak sorguyu dikkatle okursanız `diamonds` veri kümesinden beş sütunu ve `price` değerinin 15.000'den büyük olduğu tüm satırları seçtiğini tahmin edebilirsiniz.
 
-## dbplyr basics
+## dbplyr temelleri
 
-Now that we've connected to a database and loaded up some data, we can start to learn about dbplyr.
-dbplyr is a dplyr **backend**, which means that you keep writing dplyr code but the backend executes it differently.
-In this, dbplyr translates to SQL; other backends include [dtplyr](https://dtplyr.tidyverse.org) which translates to [data.table](https://r-datatable.com), and [multidplyr](https://multidplyr.tidyverse.org) which executes your code on multiple cores.
+Bir veritabanına bağlanıp biraz veri yüklediğimize göre dbplyr'ı öğrenmeye başlayabiliriz.
+dbplyr bir dplyr **arka ucudur**; yani siz dplyr kodu yazmaya devam ederken arka uç bu kodu farklı biçimde çalıştırır.
+dbplyr kodu SQL'e çevirir; diğer arka uçlar arasında kodu [data.table](https://r-datatable.com)'a çeviren [dtplyr](https://dtplyr.tidyverse.org) ve kodunuzu birden çok çekirdekte çalıştıran [multidplyr](https://multidplyr.tidyverse.org) bulunur.
 
-To use dbplyr, you must first use `tbl()` to create an object that represents a database table:
+dbplyr'ı kullanmak için önce `tbl()` ile bir veritabanı tablosunu temsil eden nesne oluşturmalısınız:
 
 ```{r}
 diamonds_db <- tbl(con, "diamonds")
@@ -177,9 +176,9 @@ diamonds_db
 ```
 
 ::: callout-note
-There are two other common ways to interact with a database.
-First, many corporate databases are very large so you need some hierarchy to keep all the tables organized.
-In that case you might need to supply a schema, or a catalog and a schema, in order to pick the table you're interested in:
+Bir veritabanıyla etkileşim kurmanın yaygın iki yolu daha vardır.
+Birincisi, birçok kurumsal veritabanı çok büyüktür; bu nedenle tüm tabloları düzenli tutmak için bir hiyerarşiye ihtiyaç duyarsınız.
+Bu durumda ilgilendiğiniz tabloyu seçmek için bir şema ya da katalog ve şema sağlamanız gerekebilir:
 
 ```{r}
 #| eval: false
@@ -187,7 +186,7 @@ diamonds_db <- tbl(con, in_schema("sales", "diamonds"))
 diamonds_db <- tbl(con, in_catalog("north_america", "sales", "diamonds"))
 ```
 
-Other times you might want to use your own SQL query as a starting point:
+Bazen de başlangıç noktası olarak kendi SQL sorgunuzu kullanmak isteyebilirsiniz:
 
 ```{r}
 #| eval: false
@@ -195,8 +194,8 @@ diamonds_db <- tbl(con, sql("SELECT * FROM diamonds"))
 ```
 :::
 
-This object is **lazy**; when you use dplyr verbs on it, dplyr doesn't do any work: it just records the sequence of operations that you want to perform and only performs them when needed.
-For example, take the following pipeline:
+Bu nesne **tembeldir**; üzerinde dplyr fiillerini kullandığınızda dplyr herhangi bir işlem yapmaz: Yalnızca gerçekleştirmek istediğiniz işlemlerin sırasını kaydeder ve bunları gerektiğinde çalıştırır.
+Örneğin aşağıdaki işlem hattını ele alın:
 
 ```{r}
 big_diamonds_db <- diamonds_db |> 
@@ -206,20 +205,20 @@ big_diamonds_db <- diamonds_db |>
 big_diamonds_db
 ```
 
-You can tell this object represents a database query because it prints the DBMS name at the top, and while it tells you the number of columns, it typically doesn't know the number of rows.
-This is because finding the total number of rows usually requires executing the complete query, something we're trying to avoid.
+Üstte DBMS adını yazdırdığından ve sütun sayısını belirtmesine karşın genellikle satır sayısını bilmediğinden, bu nesnenin bir veritabanı sorgusunu temsil ettiğini anlayabilirsiniz.
+Bunun nedeni, toplam satır sayısını bulmanın genellikle tüm sorguyu çalıştırmayı gerektirmesidir; biz de tam olarak bundan kaçınmaya çalışıyoruz.
 
-You can see the SQL code generated by the dplyr function `show_query()`.
-If you know dplyr, this is a great way to learn SQL!
-Write some dplyr code, get dbplyr to translate it to SQL, and then try to figure out how the two languages match up.
+dplyr'ın `show_query()` fonksiyonuyla üretilen SQL kodunu görebilirsiniz.
+dplyr'ı biliyorsanız bu, SQL öğrenmenin harika bir yoludur!
+Biraz dplyr kodu yazın, dbplyr'ın bunu SQL'e çevirmesini sağlayın ve ardından iki dilin nasıl eşleştiğini anlamaya çalışın.
 
 ```{r}
 big_diamonds_db |>
   show_query()
 ```
 
-To get all the data back into R, you call `collect()`.
-Behind the scenes, this generates the SQL, calls `dbGetQuery()` to get the data, then turns the result into a tibble:
+Tüm verileri yeniden R'a almak için `collect()` fonksiyonunu çağırırsınız.
+Bu işlem arka planda SQL'i üretir, verileri almak için `dbGetQuery()` fonksiyonunu çağırır ve ardından sonucu bir tibble'a dönüştürür:
 
 ```{r}
 big_diamonds <- big_diamonds_db |> 
@@ -227,17 +226,17 @@ big_diamonds <- big_diamonds_db |>
 big_diamonds
 ```
 
-Typically, you'll use dbplyr to select the data you want from the database, performing basic filtering and aggregation using the translations described below.
-Then, once you're ready to analyse the data with functions that are unique to R, you'll `collect()` the data to get an in-memory tibble, and continue your work with pure R code.
+Genellikle veritabanından istediğiniz verileri seçmek ve aşağıda açıklanan çevirilerle temel süzme ve toplulaştırma işlemlerini yapmak için dbplyr'ı kullanırsınız.
+Ardından verileri R'a özgü fonksiyonlarla çözümlemeye hazır olduğunuzda, bellekte bir tibble elde etmek için `collect()` çağırır ve çalışmanıza doğrudan R koduyla devam edersiniz.
 
 ## SQL
 
-The rest of the chapter will teach you a little SQL through the lens of dbplyr.
-It's a rather non-traditional introduction to SQL but we hope it will get you quickly up to speed with the basics.
-Luckily, if you understand dplyr you're in a great place to quickly pick up SQL because so many of the concepts are the same.
+Bu bölümün geri kalanı, dbplyr açısından bakarak size biraz SQL öğretecek.
+Bu, SQL'e oldukça alışılmadık bir giriş olsa da temel bilgileri hızla edinmenizi sağlayacağını umuyoruz.
+Neyse ki dplyr'ı anlıyorsanız SQL'i çabucak öğrenmek için iyi bir konumdasınız; çünkü iki dildeki kavramların pek çoğu aynıdır.
 
-We'll explore the relationship between dplyr and SQL using a couple of old friends from the nycflights13 package: `flights` and `planes`.
-These datasets are easy to get into our learning database because dbplyr comes with a function that copies the tables from nycflights13 to our database:
+nycflights13 paketinden iki eski dostu, `flights` ve `planes` veri kümelerini kullanarak dplyr ile SQL arasındaki ilişkiyi inceleyeceğiz.
+dbplyr, nycflights13 tablolarını veritabanımıza kopyalayan bir fonksiyonla geldiği için bu veri kümelerini eğitim veritabanımıza aktarmak kolaydır:
 
 ```{r}
 dbplyr::copy_nycflights13(con)
@@ -250,29 +249,28 @@ planes <- tbl(con, "planes")
 options(dplyr.strict_sql = TRUE)
 ```
 
-### SQL basics
+### SQL temelleri
 
-The top-level components of SQL are called **statements**.
-Common statements include `CREATE` for defining new tables, `INSERT` for adding data, and `SELECT` for retrieving data.
-We will focus on `SELECT` statements, also called **queries**, because they are almost exclusively what you'll use as a data scientist.
+SQL'in en üst düzey bileşenlerine **deyim** denir.
+Yaygın deyimler arasında yeni tablolar tanımlamak için `CREATE`, veri eklemek için `INSERT` ve veri almak için `SELECT` bulunur.
+Bir veri bilimci olarak neredeyse yalnızca bunları kullanacağınız için **sorgu** olarak da adlandırılan `SELECT` deyimlerine odaklanacağız.
 
-A query is made up of **clauses**.
-There are five important clauses: `SELECT`, `FROM`, `WHERE`, `ORDER BY`, and `GROUP BY`. Every query must have the `SELECT`[^databases-4] and `FROM`[^databases-5] clauses and the simplest query is `SELECT * FROM table`, which selects all columns from the specified table
-. This is what dbplyr generates for an unadulterated table
-:
+Bir sorgu **tümceciklerden** oluşur.
+Beş önemli tümcecik vardır: `SELECT`, `FROM`, `WHERE`, `ORDER BY` ve `GROUP BY`. Her sorguda `SELECT`[^databases-4] ve `FROM`[^databases-5] tümcecikleri bulunmalıdır. En basit sorgu, belirtilen tablodaki tüm sütunları seçen `SELECT * FROM table` sorgusudur.
+dbplyr, üzerinde işlem yapılmamış bir tablo için tam olarak bunu üretir:
 
-[^databases-4]: Confusingly, depending on the context, `SELECT` is either a statement or a clause.
-    To avoid this confusion, we'll generally use `SELECT` query instead of `SELECT` statement.
+[^databases-4]: Kafa karıştırıcı biçimde, bağlama göre `SELECT` bir deyim ya da tümcecik olabilir.
+    Bu karışıklığı önlemek için genellikle `SELECT` deyimi yerine `SELECT` sorgusu ifadesini kullanacağız.
 
-[^databases-5]: Ok, technically, only the `SELECT` is required, since you can write queries like `SELECT 1+1` to perform basic calculations.
-    But if you want to work with data (as you always do!) you'll also need a `FROM` clause.
+[^databases-5]: Teknik olarak yalnızca `SELECT` zorunludur; çünkü temel hesaplamalar yapmak için `SELECT 1+1` gibi sorgular yazabilirsiniz.
+    Ancak verilerle çalışmak istiyorsanız (ki her zaman istersiniz!) bir `FROM` tümceciğine de ihtiyacınız vardır.
 
 ```{r}
 flights |> show_query()
 planes |> show_query()
 ```
 
-`WHERE` and `ORDER BY` control which rows are included and how they are ordered:
+`WHERE` ve `ORDER BY`, hangi satırların dahil edileceğini ve nasıl sıralanacağını denetler:
 
 ```{r}
 flights |> 
@@ -281,7 +279,7 @@ flights |>
   show_query()
 ```
 
-`GROUP BY` converts the query to a summary, causing aggregation to happen:
+`GROUP BY`, sorguyu bir özete dönüştürerek toplulaştırma yapılmasını sağlar:
 
 ```{r}
 flights |> 
@@ -290,25 +288,25 @@ flights |>
   show_query()
 ```
 
-There are two important differences between dplyr verbs and SELECT clauses:
+dplyr fiilleriyle SELECT tümcecikleri arasında iki önemli fark vardır:
 
--   In SQL, case doesn't matter: you can write `select`, `SELECT`, or even `SeLeCt`. In this book we'll stick with the common convention of writing SQL keywords in uppercase to distinguish them from table or variables names.
--   In SQL, order matters: you must always write the clauses in the order `SELECT`, `FROM`, `WHERE`, `GROUP BY`, `ORDER BY`. Confusingly, this order doesn't match how the clauses are actually evaluated which is first `FROM`, then `WHERE`, `GROUP BY`, `SELECT`, and `ORDER BY`.
+-   SQL'de büyük-küçük harf fark etmez: `select`, `SELECT`, hatta `SeLeCt` yazabilirsiniz. Bu kitapta SQL anahtar sözcüklerini tablo veya değişken adlarından ayırmak için büyük harfle yazma geleneğine uyacağız.
+-   SQL'de sıra önemlidir: Tümcecikleri her zaman `SELECT`, `FROM`, `WHERE`, `GROUP BY`, `ORDER BY` sırasıyla yazmalısınız. Kafa karıştırıcı biçimde bu sıra, tümceciklerin gerçekte değerlendirilme sırasıyla aynı değildir; değerlendirme sırası `FROM`, `WHERE`, `GROUP BY`, `SELECT` ve `ORDER BY` biçimindedir.
 
-The following sections explore each clause in more detail.
+Aşağıdaki bölümlerde her tümceciği daha ayrıntılı inceleyeceğiz.
 
 ::: callout-note
-Note that while SQL is a standard, it is extremely complex and no database follows it exactly.
-While the main components that we'll focus on in this book are very similar between DBMS's, there are many minor variations.
-Fortunately, dbplyr is designed to handle this problem and generates different translations for different databases.
-It's not perfect, but it's continually improving, and if you hit a problem you can file an issue [on GitHub](https://github.com/tidyverse/dbplyr/issues/) to help us do better.
+SQL bir standart olsa da son derece karmaşıktır ve hiçbir veritabanı bu standardı eksiksiz izlemez.
+Bu kitapta odaklanacağımız temel bileşenler DBMS'ler arasında oldukça benzer olsa da birçok küçük farklılık vardır.
+Neyse ki dbplyr bu sorunu ele alacak biçimde tasarlanmıştır ve farklı veritabanları için farklı çeviriler üretir.
+Kusursuz değildir ancak sürekli geliştirilmektedir; bir sorunla karşılaşırsanız daha iyi hâle gelmesine yardımcı olmak için [GitHub'da](https://github.com/tidyverse/dbplyr/issues/) bir konu açabilirsiniz.
 :::
 
 ### SELECT
 
-The `SELECT` clause is the workhorse of queries and performs the same job as `select()`, `mutate()`, `rename()`, `relocate()`, and, as you'll learn in the next section, `summarize()`.
+`SELECT` tümceciği sorguların yükünü taşıyan temel bileşendir; `select()`, `mutate()`, `rename()`, `relocate()` ve bir sonraki bölümde öğreneceğiniz üzere `summarize()` ile aynı işi yapar.
 
-`select()`, `rename()`, and `relocate()` have very direct translations to `SELECT` as they just affect where a column appears (if at all) along with its name:
+`select()`, `rename()` ve `relocate()` yalnızca bir sütunun görünüp görünmediğini, görünüyorsa nerede ve hangi adla göründüğünü etkilediğinden `SELECT` karşılıkları oldukça doğrudandır:
 
 ```{r}
 planes |> 
@@ -326,22 +324,22 @@ planes |>
   show_query()
 ```
 
-This example also shows you how SQL does renaming.
-In SQL terminology renaming is called **aliasing** and is done with `AS`.
-Note that unlike `mutate()`, the old name is on the left and the new name is on the right.
+Bu örnek SQL'de yeniden adlandırmanın nasıl yapıldığını da gösterir.
+SQL terminolojisinde yeniden adlandırmaya **takma ad verme** denir ve `AS` ile yapılır.
+`mutate()` fonksiyonundan farklı olarak eski adın solda, yeni adın sağda olduğuna dikkat edin.
 
 ::: callout-note
-In the examples above note that `"year"` and `"type"` are wrapped in double quotes.
-That's because these are **reserved words** in duckdb, so dbplyr quotes them to avoid any potential confusion between column/table names and SQL operators.
+Yukarıdaki örneklerde `"year"` ve `"type"` ifadelerinin çift tırnak içine alındığına dikkat edin.
+Bunun nedeni bunların duckdb'de **ayrılmış sözcükler** olmasıdır; dbplyr sütun/tablo adlarıyla SQL işleçleri arasında oluşabilecek karışıklığı önlemek için bunları tırnak içine alır.
 
-When working with other databases you're likely to see every variable name quoted because only a handful of client packages, like duckdb, know what all the reserved words are, so they quote everything to be safe.
+Başka veritabanlarıyla çalışırken tüm değişken adlarının tırnak içine alındığını görebilirsiniz. Çünkü duckdb gibi yalnızca birkaç istemci paketi ayrılmış sözcüklerin tümünü bilir; diğerleri güvenli olmak için her şeyi tırnak içine alır.
 
 ``` sql
 SELECT "tailnum", "type", "manufacturer", "model", "year"
 FROM "planes"
 ```
 
-Some other database systems use backticks instead of quotes:
+Bazı veritabanı sistemleri çift tırnak yerine ters tırnak kullanır:
 
 ``` sql
 SELECT `tailnum`, `type`, `manufacturer`, `model`, `year`
@@ -349,7 +347,7 @@ FROM `planes`
 ```
 :::
 
-The translations for `mutate()` are similarly straightforward: each variable becomes a new expression in `SELECT`:
+`mutate()` çevirileri de benzer biçimde doğrudandır: Her değişken `SELECT` içinde yeni bir ifadeye dönüşür:
 
 ```{r}
 flights |> 
@@ -359,19 +357,19 @@ flights |>
   show_query()
 ```
 
-We'll come back to the translation of individual components (like `/`) in @sec-sql-expressions.
+Tek tek bileşenlerin (`/` gibi) çevirisine @sec-sql-expressions bölümünde geri döneceğiz.
 
 ### FROM
 
-The `FROM` clause defines the data source.
-It's going to be rather uninteresting for a little while, because we're just using single tables.
-You'll see more complex examples once we hit the join functions.
+`FROM` tümceciği veri kaynağını tanımlar.
+Şimdilik yalnızca tek tablolar kullandığımızdan bir süre pek ilginç olmayacak.
+Birleştirme fonksiyonlarına geldiğimizde daha karmaşık örnekler göreceksiniz.
 
 ### GROUP BY
 
-`group_by()` is translated to the `GROUP BY`[^databases-6] clause and `summarize()` is translated to the `SELECT` clause:
+`group_by()` fonksiyonu `GROUP BY`[^databases-6] tümceciğine, `summarize()` ise `SELECT` tümceciğine çevrilir:
 
-[^databases-6]: This is no coincidence: the dplyr function name was inspired by the SQL clause.
+[^databases-6]: Bu bir rastlantı değildir: dplyr fonksiyonunun adı SQL tümceciğinden esinlenmiştir.
 
 ```{r}
 diamonds_db |> 
@@ -383,11 +381,11 @@ diamonds_db |>
   show_query()
 ```
 
-We'll come back to what's happening with the translation of `n()` and `mean()` in @sec-sql-expressions.
+`n()` ve `mean()` fonksiyonlarının çevirisinde neler olduğuna @sec-sql-expressions bölümünde geri döneceğiz.
 
 ### WHERE
 
-`filter()` is translated to the `WHERE` clause:
+`filter()` fonksiyonu `WHERE` tümceciğine çevrilir:
 
 ```{r}
 flights |> 
@@ -399,13 +397,13 @@ flights |>
   show_query()
 ```
 
-There are a few important details to note here:
+Burada dikkat edilmesi gereken birkaç önemli ayrıntı vardır:
 
--   `|` becomes `OR` and `&` becomes `AND`.
--   SQL uses `=` for comparison, not `==`. SQL doesn't have assignment, so there's no potential for confusion there.
--   SQL uses only `''` for strings, not `""`. In SQL, `""` is used to identify variables, like R's ``` `` ```.
+-   `|`, `OR`; `&` ise `AND` olur.
+-   SQL karşılaştırma için `==` değil `=` kullanır. SQL'de atama olmadığından burada karışıklık olasılığı yoktur.
+-   SQL karakter dizileri için yalnızca `''` kullanır; `""` kullanmaz. SQL'de `""`, R'daki ``` `` ``` gibi değişkenleri tanımlamak için kullanılır.
 
-Another useful SQL operator is `IN`, which is very close to R's `%in%`:
+Bir başka kullanışlı SQL işleci, R'daki `%in%` işlecine çok benzeyen `IN`'dir:
 
 ```{r}
 flights |> 
@@ -413,10 +411,10 @@ flights |>
   show_query()
 ```
 
-SQL uses `NULL` instead of `NA`.
-`NULL`s behave similarly to `NA`s.
-The main difference is that while they're "infectious" in comparisons and arithmetic, they are silently dropped when summarizing.
-dbplyr will remind you about this behavior the first time you hit it:
+SQL, `NA` yerine `NULL` kullanır.
+`NULL` değerleri `NA` değerlerine benzer davranır.
+Temel fark, karşılaştırma ve aritmetik işlemlerinde “bulaşıcı” olmalarına karşın özetleme sırasında sessizce çıkarılmalarıdır.
+dbplyr bu davranışla ilk karşılaştığınızda size onu hatırlatır:
 
 ```{r}
 flights |> 
@@ -424,9 +422,9 @@ flights |>
   summarize(delay = mean(arr_delay))
 ```
 
-If you want to learn more about how `NULL`s work, you might enjoy "[The Three-Valued Logic of SQL](https://modern-sql.com/concept/three-valued-logic)" by Markus Winand.
+`NULL` değerlerinin nasıl çalıştığı hakkında daha fazla bilgi edinmek isterseniz Markus Winand'ın “[The Three-Valued Logic of SQL](https://modern-sql.com/concept/three-valued-logic)” yazısını okuyabilirsiniz.
 
-In general, you can work with `NULL`s using the functions you'd use for `NA`s in R:
+Genel olarak `NULL` değerleriyle, R'da `NA` değerleri için kullandığınız fonksiyonlarla çalışabilirsiniz:
 
 ```{r}
 flights |> 
@@ -434,15 +432,15 @@ flights |>
   show_query()
 ```
 
-This SQL query illustrates one of the drawbacks of dbplyr: while the SQL is correct, it isn't as simple as you might write by hand.
-In this case, you could drop the parentheses and use a special operator that's easier to read:
+Bu SQL sorgusu dbplyr'ın dezavantajlarından birini gösterir: Üretilen SQL doğru olsa da elle yazacağınız kadar basit değildir.
+Bu durumda parantezleri kaldırıp okunması daha kolay özel bir işleç kullanabilirsiniz:
 
 ``` sql
 WHERE "dep_delay" IS NOT NULL
 ```
 
-Note that if you `filter()` a variable that you created using a summarize, dbplyr will generate a `HAVING` clause, rather than a `WHERE` clause.
-This is a one of the idiosyncrasies of SQL: `WHERE` is evaluated before `SELECT` and `GROUP BY`, so SQL needs another clause that's evaluated afterwards.
+Özetleme sırasında oluşturduğunuz bir değişkeni `filter()` ile süzerseniz dbplyr'ın `WHERE` yerine `HAVING` tümceciği üreteceğine dikkat edin.
+Bu, SQL'in kendine özgü özelliklerinden biridir: `WHERE`, `SELECT` ve `GROUP BY` öncesinde değerlendirilir; dolayısıyla SQL daha sonra değerlendirilen başka bir tümceciğe ihtiyaç duyar.
 
 ```{r}
 diamonds_db |> 
@@ -454,7 +452,7 @@ diamonds_db |>
 
 ### ORDER BY
 
-Ordering rows involves a straightforward translation from `arrange()` to the `ORDER BY` clause:
+Satırları sıralamak, `arrange()` fonksiyonundan `ORDER BY` tümceciğine doğrudan bir çeviri gerektirir:
 
 ```{r}
 flights |> 
@@ -462,16 +460,16 @@ flights |>
   show_query()
 ```
 
-Notice how `desc()` is translated to `DESC`: this is one of the many dplyr functions whose name was directly inspired by SQL.
+`desc()` fonksiyonunun `DESC` olarak çevrildiğine dikkat edin: Bu, adı doğrudan SQL'den esinlenen birçok dplyr fonksiyonundan biridir.
 
-### Subqueries
+### Alt sorgular
 
-Sometimes it's not possible to translate a dplyr pipeline into a single `SELECT` statement and you need to use a subquery.
-A **subquery** is just a query used as a data source in the `FROM` clause, instead of the usual table.
+Bazen bir dplyr işlem hattını tek bir `SELECT` deyimine çevirmek mümkün olmaz ve bir alt sorgu kullanmanız gerekir.
+**Alt sorgu**, `FROM` tümceciğinde olağan tablo yerine veri kaynağı olarak kullanılan bir sorgudur.
 
-dbplyr typically uses subqueries to work around limitations of SQL.
-For example, expressions in the `SELECT` clause can't refer to columns that were just created.
-That means that the following (silly) dplyr pipeline needs to happen in two steps: the first (inner) query computes `year1` and then the second (outer) query can compute `year2`.
+dbplyr genellikle SQL'in sınırlamalarını aşmak için alt sorgular kullanır.
+Örneğin `SELECT` tümceciğindeki ifadeler yeni oluşturulmuş sütunlara başvuramaz.
+Bu nedenle aşağıdaki (yapay) dplyr işlem hattının iki adımda gerçekleşmesi gerekir: İlk (iç) sorgu `year1` değerini hesaplar, ardından ikinci (dış) sorgu `year2` değerini hesaplayabilir.
 
 ```{r}
 flights |> 
@@ -482,8 +480,8 @@ flights |>
   show_query()
 ```
 
-You'll also see this if you attempted to `filter()` a variable that you just created.
-Remember, even though `WHERE` is written after `SELECT`, it's evaluated before it, so we need a subquery in this (silly) example:
+Yeni oluşturduğunuz bir değişkeni `filter()` ile süzmeye çalışırsanız bunu yine görürsünüz.
+Unutmayın: `WHERE`, `SELECT` sonrasında yazılsa da ondan önce değerlendirilir; dolayısıyla bu (yapay) örnekte bir alt sorguya ihtiyacımız vardır:
 
 ```{r}
 flights |> 
@@ -492,13 +490,13 @@ flights |>
   show_query()
 ```
 
-Sometimes dbplyr will create a subquery where it's not needed because it doesn't yet know how to optimize that translation.
-As dbplyr improves over time, these cases will get rarer but will probably never go away.
+Bazen dbplyr çeviriyi nasıl eniyileyeceğini henüz bilmediği için gerekmediği hâlde bir alt sorgu oluşturur.
+dbplyr zamanla geliştikçe bu durumlar seyrekleşecek, ancak muhtemelen hiçbir zaman bütünüyle ortadan kalkmayacaktır.
 
-### Joins
+### Birleştirmeler
 
-If you're familiar with dplyr's joins, SQL joins are very similar.
-Here's a simple example:
+dplyr birleştirmelerine aşinaysanız SQL birleştirmeleri de oldukça benzerdir.
+İşte basit bir örnek:
 
 ```{r}
 flights |> 
@@ -506,9 +504,9 @@ flights |>
   show_query()
 ```
 
-The main thing to notice here is the syntax: SQL joins use sub-clauses of the `FROM` clause to bring in additional tables, using `ON` to define how the tables are related.
+Burada dikkat edilmesi gereken temel nokta sözdizimidir: SQL birleştirmeleri ek tabloları dahil etmek için `FROM` tümceciğinin alt tümceciklerini, tabloların nasıl ilişkili olduğunu tanımlamak içinse `ON` kullanır.
 
-dplyr's names for these functions are so closely connected to SQL that you can easily guess the equivalent SQL for `inner_join()`, `right_join()`, and `full_join()`:
+dplyr'daki bu fonksiyonların adları SQL ile öylesine yakından ilişkilidir ki `inner_join()`, `right_join()` ve `full_join()` fonksiyonlarının SQL karşılıklarını kolayca tahmin edebilirsiniz:
 
 ``` sql
 SELECT flights.*, "type", manufacturer, model, engines, seats, speed
@@ -524,22 +522,22 @@ FROM flights
 FULL JOIN planes ON (flights.tailnum = planes.tailnum)
 ```
 
-You're likely to need many joins when working with data from a database.
-That's because database tables are often stored in a highly normalized form, where each "fact" is stored in a single place and to keep a complete dataset for analysis you need to navigate a complex network of tables connected by primary and foreign keys.
-If you hit this scenario, the [dm package](https://cynkra.github.io/dm/), by Tobias Schieferdecker, Kirill Müller, and Darko Bergant, is a life saver.
-It can automatically determine the connections between tables using the constraints that DBAs often supply, visualize the connections so you can see what's going on, and generate the joins you need to connect one table to another.
+Bir veritabanındaki verilerle çalışırken çok sayıda birleştirmeye ihtiyaç duymanız olasıdır.
+Bunun nedeni, veritabanı tablolarının çoğu zaman yüksek ölçüde normalleştirilmiş biçimde saklanmasıdır: Her “olgu” tek bir yerde tutulur ve çözümleme için eksiksiz bir veri kümesi oluşturmak üzere birincil ve yabancı anahtarlarla bağlanmış karmaşık bir tablo ağında ilerlemeniz gerekir.
+Bu durumla karşılaşırsanız Tobias Schieferdecker, Kirill Müller ve Darko Bergant'ın [dm paketi](https://cynkra.github.io/dm/) hayat kurtarıcıdır.
+Paket, DBA'ların sıklıkla sağladığı kısıtlamaları kullanarak tablolar arasındaki bağlantıları otomatik olarak belirleyebilir, neler olduğunu görebilmeniz için bağlantıları görselleştirebilir ve bir tabloyu diğerine bağlamak için gereken birleştirmeleri oluşturabilir.
 
-### Other verbs
+### Diğer fiiller
 
-dbplyr also translates other verbs like `distinct()`, `slice_*()`, and `intersect()`, and a growing selection of tidyr functions like `pivot_longer()` and `pivot_wider()`.
-The easiest way to see the full set of what's currently available is to visit the dbplyr website: <https://dbplyr.tidyverse.org/reference/>.
+dbplyr ayrıca `distinct()`, `slice_*()` ve `intersect()` gibi başka fiillerin yanı sıra `pivot_longer()` ve `pivot_wider()` gibi giderek artan sayıda tidyr fonksiyonunu da çevirir.
+Şu anda kullanılabilenlerin tam listesini görmenin en kolay yolu dbplyr web sitesini ziyaret etmektir: <https://dbplyr.tidyverse.org/reference/>.
 
-### Exercises
+### Alıştırmalar
 
-1.  What is `distinct()` translated to?
-    How about `head()`?
+1.  `distinct()` neye çevrilir?
+    Peki ya `head()`?
 
-2.  Explain what each of the following SQL queries do and try recreate them using dbplyr.
+2.  Aşağıdaki SQL sorgularının her birinin ne yaptığını açıklayın ve bunları dbplyr ile yeniden oluşturmaya çalışın.
 
     ``` sql
     SELECT * 
@@ -550,13 +548,13 @@ The easiest way to see the full set of what's currently available is to visit th
     FROM flights
     ```
 
-## Function translations {#sec-sql-expressions}
+## Fonksiyon çevirileri {#sec-sql-expressions}
 
-So far we've focused on the big picture of how dplyr verbs are translated to the clauses of a query.
-Now we're going to zoom in a little and talk about the translation of the R functions that work with individual columns, e.g., what happens when you use `mean(x)` in a `summarize()`?
+Şimdiye kadar dplyr fiillerinin bir sorgunun tümceciklerine nasıl çevrildiğinin genel görünümüne odaklandık.
+Şimdi biraz daha yakından bakacak ve tek tek sütunlarla çalışan R fonksiyonlarının çevirisini ele alacağız. Örneğin bir `summarize()` içinde `mean(x)` kullandığınızda ne olur?
 
-To help see what's going on, we'll use a couple of little helper functions that run a `summarize()` or `mutate()` and show the generated SQL.
-That will make it a little easier to explore a few variations and see how summaries and transformations can differ.
+Neler olduğunu görmeyi kolaylaştırmak için `summarize()` ya da `mutate()` çalıştırıp üretilen SQL'i gösteren birkaç küçük yardımcı fonksiyon kullanacağız.
+Bu, bazı çeşitleri incelemeyi ve özetlerle dönüşümlerin nasıl farklılaşabildiğini görmeyi kolaylaştıracak.
 
 ```{r}
 summarize_query <- function(df, ...) {
@@ -571,9 +569,9 @@ mutate_query <- function(df, ...) {
 }
 ```
 
-Let's dive in with some summaries!
-Looking at the code below you'll notice that some summary functions, like `mean()`, have a relatively simple translation while others, like `median()`, are much more complex.
-The complexity is typically higher for operations that are common in statistics but less common in databases.
+Bazı özetlerle başlayalım!
+Aşağıdaki koda baktığınızda `mean()` gibi bazı özet fonksiyonlarının görece basit, `median()` gibi diğerlerininse çok daha karmaşık çevirilere sahip olduğunu fark edeceksiniz.
+Karmaşıklık genellikle istatistikte yaygın, ancak veritabanlarında daha az kullanılan işlemlerde daha yüksektir.
 
 ```{r}
 flights |> 
@@ -584,8 +582,8 @@ flights |>
   )
 ```
 
-The translation of summary functions becomes more complicated when you use them inside a `mutate()` because they have to turn into so-called **window** functions.
-In SQL, you turn an ordinary aggregation function into a window function by adding `OVER` after it:
+Özet fonksiyonlarını `mutate()` içinde kullandığınızda çevirileri daha karmaşık hâle gelir; çünkü **pencere** fonksiyonu denen fonksiyonlara dönüşmeleri gerekir.
+SQL'de sıradan bir toplulaştırma fonksiyonunun sonuna `OVER` ekleyerek onu pencere fonksiyonuna dönüştürürsünüz:
 
 ```{r}
 flights |> 
@@ -595,9 +593,9 @@ flights |>
   )
 ```
 
-In SQL, the `GROUP BY` clause is used exclusively for summaries so here you can see that the grouping has moved from the `GROUP BY` clause to `OVER`.
+SQL'de `GROUP BY` tümceciği yalnızca özetler için kullanılır; dolayısıyla burada gruplamanın `GROUP BY` tümceciğinden `OVER` içine taşındığını görebilirsiniz.
 
-Window functions include all functions that look forward or backwards, like `lead()` and `lag()` which look at the "previous" or "next" value respectively:
+Pencere fonksiyonları ileriye veya geriye bakan tüm fonksiyonları kapsar; örneğin `lead()` ve `lag()` sırasıyla “sonraki” ve “önceki” değere bakar:
 
 ```{r}
 flights |> 
@@ -609,31 +607,31 @@ flights |>
   )
 ```
 
-Here it's important to `arrange()` the data, because SQL tables have no intrinsic order.
-In fact, if you don't use `arrange()` you might get the rows back in a different order every time!
-Notice for window functions, the ordering information is repeated: the `ORDER BY` clause of the main query doesn't automatically apply to window functions.
+SQL tablolarının kendiliğinden bir sırası olmadığından burada verileri `arrange()` ile sıralamak önemlidir.
+Hatta `arrange()` kullanmazsanız satırları her seferinde farklı bir sırada geri alabilirsiniz!
+Pencere fonksiyonlarında sıralama bilgisinin yinelendiğine dikkat edin: Ana sorgunun `ORDER BY` tümceciği pencere fonksiyonlarına otomatik olarak uygulanmaz.
 
-Another important SQL function is `CASE WHEN`. It's used as the translation of `if_else()` and `case_when()`, the dplyr function that it directly inspired.
-Here are a couple of simple examples:
+Bir başka önemli SQL fonksiyonu `CASE WHEN`'dir. `if_else()` fonksiyonunun ve doğrudan kendisinden esinlenen dplyr fonksiyonu `case_when()`'in çevirisi olarak kullanılır.
+İşte birkaç basit örnek:
 
 ```{r}
 flights |> 
   mutate_query(
-    description = if_else(arr_delay > 0, "delayed", "on-time")
+    description = if_else(arr_delay > 0, "gecikmeli", "zamanında")
   )
 flights |> 
   mutate_query(
     description = 
       case_when(
-        arr_delay < -5 ~ "early", 
-        arr_delay < 5 ~ "on-time",
-        arr_delay >= 5 ~ "late"
+        arr_delay < -5 ~ "erken",
+        arr_delay < 5 ~ "zamanında",
+        arr_delay >= 5 ~ "geç"
       )
   )
 ```
 
-`CASE WHEN` is also used for some other functions that don't have a direct translation from R to SQL.
-A good example of this is `cut()`:
+`CASE WHEN`, R'dan SQL'e doğrudan çevirisi olmayan bazı başka fonksiyonlar için de kullanılır.
+`cut()` bunun iyi bir örneğidir:
 
 ```{r}
 flights |> 
@@ -641,24 +639,24 @@ flights |>
     description =  cut(
       arr_delay, 
       breaks = c(-Inf, -5, 5, Inf), 
-      labels = c("early", "on-time", "late")
+      labels = c("erken", "zamanında", "geç")
     )
   )
 ```
 
-dbplyr also translates common string and date-time manipulation functions, which you can learn about in `vignette("translation-function", package = "dbplyr")`.
-dbplyr's translations are certainly not perfect, and there are many R functions that aren't translated yet, but dbplyr does a surprisingly good job covering the functions that you'll use most of the time.
+dbplyr yaygın karakter dizisi ve tarih-saat işleme fonksiyonlarını da çevirir; bunlar hakkında `vignette("translation-function", package = "dbplyr")` ile bilgi edinebilirsiniz.
+dbplyr çevirileri elbette kusursuz değildir ve henüz çevrilmeyen birçok R fonksiyonu vardır; yine de dbplyr çoğu zaman kullanacağınız fonksiyonları şaşırtıcı derecede iyi kapsar.
 
-## Summary
+## Özet
 
-In this chapter you learned how to access data from databases.
-We focused on dbplyr, a dplyr "backend" that allows you to write the dplyr code you're familiar with, and have it be automatically translated to SQL.
-We used that translation to teach you a little SQL; it's important to learn some SQL because it's *the* most commonly used language for working with data and knowing some will make it easier for you to communicate with other data folks who don't use R.
+Bu bölümde veritabanlarındaki verilere nasıl erişeceğinizi öğrendiniz.
+Alışık olduğunuz dplyr kodunu yazmanızı ve bunun otomatik olarak SQL'e çevrilmesini sağlayan bir dplyr “arka ucu” olan dbplyr'a odaklandık.
+Bu çeviriyi size biraz SQL öğretmek için kullandık. SQL öğrenmek önemlidir; çünkü verilerle çalışmak için *en* yaygın kullanılan dildir ve biraz SQL bilmek, R kullanmayan diğer veri çalışanlarıyla iletişim kurmanızı kolaylaştırır.
 
-If you've finished this chapter and would like to learn more about SQL, we have two recommendations:
+Bu bölümü bitirdiyseniz ve SQL hakkında daha fazla bilgi edinmek istiyorsanız iki önerimiz var:
 
--   [*SQL for Data Scientists*](https://sqlfordatascientists.com) by Renée M. P. Teate is an introduction to SQL designed specifically for the needs of data scientists, and includes examples of the sort of highly interconnected data you're likely to encounter in real organizations.
--   [*Practical SQL*](https://www.practicalsql.com) by Anthony DeBarros is written from the perspective of a data journalist (a data scientist specialized in telling compelling stories) and goes into more detail about getting your data into a database and running your own DBMS.
+-   Renée M. P. Teate'in [*SQL for Data Scientists*](https://sqlfordatascientists.com) kitabı, özellikle veri bilimcilerin ihtiyaçları için tasarlanmış bir SQL girişidir ve gerçek kuruluşlarda karşılaşmanız olası, birbiriyle yoğun biçimde bağlantılı veri örnekleri içerir.
+-   Anthony DeBarros'un [*Practical SQL*](https://www.practicalsql.com) kitabı bir veri gazetecisinin (etkileyici öyküler anlatma konusunda uzmanlaşmış bir veri bilimcinin) bakış açısından yazılmıştır; verilerinizi bir veritabanına aktarma ve kendi DBMS'nizi çalıştırma konularını daha ayrıntılı ele alır.
 
-In the next chapter, we'll learn about another dplyr backend for working with large data: arrow.
-Arrow is designed for working with large files on disk, and is a natural complement to databases.
+Bir sonraki bölümde büyük verilerle çalışmak için kullanılan başka bir dplyr arka ucunu öğreneceğiz: arrow.
+Arrow, diskteki büyük dosyalarla çalışmak üzere tasarlanmıştır ve veritabanlarının doğal bir tamamlayıcısıdır.

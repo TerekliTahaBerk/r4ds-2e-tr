@@ -5,135 +5,142 @@
 source("_common.R")
 ```
 
-Veri bilimi, ham veriyi anlayışa, içgörüye ve bilgiye dönüştürmenize olanak tanıyan heyecan verici bir disiplindir. 
-“Veri Bilimi için R” kitabının amacı, veri bilimini verimli ve yeniden üretilebilir bir şekilde yapmanızı sağlayacak R içindeki en önemli araçları öğrenmenize yardımcı olmak ve bu süreçte biraz eğlenmenizi sağlamaktır 😃.
-Bu kitabı okuduktan sonra, R'ın en iyi parçalarını kullanarak çok çeşitli veri bilimi zorluklarının üstesinden gelecek araçlara sahip olacaksınız.
+Veri bilimi, ham veriden anlayış, içgörü ve bilgi üretmenizi sağlayan heyecan verici bir disiplindir.
+“Veri Bilimi için R” kitabının amacı, veri bilimini verimli ve yeniden üretilebilir biçimde yürütmenizi sağlayacak en önemli R araçlarını öğrenmenize yardımcı olmak ve bu sırada biraz da eğlenmenizi sağlamaktır 😃.
+Bu kitabı okuduktan sonra R'ın en iyi yönlerinden yararlanarak çok çeşitli veri bilimi sorunlarının üstesinden gelebilecek araçlara sahip olacaksınız.
 
-## Neler Öğreneceksiniz?
+## Neler öğreneceksiniz?
 
-Veri bilimi uçsuz bucaksız bir alandır ve tek bir kitap okuyarak her şeyde uzmanlaşmanızın imkanı yoktur. 
-Bu kitap, size en önemli araçlarda sağlam bir temel oluşturmayı ve gerektiğinde daha fazlasını öğrenmek için kaynakları bulabilecek yeterli bilgiyi vermeyi amaçlamaktadır. 
-Tipik bir veri bilimi projesinin adımlarına dair modelimiz @fig-ds-diagram üzerindeki gibi görünmektedir.
+Veri bilimi uçsuz bucaksız bir alandır; tek bir kitap okuyarak bu alanın tamamında uzmanlaşmanız mümkün değildir.
+Bu kitap size en önemli araçlar konusunda sağlam bir temel ve gerektiğinde daha fazlasını öğrenebileceğiniz kaynakları bulmaya yetecek bilgi kazandırmayı amaçlıyor.
+Tipik bir veri bilimi projesinin adımlarına ilişkin modelimiz @fig-ds-diagram üzerinde gösterilmiştir.
 
 ```{r}
 #| label: fig-ds-diagram
 #| echo: false
 #| fig-cap: |
-#|   Veri bilimi süreci modelimizde işe veriyi içe aktarma ve düzenleme ile başlarsınız. 
-#|   Ardından; dönüştürme, görselleştirme ve modellemeden oluşan yinelemeli bir döngüyle 
-#|   verinizi anlamlandırırsınız. Süreci, sonuçlarınızı diğer insanlara aktararak tamamlarsınız.
+#|   Veri bilimi süreci modelimizde işe veriyi içe aktarıp düzenleyerek başlarsınız.
+#|   Ardından dönüştürme, görselleştirme ve modellemeden oluşan yinelemeli bir döngüyle
+#|   verilerinizi anlamlandırırsınız. Süreci, sonuçlarınızı başkalarına aktararak tamamlarsınız.
 #| fig-alt: |
-#|   Veri bilimi döngüsünü gösteren bir diyagram: İçe Aktar (Import) -> Düzenle (Tidy) -> 
-#|   Anla (Anla aşaması kendi içinde Dönüştür -> Görselleştir -> Modelle şeklinde bir 
-#|   döngüye sahiptir) -> İletişim Kur (Communicate). Tüm bu süreci Programlama (Program) çevreler.
+#|   Veri bilimi döngüsünü gösteren bir diyagram. İngilizce etiketlerle Import (İçe aktar) ->
+#|   Tidy (Düzenle) -> Understand (Anla) -> Communicate (İletişim kur) akışı gösterilir.
+#|   Understand aşamasında Transform (Dönüştür), Visualize (Görselleştir) ve Model (Modelle)
+#|   bir döngü oluşturur. Program (Programlama) tüm bu süreci çevreler.
 #| out.width: NULL
 knitr::include_graphics("diagrams/data-science/base.png", dpi = 270)
 ```
 
-Öncelikle, verilerinizi R içine **aktarmalısınız** (import). 
-Bu işlem genellikle bir dosyada, veri tabanında veya bir web uygulama programlama arayüzünde (API) tutulan verilerin alınarak R içindeki bir **veri çerçevesine** (data frame) yüklenmesi anlamına gelir. 
-Eğer verinizi R’ın içine aktaramıyorsanız, üzerinde veri bilimi yapmanız da mümkün değildir!
+Öncelikle verilerinizi R'a **aktarmalısınız**.
+Bu işlem genellikle bir dosyada, veritabanında veya web uygulaması programlama arayüzünde (API) saklanan verileri alıp R'daki bir **veri çerçevesine** (data frame) yüklemek anlamına gelir.
+Verilerinizi R'a aktaramıyorsanız üzerlerinde veri bilimi de yapamazsınız!
 
-Verinizi içe aktardıktan sonra, onu **düzenlemek** (tidy) iyi bir fikirdir. Veriyi düzenlemek; verinin anlam yapısı (semantiği) ile saklanma biçiminin birbiriyle örtüştüğü, tutarlı bir formda depolanması anlamına gelir. 
-Özetle, veriniz "düzenli" olduğunda her sütun bir değişkeni, her satır ise bir gözlemi temsil eder.
-Düzenli veri önemlidir; çünkü bu tutarlı yapı, enerjinizi farklı fonksiyonlar için veriyi doğru forma sokmaya harcamak yerine, doğrudan veriye dair soruları yanıtlamaya odaklamanıza olanak tanır.
+Verilerinizi içe aktardıktan sonra **düzenlemek** iyi bir fikirdir.
+Verileri düzenlemek, veri kümesinin anlamsal yapısıyla saklanma biçiminin örtüştüğü tutarlı bir yapıda saklamak demektir.
+Kısacası verileriniz düzenliyse her sütun bir değişkeni, her satır da bir gözlemi temsil eder.
+Düzenli veri önemlidir; çünkü bu tutarlı yapı, enerjinizi farklı fonksiyonlar için verileri doğru biçime sokmakla uğraşmak yerine veriler hakkındaki soruları yanıtlamaya yöneltmenizi sağlar.
 
-Düzenli bir veriye sahip olduğunuzda, bir sonraki yaygın adım onu **dönüştürmektir** (transform). 
-Dönüştürme işlemi; ilgilendiğiniz gözlemlere odaklanmayı (belirli bir şehirdeki tüm insanlar veya geçen yıla ait tüm veriler gibi), mevcut değişkenlerden yeni değişkenler türetmeyi (mesafe ve süreden hız hesaplamak gibi) ve bir dizi özet istatistik hesaplamayı (sayımlar veya ortalamalar gibi) kapsar.
-Düzenleme ve dönüştürme işlemleri birlikte **veri düzenleme** (wrangling) olarak adlandırılır; çünkü veriyi üzerinde çalışmaya uygun, doğal bir forma getirmek genellikle çetin bir mücadele gibi hissettirir!
+Düzenli verilere ulaştığınızda sonraki adım genellikle onları **dönüştürmektir**.
+Dönüştürme; ilgilendiğiniz gözlemlere odaklanmayı (belirli bir şehirdeki tüm insanlar veya geçen yıla ait tüm veriler gibi), mevcut değişkenlerin fonksiyonu olan yeni değişkenler oluşturmayı (mesafe ve süreden hız hesaplamak gibi) ve bir dizi özet istatistik hesaplamayı (sayımlar veya ortalamalar gibi) kapsar.
+Düzenleme ve dönüştürme işlemlerinin bütününe **veri düzenleme** (wrangling) denir; çünkü verileri çalışmaya elverişli ve doğal bir biçime sokmak çoğu zaman onlarla boğuşmayı andırır!
 
-İhtiyacınız olan değişkenleri içeren düzenli bir veriye ulaştığınızda, bilgi üretmenin iki ana motoru devreye girer: görselleştirme ve modelleme. 
-Bunların birbirini tamamlayan güçlü ve zayıf yönleri vardır; bu nedenle gerçek bir veri analizi süreci, bu iki aşama arasında defalarca gidip gelen bir döngüden oluşur.
+İhtiyacınız olan değişkenleri içeren düzenli verilere ulaştığınızda bilgi üretmenin iki ana motoru devreye girer: görselleştirme ve modelleme.
+Bunların birbirini tamamlayan güçlü ve zayıf yönleri vardır; dolayısıyla gerçek bir veri analizinde bu ikisi arasında defalarca gidip gelirsiniz.
 
-**Görselleştirme** (visualization), temelde insana özgü bir aktivitedir. 
-İyi bir görselleştirme, size beklemediğiniz şeyler gösterir veya veriye dair yeni sorular uyandırır. Hatta iyi bir görselleştirme, yanlış soruyu sorduğunuza veya farklı veriler toplamanız gerektiğine dair ipuçları bile verebilir. 
-Görselleştirmeler sizi şaşırtabilir; ancak yorumlanmaları için bir insana ihtiyaç duyduklarından, özellikle ölçeklendirme konusunda çok başarılı değillerdir.
+**Görselleştirme** özünde insana özgü bir etkinliktir.
+İyi bir görselleştirme size beklemediğiniz şeyler gösterir veya veriler hakkında yeni sorular doğurur.
+Ayrıca yanlış soruyu sorduğunuza ya da farklı veriler toplamanız gerektiğine ilişkin ipuçları verebilir.
+Görselleştirmeler sizi şaşırtabilir, ancak yorumlanmaları için bir insana ihtiyaç duyduklarından pek iyi ölçeklenmezler.
 
-**Modeller** (models), görselleştirmenin tamamlayıcı araçlarıdır. 
-Sorularınızı yeterince netleştirdiğinizde, onları yanıtlamak için bir model kullanabilirsiniz. 
-Modeller temelde matematiksel veya hesaplamalı araçlar olduklarından genellikle iyi ölçeklenirler. 
-Ölçeklenmedikleri durumlarda bile, daha fazla bilgisayar satın almak, daha fazla insan beyni satın almaktan genellikle daha ucuzdur! 
-Ancak her model belirli varsayımlara dayanır ve doğası gereği bir model kendi varsayımlarını sorgulayamaz. 
-Bu da bir modelin sizi temelde şaşırtamayacağı anlamına gelir.
+**Modeller**, görselleştirmeyi tamamlayan araçlardır.
+Sorularınızı yeterince kesin hâle getirdiğinizde onları yanıtlamak için bir model kullanabilirsiniz.
+Modeller özünde matematiksel veya hesaplamalı araçlardır; bu nedenle genellikle iyi ölçeklenirler.
+Ölçeklenmediklerinde bile daha fazla bilgisayar satın almak, daha fazla insan beyni satın almaktan çoğu zaman daha ucuzdur!
+Ancak her model birtakım varsayımlarda bulunur ve doğası gereği kendi varsayımlarını sorgulayamaz.
+Bu nedenle bir model sizi gerçek anlamda şaşırtamaz.
 
-Veri biliminin son adımı **iletişimdir** (communication) ve bu, herhangi bir veri analizi projesinin mutlak surette kritik bir parçasıdır. 
-Modellerinizin ve görselleştirmelerinizin veriyi anlamanızı ne kadar iyi sağladığının, sonuçlarınızı başkalarına aktaramadığınız sürece hiçbir önemi yoktur.
+Veri biliminin son adımı **iletişimdir** ve bu, her veri analizi projesinin kesinlikle vazgeçilmez bir parçasıdır.
+Sonuçlarınızı başkalarına aktaramıyorsanız modellerinizin ve görselleştirmelerinizin verileri ne kadar iyi anlamanızı sağladığının hiçbir önemi yoktur.
 
-Tüm bu araçları çevreleyen temel unsur **programlamadır** (programming). 
-Programlama, bir veri bilimi projesinin hemen her aşamasında kullandığınız, süreçlerin tamamını kesen bir araçtır. 
-Başarılı bir veri bilimci olmak için uzman bir programcı olmanıza gerek yoktur; ancak programlama konusunda kendinizi geliştirmeniz buna kesinlikle değer. 
-Çünkü daha iyi bir programcı olmak, rutin görevleri otomatikleştirmenize ve yeni sorunları çok daha kolay bir şekilde çözmenize olanak tanır.
+Tüm bu araçları çevreleyen unsur **programlamadır**.
+Programlama, bir veri bilimi projesinin hemen her aşamasında kullandığınız ve sürecin tamamına yayılan bir araçtır.
+Başarılı bir veri bilimci olmak için uzman bir programcı olmanız gerekmez, ancak programlama hakkında daha fazla şey öğrenmek karşılığını verir: Daha iyi bir programcı olmak, sık karşılaşılan görevleri otomatikleştirmenizi ve yeni sorunları daha kolay çözmenizi sağlar.
 
-Bu araçları her veri bilimi projesinde kullanacaksınız; ancak çoğu proje için bunlar tek başına yeterli olmayacaktır. 
-Burada kabaca bir "80/20 kuralı" işler: Her projenin yaklaşık %80'ini bu kitapta öğreneceğiniz araçlarla tamamlayabilirsiniz, fakat geri kalan %20'lik kısmı çözmek için başka araçlara ihtiyaç duyacaksınız. 
-Kitap boyunca, daha fazlasını öğrenebileceğiniz kaynaklara sizi yönlendireceğiz.
+Bu araçları her veri bilimi projesinde kullanacaksınız, ancak çoğu proje için bunlar tek başına yeterli olmayacaktır.
+Burada kabaca bir 80/20 kuralı işler: Her projenin yaklaşık %80'ini bu kitapta öğreneceğiniz araçlarla ele alabilirsiniz, ancak kalan %20 için başka araçlara ihtiyaç duyarsınız.
+Kitap boyunca daha fazlasını öğrenebileceğiniz kaynaklara yönlendirmeler yapacağız.
 
-## Bu Kitap Nasıl Düzenlendi?
+## Bu kitap nasıl düzenlendi?
 
-Veri bilimi araçlarına dair yukarıdaki açıklama, kabaca bir analiz sırasında onları kullanma sıranıza göre düzenlenmiştir (elbette bu adımlar arasında defalarca döngüsel olarak gidip geleceksiniz). 
-Ancak tecrübelerimize göre, işe ilk olarak veriyi içe aktarma ve düzenlemeyi öğrenerek başlamak pek ideal değildir; çünkü bu süreç zamanın %80'inde rutin ve sıkıcıyken, geri kalan %20'sinde ise tuhaf ve moral bozucudur. 
-Yeni bir konuyu öğrenmeye başlamak için burası pek de iyi bir nokta değil!
+Veri bilimi araçlarına ilişkin yukarıdaki açıklama, bu araçları bir analiz sırasında kabaca kullanacağınız sıraya göre düzenlenmiştir (elbette bu adımlardan defalarca geçeceksiniz).
+Ancak deneyimlerimize göre işe veri aktarmayı ve düzenlemeyi öğrenerek başlamak pek uygun değildir; çünkü bu süreç zamanın %80'inde sıradan ve sıkıcı, kalan %20'sinde ise tuhaf ve sinir bozucudur.
+Yeni bir konuyu öğrenmeye başlamak için hiç de iyi bir yer değil!
 
-Bunun yerine, halihazırda içe aktarılmış ve düzenlenmiş verilerin görselleştirilmesi ve dönüştürülmesiyle başlayacağız.
-Bu sayede, kendi verilerinizi sisteme alıp düzenleme aşamasına geldiğinizde, çekeceğiniz zahmetin karşılığını alacağınızı bildiğiniz için motivasyonunuz yüksek kalacaktır.
+Bunun yerine, önceden içe aktarılıp düzenlenmiş verileri görselleştirmek ve dönüştürmekle başlayacağız.
+Böylece kendi verilerinizi içeri alıp düzenleme zamanı geldiğinde, çektiğiniz zahmete değeceğini bildiğiniz için motivasyonunuz yüksek kalacak.
 
-Her bölümde tutarlı bir düzene bağlı kalmaya çalışıyoruz: önce büyük resmi görebilmeniz için birkaç motive edici örnekle başlıyor, ardından ayrıntılara giriyoruz.
-Kitabın her bölümü, öğrendiklerinizi uygulamanıza yardımcı olacak alıştırmalarla eşleştirilmiştir.
-Alıştırmaları atlamak cazip gelebilir, ancak gerçek problemler üzerinde pratik yapmaktan daha iyi bir öğrenme yolu yoktur.
+Her bölümde tutarlı bir düzen izlemeye çalışıyoruz: Büyük resmi görebilmeniz için önce birkaç ilgi uyandırıcı örnek veriyor, ardından ayrıntılara giriyoruz.
+Kitabın her bölümü, öğrendiklerinizi uygulamanıza yardımcı olacak alıştırmalar içeriyor.
+Alıştırmaları atlamak cazip gelebilir, ancak gerçek sorunlar üzerinde pratik yapmaktan daha iyi bir öğrenme yolu yoktur.
 
-## Neler Öğrenmeyeceksiniz?
+## Neler öğrenmeyeceksiniz?
 
-Bu kitabın kapsamadığı birkaç önemli konu bulunuyor. 
-En temel konulara amansızca odaklanmanın, sizin mümkün olduğunca hızlı bir şekilde işe koyulabilmeniz için önemli olduğuna inanıyoruz.
+Bu kitabın kapsamadığı birkaç önemli konu var.
+Olabildiğince çabuk işe koyulabilmeniz için temel konulara tavizsiz biçimde odaklanmanın önemli olduğuna inanıyoruz.
 Bu da kitabın her önemli konuyu ele alamayacağı anlamına geliyor.
 
 ### Modelleme
 
-Modelleme veri bilimi için son derece önemlidir; ancak bu konu o kadar geniştir ki, maalesef burada ona hak ettiği yeri ayıracak alanımız yok. 
-Modelleme hakkında daha fazla bilgi edinmek için meslektaşlarımız Max Kuhn ve Julia Silge tarafından kaleme alınan [Tidy Modeling with R](https://www.tmwr.org) kitabını şiddetle tavsiye ederiz. 
-Bu kitap size, isminden de tahmin edebileceğiniz gibi, bu kitapta kullandığımız tidyverse paketleriyle benzer prensipleri paylaşan tidymodels paket ailesini öğretecektir.
+Modelleme veri bilimi için son derece önemlidir, ancak çok geniş bir konudur ve ne yazık ki burada ona hak ettiği yeri ayıracak alanımız yok.
+Modelleme hakkında daha fazla bilgi edinmek için meslektaşlarımız Max Kuhn ve Julia Silge'nin yazdığı [Tidy Modeling with R](https://www.tmwr.org) kitabını özellikle öneriyoruz.
+Bu kitap, adından da tahmin edebileceğiniz gibi, burada kullandığımız tidyverse paketleriyle pek çok ortak kurala sahip tidymodels paket ailesini öğretecek.
 
-### Büyük Veri
+### Büyük veri
 
-Bu kitap, gururla ve öncelikle bellek içi (in-memory) küçük veri kümelerine odaklanmaktadır. 
-Bu, başlamak için en doğru noktadır; çünkü küçük verilerle deneyim kazanmadan büyük verilerin üstesinden gelemezsiniz. 
-Kitabın büyük bir bölümünde öğreneceğiniz araçlar, yüzlerce megabaytlık veriyi kolayca işleyebilir ve biraz dikkatle, genellikle birkaç gigabaytlık verilerle çalışmak için de kullanılabilirler. 
-Ayrıca, büyük verileri depolamak için sıklıkla kullanılan veri tabanlarından ve parquet dosyalarından nasıl veri çekeceğinizi de göstereceğiz. 
-Tüm veri kümesiyle çalışmanız her zaman mümkün olmayabilir, ancak bu bir sorun teşkil etmez; çünkü ilgilendiğiniz soruyu yanıtlamak için genellikle verinin bir alt kümesine veya alt örneklemine ihtiyacınız vardır.
+Bu kitapta bilinçli bir tercihle öncelikle küçük, bellek içi (in-memory) veri kümelerine odaklanıyoruz.
+Başlamak için doğru yer burasıdır; çünkü küçük verilerle deneyim kazanmadan büyük verilerin üstesinden gelemezsiniz.
+Kitabın büyük bölümünde öğreneceğiniz araçlar yüzlerce megabaytlık veriyi kolayca işleyebilir; biraz dikkatle bu araçları birkaç gigabaytlık verilerle çalışmak için de kullanabilirsiniz.
+Ayrıca büyük verileri saklamakta sık kullanılan veritabanlarından ve parquet dosyalarından nasıl veri alacağınızı göstereceğiz.
+Her zaman veri kümesinin tamamıyla çalışamayabilirsiniz, ancak bu sorun değildir; çünkü ilgilendiğiniz soruyu yanıtlamak için genellikle verilerin bir alt kümesi veya alt örneklemi yeterlidir.
 
-Eğer rutin olarak daha büyük verilerle (örneğin 10--100 GB) çalışıyorsanız, [data.table](https://github.com/Rdatatable/data.table) hakkında daha fazla bilgi edinmenizi öneririz. Burada bu paketi öğretmiyoruz çünkü **tidyverse**'den farklı bir arayüz kullanıyor ve bazı farklı kuralları öğrenmenizi gerektiriyor.
-Bununla birlikte, inanılmaz derecede hızlıdır ve büyük verilerle uğraşıyorsanız, onu öğrenmek için zaman ayırmanıza değecek bir performans artışı sağlar.
+Düzenli olarak daha büyük verilerle (örneğin 10--100 GB) çalışıyorsanız [data.table](https://github.com/Rdatatable/data.table) hakkında daha fazla bilgi edinmenizi öneriyoruz.
+Bu paketi burada öğretmiyoruz; çünkü tidyverse'den farklı bir arayüz kullanıyor ve başka kurallar öğrenmenizi gerektiriyor.
+Bununla birlikte inanılmaz derecede hızlıdır. Büyük verilerle çalışıyorsanız sağladığı performans artışı, onu öğrenmeye zaman ayırmaya değer.
 
-### Python, Julia ve Arkadaşları
+### Python, Julia ve arkadaşları
 
-Bu kitapta Python, Julia veya veri bilimi için yararlı olan diğer programlama dilleri hakkında hiçbir şey öğrenmeyeceksiniz. 
-Bunun sebebi, bu araçların kötü olduğunu düşünmemiz değil. Kesinlikle değiller! Uygulamada, çoğu veri bilimi ekibi dillerin bir karışımını, genellikle de en azından R ve Python'ı bir arada kullanır. 
-Ancak, her seferinde tek bir araçta uzmanlaşmanın en iyisi olduğuna ve R'ın başlamak için harika bir yer olduğuna yürekten inanıyoruz.
+Bu kitapta Python, Julia veya veri bilimi için yararlı olan diğer programlama dilleri hakkında hiçbir şey öğrenmeyeceksiniz.
+Bunun nedeni bu araçların kötü olduğunu düşünmemiz değil. Kesinlikle değiller!
+Uygulamada çoğu veri bilimi ekibi farklı dilleri, genellikle de en azından R ile Python'ı birlikte kullanır.
+Ancak her seferinde tek bir araçta uzmanlaşmanın en iyisi olduğuna ve R'ın başlamak için harika bir seçenek olduğuna yürekten inanıyoruz.
 
-## Ön Koşullar
+## Ön koşullar
 
-Bu kitaptan en iyi şekilde yararlanabilmeniz için neler bildiğinize dair birkaç varsayımda bulunduk. 
-Genel olarak sayısal okuryazarlığa sahip olmanız gerekir; ayrıca temel düzeyde programlama deneyiminizin olması da size yardımcı olacaktır. 
-Eğer daha önce hiç programlama yapmadıysanız, Garrett tarafından kaleme alınan [Hands on Programming with R](https://rstudio-education.github.io/hopr/) kitabını bu kitap için değerli bir yardımcı kaynak olarak görebilirsiniz.
+Bu kitaptan en iyi şekilde yararlanabilmeniz için hâlihazırda bildiklerinize ilişkin birkaç varsayımda bulunduk.
+Genel bir sayısal okuryazarlığa sahip olmalısınız; ayrıca biraz programlama deneyiminizin olması yararlı olacaktır.
+Daha önce hiç programlama yapmadıysanız Garrett'ın yazdığı [Hands on Programming with R](https://rstudio-education.github.io/hopr/) kitabı bu kitap için değerli bir yardımcı kaynak olabilir.
 
-Bu kitaptaki kodları çalıştırmak için dört şeye ihtiyacınız var: R, RStudio, **tidyverse** adı verilen bir R paketleri koleksiyonu ve birkaç ek paket. 
-Paketler, yeniden üretilebilir R kodunun temel birimleridir. Bu paketler; yeniden kullanılabilir fonksiyonlar, bu fonksiyonların nasıl kullanılacağını açıklayan dokümantasyonlar ve örnek veriler içerir.
+Bu kitaptaki kodları çalıştırmak için dört şeye ihtiyacınız var: R, RStudio, **tidyverse** adlı bir R paketleri koleksiyonu ve birkaç ek paket.
+Paketler, yeniden üretilebilir R kodunun temel birimleridir. Yeniden kullanılabilir fonksiyonlar, bu fonksiyonların nasıl kullanılacağını açıklayan belgeler ve örnek veriler içerirler.
 
 ### R
 
-R'ı indirmek için **CRAN** (comprehensive R archive network) adresine gidin: <https://cloud.r-project.org>.
-R'ın her yıl yeni bir ana sürümü, yıl içinde ise 2-3 adet ara sürümü yayınlanır. Düzenli olarak güncelleme yapmak iyi bir fikirdir. 
-Güncelleme yapmak, özellikle tüm paketlerinizi yeniden kurmanızı gerektiren ana sürümlerde biraz zahmetli olabilir; ancak bunu ertelemek işleri sadece daha da zorlaştırır. 
+R'ı indirmek için **C**omprehensive **R** **A**rchive **N**etwork (CRAN; Kapsamlı R Arşiv Ağı) adresine gidin: <https://cloud.r-project.org>.
+R'ın her yıl yeni bir ana sürümü, yıl içinde de iki veya üç ara sürümü yayımlanır.
+Düzenli olarak güncelleme yapmak iyi bir fikirdir.
+Özellikle tüm paketlerinizi yeniden kurmanızı gerektiren ana sürümlere geçmek biraz zahmetli olabilir, ancak ertelemek işleri daha da zorlaştırır.
 Bu kitap için R 4.2.0 veya daha yeni bir sürümünü kullanmanızı öneriyoruz.
 
 ### RStudio
 
-RStudio, R programlama için bir tümleşik geliştirme ortamıdır (IDE) ve <https://posit.co/download/rstudio-desktop/> adresinden indirilebilir. 
-RStudio yılda birkaç kez güncellenir ve yeni bir sürüm çıktığında sizi otomatik olarak bilgilendirir; bu yüzden sürekli kontrol etmenize gerek yoktur. 
-En yeni ve en iyi özelliklerden yararlanmak için düzenli olarak güncelleme yapmak iyi bir fikirdir. Bu kitap için en az RStudio 2022.02.0 sürümüne sahip olduğunuzdan emin olun.
+RStudio, R programlama için bir tümleşik geliştirme ortamıdır (integrated development environment, IDE) ve <https://posit.co/download/rstudio-desktop/> adresinden indirilebilir.
+RStudio yılda birkaç kez güncellenir ve yeni bir sürüm çıktığında sizi otomatik olarak bilgilendirir; dolayısıyla sürekli kontrol etmeniz gerekmez.
+En yeni özelliklerden yararlanmak için düzenli olarak güncelleme yapmak iyi bir fikirdir.
+Bu kitap için en az RStudio 2022.02.0 sürümünü kullandığınızdan emin olun.
 
-RStudio'yu başlattığınızda (@fig-rstudio-console), arayüzde iki temel bölge göreceksiniz: konsol paneli ve çıktı paneli. 
-Şimdilik bilmeniz gereken tek şey, R kodunu konsol paneline yazıp çalıştırmak için enter tuşuna basacağınızdır. İlerledikçe daha fazlasını öğreneceksiniz![^intro-1]
+RStudio'yu başlattığınızda (@fig-rstudio-console) arayüzde iki temel bölge göreceksiniz: `Console` (Konsol) paneli ve `Output` (Çıktı) paneli.
+Şimdilik bilmeniz gereken tek şey, R kodunu `Console` paneline yazıp çalıştırmak için `Enter` tuşuna basacağınızdır.
+İlerledikçe daha fazlasını öğreneceksiniz![^intro-1]
 
 [^intro-1]: RStudio'nun tüm özelliklerine dair kapsamlı bir genel bakış isterseniz, <https://docs.posit.co/ide/user> adresindeki RStudio Kullanıcı Kılavuzu'na bakabilirsiniz.
 
@@ -142,17 +149,20 @@ RStudio'yu başlattığınızda (@fig-rstudio-console), arayüzde iki temel böl
 #| echo: false
 #| out-width: ~
 #| fig-cap: |
-#|   RStudio IDE'si iki temel bölgeye sahiptir: R kodunu soldaki konsol paneline (console pane) yazarsınız ve grafikler için sağdaki çıktı paneline (output pane) bakarsınız.
+#|   RStudio IDE'sinin iki temel bölgesi vardır: R kodunu soldaki Console paneline
+#|   yazarsınız ve grafikleri sağdaki Output panelinde görürsünüz.
 #| fig-alt: |
-#|   Konsol ve Çıktı panellerinin vurgulandığı RStudio IDE'si.
+#|   İngilizce Console ve Output etiketli panellerin vurgulandığı RStudio IDE'si.
 knitr::include_graphics("diagrams/rstudio/console.png", dpi = 270)
 ```
 
-### The Tidyverse
+### tidyverse
 
-Bazı R paketlerini de kurmanız gerekecek. Bir R paketi; temel R’ın (base R) yeteneklerini artıran fonksiyonlar, veriler ve dokümantasyonlar bütünüdür. 
-Paket kullanmak, R'ı başarılı bir şekilde kullanmanın anahtarıdır. Bu kitapta öğreneceğiniz paketlerin çoğu, tidyverse olarak adlandırılan yapının bir parçasıdır. 
-Tidyverse içindeki tüm paketler; veri ve R programlama konusunda ortak bir felsefeyi paylaşır ve birlikte çalışacak şekilde tasarlanmıştır.
+Bazı R paketlerini de kurmanız gerekecek.
+Bir R **paketi**, temel R'ın yeteneklerini genişleten fonksiyon, veri ve belge koleksiyonudur.
+R'ı başarıyla kullanmanın anahtarı paketlerden yararlanmaktır.
+Bu kitapta öğreneceğiniz paketlerin çoğu tidyverse'in parçasıdır.
+tidyverse'deki tüm paketler veri ve R programlama konusunda ortak bir felsefeyi paylaşır ve birlikte çalışacak şekilde tasarlanmıştır.
 
 Tidyverse'in tamamını tek bir satır kodla kurabilirsiniz:
 
@@ -161,30 +171,30 @@ Tidyverse'in tamamını tek bir satır kodla kurabilirsiniz:
 install.packages("tidyverse")
 ```
 
-Bilgisayarınızda bu kod satırını konsola yazın ve çalıştırmak için enter tuşuna basın. 
-R, paketleri CRAN üzerinden indirecek ve bilgisayarınıza kuracaktır.
+Bu kod satırını bilgisayarınızdaki `Console` paneline yazın ve çalıştırmak için `Enter` tuşuna basın.
+R, paketleri CRAN'dan indirip bilgisayarınıza kuracaktır.
 
-Bir paketi `library()` ile yükleyene kadar o paketteki fonksiyonları, nesneleri veya yardım dosyalarını kullanamazsınız. 
-Bir paketi kurduktan sonra, onu `library()` fonksiyonunu kullanarak yükleyebilirsiniz:
+Bir paketi `library()` ile yükleyene kadar o paketteki fonksiyonları, nesneleri veya yardım dosyalarını kullanamazsınız.
+Paketi kurduktan sonra `library()` fonksiyonuyla yükleyebilirsiniz:
 
 ```{r}
 library(tidyverse)
 ```
 
-Bu, tidyverse'in şu dokuz paketi yüklediğini gösterir: dplyr, forcats, ggplot2, lubridate, purrr, readr, stringr, tibble, tidyr. 
-Bu paketler tidyverse'in çekirdeği (core) olarak kabul edilir; çünkü onları hemen hemen her analizde kullanacaksınız.
+Çıktı, tidyverse'in dokuz paket yüklediğini gösterir: dplyr, forcats, ggplot2, lubridate, purrr, readr, stringr, tibble ve tidyr.
+Neredeyse her analizde kullanacağınız bu paketler tidyverse'in **çekirdeği** kabul edilir.
 
-Tidyverse içindeki paketler oldukça sık güncellenir. `tidyverse_update()` fonksiyonunu çalıştırarak güncellemelerin mevcut olup olmadığını kontrol edebilirsiniz.
+tidyverse içindeki paketler oldukça sık güncellenir. `tidyverse_update()` fonksiyonunu çalıştırarak güncelleme olup olmadığını denetleyebilirsiniz.
 
-### Diğer Paketler
+### Diğer paketler
 
-Tidyverse'in parçası olmayan ancak farklı alanlardaki sorunları çözdükleri veya farklı temel prensiplerle tasarlandıkları için mükemmel olan pek çok başka paket de vardır. 
-Bu durum onları daha iyi veya daha kötü yapmaz; sadece farklı kılar. 
-Bir başka deyişle, tidyverse'in tamamlayıcısı "karmaşık-verse" (messyverse) değil, birbiriyle ilişkili paketlerden oluşan diğer pek çok evrendir. 
-R ile daha fazla veri bilimi projesi üzerinde çalıştıkça, yeni paketler ve veriye dair yeni düşünme biçimleri öğreneceksiniz.
+Tidyverse'in parçası olmayan pek çok başka mükemmel paket de vardır; bunlar farklı alanlardaki sorunları çözer veya farklı temel ilkelerle tasarlanmıştır.
+Bu durum onları daha iyi ya da daha kötü değil, yalnızca farklı yapar.
+Başka bir deyişle tidyverse'in karşıtı *messyverse* değil, birbiriyle ilişkili paketlerden oluşan başka pek çok evrendir.
+R ile daha fazla veri bilimi projesi yaptıkça yeni paketler ve veriler hakkında yeni düşünme biçimleri öğreneceksiniz.
 
-Bu kitapta tidyverse dışından da pek çok paket kullanacağız. 
-Örneğin, R öğrenme sürecinde üzerinde çalışabileceğimiz ilginç veri kümeleri sundukları için şu paketleri kullanacağız:
+Bu kitapta tidyverse dışından da pek çok paket kullanacağız.
+Örneğin R'ı öğrenirken üzerinde çalışabileceğimiz ilginç veri kümeleri sundukları için şu paketlerden yararlanacağız:
 
 ```{r}
 #| eval: false
@@ -196,8 +206,8 @@ install.packages(
   )
 ```
 
-Ayrıca, tek seferlik örnekler için diğer bazı paketleri de kullanacağız. 
-Bunları şu an kurmanıza gerek yok; sadece ne zaman şöyle bir hata görürseniz şunu hatırlayın:
+Ayrıca tek seferlik örneklerde başka paketler de kullanacağız.
+Bunları şimdi kurmanız gerekmiyor; aşağıdaki gibi bir hata gördüğünüzde ne yapacağınızı hatırlamanız yeterli:
 
 ```{r}
 #| eval: false
@@ -205,42 +215,43 @@ library(ggrepel)
 #> Error in library(ggrepel) : there is no package called ‘ggrepel’
 ```
 
-Paketi kurmak için `install.packages("ggrepel")` komutunu çalıştırmanız gerekir.
+Paketi kurmak için `install.packages("ggrepel")` komutunu çalıştırmalısınız.
 
-## R Kodunu Çalıştırma
+## R kodunu çalıştırma
 
-Önceki bölüm, R kodunu çalıştırmaya dair size birkaç örnek gösterdi. 
-Kitaptaki kodlar şu şekilde görünmektedir:
+Önceki kısımda R kodunu çalıştırmaya ilişkin birkaç örnek gördünüz.
+Kitaptaki kod şöyle görünür:
 
 ```{r}
 #| eval: true
 1 + 2
 ```
 
-Eğer aynı kodu kendi yerel konsolunuzda çalıştırırsanız, şöyle görünecektir:
+Aynı kodu kendi konsolunuzda çalıştırırsanız şöyle görünür:
 
 ```         
 > 1 + 2
 [1] 3
 ```
 
-İki ana fark vardır. Kendi konsolunuzda, prompt (istem) adı verilen `>` işaretinden sonra yazarsınız; kitapta ise bu işareti göstermiyoruz. 
-Kitapta çıktılar, başlarına yorum işareti olan `#>` eklenerek gösterilir; konsolunuzda ise çıktılar doğrudan kodunuzun altında belirir. 
-Bu iki fark, kitabın elektronik bir versiyonuyla çalışıyorsanız, kodları kitaptan kolayca kopyalayıp konsola yapıştırabileceğiniz anlamına gelir.
+İki temel fark vardır.
+Kendi konsolunuzda **istem** (prompt) adı verilen `>` işaretinden sonra yazarsınız; kitapta ise istemi göstermiyoruz.
+Kitapta çıktılar `#>` ile yorum satırı biçiminde gösterilir; konsolunuzda ise doğrudan kodunuzun altında görünür.
+Bu iki fark sayesinde kitabın elektronik bir sürümünü kullanıyorsanız kodları kolayca kopyalayıp konsola yapıştırabilirsiniz.
 
-Kitap boyunca, kodlara atıfta bulunmak için tutarlı bir kurallar dizisi kullanıyoruz:
+Kitap boyunca koddan söz ederken tutarlı bir dizi kural kullanıyoruz:
 
--   Fonksiyonlar, kod yazı tipinde görüntülenir ve ardından `sum()` veya `mean()` gibi parantezler gelir.
+-   Fonksiyonlar kod yazı tipinde gösterilir ve adlarının ardından `sum()` veya `mean()` örneklerindeki gibi parantez gelir.
 
--   Diğer R nesneleri (veri veya fonksiyon argümanları gibi), `flights` veya `x` örneklerinde olduğu gibi parantez olmaksızın kod yazı tipinde gösterilir.
+-   Veri veya fonksiyon argümanı gibi diğer R nesneleri, `flights` ve `x` örneklerindeki gibi parantezsiz olarak kod yazı tipinde gösterilir.
 
--   Bazen bir nesnenin hangi paketten geldiğini netleştirmek için, paket adının ardından iki üst üste nokta kullanırız: `dplyr::mutate()` veya `nycflights13::flights` gibi. 
-    Bu kullanım aynı zamanda geçerli bir R kodudur.
+-   Bazen bir nesnenin hangi paketten geldiğini belirtmek için paket adının ardından çift iki nokta (`::`) kullanırız: `dplyr::mutate()` veya `nycflights13::flights`.
+    Bu aynı zamanda geçerli bir R kodudur.
 
 ## Teşekkür
 
-Bu kitap yalnızca Hadley, Mine ve Garrett'ın ürünü değil, R topluluğundaki pek çok kişiyle yüz yüze ve çevrimiçi olarak yaptığımız sayısız konuşmanın sonucudur.
-Sizinle yaptığımız tüm bu konuşmalar için son derece minnettarız; çok teşekkür ederiz!
+Bu kitap yalnızca Hadley, Mine ve Garrett'ın eseri değildir; R topluluğundaki pek çok kişiyle yüz yüze ve çevrimiçi yaptığımız sayısız sohbetin sonucudur.
+Tüm bu sohbetler için hepinize ne kadar teşekkür etsek az; çok teşekkürler!
 
 ```{r}
 #| eval: false
@@ -259,7 +270,7 @@ contribs_all <- tibble(
 contribs_old <- read_csv("contributors.csv", col_types = list())
 contribs_new <- contribs_all |> anti_join(contribs_old, by = "login")
 
-# Get info for new contributors
+# Yeni katkıda bulunanların bilgilerini al
 needed_json <- map(
   contribs_new$login, 
   ~ gh::gh("/users/:username", username = .x),
@@ -294,17 +305,17 @@ contributors <- contributors |>
     desc = ifelse(is.na(name), login, paste0(name, " (", login, ")"))
   )
 
-cat("Bu kitap açık bir şekilde yazıldı ve pull request'ler aracılığıyla birçok kişi katkıda bulundu. GitHub pull request'leri aracılığıyla iyileştirmelere katkıda bulunan ",nrow(contributors), " kişiye özel teşekkürler (kullanıcı adına göre alfabetik sırada): ", sep = "")
+cat("Bu kitap herkese açık olarak yazıldı ve birçok kişi pull request'ler aracılığıyla katkıda bulundu. GitHub pull request'leriyle iyileştirmeler sunan ",nrow(contributors), " kişiye özellikle teşekkür ederiz (kullanıcı adına göre alfabetik sırada): ", sep = "")
 cat(paste0(contributors$desc, collapse = ", "))
 cat(".\n")
 ```
 
-## Yayın Bilgileri
+## Yayın bilgileri
 
-Bu kitabın çevrimiçi bir sürümüne <https://r4ds.hadley.nz> adresinden ulaşabilirsiniz.
-Bu çevrimiçi sürüm, kitabın fiziksel baskıları arasında gelişmeye devam edecektir.
-Kitabın kaynak dosyalarına <https://github.com/hadley/r4ds> adresinden ulaşabilirsiniz.
-Kitap, metin ile çalıştırılabilir kodu birleştiren kitaplar yazmayı kolaylaştıran [Quarto](https://quarto.org) ile hazırlanmıştır.
+Kitabın çevrimiçi sürümüne <https://r4ds.hadley.nz> adresinden ulaşabilirsiniz.
+Bu sürüm, basılı kitabın yeniden basımları arasında gelişmeye devam edecektir.
+Kitabın kaynak dosyaları <https://github.com/hadley/r4ds> adresindedir.
+Kitap, metin ile çalıştırılabilir kodu bir araya getiren kitaplar yazmayı kolaylaştıran [Quarto](https://quarto.org) ile hazırlanmıştır.
 
 ```{r}
 #| eval: false

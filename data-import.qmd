@@ -1,4 +1,4 @@
-# Veri Aktarımı {#sec-data-import}
+# Veri aktarımı {#sec-data-import}
 
 ```{r}
 #| echo: false
@@ -7,17 +7,17 @@ source("_common.R")
 
 ## Giriş
 
-R paketleri tarafından sağlanan verilerle çalışmak, veri bilimi araçlarını öğrenmenin harika bir yoludur; ama bir noktada öğrendiklerinizi kendi verinize uygulamak istersiniz.
-Bu bölümde, veri dosyalarını R'a okumanın temellerini öğreneceksiniz.
+R paketlerinin sağladığı verilerle çalışmak, veri bilimi araçlarını öğrenmenin harika bir yoludur; ancak bir noktada öğrendiklerinizi kendi verilerinize uygulamak istersiniz.
+Bu bölümde veri dosyalarını R'a aktarmanın temellerini öğreneceksiniz.
 
-Özellikle, bu bölüm düz metin dikdörtgen dosyaları okumaya odaklanacaktır.
-Sütun adları, türleri ve eksik veri gibi özellikleri ele almak için pratik tavsiyelerle başlayacağız.
+Bu bölüm özellikle tablo biçimindeki düz metin dosyalarını okumaya odaklanır.
+Sütun adları, sütun türleri ve eksik veriler gibi özellikleri ele almaya yönelik pratik önerilerle başlayacağız.
 Ardından, birden fazla dosyadan aynı anda veri okumayı ve R'dan bir dosyaya veri yazmayı öğreneceksiniz.
 Son olarak, R'da veri çerçevelerini elle nasıl oluşturacağınızı öğreneceksiniz.
 
-### Ön Koşullar
+### Ön koşullar
 
-Bu bölümde, tidyverse'in çekirdeğinin bir parçası olan **readr** paketiyle R'da düz dosyaları nasıl yükleyeceğinizi öğreneceksiniz.
+Bu bölümde çekirdek tidyverse'in bir parçası olan **readr** paketiyle düz metin dosyalarını R'a aktarmayı öğreneceksiniz.
 
 ```{r}
 #| label: setup
@@ -25,12 +25,12 @@ Bu bölümde, tidyverse'in çekirdeğinin bir parçası olan **readr** paketiyle
 library(tidyverse)
 ```
 
-## Bir Dosyadan Veri Okuma
+## Bir dosyadan veri okuma
 
-Başlamak için, en yaygın dikdörtgen veri dosyası türüne odaklanacağız: virgülle ayrılmış değerler (comma-separated values) anlamına gelen CSV.
+Başlangıçta en yaygın tablo biçimli veri dosyası türüne odaklanacağız: virgülle ayrılmış değerler (comma-separated values) anlamına gelen CSV.
 Basit bir CSV dosyası şuna benzer.
 Genellikle başlık satırı (header row) olarak adlandırılan ilk satır sütun adlarını verir ve ardından gelen altı satır veriyi sağlar.
-Sütunlar virgüllerle ayrılır (aka delimited, yani sınırlandırılmış).
+Sütunlar virgülle ayrılır; başka bir deyişle virgül burada **ayraç** (delimiter) görevi görür.
 
 ```{r}
 #| echo: false
@@ -52,7 +52,7 @@ read_csv("data/students.csv") |>
 
 Bu dosyayı `read_csv()`'i kullanarak R'a okuyabiliriz.
 İlk argüman en önemlisidir: dosyanın yolu.
-Yolu, dosyanın adresi olarak düşünebilirsiniz: dosyanın adı `students.csv`'dir ve `data` klasöründe yaşar.
+Yolu dosyanın adresi olarak düşünebilirsiniz: Dosyanın adı `students.csv`'dir ve dosya `data` klasöründe bulunur.
 
 ```{r}
 #| message: true
@@ -67,20 +67,20 @@ Yukarıdaki kod, projenizde bir `data` klasöründe `students.csv` dosyasına sa
 students <- read_csv("https://pos.it/r4ds-students-csv")
 ```
 
-`read_csv()`'i çalıştırdığınızda, verinin satır ve sütun sayısını, kullanılan sınırlayıcıyı ve sütun spesifikasyonlarını (sütunun içerdiği veri türüne göre organize edilmiş sütun adlarını) size bildiren bir mesaj yazdırır.
-Ayrıca, tam sütun spesifikasyonunu almak ve bu mesajı nasıl susturacağınız hakkında bazı bilgiler de yazdırır.
+`read_csv()` çalıştırıldığında verilerin satır ve sütun sayısını, kullanılan ayracı ve sütun belirtimini (içerdikleri veri türüne göre gruplanmış sütun adlarını) açıklayan bir mesaj görüntüler.
+Ayrıca tam sütun belirtimini nasıl görebileceğinizi ve bu mesajı nasıl gizleyebileceğinizi de açıklar.
 Bu mesaj readr'ın ayrılmaz bir parçasıdır ve @sec-col-types bölümünde ona geri döneceğiz.
 
-### Pratik Tavsiyeler
+### Pratik öneriler
 
-Veriyi okuduktan sonra, ilk adım genellikle analizinizin geri kalanında onunla çalışmayı kolaylaştırmak için bir şekilde dönüştürmeyi içerir.
+Verileri okuduktan sonraki ilk adım, analizinizin geri kalanında çalışmayı kolaylaştıracak bir dönüşüm yapmak olur.
 Bunu aklımızda tutarak `students` verisine tekrar bir bakalım.
 
 ```{r}
 students
 ```
 
-`favourite.food` sütununda bir dizi yiyecek maddesi var ve ardından, R'ın "mevcut değil" (not available) olarak tanıyacağı gerçek bir `NA` olması gereken `N/A` karakter dizisi var.
+`favourite.food` sütununda çeşitli yiyecek adlarının yanı sıra, aslında R'ın "mevcut değil" (not available) olarak tanıyacağı gerçek bir `NA` olması gereken `N/A` karakter dizisi bulunur.
 Bu, `na` argümanını kullanarak ele alabileceğimiz bir şeydir.
 Varsayılan olarak, `read_csv()` bu veri kümesinde yalnızca boş karakter dizilerini (`""`) `NA` olarak tanır ve `"N/A"` karakter dizisini de tanımasını istiyoruz.
 
@@ -92,7 +92,7 @@ students
 ```
 
 `Student ID` ve `Full Name` sütunlarının ters tırnak (backtick) içine alındığını da fark etmiş olabilirsiniz.
-Bunun nedeni, boşluk içermeleri ve R'ın değişken adları için olağan kurallarını çiğnemeleridir; bunlar **sözdizimsel olmayan** (non-syntactic) isimlerdir.
+Bunun nedeni boşluk içermeleri ve R'ın değişken adlarına ilişkin olağan kurallarına uymamalarıdır; bunlar **söz dizimsel olmayan** (non-syntactic) adlardır.
 Bu değişkenlere atıfta bulunmak için, onları ters tırnaklarla, `` ` ``, çevrelemeniz gerekir:
 
 ```{r}
@@ -105,7 +105,7 @@ students |>
 
 Alternatif bir yaklaşım, hepsini bir kerede snake case'e dönüştürmek için bazı sezgisel yöntemler kullanan `janitor::clean_names()`'i kullanmaktır[^data-import-1].
 
-[^data-import-1]: [janitor](http://sfirke.github.io/janitor/) paketi tidyverse'in bir parçası değildir; ama veri temizleme için kullanışlı fonksiyonlar sunar ve `|>` kullanan veri pipeline'ları içinde iyi çalışır.
+[^data-import-1]: [janitor](http://sfirke.github.io/janitor/) paketi tidyverse'in bir parçası değildir; ancak veri temizlemeye yönelik yararlı fonksiyonlar sunar ve `|>` kullanan veri işlem hatlarında iyi çalışır.
 
 ```{r}
 #| message: false
@@ -139,13 +139,13 @@ students <- students |>
 students
 ```
 
-Burada yeni bir fonksiyon, üç argümanı olan `if_else()`'dir.
-İlk argüman `test`, mantıksal bir vektör olmalıdır.
-Sonuç, `test` `TRUE` olduğunda ikinci argümanın, `yes`'in, değerini; `FALSE` olduğunda ise üçüncü argümanın, `no`'nun, değerini içerecektir.
+Buradaki yeni fonksiyon, üç argüman alan `if_else()` fonksiyonudur.
+İlk argüman olan `test`, mantıksal bir vektör olmalıdır.
+Sonuçta `test` değeri `TRUE` olduğunda ikinci argümanın (`yes`), `FALSE` olduğunda ise üçüncü argümanın (`no`) değeri kullanılır.
 Burada, `age` `"five"` karakter dizisiyse onu `"5"` yap, değilse `age` olarak bırak diyoruz.
 `if_else()` ve mantıksal vektörler hakkında @sec-logicals bölümünde daha fazla bilgi edineceksiniz.
 
-### Diğer Argümanlar
+### Diğer argümanlar
 
 Bahsetmemiz gereken birkaç önemli argüman daha var ve önce size kullanışlı bir numara gösterirsek bunları göstermek daha kolay olacak: `read_csv()`, oluşturup bir CSV dosyası gibi biçimlendirdiğiniz metin karakter dizilerini okuyabilir:
 
@@ -158,8 +158,8 @@ read_csv(
 )
 ```
 
-Genellikle `read_csv()`, çok yaygın bir kural olan, verinin ilk satırını sütun adları için kullanır.
-Ama dosyanın başına birkaç satır metaveri eklenmesi de az rastlanan bir durum değildir.
+`read_csv()` genellikle verilerin ilk satırını sütun adları olarak kullanır; bu çok yaygın bir kuraldır.
+Ancak dosyanın başında birkaç satır üst veri bulunması da olağandır.
 İlk `n` satırı atlamak için `skip = n` kullanabilir veya (örneğin) `#` ile başlayan tüm satırları düşürmek için `comment = "#"` kullanabilirsiniz:
 
 ```{r}
@@ -206,16 +206,16 @@ read_csv(
 Bu argümanlar, pratikte karşılaşacağınız CSV dosyalarının çoğunu okumak için bilmeniz gereken her şeydir.
 (Geri kalanı için, `.csv` dosyanızı dikkatlice incelemeniz ve `read_csv()`'in diğer pek çok argümanının dokümantasyonunu okumanız gerekecek.)
 
-### Diğer Dosya Türleri
+### Diğer dosya türleri
 
-`read_csv()`'de ustalaştıktan sonra, readr'ın diğer fonksiyonlarını kullanmak basittir; sadece hangi fonksiyona başvuracağınızı bilme meselesidir:
+`read_csv()` fonksiyonunda ustalaştıktan sonra readr'ın diğer fonksiyonlarını kullanmak kolaydır; yalnızca hangi fonksiyonu çağıracağınızı bilmeniz gerekir:
 
 -   `read_csv2()` noktalı virgülle ayrılmış dosyaları okur.
     Bunlar, alanları ayırmak için `,` yerine `;` kullanır ve ondalık işareti olarak `,` kullanan ülkelerde yaygındır.
 
--   `read_tsv()` sekmeyle sınırlandırılmış dosyaları okur.
+-   `read_tsv()` sekmeyle ayrılmış dosyaları okur.
 
--   `read_delim()`, belirtmezseniz sınırlayıcıyı otomatik olarak tahmin etmeye çalışarak, herhangi bir sınırlayıcıya sahip dosyaları okur.
+-   `read_delim()`, herhangi bir ayraç kullanan dosyaları okur; ayracı belirtmezseniz otomatik olarak tahmin etmeye çalışır.
 
 -   `read_fwf()` sabit genişlikli dosyaları okur.
     Alanları `fwf_widths()` ile genişliklerine göre veya `fwf_positions()` ile konumlarına göre belirtebilirsiniz.
@@ -267,13 +267,13 @@ Bu argümanlar, pratikte karşılaşacağınız CSV dosyalarının çoğunu okum
     )
     ```
 
-## Sütun Türlerini Kontrol Etme {#sec-col-types}
+## Sütun türlerini denetleme {#sec-col-types}
 
 Bir CSV dosyası, her değişkenin türü hakkında herhangi bir bilgi içermez (yani mantıksal mı, sayı mı, karakter dizisi mi vb.), bu yüzden readr türü tahmin etmeye çalışır.
 Bu bölüm, tahmin sürecinin nasıl çalıştığını, başarısız olmasına neden olan bazı yaygın sorunların nasıl çözüleceğini ve gerekirse sütun türlerini kendinizin nasıl sağlayacağını açıklar.
-Son olarak, readr feci şekilde başarısız oluyorsa ve dosyanızın yapısı hakkında daha fazla içgörü elde etmeniz gerekiyorsa faydalı olan birkaç genel stratejiden bahsedeceğiz.
+Son olarak readr dosyayı doğru biçimde ayrıştıramıyorsa ve dosya yapısı hakkında daha fazla bilgi edinmeniz gerekiyorsa yararlanabileceğiniz birkaç genel stratejiden söz edeceğiz.
 
-### Türleri Tahmin Etme
+### Türleri tahmin etme
 
 readr, sütun türlerini bulmak için sezgisel bir yöntem kullanır.
 Her sütun için, eksik değerleri göz ardı ederek, ilk satırdan sona kadar eşit aralıklarla dağılmış 1.000 satırın[^data-import-2] değerlerini çeker.
@@ -298,11 +298,11 @@ read_csv("
 ")
 ```
 
-Bu sezgisel yöntem temiz bir veri kümeniz varsa iyi çalışır; ama gerçek hayatta, garip ve güzel başarısızlıklardan oluşan bir seçkiyle karşılaşacaksınız.
+Bu sezgisel yöntem temiz veri kümelerinde iyi çalışır; ancak gerçek yaşamda çeşit çeşit tuhaf ayrıştırma hatasıyla karşılaşırsınız.
 
-### Eksik Değerler, Sütun Türleri ve Sorunlar
+### Eksik değerler, sütun türleri ve sorunlar
 
-Sütun tespitinin başarısız olmasının en yaygın yolu, bir sütunun beklenmedik değerler içermesi ve daha spesifik bir tür yerine bir karakter sütunu elde etmenizdir.
+Sütun türü tespitinin en yaygın başarısızlık biçimi, sütunun beklenmedik değerler içermesi ve daha özel bir tür yerine karakter sütunu olarak okunmasıdır.
 Bunun en yaygın nedenlerinden biri, readr'ın beklediği `NA` dışında bir şey kullanılarak kaydedilmiş bir eksik değerdir.
 
 Bu basit, tek sütunlu CSV dosyasını örnek olarak ele alalım:
@@ -350,7 +350,7 @@ Bu yüzden `na = "."` ayarladığımızda, otomatik tahmin başarılı olur ve b
 read_csv(simple_csv, na = ".")
 ```
 
-### Sütun Türleri
+### Sütun türleri
 
 readr, kullanmanız için toplam dokuz sütun türü sağlar:
 
@@ -361,7 +361,7 @@ readr, kullanmanız için toplam dokuz sütun türü sağlar:
 -   `col_number()`, sayısal olmayan bileşenleri yok sayan hoşgörülü bir sayısal ayrıştırıcıdır ve özellikle para birimleri için yararlıdır. Bu konuda @sec-numbers bölümünde daha fazla bilgi edineceksiniz.
 -   `col_skip()`, bir sütunu atlayarak sonuca dahil edilmemesini sağlar; bu, büyük bir CSV dosyanız varsa ve yalnızca bazı sütunları kullanmak istiyorsanız veriyi okumayı hızlandırmak için yararlı olabilir.
 
-`list()`'ten `cols()`'a geçip `.default`'u belirterek, türleri tahmin eden varsayılan sezgisel yöntemi geçersiz kılmak da mümkündür:
+`list()` yerine `cols()` kullanıp `.default` değerini belirterek tür tahmini yapan varsayılan sezgisel yöntemi geçersiz kılabilirsiniz:
 
 ```{r}
 another_csv <- "
@@ -383,7 +383,7 @@ read_csv(
 )
 ```
 
-## Birden Fazla Dosyadan Veri Okuma {#sec-readr-directory}
+## Birden fazla dosyadan veri okuma {#sec-readr-directory}
 
 Bazen veriniz tek bir dosyada bulunmak yerine birden fazla dosyaya bölünmüştür.
 Örneğin, birden fazla aya ait satış verileriniz olabilir; her ayın verisi ayrı bir dosyada: Ocak için `01-sales.csv`, Şubat için `02-sales.csv` ve Mart için `03-sales.csv`.
@@ -408,7 +408,7 @@ sales_files <- c(
 read_csv(sales_files, id = "file")
 ```
 
-`id` argümanı, verinin hangi dosyadan geldiğini tanımlayan `file` adında yeni bir sütunu ortaya çıkan veri çerçevesine ekler.
+`id` argümanı, ortaya çıkan veri çerçevesine `file` adlı yeni bir sütun ekler; bu sütun verilerin hangi dosyadan geldiğini belirtir.
 Bu, okuduğunuz dosyaların, gözlemleri orijinal kaynaklarına geri izlemenize yardımcı olacak bir tanımlayıcı sütuna sahip olmadığı durumlarda özellikle yararlıdır.
 
 Okumak istediğiniz çok sayıda dosyanız varsa, adlarını bir liste olarak yazmak külfetli hale gelebilir.
@@ -420,11 +420,11 @@ sales_files <- list.files("data", pattern = "sales\\.csv$", full.names = TRUE)
 sales_files
 ```
 
-## Bir Dosyaya Yazma {#sec-writing-to-a-file}
+## Bir dosyaya yazma {#sec-writing-to-a-file}
 
 readr ayrıca veriyi diske geri yazmak için iki yararlı fonksiyonla birlikte gelir: `write_csv()` ve `write_tsv()`.
 Bu fonksiyonların en önemli argümanları `x` (kaydedilecek veri çerçevesi) ve `file`'dır (kaydedileceği konum).
-Ayrıca eksik değerlerin `na` ile nasıl yazılacağını ve mevcut bir dosyaya `append` etmek isteyip istemediğinizi de belirtebilirsiniz.
+Ayrıca eksik değerlerin `na` ile nasıl yazılacağını ve verileri mevcut bir dosyanın sonuna eklemek isteyip istemediğinizi de belirtebilirsiniz.
 
 ```{r}
 #| eval: false
@@ -442,11 +442,11 @@ write_csv(students, "students-2.csv")
 read_csv("students-2.csv")
 ```
 
-Bu, CSV'leri ara sonuçları önbelleğe almak için biraz güvenilmez hale getirir --- her yüklediğinizde sütun spesifikasyonunu yeniden oluşturmanız gerekir.
+Bu durum CSV dosyalarını ara sonuçları önbelleğe almak için biraz güvenilmez kılar: Dosyayı her yüklediğinizde sütun belirtimini yeniden oluşturmanız gerekir.
 İki temel alternatif vardır:
 
-1.  `write_rds()` ve `read_rds()`, temel `readRDS()` ve `saveRDS()` fonksiyonlarının etrafındaki tekdüze sarmalayıcılardır.
-    Bunlar veriyi RDS adı verilen R'a özgü ikili formatta saklar.
+1.  `write_rds()` ve `read_rds()`, temel `readRDS()` ve `saveRDS()` fonksiyonları için tutarlı bir arayüz sunan sarmalayıcılardır.
+    Verileri RDS adı verilen, R'a özgü ikili dosya biçiminde saklarlar.
     Bu, nesneyi yeniden yüklediğinizde, sakladığınız *tamamen aynı* R nesnesini yüklediğiniz anlamına gelir.
 
     ```{r}
@@ -454,7 +454,7 @@ Bu, CSV'leri ara sonuçları önbelleğe almak için biraz güvenilmez hale geti
     read_rds("students.rds")
     ```
 
-2.  arrow paketi, programlama dilleri arasında paylaşılabilen hızlı bir ikili dosya formatı olan parquet dosyalarını okumanızı ve yazmanızı sağlar.
+2.  arrow paketi, programlama dilleri arasında paylaşılabilen hızlı bir ikili dosya biçimi olan Parquet dosyalarını okuyup yazmanızı sağlar.
     arrow'a @sec-arrow bölümünde daha derinlemesine geri döneceğiz.
 
     ```{r}
@@ -473,7 +473,7 @@ Bu, CSV'leri ara sonuçları önbelleğe almak için biraz güvenilmez hale geti
     #> 6          6 Güvenç Attila    Ice cream          Lunch only              6
     ```
 
-Parquet, RDS'den çok daha hızlı olma eğilimindedir ve R dışında kullanılabilir; ama arrow paketini gerektirir.
+Parquet genellikle RDS'den çok daha hızlıdır ve R dışında da kullanılabilir; ancak arrow paketini gerektirir.
 
 ```{r}
 #| include: false
@@ -481,9 +481,9 @@ file.remove("students-2.csv")
 file.remove("students.rds")
 ```
 
-## Veri Girişi
+## Elle veri girişi
 
-Bazen R scriptinizde biraz veri girişi yaparak bir tibble'ı "elle" bir araya getirmeniz gerekecek.
+Bazen R scriptinizin içinde veri girerek bir `tibble`'ı "elle" oluşturmanız gerekir.
 Bunu yapmanıza yardımcı olacak, tibble'ı sütunlara göre mi yoksa satırlara göre mi düzenlediğinize göre farklılık gösteren iki yararlı fonksiyon vardır.
 `tibble()` sütun bazında çalışır:
 
@@ -495,7 +495,7 @@ tibble(
 )
 ```
 
-Veriyi sütun bazında düzenlemek, satırların nasıl ilişkili olduğunu görmeyi zorlaştırabilir, bu yüzden bir alternatif, verinizi satır satır düzenlemenizi sağlayan, **tr**ansposed t**ibble**'ın (devrik tibble) kısaltması olan `tribble()`'dır.
+Verileri sütunlara göre düzenlemek satırlar arasındaki ilişkileri görmeyi zorlaştırabilir. Bir alternatif, verileri satır satır düzenlemenizi sağlayan ve **tr**ansposed t**ibble** (devrik tibble) ifadesinin kısaltması olan `tribble()` fonksiyonudur.
 `tribble()`, kodda veri girişi için özelleştirilmiştir: sütun başlıkları `~` ile başlar ve girdiler virgüllerle ayrılır.
 Bu, az miktarda veriyi okunması kolay bir formda düzenlemeyi mümkün kılar:
 
@@ -515,4 +515,4 @@ CSV dosyalarının nasıl çalıştığını, karşılaşabileceğiniz bazı sor
 Bu kitapta veri aktarımına birkaç kez daha döneceğiz: Excel ve Google E-Tablolar'dan @sec-import-spreadsheets, veritabanlarından veri yüklemeyi göstereceğimiz @sec-import-databases, parquet dosyalarından @sec-arrow, JSON'dan @sec-rectangling ve web sitelerinden @sec-scraping.
 
 Kitabın bu bölümünün neredeyse sonuna geldik; ama ele almamız gereken önemli bir son konu daha var: nasıl yardım alınır.
-Bu yüzden bir sonraki bölümde, yardım aramak için iyi yerler, iyi yardım alma şansınızı en üst düzeye çıkarmak için bir reprex nasıl oluşturulur ve R dünyasını takip etmeye dair bazı genel tavsiyeler öğreneceksiniz.
+Bu yüzden bir sonraki bölümde yardım arayabileceğiniz iyi kaynakları, yararlı yanıt alma olasılığınızı artıracak yeniden üretilebilir bir örneği (`reprex`) nasıl oluşturacağınızı ve R dünyasını takip etmeye yönelik bazı genel önerileri öğreneceksiniz.

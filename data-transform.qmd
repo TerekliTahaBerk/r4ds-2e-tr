@@ -1,4 +1,4 @@
-# Veri Dönüştürme {#sec-data-transform}
+# Veri dönüştürme {#sec-data-transform}
 
 ```{r}
 #| echo: false
@@ -7,17 +7,17 @@ source("_common.R")
 
 ## Giriş
 
-Görselleştirme, içgörü üretmek için önemli bir araçtır; ama verinin, yapmak istediğiniz grafiği oluşturmak için tam olarak ihtiyacınız olan formda gelmesi nadirdir.
-Genellikle, sorularınızı verinizle yanıtlamak için bazı yeni değişkenler veya özetler oluşturmanız gerekir; ya da belki de yalnızca değişkenleri yeniden adlandırmak veya veriyle çalışmayı biraz daha kolaylaştırmak için gözlemleri yeniden sıralamak istersiniz.
-Bunların tümünü (ve daha fazlasını!) bu bölümde nasıl yapacağınızı öğreneceksiniz; bu bölüm sizi **dplyr** paketini ve 2013 yılında New York City'den kalkan uçuşlara dair yeni bir veri kümesini kullanarak veri dönüştürmeyle tanıştıracaktır.
+Görselleştirme, içgörü üretmenin önemli bir aracıdır; ancak veriler, çizmek istediğiniz grafik için tam da gereken biçimde nadiren gelir.
+Sorularınızı verilerle yanıtlamak için çoğu zaman yeni değişkenler veya özetler oluşturmanız gerekir. Bazen de yalnızca değişkenleri yeniden adlandırmak ya da verilerle çalışmayı kolaylaştırmak için gözlemleri yeniden sıralamak istersiniz.
+Bu bölümde bunların tümünü (hatta daha fazlasını!) nasıl yapacağınızı öğreneceksiniz. **dplyr** paketini ve 2013'te New York City'den kalkan uçuşlara ilişkin yeni bir veri kümesini kullanarak veri dönüştürmeyle tanışacaksınız.
 
-Bu bölümün amacı, bir veri çerçevesini dönüştürmek için gereken tüm temel araçlara dair size bir genel bakış sunmaktır.
-Bir veri çerçevesinin önce satırları, sonra sütunları üzerinde çalışan fonksiyonlarla başlayacak, ardından fiilleri (verbs) birleştirmek için kullandığınız önemli bir araç olan pipe hakkında daha fazla konuşmak için geri döneceğiz.
-Ardından, gruplarla çalışma yeteneğini tanıtacağız.
-Bölümü, bu fonksiyonları eylem halinde gösteren bir örnek olayla bitireceğiz.
-Sonraki bölümlerde, belirli veri türlerini (örneğin sayılar, karakter dizileri, tarihler) incelemeye başladıkça bu fonksiyonlara daha ayrıntılı olarak geri döneceğiz.
+Bu bölümün amacı, bir veri çerçevesini dönüştürmekte kullanılan temel araçların genel bir görünümünü sunmaktır.
+Önce veri çerçevesinin satırları, ardından sütunları üzerinde çalışan fonksiyonlarla başlayacağız. Sonra dplyr fiillerini birleştiren önemli bir araç olan pipe operatörünü daha ayrıntılı ele alacağız.
+Ardından gruplarla çalışmayı öğreneceğiz.
+Bölümü, bu fonksiyonların uygulamadaki kullanımını gösteren bir örnek olayla tamamlayacağız.
+Sonraki bölümlerde sayılar, karakter dizileri ve tarihler gibi belirli veri türlerini incelerken bu fonksiyonlara daha ayrıntılı biçimde döneceğiz.
 
-### Ön Koşullar
+### Ön koşullar
 
 Bu bölümde, tidyverse'in bir diğer çekirdek üyesi olan dplyr paketine odaklanacağız.
 Temel fikirleri nycflights13 paketindeki veriyi kullanarak açıklayacak ve veriyi anlamamıza yardımcı olması için ggplot2 kullanacağız.
@@ -28,11 +28,11 @@ library(nycflights13)
 library(tidyverse)
 ```
 
-Tidyverse'i yüklediğinizde yazdırılan çakışma mesajına dikkatlice bakın.
-Bu mesaj, dplyr'in temel R'daki (base R) bazı fonksiyonların üzerine yazdığını size bildirir.
-dplyr'i yükledikten sonra bu fonksiyonların temel R sürümünü kullanmak isterseniz, tam adlarını kullanmanız gerekir: `stats::filter()` ve `stats::lag()`.
-Şimdiye kadar, bir fonksiyonun hangi paketten geldiğini büyük ölçüde göz ardı ettik; çünkü bu genellikle önemli değildir.
-Ancak paketi bilmek, yardım bulmanıza ve ilgili fonksiyonları bulmanıza yardımcı olabilir; bu yüzden bir fonksiyonun hangi paketten geldiği konusunda kesin olmamız gerektiğinde, R ile aynı sözdizimini kullanacağız: `packagename::functionname()`.
+Tidyverse'i yüklediğinizde ekrana gelen çakışma mesajına dikkatle bakın.
+Bu mesaj, dplyr'in temel R'daki (base R) bazı fonksiyonları geçersiz kıldığını bildirir.
+dplyr'i yükledikten sonra bu fonksiyonların temel R sürümlerini kullanmak isterseniz tam adlarını yazmanız gerekir: `stats::filter()` ve `stats::lag()`.
+Şimdiye kadar bir fonksiyonun hangi paketten geldiğini büyük ölçüde göz ardı ettik; çünkü bu çoğu zaman önemli değildir.
+Yine de paketi bilmek, yardım belgelerini ve ilgili fonksiyonları bulmanızı kolaylaştırabilir. Bu nedenle fonksiyonun geldiği paketi açıkça belirtmemiz gerektiğinde R ile aynı söz dizimini kullanacağız: `packagename::functionname()`.
 
 ### nycflights13
 
@@ -44,7 +44,7 @@ Veri, ABD [Ulaştırma İstatistikleri Bürosu'ndan](https://www.transtats.bts.g
 flights
 ```
 
-`flights`, tidyverse tarafından bazı yaygın tuzaklardan kaçınmak için kullanılan özel bir veri çerçevesi türü olan bir tibble'dır.
+`flights`, tidyverse'in bazı yaygın sorunlardan kaçınmak için kullandığı özel bir veri çerçevesi türü olan `tibble`'dır.
 Tibble'lar ile veri çerçeveleri arasındaki en önemli fark, tibble'ların yazdırılma şeklidir; büyük veri kümeleri için tasarlandıklarından, yalnızca ilk birkaç satırı ve yalnızca bir ekrana sığan sütunları gösterirler.
 Her şeyi görmek için birkaç seçenek vardır.
 RStudio kullanıyorsanız, en uygunu muhtemelen etkileşimli, kaydırılabilir ve filtrelenebilir bir görünüm açan `View(flights)`'tır.
@@ -54,13 +54,13 @@ Aksi takdirde, tüm sütunları göstermek için `print(flights, width = Inf)` k
 glimpse(flights)
 ```
 
-Her iki görünümde de değişken adlarının ardından, her değişkenin türünü belirten kısaltmalar gelir: `<int>` tam sayı (integer), `<dbl>` çift duyarlıklı sayı (double, yani gerçek sayılar), `<chr>` karakter (character, yani karakter dizileri) ve `<dttm>` tarih-saat (date-time) için kısaltmadır.
+Her iki görünümde de değişken adlarının ardından değişken türünü belirten kısaltmalar gelir: `<int>` tam sayıyı (integer), `<dbl>` çift duyarlıklı sayıyı (double; diğer adıyla gerçek sayı), `<chr>` karakteri (character; diğer adıyla karakter dizisi), `<dttm>` ise tarih-saati (date-time) belirtir.
 Bunlar önemlidir; çünkü bir sütun üzerinde gerçekleştirebileceğiniz işlemler büyük ölçüde onun "türüne" bağlıdır.
 
-### dplyr Temelleri
+### dplyr'ın temelleri
 
-Veri manipülasyonu zorluklarınızın büyük çoğunluğunu çözmenizi sağlayacak temel dplyr fiillerini (fonksiyonlarını) öğrenmek üzeresiniz.
-Ama bireysel farklılıklarını tartışmadan önce, ortak yönlerini belirtmekte fayda var:
+Veri işleme sorunlarının büyük çoğunluğunu çözmenizi sağlayacak temel dplyr fiillerini (fonksiyonlarını) öğrenmek üzeresiniz.
+Ancak aralarındaki farkları ele almadan önce ortak yönlerini belirtmekte yarar var:
 
 1.  İlk argüman her zaman bir veri çerçevesidir.
 
@@ -68,9 +68,9 @@ Ama bireysel farklılıklarını tartışmadan önce, ortak yönlerini belirtmek
 
 3.  Çıktı her zaman yeni bir veri çerçevesidir.
 
-Her fiil tek bir şeyi iyi yaptığından, karmaşık problemleri çözmek genellikle birden fazla fiili birleştirmeyi gerektirir ve bunu pipe, `|>`, ile yapacağız.
-Pipe'ı @sec-the-pipe bölümünde daha ayrıntılı tartışacağız; ama kısaca, pipe solundaki şeyi alır ve sağındaki fonksiyona iletir; böylece `x |> f(y)`, `f(x, y)`'ye eşdeğerdir ve `x |> f(y) |> g(z)`, `g(f(x, y), z)`'ye eşdeğerdir.
-Pipe'ı telaffuz etmenin en kolay yolu "sonra"dır (then).
+Her fiil tek bir işi iyi yaptığından karmaşık sorunları çözmek çoğunlukla birden fazla fiili birleştirmeyi gerektirir. Bunu pipe operatörü `|>` ile yapacağız.
+@sec-the-pipe bölümünde pipe operatörünü daha ayrıntılı ele alacağız. Kısaca söylemek gerekirse pipe, solundaki nesneyi alıp sağındaki fonksiyona aktarır. Böylece `x |> f(y)`, `f(x, y)` ifadesine; `x |> f(y) |> g(z)` ise `g(f(x, y), z)` ifadesine eşdeğer olur.
+Pipe operatörünü okumanın en kolay yolu "sonra" demektir.
 Bu, ayrıntılarını henüz öğrenmemiş olsanız bile aşağıdaki kodun ne yaptığına dair bir fikir edinmenizi mümkün kılar:
 
 ```{r}
@@ -90,7 +90,7 @@ Hadi başlayalım!
 
 ## Satırlar
 
-Bir veri kümesinin satırları üzerinde işlem yapan en önemli fiiller; hangi satırların bulunduğunu sıralarını değiştirmeden değiştiren `filter()` ve satırların sırasını hangilerinin bulunduğunu değiştirmeden değiştiren `arrange()`'dir.
+Bir veri kümesinin satırları üzerinde çalışan en önemli fiiller `filter()` ve `arrange()`'dir. `filter()`, satırların sırasını değiştirmeden veri kümesinde hangi satırların bulunacağını; `arrange()` ise hangi satırların bulunduğunu değiştirmeden bunların sırasını değiştirir.
 Her iki fonksiyon da yalnızca satırları etkiler; sütunlar değişmeden kalır.
 Benzersiz değerlere sahip satırları bulan `distinct()`'i de tartışacağız.
 `arrange()` ve `filter()`'ın aksine, isteğe bağlı olarak sütunları da değiştirebilir.
@@ -142,7 +142,7 @@ jan1 <- flights |>
   filter(month == 1 & day == 1)
 ```
 
-### Yaygın Hatalar
+### Yaygın hatalar
 
 R'a yeni başladığınızda yapılması en kolay hata, eşitlik testi yaparken `==` yerine `=` kullanmaktır.
 Bu olduğunda `filter()` size haber verecektir:
@@ -161,7 +161,7 @@ flights |>
   filter(month == 1 | 2)
 ```
 
-Bu, hata vermemesi anlamında "çalışır"; ama istediğinizi yapmaz, çünkü `|` önce `month == 1` koşulunu, ardından da anlamlı bir koşul olmayan `2` koşulunu kontrol eder.
+Bu ifade hata vermediği için bir anlamda "çalışır"; ancak istediğiniz sonucu üretmez. Çünkü `|` önce `month == 1` koşulunu, ardından anlamlı bir koşul olmayan `2` değerini denetler.
 Burada neler olduğu ve nedenini @sec-order-operations-boolean bölümünde daha ayrıntılı öğreneceğiz.
 
 ### `arrange()`
@@ -209,11 +209,11 @@ flights |>
   distinct(origin, dest, .keep_all = TRUE)
 ```
 
-Bu benzersiz uçuşların tümünün 1 Ocak'ta olması tesadüf değildir: `distinct()`, veri kümesindeki benzersiz bir satırın ilk oluşumunu bulur ve geri kalanını atar.
+Bu benzersiz uçuşların tümünün 1 Ocak'ta olması tesadüf değildir: `distinct()`, veri kümesindeki her benzersiz satırın ilk görüldüğü örneği tutup geri kalanları atar.
 
-Bunun yerine oluşum sayısını bulmak isterseniz, `distinct()`'i `count()` ile değiştirmeniz daha iyi olur.
-`sort = TRUE` argümanıyla, bunları oluşum sayısına göre azalan sırada düzenleyebilirsiniz.
-count hakkında daha fazlasını @sec-counts bölümünde öğreneceksiniz.
+Bunun yerine her değerin kaç kez görüldüğünü bulmak isterseniz `distinct()` yerine `count()` kullanmanız daha uygun olur.
+`sort = TRUE` argümanıyla sonuçları görülme sayısına göre azalan sırada düzenleyebilirsiniz.
+`count()` hakkında daha fazlasını @sec-counts bölümünde öğreneceksiniz.
 
 ```{r}
 flights |>
@@ -222,7 +222,7 @@ flights |>
 
 ### Alıştırmalar
 
-1.  Her koşul için tek bir pipeline'da, koşulu sağlayan tüm uçuşları bulun:
+1.  Her koşul için tek bir işlem hattında, koşulu sağlayan tüm uçuşları bulun:
 
     -   İki saat veya daha fazla varış gecikmesi yaşayanlar
     -   Houston'a uçanlar (`IAH` veya `HOU`)
@@ -243,7 +243,7 @@ flights |>
     Hangileri en kısa mesafeyi kat etti?
 
 6.  Hem `filter()` hem de `arrange()` kullanıyorsanız, bunları kullanma sırası önemli mi?
-    Neden / neden değil?
+    Neden önemli veya neden önemsiz?
     Sonuçları ve fonksiyonların ne kadar iş yapması gerekeceğini düşünün.
 
 ## Sütunlar
@@ -408,7 +408,7 @@ flights |>
 ```{r}
 #| eval: false
 #| echo: false
-# For data checking, not used in results shown in book
+# Veriyi denetlemek içindir; kitapta gösterilen sonuçlarda kullanılmaz
 flights <- flights |> mutate(
   dep_time = hour * 60 + minute,
   arr_time = (arr_time %/% 100) * 60 + (arr_time %% 100),
@@ -422,9 +422,9 @@ ggplot(flights, aes(x = air_time - airtime2)) + geom_histogram()
 ```
 
 1.  `dep_time`, `sched_dep_time` ve `dep_delay`'i karşılaştırın.
-    Bu üç sayının nasıl ilişkili olmasını beklersiniz?
+    Bu üç sayının birbiriyle nasıl ilişkili olmasını beklersiniz?
 
-2.  `flights`'tan `dep_time`, `dep_delay`, `arr_time` ve `arr_delay`'i seçmenin mümkün olduğunca çok yolu üzerine beyin fırtınası yapın.
+2.  `flights` içinden `dep_time`, `dep_delay`, `arr_time` ve `arr_delay` değişkenlerini seçmenin olabildiğince çok yolunu bulun.
 
 3.  Bir `select()` çağrısında aynı değişkenin adını birden fazla kez belirtirseniz ne olur?
 
@@ -436,7 +436,7 @@ ggplot(flights, aes(x = air_time - airtime2)) + geom_histogram()
     ```
 
 5.  Aşağıdaki kodu çalıştırmanın sonucu sizi şaşırtıyor mu?
-    select yardımcıları varsayılan olarak büyük ve küçük harfle nasıl başa çıkar?
+    `select()` yardımcıları varsayılan olarak büyük ve küçük harfleri nasıl ele alır?
     Bu varsayılanı nasıl değiştirebilirsiniz?
 
     ```{r}
@@ -455,10 +455,10 @@ ggplot(flights, aes(x = air_time - airtime2)) + geom_histogram()
       arrange(arr_delay)
     ```
 
-## Pipe {#sec-the-pipe}
+## Pipe operatörü {#sec-the-pipe}
 
 Yukarıda size pipe'ın basit örneklerini gösterdik; ama gerçek gücü, birden fazla fiili birleştirmeye başladığınızda ortaya çıkar.
-Örneğin, Houston'ın IAH havalimanına giden en hızlı uçuşları bulmak istediğinizi hayal edin: `filter()`, `mutate()`, `select()` ve `arrange()`'i birleştirmeniz gerekir:
+Örneğin Houston'daki IAH Havalimanı'na giden en hızlı uçuşları bulmak istediğinizi düşünün. Bunun için `filter()`, `mutate()`, `select()` ve `arrange()` fonksiyonlarını birleştirmeniz gerekir:
 
 ```{r}
 flights |>
@@ -468,7 +468,7 @@ flights |>
   arrange(desc(speed))
 ```
 
-Bu pipeline'ın dört adımı olsa da, fiiller her satırın başında geldiği için göz gezdirmesi kolaydır: `flights` verisiyle başla, sonra filtrele, sonra mutate et, sonra seç, sonra sırala.
+Bu işlem hattı dört adımdan oluşsa da fiiller her satırın başında yer aldığı için kodu gözden geçirmek kolaydır: `flights` verisiyle başla, sonra filtrele, yeni değişken oluştur, sütunları seç ve satırları sırala.
 
 Pipe olmasaydı ne olurdu?
 Her fonksiyon çağrısını bir önceki çağrının içine yerleştirebilirdik:
@@ -500,10 +500,10 @@ flights3 <- select(flights2, year:day, dep_time, carrier, flight, speed)
 arrange(flights3, desc(speed))
 ```
 
-Her iki formun da kendine göre bir yeri ve zamanı olsa da, pipe genellikle yazması ve okuması daha kolay veri analizi kodu üretir.
+Her iki biçimin de uygun olduğu durumlar vardır; ancak pipe operatörü çoğunlukla yazması ve okuması daha kolay veri analizi kodları oluşturur.
 
-Kodunuza pipe eklemek için, yerleşik klavye kısayolu Ctrl/Cmd + Shift + M'yi kullanmanızı öneririz.
-@fig-pipe-options'ta gösterildiği gibi, `%>%` yerine `|>` kullanmak için RStudio seçeneklerinizde bir değişiklik yapmanız gerekecek; `%>%` hakkında birazdan daha fazlası.
+Kodunuza pipe operatörü eklemek için yerleşik Ctrl/Cmd + Shift + M klavye kısayolunu kullanmanızı öneririz.
+`%>%` yerine `|>` eklemek için @fig-pipe-options'ta gösterildiği gibi RStudio ayarlarını değiştirmeniz gerekir. Birazdan `%>%` hakkında daha fazla bilgi vereceğiz.
 
 ```{r}
 #| label: fig-pipe-options
@@ -520,7 +520,7 @@ knitr::include_graphics("screenshots/rstudio-pipe-options.png")
 ::: callout-note
 ## magrittr
 
-Bir süredir tidyverse kullanıyorsanız, **magrittr** paketi tarafından sağlanan `%>%` pipe'ına aşina olabilirsiniz.
+Bir süredir tidyverse kullanıyorsanız **magrittr** paketinin sağladığı `%>%` pipe operatörünü biliyor olabilirsiniz.
 magrittr paketi çekirdek tidyverse'e dahildir, bu yüzden tidyverse'i her yüklediğinizde `%>%`'i kullanabilirsiniz:
 
 ```{r}
@@ -535,7 +535,7 @@ mtcars %>%
 Basit durumlar için, `|>` ve `%>%` aynı şekilde davranır.
 Peki neden temel pipe'ı öneriyoruz?
 İlk olarak, temel R'ın (base R) bir parçası olduğu için, tidyverse'i kullanmadığınızda bile kullanımınıza her zaman açıktır.
-İkinci olarak, `|>`, `%>%`'den oldukça daha basittir: `%>%`'nin 2014'te icat edilmesi ile `|>`'nin 2021'de R 4.1.0'a dahil edilmesi arasındaki sürede, pipe'ı daha iyi anlamaya başladık.
+İkincisi, `|>` operatörü `%>%` operatöründen çok daha basittir: `%>%`'nin 2014'te ortaya çıkışı ile `|>` operatörünün 2021'de R 4.1.0'a eklenmesi arasındaki sürede pipe kavramını daha iyi anlamaya başladık.
 Bu, temel uygulamanın nadiren kullanılan ve daha az önemli özellikleri bir kenara bırakmasına olanak tanıdı.
 :::
 
@@ -543,7 +543,7 @@ Bu, temel uygulamanın nadiren kullanılan ve daha az önemli özellikleri bir k
 
 Şimdiye kadar satırlar ve sütunlarla çalışan fonksiyonlar hakkında bilgi edindiniz.
 Gruplarla çalışma yeteneğini eklediğinizde dplyr daha da güçlü hale gelir.
-Bu bölümde, en önemli fonksiyonlara odaklanacağız: `group_by()`, `summarize()` ve slice fonksiyon ailesi.
+Bu bölümde en önemli fonksiyonlara odaklanacağız: `group_by()`, `summarize()` ve `slice_*()` fonksiyon ailesi.
 
 ### `group_by()`
 
@@ -554,14 +554,14 @@ flights |>
   group_by(month)
 ```
 
-`group_by()` veriyi değiştirmez; ama çıktıya yakından bakarsanız, çıktının month'a göre "gruplandığını" (`Groups: month [12]`) belirttiğini fark edeceksiniz.
-Bu, sonraki işlemlerin artık "month'a göre" çalışacağı anlamına gelir.
-`group_by()`, veriye uygulanan sonraki fiillerin davranışını değiştiren bu gruplu özelliği (class olarak adlandırılır) veri çerçevesine ekler.
+`group_by()` verileri değiştirmez; ancak çıktıya dikkatle bakarsanız `month` değişkenine göre "gruplandığını" belirten `Groups: month [12]` ifadesini görürsünüz.
+Bu, sonraki işlemlerin artık `month` grupları üzerinde çalışacağı anlamına gelir.
+`group_by()`, veri çerçevesine gruplu olma özelliğini (teknik adıyla bir sınıfı) ekler ve böylece daha sonra uygulanan fiillerin davranışını değiştirir.
 
 ### `summarize()` {#sec-summarize}
 
-En önemli gruplu işlem, tek bir özet istatistik hesaplamak için kullanıldığında veri çerçevesini her grup için tek bir satıra indirgeyen bir özettir.
-dplyr'de bu işlem, month'a göre ortalama kalkış gecikmesini hesaplayan aşağıdaki örnekte gösterildiği gibi `summarize()`[^data-transform-3] tarafından gerçekleştirilir:
+En önemli gruplu işlem özetlemedir: Tek bir özet istatistik hesaplandığında veri çerçevesi, her grup için bir satıra indirgenir.
+dplyr'de bu işlemi `summarize()`[^data-transform-3] gerçekleştirir. Aşağıdaki örnek, `month` gruplarına göre ortalama kalkış gecikmesini hesaplar:
 
 [^data-transform-3]: Ya da İngiliz İngilizcesini tercih ediyorsanız `summarise()`.
 
@@ -600,7 +600,7 @@ flights |>
 
 Ortalamalar ve sayımlar, veri biliminde sizi şaşırtıcı derecede ileriye götürebilir!
 
-### `slice_` Fonksiyonları
+### `slice_*()` fonksiyonları
 
 Her grup içindeki belirli satırları çıkarmanızı sağlayan beş kullanışlı fonksiyon vardır:
 
@@ -627,7 +627,7 @@ Grup başına tam olarak bir satır istiyorsanız `with_ties = FALSE` ayarlayabi
 
 Bu, `summarize()` ile maksimum gecikmeyi hesaplamaya benzer; ama tek bir özet istatistik yerine karşılık gelen satırın tamamını (veya eşitlik varsa satırları) elde edersiniz.
 
-### Birden Fazla Değişkene Göre Gruplama
+### Birden fazla değişkene göre gruplama
 
 Birden fazla değişken kullanarak gruplar oluşturabilirsiniz.
 Örneğin, her tarih için bir grup oluşturabiliriz.
@@ -638,8 +638,8 @@ daily <- flights |>
 daily
 ```
 
-Birden fazla değişkene göre gruplanmış bir tibble'ı özetlediğinizde, her özet son grubu soyar.
-Geriye dönüp bakınca, bu fonksiyonu çalıştırmanın harika bir yolu değildi; ama mevcut kodu bozmadan değiştirmek zor.
+Birden fazla değişkene göre gruplanmış bir `tibble`'ı özetlediğinizde her özetleme, gruplama düzeylerinden sonuncusunu kaldırır.
+Bugünden geriye baktığımızda bunun fonksiyon için pek iyi bir davranış olmadığını görüyoruz; ancak mevcut kodları bozmadan değiştirmek zordur.
 Neler olduğunu açık hale getirmek için dplyr, bu davranışı nasıl değiştirebileceğinizi söyleyen bir mesaj gösterir:
 
 ```{r}
@@ -661,7 +661,7 @@ daily_flights <- daily |>
 
 Alternatif olarak, farklı bir değer ayarlayarak varsayılan davranışı değiştirin; örneğin, tüm gruplamayı kaldırmak için `"drop"` veya aynı grupları korumak için `"keep"`.
 
-### Gruplamayı Kaldırma
+### Gruplamayı kaldırma
 
 `summarize()` kullanmadan bir veri çerçevesinden gruplamayı da kaldırmak isteyebilirsiniz.
 Bunu `ungroup()` ile yapabilirsiniz.
@@ -687,7 +687,7 @@ Tek bir satır elde edersiniz; çünkü dplyr, gruplanmamış bir veri çerçeve
 ### `.by`
 
 dplyr 1.1.0, işlem başına gruplama için yeni, deneysel bir sözdizimi olan `.by` argümanını içerir.
-`group_by()` ve `ungroup()` kalkmıyor; ama artık tek bir işlem içinde gruplamak için `.by` argümanını da kullanabilirsiniz:
+`group_by()` ve `ungroup()` kullanılmaya devam edecek; ancak artık tek bir işlem içinde gruplama yapmak için `.by` argümanını da kullanabilirsiniz:
 
 ```{r}
 #| results: false
@@ -713,15 +713,15 @@ flights |>
 
 `.by`, tüm fiillerle çalışır ve gruplama mesajını bastırmak için `.groups` argümanını kullanmanıza veya işiniz bittiğinde `ungroup()` kullanmanıza gerek olmaması gibi bir avantaja sahiptir.
 
-Bu bölümde bu sözdizimine odaklanmadık; çünkü kitabı yazdığımızda çok yeniydi.
-Yine de belirtmek istedik; çünkü çok gelecek vaat ettiğini ve oldukça popüler olması muhtemel olduğunu düşünüyoruz.
+Kitabı yazdığımız sırada çok yeni olduğu için bu bölümde söz dizimine odaklanmadık.
+Yine de gelecek vadettiğini ve büyük olasılıkla yaygınlaşacağını düşündüğümüz için söz etmek istedik.
 Bu konuda daha fazlasını [dplyr 1.1.0 blog yazısında](https://www.tidyverse.org/blog/2023/02/dplyr-1-1-0-per-operation-grouping/) öğrenebilirsiniz.
 
 ### Alıştırmalar
 
 1.  Hangi taşıyıcının ortalama gecikmeleri en kötü?
-    Meydan okuma: kötü havalimanlarının etkilerini kötü taşıyıcıların etkilerinden ayırt edebilir misiniz?
-    Neden / neden değil?
+    Zor soru: sorunlu havalimanlarının etkilerini sorunlu taşıyıcıların etkilerinden ayırt edebilir misiniz?
+    Neden ayırt edebilirsiniz veya neden edemezsiniz?
     (İpucu: `flights |> group_by(carrier, dest) |> summarize(n())` üzerine düşünün)
 
 2.  Her varış noktasına kalkışta en çok geciken uçuşları bulun.
@@ -761,7 +761,7 @@ Bu konuda daha fazlasını [dplyr 1.1.0 blog yazısında](https://www.tidyverse.
           arrange(y)
         ```
 
-    c.  Çıktının neye benzeyeceğini yazın, sonra doğru olup olmadığınızı kontrol edin ve pipeline'ın ne yaptığını açıklayın.
+    c.  Çıktının neye benzeyeceğini yazın, sonra doğru olup olmadığınızı kontrol edin ve işlem hattının ne yaptığını açıklayın.
 
         ```{r}
         #| eval: false
@@ -770,7 +770,7 @@ Bu konuda daha fazlasını [dplyr 1.1.0 blog yazısında](https://www.tidyverse.
           summarize(mean_x = mean(x))
         ```
 
-    d.  Çıktının neye benzeyeceğini yazın, sonra doğru olup olmadığınızı kontrol edin ve pipeline'ın ne yaptığını açıklayın.
+    d.  Çıktının neye benzeyeceğini yazın, sonra doğru olup olmadığınızı kontrol edin ve işlem hattının ne yaptığını açıklayın.
         Ardından, mesajın ne söylediğine dair yorum yapın.
 
         ```{r}
@@ -780,7 +780,7 @@ Bu konuda daha fazlasını [dplyr 1.1.0 blog yazısında](https://www.tidyverse.
           summarize(mean_x = mean(x))
         ```
 
-    e.  Çıktının neye benzeyeceğini yazın, sonra doğru olup olmadığınızı kontrol edin ve pipeline'ın ne yaptığını açıklayın.
+    e.  Çıktının neye benzeyeceğini yazın, sonra doğru olup olmadığınızı kontrol edin ve işlem hattının ne yaptığını açıklayın.
         Çıktı, (d) şıkkındakinden nasıl farklı?
 
         ```{r}
@@ -790,8 +790,8 @@ Bu konuda daha fazlasını [dplyr 1.1.0 blog yazısında](https://www.tidyverse.
           summarize(mean_x = mean(x), .groups = "drop")
         ```
 
-    f.  Çıktıların neye benzeyeceğini yazın, sonra doğru olup olmadığınızı kontrol edin ve her pipeline'ın ne yaptığını açıklayın.
-        İki pipeline'ın çıktıları nasıl farklı?
+    f.  Çıktıların neye benzeyeceğini yazın, sonra doğru olup olmadığınızı kontrol edin ve her işlem hattının ne yaptığını açıklayın.
+        İki işlem hattının çıktıları nasıl farklı?
 
         ```{r}
         #| eval: false
@@ -804,12 +804,12 @@ Bu konuda daha fazlasını [dplyr 1.1.0 blog yazısında](https://www.tidyverse.
           mutate(mean_x = mean(x))
         ```
 
-## Örnek Olay: Toplulaştırmalar ve Örneklem Büyüklüğü {#sec-sample-size}
+## Örnek olay: toplulaştırmalar ve örneklem büyüklüğü {#sec-sample-size}
 
 Herhangi bir toplulaştırma yaptığınızda, her zaman bir sayım (`n()`) eklemek iyi bir fikirdir.
 Bu şekilde, çok küçük miktarda veriye dayanarak sonuç çıkarmadığınızdan emin olabilirsiniz.
 Bunu **Lahman** paketinden bazı beyzbol verileriyle göstereceğiz.
-Özellikle, bir oyuncunun vuruş yapma oranını (`H`) topu oyuna sokmayı denediği sayıya (`AB`) karşı karşılaştıracağız:
+Özellikle bir oyuncunun başarılı vuruş sayısının (`H`), topu oyuna sokmayı denediği toplam sayıya (`AB`) oranını inceleyeceğiz:
 
 ```{r}
 batters <- Lahman::Batting |>
@@ -833,8 +833,8 @@ Vurucunun becerisini (vuruş ortalamasıyla, `performance`, ölçülür) topa vu
 ```{r}
 #| warning: false
 #| fig-alt: |
-#|   Vuruş performansı sayısına karşı vuruş fırsatlarının, üzerine düzgün
-#|   bir çizgi bindirilmiş bir saçılım grafiği. Ortalama performans, n
+#|   Vuruş fırsatlarının sayısı ile vuruş performansını karşılaştıran ve
+#|   üzerine pürüzsüz bir çizgi eklenmiş saçılım grafiği. Ortalama performans, n
 #|   ~100 iken 0,2'den n ~1000 iken 0,25'e keskin bir şekilde artar.
 #|   Ortalama performans, çok daha sığ bir eğimle doğrusal olarak artmaya
 #|   devam eder ve n ~12.000 iken 0,3'e ulaşır.
@@ -845,11 +845,11 @@ batters |>
   geom_smooth(se = FALSE)
 ```
 
-ggplot2 ve dplyr'i birleştirmek için kullanışlı örüntüye dikkat edin.
-Yalnızca, veri kümesi işleme için `|>`'dan, grafiğinize katman eklemek için `+`'a geçmeyi hatırlamanız gerekir.
+ggplot2 ile dplyr'ı birleştirirken kullanılan bu yararlı örüntüye dikkat edin.
+Veri kümesini işlerken `|>`, grafiğe katman eklerken `+` kullanmaya geçmeniz gerektiğini hatırlamanız yeterlidir.
 
 Bunun sıralama için de önemli sonuçları vardır.
-`desc(performance)` üzerinde saf bir şekilde sıralarsanız, en iyi vuruş ortalamasına sahip kişiler açıkça topu oyuna çok az sayıda sokmaya çalışıp tesadüfen vuruş yapanlardır; bunlar mutlaka en becerikli oyuncular değildir:
+Sonuçları düşünmeden yalnızca `desc(performance)` değerine göre sıralarsanız en iyi vuruş ortalamasına sahip kişiler, topu oyuna yalnızca birkaç kez sokmayı deneyip şans eseri başarılı olanlar çıkar. Bunlar mutlaka en yetenekli oyuncular değildir:
 
 ```{r}
 batters |>
@@ -861,8 +861,8 @@ Bu problemin ve bunun nasıl aşılacağının iyi bir açıklamasını <http://
 ## Özet
 
 Bu bölümde, dplyr'in veri çerçeveleriyle çalışmak için sağladığı araçları öğrendiniz.
-Araçlar kabaca üç kategoriye ayrılır: satırları manipüle edenler (`filter()` ve `arrange()` gibi), sütunları manipüle edenler (`select()` ve `mutate()` gibi) ve grupları manipüle edenler (`group_by()` ve `summarize()` gibi).
-Bu bölümde, bu "tüm veri çerçevesi" araçlarına odaklandık; ama bireysel değişkenle neler yapabileceğiniz hakkında henüz çok fazla şey öğrenmediniz.
+Araçlar kabaca üç kategoriye ayrılır: satırları işleyenler (`filter()` ve `arrange()` gibi), sütunları işleyenler (`select()` ve `mutate()` gibi) ve grupları işleyenler (`group_by()` ve `summarize()` gibi).
+Bu bölümde "tüm veri çerçevesi" üzerinde çalışan araçlara odaklandık; ancak tek tek değişkenlerle neler yapabileceğiniz hakkında henüz pek bir şey öğrenmediniz.
 Buna, her bölümün belirli bir değişken türü için araçlar sağladığı kitabın Dönüştürme bölümünde geri döneceğiz.
 
 Bir sonraki bölümde, kod stilinin önemini ve kodunuzu sizin ve başkalarının okuyup anlamasını kolaylaştıracak şekilde düzenli tutmayı tartışmak için iş akışına geri döneceğiz.

@@ -1,55 +1,54 @@
-# Hoş Geldiniz {.unnumbered}
+# Hoş geldiniz {.unnumbered}
 
-Bu web sitesi, **"Veri Bilimi için R"** kitabının 2. baskısının Türkçe çevirisidir.
-Bu kitap, R ile veri bilimi yapmayı öğretecek: Verinizi R'a nasıl aktaracağınızı, en kullanışlı yapıya nasıl getireceğinizi, nasıl dönüştüreceğinizi ve görselleştireceğinizi öğreneceksiniz.
-Bu kitap, veri bilimi becerileri için bir **uygulama kılavuzu** niteliğindedir.
-Nasıl ki bir kimyager işe deney tüplerini temizlemeyi ve laboratuvar düzenini sağlamayı öğrenerek başlıyorsa, siz de veriyi temizlemeyi, grafik çizmeyi ve daha pek çok yetkinliği burada öğreneceksiniz.
-Bunlar, veri biliminin gerçekleşmesini sağlayan becerilerdir. Burada, tüm bu süreçleri R ile yürütürken kullanılan **en iyi uygulamaları** (best practices) bulacaksınız.
-Zamanı verimli kullanmak adına; **grafik grameri** (grammar of graphics), **açıklamalı programlama** (literate programming) ve **tekrarlanabilir araştırma** yöntemlerini nasıl kullanacağınızı göreceksiniz. 
-Ayrıca; veri düzenleme (wrangling), görselleştirme ve keşif dolu analiz süreçlerinde, zihinsel enerjinizi yeni bulgulara odaklayabilmek için bilişsel kaynaklarınızı nasıl yönetmeniz gerektiğini öğreneceksiniz.
+Bu web sitesi, **“Veri Bilimi için R”** kitabının ikinci baskısının Türkçe çevirisidir.
+Bu kitapta R ile veri bilimi yapmayı öğreneceksiniz: Verilerinizi R'a aktarmayı, en kullanışlı yapıya getirmeyi, dönüştürmeyi ve görselleştirmeyi öğreneceksiniz.
 
-Bu web sitesi her zaman ücretsiz kalacaktır ve [CC BY-NC-ND 3.0](https://creativecommons.org/licenses/by-nc-nd/3.0/us/) lisansı ile korunmaktadır.
-Kitabın fiziksel bir kopyasına sahip olmak isterseniz [Amazon](https://www.amazon.com/dp/1492097403?&tag=hadlwick-20) üzerinden sipariş verebilirsiniz.
-Eğer kitabın ücretsiz sunulmasını değerli buluyor ve bu emeğe karşılık vermek istiyorsanız, lütfen [Kākāpō Recovery](https://www.doc.govt.nz/kakapo-donate) vakfına bağışta bulunun:
-R4DS'in kapağında da yer alan [kākāpō](https://www.youtube.com/watch?v=9T1vfsHYiKY) Yeni Zelanda'ya özgü, nesli kritik derecede tehlike altında olan bir papağan türüdür; dünyada sadece 244 adet kalmıştır.
+Bu kitapta, veri bilimi için gerekli becerileri uygulamalı olarak öğreneceksiniz.
+Bir kimyager nasıl deney tüplerini temizlemeyi ve laboratuvarı malzemelerle donatmayı öğrenirse, siz de verileri temizlemeyi, grafikler çizmeyi ve daha pek çok şeyi öğreneceksiniz.
+Bunlar, veri biliminin yapılabilmesini sağlayan becerilerdir; burada her birini R ile gerçekleştirirken başvurabileceğiniz en iyi uygulamaları bulacaksınız.
+Zaman kazanmak için **grafik gramerinden** (grammar of graphics), **açıklamalı programlamadan** (literate programming) ve **yeniden üretilebilir araştırmadan** nasıl yararlanacağınızı öğreneceksiniz.
+Ayrıca verileri düzenlerken, görselleştirirken ve keşif amacıyla incelerken yeni bulgulara ulaşmayı kolaylaştıracak biçimde zihinsel kaynaklarınızı yönetmeyi de öğreneceksiniz.
+
+Bu web sitesi ücretsizdir ve her zaman ücretsiz kalacaktır; içerik [CC BY-NC-ND 3.0](https://creativecommons.org/licenses/by-nc-nd/3.0/us/) lisansıyla sunulmaktadır.
+Kitabın basılı bir kopyasını edinmek isterseniz [Amazon](https://www.amazon.com/dp/1492097403?&tag=hadlwick-20) üzerinden sipariş verebilirsiniz.
+Kitabı ücretsiz okuyabilmeyi değerli buluyor ve karşılığında destek olmak istiyorsanız lütfen [Kākāpō Recovery](https://www.doc.govt.nz/kakapo-donate) programına bağış yapın: R4DS'in kapağında da yer alan [kākāpō](https://www.youtube.com/watch?v=9T1vfsHYiKY), Yeni Zelanda'ya özgü ve nesli kritik tehlike altında olan bir papağan türüdür; dünyada yalnızca 244 kākāpō kalmıştır.
 
 Başka bir dil konuşuyorsanız, kitabın birinci baskısının ücretsiz olarak sunulan şu çevirileri ilginizi çekebilir:
 
--   [Spanish](http://es.r4ds.hadley.nz)
--   [Italian](https://it.r4ds.hadley.nz)
--   [Turkish](https://tr.r4ds.hadley.nz)
--   [Portuguese](https://pt.r4ds.hadley.nz)
+-   [İspanyolca](http://es.r4ds.hadley.nz)
+-   [İtalyanca](https://it.r4ds.hadley.nz)
+-   [Türkçe](https://tr.r4ds.hadley.nz)
+-   [Portekizce](https://pt.r4ds.hadley.nz)
 
-ve ikinci baskısı:
+İkinci baskının çevirileri ise şunlardır:
 
--   [Spanish](https://davidrsch.github.io/r4ds-es/)
--   [Vietnamese](https://vn.r4ds.hadley.nz/)
+-   [İspanyolca](https://davidrsch.github.io/r4ds-es/)
+-   [Vietnamca](https://vn.r4ds.hadley.nz/)
 
 Kitaptaki alıştırmalar için önerilen çözümlere <https://mine-cetinkaya-rundel.github.io/r4ds-solutions> adresinden ulaşabilirsiniz.
 
-Lütfen unutmayın; R4DS, bir [Katılımcı Davranış Kuralları](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html) (Contributor Code of Conduct) protokolü uygulamaktadır. 
-Bu kitaba katkıda bulunarak, ilgili protokolün şartlarına uymayı kabul etmiş sayılırsınız.
+R4DS'in [Katılımcı Davranış Kuralları](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html) uyguladığını lütfen unutmayın.
+Bu kitaba katkıda bulunarak bu kurallara uymayı kabul etmiş olursunuz.
 
 ---
 
-# Çeviriye Önsöz {.unnumbered}
+# Çeviriye önsöz {.unnumbered}
 
-21. yüzyılda hızlanarak devam eden bilgi devrimi, insan hayatının her alanından toplanan veri miktarını üssel bir şekilde artırmış; 
-veriye erişimin demokratikleşmesi ise modern dünyanın en önemli kazanımlarından biri haline gelmiştir. 
-Sosyal bilimlerden temel bilimlere, tıptan mühendisliğe kadar her alanda veri toplamak ve analiz etmek, geçmişte yalnızca kısıtlı bir kesimin tekelindeydi. 
-Bugün ise “büyük veri” setlerinin erişilebilir olması, bilimle uğraşmak isteyen herkes için büyük bir "eşitleyici" rol üstlenmektedir.
-Veri bilimi (data science), işte bu özgürleştirici atmosferde tüm disiplinlerle iç içe geçen hayati bir meslek grubu olarak doğmuştur.
+Yirmi birinci yüzyılda giderek hızlanan bilgi devrimi, insan yaşamının her alanından toplanan veri miktarını katlanarak artırırken veriye erişimin demokratikleşmesi de modern dünyanın en önemli kazanımlarından biri hâline gelmiştir.
+Sosyal bilimlerden temel bilimlere, tıptan mühendisliğe kadar her alanda veri toplamak ve analiz etmek, geçmişte yalnızca sınırlı bir kesimin tekelindeydi.
+Bugün ise “büyük veri” kümelerine erişilebilmesi, bilimle uğraşmak isteyen herkes için fırsat eşitliği sağlamaktadır.
+Veri bilimi (data science), bu özgürleştirici ortamda tüm disiplinlerle iç içe geçen önemli bir çalışma alanı olarak doğmuştur.
 
-Günümüz veri analisti için bir diğer büyük eşitleyici unsur ise R gibi ücretsiz, açık kaynaklı ve topluluk destekli programlama dillerinin yaygınlaşmasıdır. 
-Artık karmaşık analizler gerçekleştirmek isteyen bir araştırmacının tek ihtiyacı bir bilgisayar, internet bağlantısı ve doğru rehberlere ulaşma isteğidir.
+Günümüz veri analisti için fırsat eşitliği sağlayan bir başka unsur da R gibi ücretsiz, açık kaynaklı ve topluluk destekli programlama dillerinin yaygınlaşmasıdır.
+Artık karmaşık analizler yapmak isteyen bir araştırmacının tek ihtiyacı bir bilgisayar, internet bağlantısı ve doğru kaynaklara ulaşma isteğidir.
 
-### Bir Geleneğin Devamı: 2. Baskı (2e)
+### Bir geleneğin devamı: İkinci baskı (2e)
 
-Elinizdeki bu çalışma, kolektif bir emeğin ve sürekliliğin ürünüdür. 
-Kitabın **1. Baskısı,** COVID-19 pandemisinin zorlu koşulları altında, **İsmail Bekar, Nurbahar Usta ve Bilgecan Şen**’in editörlüğünde büyük bir özveriyle Türkçeye kazandırılmıştı.
+Elinizdeki çalışma, ortak bir emeğin ve sürekliliğin ürünüdür.
+Kitabın **birinci baskısı**, COVID-19 pandemisinin zorlu koşullarında **İsmail Bekar, Nurbahar Usta ve Bilgecan Şen**'in editörlüğünde büyük bir özveriyle Türkçeye kazandırılmıştı.
 
-Bugün bizler, bu kıymetli mirası devralarak; veriyi işleme, görselleştirme ve modern programlama pratiklerinin tamamen yenilendiği "2. Baskı"yı (2e) Türkçeye kazandırmış olmanın heyecanını yaşıyoruz. 
-Bu yeni edisyonun çeviri süreci **Taha Berk Terekli** ve **Zeynep Köse** tarafından yürütülmüştür. 
-Amacımız, sadece metni Türkçeleştirmek değil; R ekosistemindeki köklü değişimleri ve güncel "en iyi uygulama" (best practices) standartlarını ana dilimizde sunarak bu kıymetli kaynağı güncel tutmaktır.
+Bugün bu değerli mirası devralarak veri işleme, görselleştirme ve modern programlama uygulamalarının baştan sona yenilendiği **ikinci baskıyı** (2e) Türkçeye kazandırmış olmanın heyecanını yaşıyoruz.
+Bu yeni baskının çeviri süreci **Taha Berk Terekli** ve **Zeynep Köse** tarafından yürütülmüştür.
+Amacımız yalnızca metni Türkçeleştirmek değil, R ekosistemindeki köklü değişiklikleri ve güncel en iyi uygulamaları ana dilimizde sunarak bu değerli kaynağı güncel tutmaktır.
 
-Bu çeviri bütünüyle gönüllü bir çabanın ürünüdür. Titizliğimize rağmen gözden kaçmış hatalar olabilir; bu hataları bize bildirerek bu güncel kaynağın gelişimine katkıda bulunursanız çok mutlu oluruz. (Düzelti ve çeviri önerileri için: https://bit.ly/r4ds-oneri)
+Bu çeviri bütünüyle gönüllü bir çabanın ürünüdür. Titizliğimize rağmen gözden kaçan hatalar olabilir. Bu hataları bize bildirerek kaynağın gelişmesine katkıda bulunursanız çok mutlu oluruz. Düzelti ve çeviri önerilerinizi <https://bit.ly/r4ds-oneri> adresinden iletebilirsiniz.

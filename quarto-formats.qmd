@@ -1,46 +1,46 @@
-# Quarto formats {#sec-quarto-formats}
+# Quarto biçimleri {#sec-quarto-formats}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## Giriş
 
-So far, you've seen Quarto used to produce HTML documents.
-This chapter gives a brief overview of some of the many other types of output you can produce with Quarto.
+Şimdiye kadar Quarto'nun HTML belgeleri üretmek için kullanıldığını gördünüz.
+Bu bölüm, Quarto ile üretebileceğiniz diğer pek çok çıktı türünden bazılarına kısa bir genel bakış sunar.
 
-There are two ways to set the output of a document:
+Bir belgenin çıktısını belirlemenin iki yolu vardır:
 
-1.  Permanently, by modifying the YAML header:
+1.  YAML üst bilgisini değiştirerek kalıcı biçimde:
 
     ``` yaml
-    title: "Diamond sizes"
+    title: "Elmas boyutları"
     format: html
     ```
 
-2.  Transiently, by calling `quarto::quarto_render()` by hand:
+2.  `quarto::quarto_render()` fonksiyonunu elle çağırarak geçici biçimde:
 
     ```{r}
     #| eval: false
     quarto::quarto_render("diamond-sizes.qmd", output_format = "docx")
     ```
 
-    This is useful if you want to programmatically produce multiple types of output since the `output_format` argument can also take a list of values.
+    `output_format` argümanı bir değer listesi de alabildiği için program aracılığıyla birden çok çıktı türü üretmek istediğinizde bu yöntem kullanışlıdır.
 
     ```{r}
     #| eval: false
     quarto::quarto_render("diamond-sizes.qmd", output_format = c("docx", "pdf"))
     ```
 
-## Output options
+## Çıktı seçenekleri
 
-Quarto offers a wide range of output formats.
-You can find the complete list at <https://quarto.org/docs/output-formats/all-formats.html>.
-Many formats share some output options (e.g., `toc: true` for including a table of contents), but others have options that are format specific (e.g., `code-fold: true` collapses code chunks into a `<details>` tag for HTML output so the user can display it on demand, it's not applicable in a PDF or Word document).
+Quarto çok çeşitli çıktı biçimleri sunar.
+Tam listeyi <https://quarto.org/docs/output-formats/all-formats.html> adresinde bulabilirsiniz.
+Pek çok biçim bazı çıktı seçeneklerini paylaşır (ör. içindekiler tablosu eklemek için `toc: true`), bazı seçenekler ise belirli bir biçime özgüdür (ör. `code-fold: true`, HTML çıktısında kod bloklarını bir `<details>` etiketi içinde daraltarak kullanıcının istediğinde görüntülemesini sağlar; PDF veya Word belgesinde geçerli değildir).
 
-To override the default options, you need to use an expanded `format` field.
-For example, if you wanted to render an `html` with a floating table of contents, you'd use:
+Varsayılan seçenekleri geçersiz kılmak için genişletilmiş bir `format` alanı kullanmanız gerekir.
+Örneğin yüzen bir içindekiler tablosuna sahip `html` çıktısı işlemek isterseniz şunu kullanırsınız:
 
 ``` yaml
 format:
@@ -49,7 +49,7 @@ format:
     toc_float: true
 ```
 
-You can even render to multiple outputs by supplying a list of formats:
+Bir biçim listesi sağlayarak aynı anda birden çok çıktı bile işleyebilirsiniz:
 
 ``` yaml
 format:
@@ -60,42 +60,42 @@ format:
   docx: default
 ```
 
-Note the special syntax (`pdf: default`) if you don't want to override any default options.
+Varsayılan seçeneklerin hiçbirini geçersiz kılmak istemediğinizde kullanılan özel söz dizimine (`pdf: default`) dikkat edin.
 
-To render to all formats specified in the YAML of a document, you can use `output_format = "all"`.
+Bir belgenin YAML'ında belirtilen tüm biçimleri işlemek için `output_format = "all"` kullanabilirsiniz.
 
 ```{r}
 #| eval: false
 quarto::quarto_render("diamond-sizes.qmd", output_format = "all")
 ```
 
-## Documents
+## Belgeler
 
-The previous chapter focused on the default `html` output.
-There are several basic variations on that theme, generating different types of documents.
-For example:
+Önceki bölüm varsayılan `html` çıktısına odaklandı.
+Farklı belge türleri üreten birkaç temel alternatif vardır.
+Örneğin:
 
--   `pdf` makes a PDF with LaTeX (an open-source document layout system), which you'll need to install.
-    RStudio will prompt you if you don't already have it.
+-   `pdf`, yüklemeniz gereken açık kaynaklı bir belge düzeni sistemi olan LaTeX ile PDF oluşturur.
+    LaTeX henüz yüklü değilse RStudio sizi yönlendirir.
 
--   `docx` for Microsoft Word (`.docx`) documents.
+-   Microsoft Word (`.docx`) belgeleri için `docx`.
 
--   `odt` for OpenDocument Text (`.odt`) documents.
+-   OpenDocument Text (`.odt`) belgeleri için `odt`.
 
--   `rtf` for Rich Text Format (`.rtf`) documents.
+-   Rich Text Format (`.rtf`) belgeleri için `rtf`.
 
--   `gfm` for a GitHub Flavored Markdown (`.md`) document.
+-   GitHub Flavored Markdown (`.md`) belgesi için `gfm`.
 
--   `ipynb` for Jupyter Notebooks (`.ipynb`).
+-   Jupyter Notebooks (`.ipynb`) için `ipynb`.
 
-Remember, when generating a document to share with decision-makers, you can turn off the default display of code by setting global options in the document YAML:
+Karar vericilerle paylaşılacak bir belge üretirken belge YAML'ında genel seçenekleri ayarlayarak kodun varsayılan olarak görüntülenmesini kapatabileceğinizi unutmayın:
 
 ``` yaml
 execute:
   echo: false
 ```
 
-For `html` documents another option is to make the code chunks hidden by default, but visible with a click:
+`html` belgeleri için bir başka seçenek, kod bloklarını varsayılan olarak gizlemek ancak tıklandığında görünür kılmaktır:
 
 ``` yaml
 format:
@@ -103,37 +103,37 @@ format:
     code: true
 ```
 
-## Presentations
+## Sunumlar
 
-You can also use Quarto to produce presentations.
-You get less visual control than with a tool like Keynote or PowerPoint, but automatically inserting the results of your R code into a presentation can save a huge amount of time.
-Presentations work by dividing your content into slides, with a new slide beginning at each second (`##`) level header.
-Additionally, first (`#`) level headers indicate the beginning of a new section with a section title slide that is, by default, centered in the middle.
+Quarto'yu sunum üretmek için de kullanabilirsiniz.
+Keynote veya PowerPoint gibi araçlara kıyasla görsel denetiminiz daha azdır; ancak R kodunuzun sonuçlarını sunuma otomatik olarak eklemek çok zaman kazandırabilir.
+Sunumlar, içeriğinizi slaytlara bölerek çalışır; ikinci düzey (`##`) her başlıkta yeni bir slayt başlar.
+Ayrıca birinci düzey (`#`) başlıklar, başlığı varsayılan olarak ortalanmış bir bölüm başlığı slaydıyla yeni bir bölümün başlangıcını belirtir.
 
-Quarto supports a variety of presentation formats, including:
+Quarto, aralarında aşağıdakilerin de bulunduğu çeşitli sunum biçimlerini destekler:
 
-1.  `revealjs` - HTML presentation with revealjs
+1.  `revealjs` — revealjs ile HTML sunumu
 
-2.  `pptx` - PowerPoint presentation
+2.  `pptx` — PowerPoint sunumu
 
-3.  `beamer` - PDF presentation with LaTeX Beamer.
+3.  `beamer` — LaTeX Beamer ile PDF sunumu.
 
-You can read more about creating presentations with Quarto at [https://quarto.org/docs/presentations](https://quarto.org/docs/presentations/).
+Quarto ile sunum oluşturma hakkında daha fazla bilgiyi [https://quarto.org/docs/presentations](https://quarto.org/docs/presentations/) adresinde bulabilirsiniz.
 
-## Interactivity
+## Etkileşim
 
-Just like any HTML document, HTML documents created with Quarto can contain interactive components as well.
-Here we introduce two options for including interactivity in your Quarto documents: htmlwidgets and Shiny.
+Diğer tüm HTML belgeleri gibi Quarto ile oluşturulan HTML belgeleri de etkileşimli bileşenler içerebilir.
+Burada Quarto belgelerinize etkileşim eklemek için iki seçeneği tanıtacağız: htmlwidgets ve Shiny.
 
 ### htmlwidgets
 
-HTML is an interactive format, and you can take advantage of that interactivity with **htmlwidgets**, R functions that produce interactive HTML visualizations.
-For example, take the **leaflet** map below.
-If you're viewing this page on the web, you can drag the map around, zoom in and out, etc.
-You obviously can't do that in a book, so Quarto automatically inserts a static screenshot for you.
+HTML etkileşimli bir biçimdir ve etkileşimli HTML görselleştirmeleri üreten R fonksiyonları olan **htmlwidgets** ile bu etkileşimden yararlanabilirsiniz.
+Örneğin aşağıdaki **leaflet** haritasına bakın.
+Bu sayfayı web'de görüntülüyorsanız haritayı sürükleyebilir, yakınlaştırıp uzaklaştırabilir ve benzeri işlemler yapabilirsiniz.
+Bunları bir kitapta yapamayacağınız açıktır; bu nedenle Quarto sizin için otomatik olarak sabit bir ekran görüntüsü ekler.
 
 ```{r}
-#| fig-alt: Leaflet map of Maungawhau / Mount Eden.
+#| fig-alt: Maungawhau / Mount Eden'ın Leaflet haritası.
 library(leaflet)
 leaflet() |>
   setView(174.764, -36.877, zoom = 16) |> 
@@ -141,83 +141,83 @@ leaflet() |>
   addMarkers(174.764, -36.877, popup = "Maungawhau") 
 ```
 
-The great thing about htmlwidgets is that you don't need to know anything about HTML or JavaScript to use them.
-All the details are wrapped inside the package, so you don't need to worry about it.
+htmlwidgets'ın en güzel yanı, bunları kullanmak için HTML veya JavaScript hakkında hiçbir şey bilmenizin gerekmemesidir.
+Tüm ayrıntılar paketin içine alınmıştır; dolayısıyla bunlarla ilgilenmeniz gerekmez.
 
-There are many packages that provide htmlwidgets, including:
+htmlwidgets sağlayan pek çok paket vardır; bunlardan bazıları şunlardır:
 
--   [**dygraphs**](https://rstudio.github.io/dygraphs) for interactive time series visualizations.
+-   Etkileşimli zaman serisi görselleştirmeleri için [**dygraphs**](https://rstudio.github.io/dygraphs).
 
--   [**DT**](https://rstudio.github.io/DT/) for interactive tables.
+-   Etkileşimli tablolar için [**DT**](https://rstudio.github.io/DT/).
 
--   [**threejs**](https://bwlewis.github.io/rthreejs) for interactive 3d plots.
+-   Etkileşimli 3B grafikler için [**threejs**](https://bwlewis.github.io/rthreejs).
 
--   [**DiagrammeR**](https://rich-iannone.github.io/DiagrammeR) for diagrams (like flow charts and simple node-link diagrams).
+-   Diyagramlar (akış şemaları ve basit düğüm-bağlantı diyagramları gibi) için [**DiagrammeR**](https://rich-iannone.github.io/DiagrammeR).
 
-To learn more about htmlwidgets and see a complete list of packages that provide them visit <https://www.htmlwidgets.org>.
+htmlwidgets hakkında daha fazla bilgi edinmek ve bunları sağlayan paketlerin tam listesini görmek için <https://www.htmlwidgets.org> adresini ziyaret edin.
 
 ### Shiny
 
-htmlwidgets provide **client-side** interactivity --- all the interactivity happens in the browser, independently of R.
-On the one hand, that's great because you can distribute the HTML file without any connection to R.
-However, that fundamentally limits what you can do to things that have been implemented in HTML and JavaScript.
-An alternative approach is to use **shiny**, a package that allows you to create interactivity using R code, not JavaScript.
+htmlwidgets **istemci taraflı** etkileşim sağlar; tüm etkileşim R'den bağımsız olarak tarayıcıda gerçekleşir.
+Bir bakıma bu harikadır çünkü HTML dosyasını R bağlantısı olmadan dağıtabilirsiniz.
+Ancak bu durum yapabileceklerinizi temelde HTML ve JavaScript ile uygulanmış özelliklerle sınırlar.
+Alternatif bir yaklaşım, JavaScript yerine R koduyla etkileşim oluşturmanıza olanak tanıyan **shiny** paketini kullanmaktır.
 
-To call Shiny code from a Quarto document, add `server: shiny` to the YAML header:
+Bir Quarto belgesinden Shiny kodu çağırmak için YAML üst bilgisine `server: shiny` ekleyin:
 
 ``` yaml
-title: "Shiny Web App"
+title: "Shiny Web Uygulaması"
 format: html
 server: shiny
 ```
 
-Then you can use the "input" functions to add interactive components to the document:
+Ardından belgeye etkileşimli bileşenler eklemek için "input" fonksiyonlarını kullanabilirsiniz:
 
 ```{r}
 #| eval: false
 library(shiny)
 
-textInput("name", "What is your name?")
-numericInput("age", "How old are you?", NA, min = 0, max = 150)
+textInput("name", "Adınız nedir?")
+numericInput("age", "Kaç yaşındasınız?", NA, min = 0, max = 150)
 ```
 
 ```{r}
 #| echo: false
 #| out-width: null
 #| fig-alt: |
-#|   Two input boxes on top of each other. Top one says, "What is your 
-#|   name?", the bottom, "How old are you?".
+#|   Üst üste iki giriş kutusu. Üsttekinde "Adınız nedir?", alttakinde
+#|   "Kaç yaşındasınız?" yazıyor.
 knitr::include_graphics("quarto/quarto-shiny.png")
 ```
 
-And you also need a code chunk with chunk option `context: server` which contains the code that needs to run in a Shiny server.
+Shiny sunucusunda çalışması gereken kodu içeren ve `context: server` blok seçeneğine sahip bir kod bloğuna da ihtiyacınız vardır.
 
-You can then refer to the values with `input$name` and `input$age`, and the code that uses them will be automatically re-run whenever they change.
+Ardından değerlere `input$name` ve `input$age` ile başvurabilirsiniz; bu değerleri kullanan kod, değerler her değiştiğinde otomatik olarak yeniden çalıştırılır.
 
-We can't show you a live shiny app here because shiny interactions occur on the **server-side**.
-This means that you can write interactive apps without knowing JavaScript, but you need a server to run them on.
-This introduces a logistical issue: Shiny apps need a Shiny server to be run online.
-When you run Shiny apps on your own computer, Shiny automatically sets up a Shiny server for you, but you need a public-facing Shiny server if you want to publish this sort of interactivity online.
-That's the fundamental trade-off of shiny: you can do anything in a shiny document that you can do in R, but it requires someone to be running R.
+Shiny etkileşimleri **sunucu tarafında** gerçekleştiği için burada çalışan bir Shiny uygulaması gösteremiyoruz.
+Bu, JavaScript bilmeden etkileşimli uygulamalar yazabileceğiniz ancak bunları çalıştıracak bir sunucuya ihtiyaç duyacağınız anlamına gelir.
+Bu durum lojistik bir sorun doğurur: Shiny uygulamalarının çevrimiçi çalışması için bir Shiny sunucusu gerekir.
+Shiny uygulamalarını kendi bilgisayarınızda çalıştırdığınızda Shiny sizin için otomatik olarak bir Shiny sunucusu kurar; ancak bu tür bir etkileşimi çevrimiçi yayımlamak istiyorsanız herkesin erişebileceği bir Shiny sunucusuna ihtiyacınız vardır.
+Shiny'ın temel ödünleşimi budur: Bir Shiny belgesinde R'de yapabildiğiniz her şeyi yapabilirsiniz ancak birinin R'yi çalıştırıyor olması gerekir.
 
-For learning more about Shiny, we recommend reading Mastering Shiny by Hadley Wickham, [https://mastering-shiny.org](https://mastering-shiny.org/).
+Shiny hakkında daha fazla bilgi edinmek için Hadley Wickham'ın *Mastering Shiny* kitabını okumanızı öneririz: [https://mastering-shiny.org](https://mastering-shiny.org/).
 
-## Websites and books
+## Web siteleri ve kitaplar
 
-With a bit of additional infrastructure, you can use Quarto to generate a complete website or book:
+Biraz ek altyapıyla Quarto'yu eksiksiz bir web sitesi veya kitap oluşturmak için kullanabilirsiniz:
 
--   Put your `.qmd` files in a single directory.
-    `index.qmd` will become the home page.
+-   `.qmd` dosyalarınızı tek bir dizine koyun.
+    `index.qmd` ana sayfa olur.
 
--   Add a YAML file named `_quarto.yml` that provides the navigation for the site.
-    In this file, set the `project` type to either `book` or `website`, e.g.:
+-   Site içinde gezinmeyi tanımlayan `_quarto.yml` adlı bir YAML dosyası ekleyin.
+    Bu dosyada `project` türünü `book` veya `website` olarak ayarlayın. Örneğin:
 
     ``` yaml
     project:
       type: book
     ```
 
-For example, the following `_quarto.yml` file creates a website from three source files: `index.qmd` (the home page), `viridis-colors.qmd`, and `terrain-colors.qmd`.
+Örneğin aşağıdaki `_quarto.yml` dosyası üç kaynak dosyadan bir web sitesi oluşturur: `index.qmd` (ana sayfa), `viridis-colors.qmd` ve `terrain-colors.qmd`.
 
 ```{r}
 #| echo: false
@@ -225,9 +225,9 @@ For example, the following `_quarto.yml` file creates a website from three sourc
 cat(readr::read_file("quarto/example-site.yml"))
 ```
 
-The `_quarto.yml` file you need for a book is very similarly structured.
-The following example shows how you can create a book with four chapters that renders to three different outputs (`html`, `pdf`, and `epub`).
-Once again, the source files are `.qmd` files.
+Bir kitap için gereken `_quarto.yml` dosyası da çok benzer bir yapıya sahiptir.
+Aşağıdaki örnek, üç farklı çıktıya (`html`, `pdf` ve `epub`) işlenen dört bölümlük bir kitabı nasıl oluşturabileceğinizi gösterir.
+Burada da kaynak dosyalar `.qmd` dosyalarıdır.
 
 ```{r}
 #| echo: false
@@ -235,37 +235,37 @@ Once again, the source files are `.qmd` files.
 cat(readr::read_file("quarto/example-book.yml"))
 ```
 
-We recommend that you use an RStudio project for your websites and books.
-Based on the `_quarto.yml` file, RStudio will recognize the type of project you're working on, and add a Build tab to the IDE that you can use to render and preview your websites and books.
-Both websites and books can also be rendered using `quarto::quarto_render()`.
+Web siteleriniz ve kitaplarınız için bir RStudio projesi kullanmanızı öneririz.
+RStudio, `_quarto.yml` dosyasına dayanarak üzerinde çalıştığınız projenin türünü tanır ve IDE'ye web sitelerinizi ve kitaplarınızı işleyip önizlemek için kullanabileceğiniz bir Build sekmesi ekler.
+Hem web siteleri hem de kitaplar `quarto::quarto_render()` kullanılarak da işlenebilir.
 
-Read more at <https://quarto.org/docs/websites> about Quarto websites and <https://quarto.org/docs/books> about books.
+Quarto web siteleri hakkında <https://quarto.org/docs/websites>, kitaplar hakkında ise <https://quarto.org/docs/books> adresinde daha fazla bilgi bulabilirsiniz.
 
-## Other formats
+## Diğer biçimler
 
-Quarto offers even more output formats:
+Quarto daha da fazla çıktı biçimi sunar:
 
--   You can write journal articles using Quarto Journal Templates: <https://quarto.org/docs/journals/templates.html>.
+-   Quarto Dergi Şablonlarını kullanarak dergi makaleleri yazabilirsiniz: <https://quarto.org/docs/journals/templates.html>.
 
--   You can output Quarto documents to Jupyter Notebooks with `format: ipynb`: <https://quarto.org/docs/reference/formats/ipynb.html>.
+-   `format: ipynb` ile Quarto belgelerinin çıktısını Jupyter Notebooks olarak alabilirsiniz: <https://quarto.org/docs/reference/formats/ipynb.html>.
 
-See <https://quarto.org/docs/output-formats/all-formats.html> for a list of even more formats.
+Daha fazla biçimin listesi için <https://quarto.org/docs/output-formats/all-formats.html> adresine bakın.
 
-## Summary
+## Özet
 
-In this chapter we presented you a variety of options for communicating your results with Quarto, from static and interactive documents to presentations to websites and books.
+Bu bölümde sonuçlarınızı Quarto ile paylaşmak için sabit ve etkileşimli belgelerden sunumlara, web sitelerine ve kitaplara uzanan çeşitli seçenekler sunduk.
 
-To learn more about effective communication in these different formats, we recommend the following resources:
+Bu farklı biçimlerde etkili iletişim kurma hakkında daha fazla bilgi edinmek için aşağıdaki kaynakları öneririz:
 
--   To improve your presentation skills, try [*Presentation Patterns*](https://presentationpatterns.com/) by Neal Ford, Matthew McCollough, and Nathaniel Schutta.
-    It provides a set of effective patterns (both low- and high-level) that you can apply to improve your presentations.
+-   Sunum becerilerinizi geliştirmek için Neal Ford, Matthew McCollough ve Nathaniel Schutta'nın [*Presentation Patterns*](https://presentationpatterns.com/) kitabını deneyin.
+    Kitap, sunumlarınızı geliştirmek için uygulayabileceğiniz hem alt hem de üst düzey etkili örüntüler sunar.
 
--   If you give academic talks, you might like the [*Leek group guide to giving talks*](https://github.com/jtleek/talkguide).
+-   Akademik konuşmalar yapıyorsanız [*Leek grubunun konuşma yapma rehberi*](https://github.com/jtleek/talkguide) ilginizi çekebilir.
 
--   We haven't taken it ourselves, but we've heard good things about Matt McGarrity's online course on public speaking: <https://www.coursera.org/learn/public-speaking>.
+-   Kendimiz katılmadık ancak Matt McGarrity'nin topluluk önünde konuşma konulu çevrimiçi dersi hakkında olumlu şeyler duyduk: <https://www.coursera.org/learn/public-speaking>.
 
--   If you are creating many dashboards, make sure to read Stephen Few's [*Information Dashboard Design: The Effective Visual Communication of Data*](https://www.amazon.com/Information-Dashboard-Design-Effective-Communication/dp/0596100167).
-    It will help you create dashboards that are truly useful, not just pretty to look at.
+-   Çok sayıda gösterge paneli oluşturuyorsanız Stephen Few'in [*Information Dashboard Design: The Effective Visual Communication of Data*](https://www.amazon.com/Information-Dashboard-Design-Effective-Communication/dp/0596100167) kitabını mutlaka okuyun.
+    Kitap yalnızca güzel görünen değil, gerçekten yararlı gösterge panelleri oluşturmanıza yardımcı olur.
 
--   Effectively communicating your ideas often benefits from some knowledge of graphic design.
-    Robin Williams' [*The Non-Designer's Design Book*](https://www.amazon.com/Non-Designers-Design-Book-4th/dp/0133966151) is a great place to start.
+-   Fikirlerinizi etkili biçimde iletmek çoğu zaman bir miktar grafik tasarım bilgisi gerektirir.
+    Robin Williams'ın [*The Non-Designer's Design Book*](https://www.amazon.com/Non-Designers-Design-Book-4th/dp/0133966151) kitabı başlamak için harika bir kaynaktır.

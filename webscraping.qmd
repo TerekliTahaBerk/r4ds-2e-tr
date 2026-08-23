@@ -1,30 +1,30 @@
-# Web scraping {#sec-scraping}
+# Web kazıma {#sec-scraping}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## Giriş
 
-This chapter introduces you to the basics of web scraping with [rvest](https://rvest.tidyverse.org).
-Web scraping is a very useful tool for extracting data from web pages.
-Some websites will offer an API, a set of structured HTTP requests that return data as JSON, which you handle using the techniques from @sec-rectangling.
-Where possible, you should use the API[^webscraping-1], because typically it will give you more reliable data.
-Unfortunately, however, programming with web APIs is out of scope for this book.
-Instead, we are teaching scraping, a technique that works whether or not a site provides an API.
+Bu bölümde [rvest](https://rvest.tidyverse.org) ile web kazımanın temellerini öğreneceksiniz.
+Web kazıma, web sayfalarından veri çıkarmak için çok kullanışlı bir araçtır.
+Bazı web siteleri, verileri JSON olarak döndüren yapılandırılmış HTTP istekleri kümesi olan bir API sunar; bu verileri @sec-rectangling bölümündeki tekniklerle işleyebilirsiniz.
+Mümkün olduğunda API'yi kullanmalısınız[^webscraping-1]; çünkü genellikle daha güvenilir veriler sağlar.
+Ne yazık ki web API'leriyle programlama bu kitabın kapsamı dışındadır.
+Bunun yerine, site API sunsun ya da sunmasın çalışan bir teknik olan web kazımayı öğretiyoruz.
 
-[^webscraping-1]: And many popular APIs already have CRAN packages that wrap them, so start with a little research first!
+[^webscraping-1]: Ayrıca birçok popüler API'yi sarmalayan CRAN paketleri zaten vardır; bu nedenle işe biraz araştırma yaparak başlayın!
 
-In this chapter, we'll first discuss the ethics and legalities of scraping before we dive into the basics of HTML.
-You'll then learn the basics of CSS selectors to locate specific elements on the page, and how to use rvest functions to get data from text and attributes out of HTML and into R.
-We'll then discuss some techniques to figure out what CSS selector you need for the page you're scraping, before finishing up with a couple of case studies, and a brief discussion of dynamic websites.
+Bu bölümde HTML'in temellerine geçmeden önce web kazımanın etik ve hukuki yönlerini ele alacağız.
+Ardından sayfadaki belirli öğeleri bulmak için CSS seçicilerinin temellerini ve HTML'deki metinlerle özniteliklerden R'a veri aktarmak için rvest fonksiyonlarını nasıl kullanacağınızı öğreneceksiniz.
+Sonrasında kazıdığınız sayfa için hangi CSS seçicisine ihtiyacınız olduğunu belirlemeye yarayan bazı teknikleri tartışacak; birkaç örnek olay ve dinamik web siteleri üzerine kısa bir değerlendirmeyle bitireceğiz.
 
-### Prerequisites
+### Ön koşullar
 
-In this chapter, we'll focus on tools provided by rvest.
-rvest is a member of the tidyverse, but is not a core member so you'll need to load it explicitly.
-We'll also load the full tidyverse since we'll find it generally useful working with the data we've scraped.
+Bu bölümde rvest'ın sağladığı araçlara odaklanacağız.
+rvest tidyverse'in bir üyesidir, ancak temel üyelerinden biri değildir; dolayısıyla onu açıkça yüklemeniz gerekir.
+Kazıdığımız verilerle çalışırken genel olarak yararlı olacağından tidyverse'in tamamını da yükleyeceğiz.
 
 ```{r}
 #| label: setup
@@ -33,181 +33,181 @@ library(tidyverse)
 library(rvest)
 ```
 
-## Scraping ethics and legalities
+## Web kazımanın etik ve hukuki yönleri
 
-Before we get started discussing the code you'll need to perform web scraping, we need to talk about whether it's legal and ethical for you to do so.
-Overall, the situation is complicated with regards to both of these.
+Web kazıma için gereken kodu ele almaya başlamadan önce bunu yapmanın hukuka ve etiğe uygun olup olmadığını konuşmamız gerekir.
+Genel olarak her iki açıdan da durum karmaşıktır.
 
-Legalities depend a lot on where you live.
-However, as a general principle, if the data is public, non-personal, and factual, you're likely to be ok[^webscraping-2].
-These three factors are important because they're connected to the site's terms and conditions, personally identifiable information, and copyright, as we'll discuss below.
+Hukuki durum büyük ölçüde yaşadığınız yere bağlıdır.
+Bununla birlikte genel bir ilke olarak veriler herkese açık, kişisel olmayan ve olgusal ise büyük olasılıkla sorun yaşamazsınız[^webscraping-2].
+Aşağıda ele alacağımız gibi bu üç etmen sitenin hüküm ve koşulları, kişisel olarak tanımlanabilir bilgiler ve telif hakkıyla bağlantılı olduğu için önemlidir.
 
-[^webscraping-2]: Obviously we're not lawyers, and this is not legal advice.
-    But this is the best summary we can give having read a bunch about this topic.
+[^webscraping-2]: Elbette hukukçu değiliz ve bu bir hukuki tavsiye değildir.
+    Ancak konu hakkında çok şey okuduktan sonra sunabildiğimiz en iyi özet budur.
 
-If the data isn't public, non-personal, or factual or you're scraping the data specifically to make money with it, you'll need to talk to a lawyer.
-In any case, you should be respectful of the resources of the server hosting the pages you are scraping.
-Most importantly, this means that if you're scraping many pages, you should make sure to wait a little between each request.
-One easy way to do so is to use the [**polite**](https://dmi3kno.github.io/polite/) package by Dmytro Perepolkin.
-It will automatically pause between requests and cache the results so you never ask for the same page twice.
+Veriler herkese açık, kişisel olmayan ya da olgusal değilse veya özellikle para kazanmak amacıyla veri kazıyorsanız bir hukukçuyla görüşmeniz gerekir.
+Her durumda, kazıdığınız sayfaları barındıran sunucunun kaynaklarına saygılı olmalısınız.
+En önemlisi, çok sayıda sayfa kazıyorsanız her istek arasında biraz beklediğinizden emin olmalısınız.
+Bunu yapmanın kolay bir yolu Dmytro Perepolkin'in [**polite**](https://dmi3kno.github.io/polite/) paketini kullanmaktır.
+Bu paket istekler arasında otomatik olarak bekler ve sonuçları önbelleğe alır; böylece aynı sayfayı hiçbir zaman iki kez istemezsiniz.
 
-### Terms of service
+### Hizmet koşulları
 
-If you look closely, you'll find many websites include a "terms and conditions" or "terms of service" link somewhere on the page, and if you read that page closely you'll often discover that the site specifically prohibits web scraping.
-These pages tend to be a legal land grab where companies make very broad claims.
-It's polite to respect these terms of service where possible, but take any claims with a grain of salt.
+Dikkatle bakarsanız birçok web sitesinin sayfanın bir yerinde “hüküm ve koşullar” ya da “hizmet koşulları” bağlantısı içerdiğini görürsünüz. Bu sayfayı dikkatle okuduğunuzda çoğu zaman sitenin web kazımayı açıkça yasakladığını keşfedersiniz.
+Bu sayfalar, şirketlerin çok geniş iddialarda bulunduğu hukuki alan kapma girişimleri olma eğilimindedir.
+Mümkün olduğunda bu hizmet koşullarına uymak nezaket gereğidir; ancak ileri sürülen iddiaları ihtiyatla değerlendirin.
 
-US courts have generally found that simply putting the terms of service in the footer of the website isn't sufficient for you to be bound by them, e.g., [HiQ Labs v. LinkedIn](https://en.wikipedia.org/wiki/HiQ_Labs_v._LinkedIn).
-Generally, to be bound to the terms of service, you must have taken some explicit action like creating an account or checking a box.
-This is why whether or not the data is **public** is important; if you don't need an account to access them, it is unlikely that you are bound to the terms of service.
-Note, however, the situation is rather different in Europe where courts have found that terms of service are enforceable even if you don't explicitly agree to them.
+ABD mahkemeleri genel olarak hizmet koşullarını yalnızca web sitesinin alt bilgisine koymanın, kullanıcıyı bunlarla bağlı kılmaya yeterli olmadığına hükmetmiştir; örneğin [HiQ Labs v. LinkedIn](https://en.wikipedia.org/wiki/HiQ_Labs_v._LinkedIn).
+Genellikle hizmet koşullarıyla bağlı olmanız için hesap oluşturmak ya da bir kutuyu işaretlemek gibi açık bir işlem yapmış olmanız gerekir.
+Verilerin **herkese açık** olup olmamasının önemli olmasının nedeni budur: Verilere erişmek için bir hesaba ihtiyacınız yoksa hizmet koşullarıyla bağlı olma olasılığınız düşüktür.
+Ancak Avrupa'da durumun oldukça farklı olduğunu unutmayın; mahkemeler açıkça kabul etmeseniz bile hizmet koşullarının uygulanabilir olduğuna hükmetmiştir.
 
-### Personally identifiable information
+### Kişisel olarak tanımlanabilir bilgiler
 
-Even if the data is public, you should be extremely careful about scraping personally identifiable information like names, email addresses, phone numbers, dates of birth, etc.
-Europe has particularly strict laws about the collection or storage of such data ([GDPR](https://gdpr-info.eu/)), and regardless of where you live you're likely to be entering an ethical quagmire.
-For example, in 2016, a group of researchers scraped public profile information (e.g., usernames, age, gender, location, etc.) about 70,000 people on the dating site OkCupid and they publicly released these data without any attempts for anonymization.
-While the researchers felt that there was nothing wrong with this since the data were already public, this work was widely condemned due to ethics concerns around identifiability of users whose information was released in the dataset.
-If your work involves scraping personally identifiable information, we strongly recommend reading about the OkCupid study[^webscraping-3] as well as similar studies with questionable research ethics involving the acquisition and release of personally identifiable information.
+Veriler herkese açık olsa bile adlar, e-posta adresleri, telefon numaraları ve doğum tarihleri gibi kişisel olarak tanımlanabilir bilgileri kazırken son derece dikkatli olmalısınız.
+Avrupa'da bu tür verilerin toplanması veya saklanması konusunda özellikle katı yasalar vardır ([GDPR](https://gdpr-info.eu/)); nerede yaşarsanız yaşayın etik açıdan çetrefilli bir alana girmeniz olasıdır.
+Örneğin 2016'da bir araştırmacı grubu OkCupid adlı arkadaşlık sitesindeki 70.000 kişinin herkese açık profil bilgilerini (kullanıcı adı, yaş, cinsiyet ve konum gibi) kazımış ve anonimleştirmeye yönelik hiçbir girişimde bulunmadan bu verileri kamuya açıklamıştır.
+Araştırmacılar veriler zaten herkese açık olduğu için bunda yanlış bir şey olmadığını düşünse de bilgileri veri kümesinde yayımlanan kullanıcıların tanımlanabilirliğine ilişkin etik kaygılar nedeniyle çalışma geniş ölçüde kınanmıştır.
+Çalışmanız kişisel olarak tanımlanabilir bilgilerin kazınmasını içeriyorsa OkCupid çalışmasının[^webscraping-3] yanı sıra bu tür bilgilerin edinilmesini ve yayımlanmasını içeren, araştırma etiği tartışmalı benzer çalışmaları okumanızı önemle öneririz.
 
-[^webscraping-3]: One example of an article on the OkCupid study was published by Wired, <https://www.wired.com/2016/05/okcupid-study-reveals-perils-big-data-science>.
+[^webscraping-3]: OkCupid çalışması üzerine yazılmış makalelerden biri Wired tarafından yayımlanmıştır: <https://www.wired.com/2016/05/okcupid-study-reveals-perils-big-data-science>.
 
-### Copyright
+### Telif hakkı
 
-Finally, you also need to worry about copyright law.
-Copyright law is complicated, but it's worth taking a look at the [US law](https://www.law.cornell.edu/uscode/text/17/102) which describes exactly what's protected: "\[...\] original works of authorship fixed in any tangible medium of expression, \[...\]".
-It then goes on to describe specific categories that it applies like literary works, musical works, motion pictures and more.
-Notably absent from copyright protection are data.
-This means that as long as you limit your scraping to facts, copyright protection does not apply.
-(But note that Europe has a separate "[sui generis](https://en.wikipedia.org/wiki/Database_right)" right that protects databases.)
+Son olarak telif hakkı hukukunu da dikkate almanız gerekir.
+Telif hakkı hukuku karmaşıktır; ancak tam olarak neyin korunduğunu açıklayan [ABD yasasına](https://www.law.cornell.edu/uscode/text/17/102) bakmak yararlıdır: “\[...\] herhangi bir somut ifade ortamına kaydedilmiş özgün eserler, \[...\]”.
+Yasa daha sonra edebî eserler, müzik eserleri ve sinema filmleri gibi uygulandığı belirli kategorileri açıklar.
+Veriler ise dikkat çekici biçimde telif hakkı koruması kapsamı dışındadır.
+Bu, kazıma işleminizi olgularla sınırladığınız sürece telif hakkı korumasının uygulanmadığı anlamına gelir.
+(Ancak Avrupa'da veritabanlarını koruyan ayrı bir “[sui generis](https://en.wikipedia.org/wiki/Database_right)” hak bulunduğunu unutmayın.)
 
-As a brief example, in the US, lists of ingredients and instructions are not copyrightable, so copyright can not be used to protect a recipe.
-But if that list of recipes is accompanied by substantial novel literary content, that is copyrightable.
-This is why when you're looking for a recipe on the internet there's always so much content beforehand.
+Kısa bir örnek olarak ABD'de malzeme ve talimat listeleri telif hakkına konu olamaz; dolayısıyla bir tarifi korumak için telif hakkı kullanılamaz.
+Ancak bu tarif listesine önemli ölçüde özgün edebî içerik eşlik ediyorsa bu içerik telif hakkıyla korunabilir.
+İnternette bir tarif aradığınızda öncesinde her zaman bu kadar çok içerik bulunmasının nedeni budur.
 
-If you do need to scrape original content (like text or images), you may still be protected under the [doctrine of fair use](https://en.wikipedia.org/wiki/Fair_use).
-Fair use is not a hard and fast rule, but weighs up a number of factors.
-It's more likely to apply if you are collecting the data for research or non-commercial purposes and if you limit what you scrape to just what you need.
+Özgün içerik (metin veya görsel gibi) kazımanız gerekiyorsa [adil kullanım doktrini](https://en.wikipedia.org/wiki/Fair_use) kapsamında yine de korunabilirsiniz.
+Adil kullanım kesin bir kural değildir; bir dizi etmeni birlikte değerlendirir.
+Verileri araştırma ya da ticari olmayan amaçlarla topluyorsanız ve kazıdığınız içeriği yalnızca ihtiyacınız olanla sınırlıyorsanız uygulanma olasılığı daha yüksektir.
 
-## HTML basics
+## HTML temelleri
 
-To scrape webpages, you need to first understand a little bit about **HTML**, the language that describes web pages.
-HTML stands for **H**yper**T**ext **M**arkup **L**anguage and looks something like this:
+Web sayfalarını kazımak için önce web sayfalarını tanımlayan dil olan **HTML** hakkında biraz bilgi edinmeniz gerekir.
+HTML, **H**yper**T**ext **M**arkup **L**anguage ifadesinin kısaltmasıdır ve kabaca şöyle görünür:
 
 ``` html
 <html>
 <head>
-  <title>Page title</title>
+  <title>Sayfa başlığı</title>
 </head>
 <body>
-  <h1 id='first'>A heading</h1>
-  <p>Some text &amp; <b>some bold text.</b></p>
+  <h1 id='first'>Bir başlık</h1>
+  <p>Biraz metin &amp; <b>biraz kalın metin.</b></p>
   <img src='myimg.png' width='100' height='100'>
 </body>
 ```
 
-HTML has a hierarchical structure formed by **elements** which consist of a start tag (e.g., `<tag>`), optional **attributes** (`id='first'`), an end tag[^webscraping-4] (like `</tag>`), and **contents** (everything in between the start and end tag).
+HTML; başlangıç etiketi (ör. `<tag>`), isteğe bağlı **öznitelikler** (`id='first'`), bitiş etiketi[^webscraping-4] (`</tag>` gibi) ve **içerikten** (başlangıç ve bitiş etiketleri arasındaki her şey) oluşan **öğelerin** meydana getirdiği hiyerarşik bir yapıya sahiptir.
 
-[^webscraping-4]: A number of tags (including `<p>` and `<li>`) don't require end tags, but we think it's best to include them because it makes seeing the structure of the HTML a little easier.
+[^webscraping-4]: Bazı etiketler (`<p>` ve `<li>` dahil) bitiş etiketi gerektirmez; ancak HTML'in yapısını görmeyi biraz kolaylaştırdığı için bunları eklemenin en iyisi olduğunu düşünüyoruz.
 
-Since `<` and `>` are used for start and end tags, you can't write them directly.
-Instead you have to use the HTML **escapes** `&gt;` (greater than) and `&lt;` (less than).
-And since those escapes use `&`, if you want a literal ampersand you have to escape it as `&amp;`.
-There are a wide range of possible HTML escapes but you don't need to worry about them too much because rvest automatically handles them for you.
+`<` ve `>` başlangıç ve bitiş etiketleri için kullanıldığından bunları doğrudan yazamazsınız.
+Bunun yerine `&gt;` (büyüktür) ve `&lt;` (küçüktür) HTML **kaçışlarını** kullanmanız gerekir.
+Bu kaçışlar `&` kullandığı için gerçek bir ve işareti yazmak isterseniz onu `&amp;` olarak kaçırmanız gerekir.
+Çok çeşitli HTML kaçışları vardır; ancak rvest bunları sizin için otomatik olarak işlediğinden üzerlerinde fazla düşünmeniz gerekmez.
 
-Web scraping is possible because most pages that contain data that you want to scrape generally have a consistent structure.
+Web kazıma mümkündür; çünkü kazımak istediğiniz verileri içeren sayfaların çoğu genellikle tutarlı bir yapıya sahiptir.
 
-### Elements
+### Öğeler
 
-There are over 100 HTML elements.
-Some of the most important are:
+100'den fazla HTML öğesi vardır.
+En önemlilerinden bazıları şunlardır:
 
--   Every HTML page must be in an `<html>` element, and it must have two children: `<head>`, which contains document metadata like the page title, and `<body>`, which contains the content you see in the browser.
+-   Her HTML sayfası bir `<html>` öğesi içinde olmalı ve iki çocuğa sahip olmalıdır: Sayfa başlığı gibi belge üst verilerini içeren `<head>` ve tarayıcıda gördüğünüz içeriği barındıran `<body>`.
 
--   Block tags like `<h1>` (heading 1), `<section>` (section), `<p>` (paragraph), and `<ol>` (ordered list) form the overall structure of the page.
+-   `<h1>` (1. düzey başlık), `<section>` (bölüm), `<p>` (paragraf) ve `<ol>` (sıralı liste) gibi blok etiketleri sayfanın genel yapısını oluşturur.
 
--   Inline tags like `<b>` (bold), `<i>` (italics), and `<a>` (link) format text inside block tags.
+-   `<b>` (kalın), `<i>` (italik) ve `<a>` (bağlantı) gibi satır içi etiketler blok etiketlerinin içindeki metni biçimlendirir.
 
-If you encounter a tag that you've never seen before, you can find out what it does with a little googling.
-Another good place to start are the [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/HTML) which describe just about every aspect of web programming.
+Daha önce hiç görmediğiniz bir etiketle karşılaşırsanız biraz Google araması yaparak ne işe yaradığını öğrenebilirsiniz.
+Web programlamanın neredeyse her yönünü açıklayan [MDN Web Belgeleri](https://developer.mozilla.org/en-US/docs/Web/HTML) de başlamak için iyi bir yerdir.
 
-Most elements can have content in between their start and end tags.
-This content can either be text or more elements.
-For example, the following HTML contains a paragraph of text, with one word in bold.
+Çoğu öğe başlangıç ve bitiş etiketleri arasında içerik barındırabilir.
+Bu içerik metin ya da başka öğeler olabilir.
+Örneğin aşağıdaki HTML, bir sözcüğü kalın yazılmış bir metin paragrafı içerir.
 
 ```         
 <p>
-  Hi! My <b>name</b> is Hadley.
+  Merhaba! Benim <b>adım</b> Hadley.
 </p>
 ```
 
-The **children** are the elements it contains, so the `<p>` element above has one child, the `<b>` element.
-The `<b>` element has no children, but it does have contents (the text "name").
+**Çocuklar**, bir öğenin içerdiği öğelerdir; dolayısıyla yukarıdaki `<p>` öğesinin `<b>` adlı bir çocuğu vardır.
+`<b>` öğesinin çocuğu yoktur, ancak içeriği vardır (`"adım"` metni).
 
-### Attributes
+### Öznitelikler
 
-Tags can have named **attributes** which look like `name1='value1' name2='value2'`.
-Two of the most important attributes are `id` and `class`, which are used in conjunction with CSS (Cascading Style Sheets) to control the visual appearance of the page.
-These are often useful when scraping data off a page.
-Attributes are also used to record the destination of links (the `href` attribute of `<a>` elements) and the source of images (the `src` attribute of the `<img>` element).
+Etiketler `name1='value1' name2='value2'` biçiminde görünen adlandırılmış **özniteliklere** sahip olabilir.
+En önemli özniteliklerden ikisi, sayfanın görsel görünümünü denetlemek üzere CSS (Basamaklı Stil Sayfaları) ile birlikte kullanılan `id` ve `class` öznitelikleridir.
+Bunlar bir sayfadan veri kazırken çoğu zaman kullanışlıdır.
+Öznitelikler bağlantıların hedefini (`<a>` öğelerinin `href` özniteliği) ve görsellerin kaynağını (`<img>` öğesinin `src` özniteliği) kaydetmek için de kullanılır.
 
-## Extracting data
+## Veri çıkarma
 
-To get started scraping, you'll need the URL of the page you want to scrape, which you can usually copy from your web browser.
-You'll then need to read the HTML for that page into R with `read_html()`.
-This returns an `xml_document`[^webscraping-5] object which you'll then manipulate using rvest functions:
+Kazımaya başlamak için kazımak istediğiniz sayfanın URL'sine ihtiyacınız vardır; bunu genellikle web tarayıcınızdan kopyalayabilirsiniz.
+Ardından bu sayfanın HTML'ini `read_html()` ile R'a okumanız gerekir.
+Bu fonksiyon, daha sonra rvest fonksiyonlarıyla işleyeceğiniz bir `xml_document`[^webscraping-5] nesnesi döndürür:
 
-[^webscraping-5]: This class comes from the [xml2](https://xml2.r-lib.org) package.
-    xml2 is a low-level package that rvest builds on top of.
+[^webscraping-5]: Bu sınıf [xml2](https://xml2.r-lib.org) paketinden gelir.
+    xml2, rvest'ın üzerine kurulduğu düşük düzeyli bir pakettir.
 
 ```{r}
 html <- read_html("http://rvest.tidyverse.org/")
 html
 ```
 
-rvest also includes a function that lets you write HTML inline.
-We'll use this a bunch in this chapter as we teach how the various rvest functions work with simple examples.
+rvest ayrıca HTML'i satır içinde yazmanızı sağlayan bir fonksiyon içerir.
+Çeşitli rvest fonksiyonlarının nasıl çalıştığını basit örneklerle öğretirken bu bölümde onu sıkça kullanacağız.
 
 ```{r}
 html <- minimal_html("
-  <p>This is a paragraph</p>
+  <p>Bu bir paragraftır</p>
   <ul>
-    <li>This is a bulleted list</li>
+    <li>Bu bir madde işaretli listedir</li>
   </ul>
 ")
 html
 ```
 
-Now that you have the HTML in R, it's time to extract the data of interest.
-You'll first learn about the CSS selectors that allow you to identify the elements of interest and the rvest functions that you can use to extract data from them.
-Then we'll briefly cover HTML tables, which have some special tools.
+HTML artık R'da olduğuna göre ilgilendiğimiz verileri çıkarma zamanı geldi.
+Önce ilgilendiğiniz öğeleri belirlemenizi sağlayan CSS seçicilerini ve bu öğelerden veri çıkarmak için kullanabileceğiniz rvest fonksiyonlarını öğreneceksiniz.
+Ardından özel araçlara sahip HTML tablolarını kısaca ele alacağız.
 
-### Find elements
+### Öğeleri bulma
 
-CSS is short for cascading style sheets, and is a tool for defining the visual styling of HTML documents.
-CSS includes a miniature language for selecting elements on a page called **CSS selectors**.
-CSS selectors define patterns for locating HTML elements, and are useful for scraping because they provide a concise way of describing which elements you want to extract.
+CSS, cascading style sheets (basamaklı stil sayfaları) ifadesinin kısaltmasıdır ve HTML belgelerinin görsel stilini tanımlamaya yarayan bir araçtır.
+CSS, bir sayfadaki öğeleri seçmek için kullanılan **CSS seçicileri** adlı küçük bir dil içerir.
+CSS seçicileri HTML öğelerini bulmaya yönelik örüntüler tanımlar ve hangi öğeleri çıkarmak istediğinizi kısa yoldan açıklamanızı sağladığı için kazıma açısından kullanışlıdır.
 
-We'll come back to CSS selectors in more detail in @sec-css-selectors, but luckily you can get a long way with just three:
+CSS seçicilerine @sec-css-selectors bölümünde daha ayrıntılı döneceğiz; ancak neyse ki yalnızca üç seçiciyle epey ilerleyebilirsiniz:
 
--   `p` selects all `<p>` elements.
+-   `p`, tüm `<p>` öğelerini seçer.
 
--   `.title` selects all elements with `class` "title".
+-   `.title`, `class` değeri `"title"` olan tüm öğeleri seçer.
 
--   `#title` selects the element with the `id` attribute that equals "title".
-    Id attributes must be unique within a document, so this will only ever select a single element.
+-   `#title`, `id` özniteliği `"title"` değerine eşit olan öğeyi seçer.
+    Id öznitelikleri belge içinde benzersiz olmalıdır; dolayısıyla bu her zaman yalnızca tek bir öğe seçer.
 
-Let's try out these selectors with a simple example:
+Bu seçicileri basit bir örnekle deneyelim:
 
 ```{r}
 html <- minimal_html("
-  <h1>This is a heading</h1>
-  <p id='first'>This is a paragraph</p>
-  <p class='important'>This is an important paragraph</p>
+  <h1>Bu bir başlıktır</h1>
+  <p id='first'>Bu bir paragraftır</p>
+  <p class='important'>Bu önemli bir paragraftır</p>
 ")
 ```
 
-Use `html_elements()` to find all elements that match the selector:
+Seçiciyle eşleşen tüm öğeleri bulmak için `html_elements()` kullanın:
 
 ```{r}
 html |> html_elements("p")
@@ -215,74 +215,74 @@ html |> html_elements(".important")
 html |> html_elements("#first")
 ```
 
-Another important function is `html_element()` which always returns the same number of outputs as inputs.
-If you apply it to a whole document it'll give you the first match:
+Bir başka önemli fonksiyon, her zaman girdilerle aynı sayıda çıktı döndüren `html_element()` fonksiyonudur.
+Onu belgenin tamamına uygularsanız ilk eşleşmeyi verir:
 
 ```{r}
 html |> html_element("p")
 ```
 
-There's an important difference between `html_element()` and `html_elements()` when you use a selector that doesn't match any elements.
-`html_elements()` returns a vector of length 0, where `html_element()` returns a missing value.
-This will be important shortly.
+Hiçbir öğeyle eşleşmeyen bir seçici kullandığınızda `html_element()` ile `html_elements()` arasında önemli bir fark vardır.
+`html_elements()` sıfır uzunluklu bir vektör, `html_element()` ise eksik değer döndürür.
+Bu fark birazdan önemli olacaktır.
 
 ```{r}
 html |> html_elements("b")
 html |> html_element("b")
 ```
 
-### Nesting selections
+### Seçimleri iç içe yerleştirme
 
-In most cases, you'll use `html_elements()` and `html_element()` together, typically using `html_elements()` to identify elements that will become observations then using `html_element()` to find elements that will become variables.
-Let's see this in action using a simple example.
-Here we have an unordered list (`<ul>`) where each list item (`<li>`) contains some information about four characters from StarWars:
+Çoğu durumda `html_elements()` ve `html_element()` fonksiyonlarını birlikte kullanırsınız. Genellikle gözlem olacak öğeleri belirlemek için `html_elements()`, değişken olacak öğeleri bulmak içinse `html_element()` kullanılır.
+Bunu basit bir örnek üzerinde görelim.
+Burada her liste öğesinin (`<li>`) Star Wars'taki dört karakter hakkında bazı bilgiler içerdiği sırasız bir listemiz (`<ul>`) vardır:
 
 ```{r}
 html <- minimal_html("
   <ul>
-    <li><b>C-3PO</b> is a <i>droid</i> that weighs <span class='weight'>167 kg</span></li>
-    <li><b>R4-P17</b> is a <i>droid</i></li>
-    <li><b>R2-D2</b> is a <i>droid</i> that weighs <span class='weight'>96 kg</span></li>
-    <li><b>Yoda</b> weighs <span class='weight'>66 kg</span></li>
+    <li><b>C-3PO</b>, <span class='weight'>167 kg</span> ağırlığında bir <i>droid</i></li>
+    <li><b>R4-P17</b> bir <i>droid</i></li>
+    <li><b>R2-D2</b>, <span class='weight'>96 kg</span> ağırlığında bir <i>droid</i></li>
+    <li><b>Yoda</b> <span class='weight'>66 kg</span> ağırlığındadır</li>
   </ul>
   ")
 ```
 
-We can use `html_elements()` to make a vector where each element corresponds to a different character:
+Her öğesi farklı bir karaktere karşılık gelen bir vektör oluşturmak için `html_elements()` kullanabiliriz:
 
 ```{r}
 characters <- html |> html_elements("li")
 characters
 ```
 
-To extract the name of each character, we use `html_element()`, because when applied to the output of `html_elements()` it's guaranteed to return one response per element:
+Her karakterin adını çıkarmak için `html_element()` kullanırız; çünkü `html_elements()` çıktısına uygulandığında her öğe için bir yanıt döndürmesi garantidir:
 
 ```{r}
 characters |> html_element("b")
 ```
 
-The distinction between `html_element()` and `html_elements()` isn't important for name, but it is important for weight.
-We want to get one weight for each character, even if there's no weight `<span>`.
-That's what `html_element()` does:
+`html_element()` ile `html_elements()` arasındaki ayrım ad için önemli değildir, ancak ağırlık için önemlidir.
+Bir ağırlık `<span>` öğesi bulunmasa bile her karakter için bir ağırlık almak istiyoruz.
+`html_element()` tam olarak bunu yapar:
 
 ```{r}
 characters |> html_element(".weight")
 ```
 
-`html_elements()` finds all weight `<span>`s that are children of `characters`.
-There's only three of these, so we lose the connection between names and weights:
+`html_elements()`, `characters` öğelerinin çocukları olan tüm ağırlık `<span>` öğelerini bulur.
+Bunlardan yalnızca üç tane olduğundan adlarla ağırlıklar arasındaki bağlantıyı kaybederiz:
 
 ```{r}
 characters |> html_elements(".weight")
 ```
 
-Now that you've selected the elements of interest, you'll need to extract the data, either from the text contents or some attributes.
+İlgilendiğiniz öğeleri seçtiğinize göre verileri metin içeriğinden ya da bazı özniteliklerden çıkarmanız gerekir.
 
-### Text and attributes
+### Metin ve öznitelikler
 
-`html_text2()`[^webscraping-6] extracts the plain text contents of an HTML element:
+`html_text2()`[^webscraping-6], bir HTML öğesinin düz metin içeriğini çıkarır:
 
-[^webscraping-6]: rvest also provides `html_text()` but you should almost always use `html_text2()` since it does a better job of converting nested HTML to text.
+[^webscraping-6]: rvest `html_text()` fonksiyonunu da sağlar; ancak iç içe HTML'i metne dönüştürme işini daha iyi yaptığı için neredeyse her zaman `html_text2()` kullanmalısınız.
 
 ```{r}
 characters |> 
@@ -294,14 +294,14 @@ characters |>
   html_text2()
 ```
 
-Note that any escapes will be automatically handled; you'll only ever see HTML escapes in the source HTML, not in the data returned by rvest.
+Tüm kaçışların otomatik olarak işleneceğini unutmayın; HTML kaçışlarını rvest'ın döndürdüğü verilerde değil, yalnızca kaynak HTML'de görürsünüz.
 
-`html_attr()` extracts data from attributes:
+`html_attr()` özniteliklerden veri çıkarır:
 
 ```{r}
 html <- minimal_html("
-  <p><a href='https://en.wikipedia.org/wiki/Cat'>cats</a></p>
-  <p><a href='https://en.wikipedia.org/wiki/Dog'>dogs</a></p>
+  <p><a href='https://en.wikipedia.org/wiki/Cat'>kediler</a></p>
+  <p><a href='https://en.wikipedia.org/wiki/Dog'>köpekler</a></p>
 ")
 
 html |> 
@@ -310,15 +310,15 @@ html |>
   html_attr("href")
 ```
 
-`html_attr()` always returns a string, so if you're extracting numbers or dates, you'll need to do some post-processing.
+`html_attr()` her zaman bir karakter dizisi döndürür; dolayısıyla sayı ya da tarih çıkarıyorsanız sonradan bazı işlemler yapmanız gerekir.
 
-### Tables
+### Tablolar
 
-If you're lucky, your data will be already stored in an HTML table, and it'll be a matter of just reading it from that table.
-It's usually straightforward to recognize a table in your browser: it'll have a rectangular structure of rows and columns, and you can copy and paste it into a tool like Excel.
+Şanslıysanız verileriniz zaten bir HTML tablosunda saklanıyordur ve tek yapmanız gereken onları bu tablodan okumaktır.
+Tarayıcıda bir tabloyu tanımak genellikle kolaydır: Satır ve sütunlardan oluşan dikdörtgensel bir yapıya sahiptir ve onu Excel gibi bir araca kopyalayıp yapıştırabilirsiniz.
 
-HTML tables are built up from four main elements: `<table>`, `<tr>` (table row), `<th>` (table heading), and `<td>` (table data).
-Here's a simple HTML table with two columns and three rows:
+HTML tabloları dört temel öğeden oluşur: `<table>`, `<tr>` (tablo satırı), `<th>` (tablo başlığı) ve `<td>` (tablo verisi).
+İşte iki sütunlu ve üç veri satırlı basit bir HTML tablosu:
 
 ```{r}
 html <- minimal_html("
@@ -331,9 +331,9 @@ html <- minimal_html("
   ")
 ```
 
-rvest provides a function that knows how to read this sort of data: `html_table()`.
-It returns a list containing one tibble for each table found on the page.
-Use `html_element()` to identify the table you want to extract:
+rvest bu tür verileri nasıl okuyacağını bilen bir fonksiyon sağlar: `html_table()`.
+Sayfada bulunan her tablo için bir tibble içeren liste döndürür.
+Çıkarmak istediğiniz tabloyu belirlemek için `html_element()` kullanın:
 
 ```{r}
 html |> 
@@ -341,45 +341,45 @@ html |>
   html_table()
 ```
 
-Note that `x` and `y` have automatically been converted to numbers.
-This automatic conversion doesn't always work, so in more complex scenarios you may want to turn it off with `convert = FALSE` and then do your own conversion.
+`x` ve `y` sütunlarının otomatik olarak sayıya dönüştürüldüğüne dikkat edin.
+Bu otomatik dönüşüm her zaman çalışmaz; dolayısıyla daha karmaşık durumlarda `convert = FALSE` ile onu kapatıp dönüşümü kendiniz yapmak isteyebilirsiniz.
 
-## Finding the right selectors {#sec-css-selectors}
+## Doğru seçicileri bulma {#sec-css-selectors}
 
-Figuring out the selector you need for your data is typically the hardest part of the problem.
-You'll often need to do some experimenting to find a selector that is both specific (i.e. it doesn't select things you don't care about) and sensitive (i.e. it does select everything you care about).
-Lots of trial and error is a normal part of the process!
-There are two main tools that are available to help you with this process: SelectorGadget and your browser's developer tools.
+Verileriniz için gereken seçiciyi belirlemek genellikle problemin en zor kısmıdır.
+Hem özgül (yani ilgilenmediğiniz şeyleri seçmeyen) hem duyarlı (yani ilgilendiğiniz her şeyi seçen) bir seçici bulmak için çoğu zaman denemeler yapmanız gerekir.
+Çok sayıda deneme yanılma sürecin olağan bir parçasıdır!
+Bu süreçte size yardımcı olabilecek iki temel araç vardır: SelectorGadget ve tarayıcınızın geliştirici araçları.
 
-[SelectorGadget](https://rvest.tidyverse.org/articles/selectorgadget.html) is a javascript bookmarklet that automatically generates CSS selectors based on the positive and negative examples that you provide.
-It doesn't always work, but when it does, it's magic!
-You can learn how to install and use SelectorGadget either by reading <https://rvest.tidyverse.org/articles/selectorgadget.html> or watching Mine's video at <https://www.youtube.com/watch?v=PetWV5g1Xsc>.
+[SelectorGadget](https://rvest.tidyverse.org/articles/selectorgadget.html), sağladığınız olumlu ve olumsuz örneklere göre otomatik olarak CSS seçicileri üreten bir JavaScript yer imidir.
+Her zaman çalışmaz; ama çalıştığında sihir gibidir!
+SelectorGadget'ı nasıl kurup kullanacağınızı <https://rvest.tidyverse.org/articles/selectorgadget.html> adresini okuyarak ya da Mine'ın <https://www.youtube.com/watch?v=PetWV5g1Xsc> adresindeki videosunu izleyerek öğrenebilirsiniz.
 
-Every modern browser comes with some toolkit for developers, but we recommend Chrome, even if it isn't your regular browser: its web developer tools are some of the best and they're immediately available.
-Right click on an element on the page and click `Inspect`.
-This will open an expandable view of the complete HTML page, centered on the element that you just clicked.
-You can use this to explore the page and get a sense of what selectors might work.
-Pay particular attention to the class and id attributes, since these are often used to form the visual structure of the page, and hence make for good tools to extract the data that you're looking for.
+Her modern tarayıcı geliştiriciler için bazı araçlar sunar; ancak günlük tarayıcınız olmasa bile Chrome'u öneriyoruz. Web geliştirici araçları en iyiler arasındadır ve hemen kullanılabilir.
+Sayfadaki bir öğeye sağ tıklayıp `İncele` seçeneğine tıklayın.
+Bu, tıkladığınız öğeyi merkeze alan ve genişletilebilen eksiksiz HTML sayfası görünümünü açar.
+Sayfayı incelemek ve hangi seçicilerin işe yarayabileceği hakkında fikir edinmek için bunu kullanabilirsiniz.
+Sayfanın görsel yapısını oluşturmak için sıklıkla kullanılan ve dolayısıyla aradığınız verileri çıkarmada iyi araçlar olan class ve id özniteliklerine özellikle dikkat edin.
 
-Inside the Elements view, you can also right click on an element and choose `Copy as Selector` to generate a selector that will uniquely identify the element of interest.
+Öğeler görünümünde bir öğeye sağ tıklayıp `Seçici olarak kopyala` seçeneğini belirleyerek ilgilendiğiniz öğeyi benzersiz biçimde tanımlayan bir seçici de üretebilirsiniz.
 
-If either SelectorGadget or Chrome DevTools have generated a CSS selector that you don't understand, try [Selectors Explained](https://kittygiraudel.github.io/selectors-explained/){.uri} which translates CSS selectors into plain English.
-If you find yourself doing this a lot, you might want to learn more about CSS selectors generally.
-We recommend starting with the fun [CSS dinner](https://flukeout.github.io/) tutorial and then referring to the [MDN web docs](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors).
+SelectorGadget veya Chrome Geliştirici Araçları anlamadığınız bir CSS seçicisi ürettiyse CSS seçicilerini sade İngilizceye çeviren [Selectors Explained](https://kittygiraudel.github.io/selectors-explained/){.uri} aracını deneyin.
+Bunu sık sık yapıyorsanız genel olarak CSS seçicileri hakkında daha fazla bilgi edinmek isteyebilirsiniz.
+Eğlenceli [CSS dinner](https://flukeout.github.io/) öğreticisiyle başlamanızı, ardından [MDN web belgelerine](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors) başvurmanızı öneririz.
 
-## Putting it all together
+## Her şeyi bir araya getirme
 
-Let's put this all together to scrape some websites.
-There's some risk that these examples may no longer work when you run them --- that's the fundamental challenge of web scraping; if the structure of the site changes, then you'll have to change your scraping code.
+Bazı web sitelerini kazımak için tüm bunları bir araya getirelim.
+Bu örnekleri çalıştırdığınızda artık çalışmama olasılıkları vardır. Web kazımanın temel zorluğu budur: Sitenin yapısı değişirse kazıma kodunuzu da değiştirmeniz gerekir.
 
-### StarWars
+### Star Wars
 
-rvest includes a very simple example in `vignette("starwars")`.
-This is a simple page with minimal HTML so it's a good place to start.
-I'd encourage you to navigate to that page now and use "Inspect Element" to inspect one of the headings that's the title of a Star Wars movie.
-Use the keyboard or mouse to explore the hierarchy of the HTML and see if you can get a sense of the shared structure used by each movie.
+rvest, `vignette("starwars")` içinde çok basit bir örnek içerir.
+Bu, az miktarda HTML içeren basit bir sayfadır; dolayısıyla başlamak için iyi bir yerdir.
+Şimdi bu sayfaya gitmenizi ve bir Star Wars filminin başlığı olan başlıklardan birini “Öğeyi İncele” ile incelemenizi öneririz.
+HTML hiyerarşisini klavye veya fareyle keşfedin ve her filmin kullandığı ortak yapıyı anlamaya çalışın.
 
-You should be able to see that each movie has a shared structure that looks like this:
+Her filmin aşağıdakine benzer ortak bir yapıya sahip olduğunu görebilmelisiniz:
 
 ``` html
 <section>
@@ -395,8 +395,8 @@ You should be able to see that each movie has a shared structure that looks like
 </section>
 ```
 
-Our goal is to turn this data into a 7 row data frame with variables `title`, `year`, `director`, and `intro`.
-We'll start by reading the HTML and extracting all the `<section>` elements:
+Amacımız bu verileri `title`, `year`, `director` ve `intro` değişkenlerini içeren 7 satırlı bir veri çerçevesine dönüştürmektir.
+HTML'i okuyup tüm `<section>` öğelerini çıkararak başlayacağız:
 
 ```{r}
 url <- "https://rvest.tidyverse.org/articles/starwars.html"
@@ -406,9 +406,9 @@ section <- html |> html_elements("section")
 section
 ```
 
-This retrieves seven elements matching the seven movies found on that page, suggesting that using `section` as a selector is good.
-Extracting the individual elements is straightforward since the data is always found in the text.
-It's just a matter of finding the right selector:
+Bu, sayfadaki yedi filmle eşleşen yedi öğe getirir ve `section` ifadesini seçici olarak kullanmanın uygun olduğunu gösterir.
+Veriler her zaman metinde bulunduğundan tek tek öğeleri çıkarmak kolaydır.
+Yalnızca doğru seçiciyi bulmak gerekir:
 
 ```{r}
 section |> html_element("h2") |> html_text2()
@@ -416,7 +416,7 @@ section |> html_element("h2") |> html_text2()
 section |> html_element(".director") |> html_text2()
 ```
 
-Once we've done that for each component, we can wrap all the results up into a tibble:
+Bunu her bileşen için yaptıktan sonra tüm sonuçları bir tibble içinde bir araya getirebiliriz:
 
 ```{r}
 tibble(
@@ -437,27 +437,27 @@ tibble(
 )
 ```
 
-We did a little more processing of `released` to get a variable that will be easy to use later in our analysis.
+Çözümlememizin ilerleyen aşamalarında kolayca kullanabileceğimiz bir değişken elde etmek için `released` üzerinde biraz daha işlem yaptık.
 
-### IMDB top films
+### IMDb'nin en iyi filmleri
 
-For our next task we'll tackle something a little trickier, extracting the top 250 movies from the internet movie database (IMDb).
-At the time we wrote this chapter, the page looked like @fig-scraping-imdb.
+Sonraki görevimizde biraz daha zor bir işlemi ele alacak ve İnternet Film Veritabanı'ndaki (IMDb) en iyi 250 filmi çıkaracağız.
+Bu bölümü yazdığımız sırada sayfa @fig-scraping-imdb gibi görünüyordu.
 
 ```{r}
 #| label: fig-scraping-imdb
 #| echo: false
 #| fig-cap: | 
-#|   Screenshot of the IMDb top movies web page taken on 2022-12-05.
+#|   IMDb'nin en iyi filmler sayfasının 05.12.2022 tarihinde alınmış ekran görüntüsü.
 #| fig-alt: |
-#|   The screenshot shows a table with columns "Rank and Title",
-#|   "IMDb Rating", and "Your Rating". 9 movies out of the top 250
-#|   are shown. The top 5 are the Shawshank Redemption, The Godfather,
-#|   The Dark Knight, The Godfather: Part II, and 12 Angry Men.
+#|   Ekran görüntüsü "Rank and Title", "IMDb Rating" ve "Your Rating" sütunlarını
+#|   içeren bir tablo gösterir. En iyi 250 filmden 9'u görünür. İlk 5 film The
+#|   Shawshank Redemption, The Godfather, The Dark Knight, The Godfather: Part II
+#|   ve 12 Angry Men'dir.
 knitr::include_graphics("screenshots/scraping-imdb.png", dpi = 300)
 ```
 
-This data has a clear tabular structure so it's worth starting with `html_table()`:
+Bu veriler açık bir tablo yapısına sahip olduğundan `html_table()` ile başlamak uygundur:
 
 ```{r}
 url <- "https://web.archive.org/web/20220201012049/https://www.imdb.com/chart/top/"
@@ -469,11 +469,11 @@ table <- html |>
 table
 ```
 
-This includes a few empty columns, but overall does a good job of capturing the information from the table.
-However, we need to do some more processing to make it easier to use.
-First, we'll rename the columns to be easier to work with, and remove the extraneous whitespace in rank and title.
-We will do this with `select()` (instead of `rename()`) to do the renaming and selecting of just these two columns in one step.
-Then we'll remove the new lines and extra spaces, and then apply `separate_wider_regex()` (from @sec-extract-variables) to pull out the title, year, and rank into their own variables.
+Bu sonuç birkaç boş sütun içerir, ancak genel olarak tablodaki bilgileri yakalama işini iyi yapar.
+Yine de kullanımı kolaylaştırmak için biraz daha işlem yapmamız gerekir.
+Önce sütunları daha kolay çalışılacak biçimde yeniden adlandıracak, sıra ve başlıktaki gereksiz boşlukları kaldıracağız.
+Yalnızca bu iki sütunu seçme ve yeniden adlandırma işlemlerini tek adımda yapmak için bunu `rename()` yerine `select()` ile yapacağız.
+Ardından yeni satırları ve fazla boşlukları kaldıracak, başlığı, yılı ve sırayı kendi değişkenlerine çıkarmak için `separate_wider_regex()` (@sec-extract-variables bölümünden) uygulayacağız.
 
 ```{r}
 ratings <- table |>
@@ -495,9 +495,9 @@ ratings <- table |>
 ratings
 ```
 
-Even in this case where most of the data comes from table cells, it's still worth looking at the raw HTML.
-If you do so, you'll discover that we can add a little extra data by using one of the attributes.
-This is one of the reasons it's worth spending a little time spelunking the source of the page; you might find extra data, or might find a parsing route that's slightly easier.
+Verilerin çoğunun tablo hücrelerinden geldiği bu durumda bile ham HTML'e bakmak yararlıdır.
+Bunu yaptığınızda özniteliklerden birini kullanarak biraz ek veri ekleyebileceğimizi keşfedersiniz.
+Sayfanın kaynağını biraz araştırmaya değer olmasının nedenlerinden biri budur: Ek veriler ya da biraz daha kolay bir ayrıştırma yolu bulabilirsiniz.
 
 ```{r}
 html |> 
@@ -506,7 +506,7 @@ html |>
   html_attr("title")
 ```
 
-We can combine this with the tabular data and again apply `separate_wider_regex()` to extract out the bit of data we care about:
+Bunu tablo verileriyle birleştirebilir ve ilgilendiğimiz veri bölümünü çıkarmak için yeniden `separate_wider_regex()` uygulayabiliriz:
 
 ```{r}
 ratings |>
@@ -526,26 +526,26 @@ ratings |>
   )
 ```
 
-## Dynamic sites
+## Dinamik siteler
 
-So far we have focused on websites where `html_elements()` returns what you see in the browser and discussed how to parse what it returns and how to organize that information in tidy data frames.
-From time-to-time, however, you'll hit a site where `html_elements()` and friends don't return anything like what you see in the browser.
-In many cases, that's because you're trying to scrape a website that dynamically generates the content of the page with javascript.
-This doesn't currently work with rvest, because rvest downloads the raw HTML and doesn't run any javascript.
+Şimdiye kadar `html_elements()` fonksiyonunun tarayıcıda gördüklerinizi döndürdüğü web sitelerine odaklandık; döndürdüğü verilerin nasıl ayrıştırılacağını ve bu bilgilerin düzenli veri çerçevelerinde nasıl düzenleneceğini ele aldık.
+Ancak zaman zaman `html_elements()` ve benzerlerinin tarayıcıda gördüklerinize hiç benzemeyen sonuçlar döndürdüğü bir siteyle karşılaşırsınız.
+Çoğu durumda bunun nedeni, sayfa içeriğini JavaScript ile dinamik olarak üreten bir web sitesini kazımaya çalışmanızdır.
+rvest ham HTML'i indirip JavaScript çalıştırmadığından bu yaklaşım şu anda rvest ile çalışmaz.
 
-It's still possible to scrape these types of sites, but rvest needs to use a more expensive process: fully simulating the web browser including running all javascript.
-This functionality is not available at the time of writing, but it's something we're actively working on and might be available by the time you read this.
-It uses the [chromote package](https://rstudio.github.io/chromote/index.html) which actually runs the Chrome browser in the background, and gives you additional tools to interact with the site, like a human typing text and clicking buttons.
-Check out the [rvest website](http://rvest.tidyverse.org/) for more details.
+Bu tür siteleri kazımak yine de mümkündür; ancak rvest'ın tüm JavaScript'i çalıştırmak dahil web tarayıcısını bütünüyle benzeten, daha maliyetli bir süreç kullanması gerekir.
+Bu işlev bu satırlar yazılırken kullanılabilir değildir; ancak üzerinde etkin olarak çalışıyoruz ve siz bu satırları okurken kullanıma sunulmuş olabilir.
+Arka planda Chrome tarayıcısını gerçekten çalıştıran [chromote paketini](https://rstudio.github.io/chromote/index.html) kullanır ve bir insanın metin yazması ya da düğmelere tıklaması gibi siteyle etkileşim kurmak için ek araçlar sağlar.
+Daha fazla ayrıntı için [rvest web sitesine](http://rvest.tidyverse.org/) bakın.
 
-## Summary
+## Özet
 
-In this chapter, you've learned about the why, the why not, and the how of scraping data from web pages.
-First, you've learned about the basics of HTML and using CSS selectors to refer to specific elements, then you've learned about using the rvest package to get data out of HTML into R.
-We then demonstrated web scraping with two case studies: a simpler scenario on scraping data on StarWars films from the rvest package website and a more complex scenario on scraping the top 250 films from IMDB.
+Bu bölümde web sayfalarından veri kazımanın nedenlerini, neden yapılmaması gerekebileceğini ve nasıl yapılacağını öğrendiniz.
+Önce HTML'in temellerini ve belirli öğelere başvurmak için CSS seçicilerini kullanmayı, ardından HTML'den R'a veri aktarmak için rvest paketini kullanmayı öğrendiniz.
+Sonra web kazımayı iki örnek olayla gösterdik: rvest paketinin web sitesinden Star Wars filmleri hakkındaki verileri kazıdığımız daha basit bir durum ve IMDb'deki en iyi 250 filmi kazıdığımız daha karmaşık bir durum.
 
-Technical details of scraping data off the web can be complex, particularly when dealing with sites, however legal and ethical considerations can be even more complex.
-It's important for you to educate yourself about both of these before setting out to scrape data.
+Özellikle dinamik siteler söz konusu olduğunda web'den veri kazımanın teknik ayrıntıları karmaşık olabilir; ancak hukuki ve etik değerlendirmeler daha da karmaşık olabilir.
+Veri kazımaya başlamadan önce bu iki konuda da kendinizi bilgilendirmeniz önemlidir.
 
-This brings us to the end of the import part of the book where you've learned techniques to get data from where it lives (spreadsheets, databases, JSON files, and web sites) into a tidy form in R.
-Now it's time to turn our sights to a new topic: making the most of R as a programming language.
+Böylece kitabın içe aktarma kısmının sonuna geldik. Bu kısımda verileri bulundukları yerden (hesap çizelgeleri, veritabanları, JSON dosyaları ve web siteleri) alıp R'da düzenli bir biçime getirme tekniklerini öğrendiniz.
+Artık yeni bir konuya yönelme zamanı: Bir programlama dili olarak R'dan en iyi biçimde yararlanmak.

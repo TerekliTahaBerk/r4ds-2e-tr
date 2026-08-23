@@ -1,4 +1,4 @@
-# Bütünsel Bakış {#sec-whole-game-intro .unnumbered}
+# Bütünsel bakış {#sec-whole-game-intro .unnumbered}
 
 ```{r}
 #| results: "asis"
@@ -6,9 +6,9 @@
 source("_common.R")
 ```
 
-Kitabın bu bölümündeki amacımız, size veri biliminin temel araçlarına hızlı bir genel bakış sunmaktır: @fig-ds-whole-game içinde gösterildiği gibi **içe aktarma**, **düzenleme**, **dönüştürme** ve **veri görselleştirme**.
-Size veri biliminin "bütünsel bakışını" göstermek istiyoruz; yani gerçek -basit de olsa- veri kümeleriyle başa çıkabilmeniz için tüm önemli parçalardan yeterince fikir vermek istiyoruz.
-Kitabın sonraki bölümleri bu konuların her birini çok daha derinlemesine ele alacak ve üstesinden gelebileceğiniz veri bilimi zorluklarının kapsamını genişletecektir.
+Kitabın bu kısmındaki amacımız, veri biliminin temel araçlarını hızlıca tanıtmaktır: @fig-ds-whole-game üzerinde gösterilen **içe aktarma**, **düzenleme**, **dönüştürme** ve **veri görselleştirme**.
+Size veri biliminin “bütünsel bakışını” göstermek, yani basit de olsa gerçek veri kümeleriyle çalışabilmeniz için tüm önemli parçalar hakkında yeterli bilgi vermek istiyoruz.
+Kitabın sonraki kısımları bu konuların her birini çok daha derinlemesine ele alacak ve çözebileceğiniz veri bilimi sorunlarının kapsamını genişletecek.
 
 ```{r}
 #| label: fig-ds-whole-game 
@@ -18,28 +18,28 @@ Kitabın sonraki bölümleri bu konuların her birini çok daha derinlemesine el
 #|   Kitabın bu bölümünde veriyi nasıl içe aktaracağınızı, düzenleyeceğinizi,
 #|   dönüştüreceğinizi ve görselleştireceğinizi öğreneceksiniz.
 #| fig-alt: |
-#|   Veri bilimi döngüsünü gösteren bir diyagram: İçe Aktar (Import) ->
-#|   Düzenle (Tidy) -> Anla (Anla aşaması kendi içinde Dönüştür ->
-#|   Görselleştir -> Modelle şeklinde bir döngüye sahiptir) -> İletişim Kur
-#|   (Communicate). Tüm bu süreci Programlama (Program) çevreler.
-#|   İçe Aktar, Düzenle, Dönüştür ve Görselleştir vurgulanmıştır.
+#|   Veri bilimi döngüsünü gösteren bir diyagram. İngilizce etiketlerle Import (İçe aktar) ->
+#|   Tidy (Düzenle) -> Understand (Anla) -> Communicate (İletişim kur) akışı gösterilir.
+#|   Understand aşamasında Transform (Dönüştür), Visualize (Görselleştir) ve Model (Modelle)
+#|   bir döngü oluşturur. Program (Programlama) tüm süreci çevreler. Import, Tidy, Transform
+#|   ve Visualize etiketleri vurgulanmıştır.
 knitr::include_graphics("diagrams/data-science/whole-game.png", dpi = 270)
 ```
 
 Dört bölüm, veri biliminin araçlarına odaklanır:
 
--   Görselleştirme, R programlamaya başlamak için harika bir noktadır; çünkü kazanımı çok nettir: veriyi anlamanıza yardımcı olacak zarif ve bilgilendirici grafikler oluşturabilirsiniz.
-    @sec-data-visualization bölümünde görselleştirmeye derinlemesine dalacak, bir ggplot2 grafiğinin temel yapısını ve veriyi grafiklere dönüştürmenin güçlü tekniklerini öğreneceksiniz.
+-   Görselleştirme, R programlamaya başlamak için harika bir noktadır; çünkü karşılığını hemen alırsınız: Verileri anlamanıza yardımcı olacak zarif ve bilgilendirici grafikler oluşturabilirsiniz.
+    @sec-data-visualization bölümünde görselleştirmeyi ayrıntılı olarak ele alacak, bir ggplot2 grafiğinin temel yapısını ve verilerden grafik oluşturmanın güçlü tekniklerini öğreneceksiniz.
 
--   Görselleştirme tek başına genellikle yeterli değildir; bu yüzden @sec-data-transform bölümünde, önemli değişkenleri seçmenizi, kilit gözlemleri filtrelemenizi, yeni değişkenler oluşturmanızı ve özet istatistikler hesaplamanızı sağlayan temel fiilleri öğreneceksiniz.
+-   Görselleştirme tek başına genellikle yeterli değildir. Bu nedenle @sec-data-transform bölümünde önemli değişkenleri seçmenizi, kilit gözlemleri filtrelemenizi, yeni değişkenler oluşturmanızı ve özetler hesaplamanızı sağlayan temel fiilleri öğreneceksiniz.
 
--   @sec-data-tidy bölümünde, dönüştürmeyi, görselleştirmeyi ve modellemeyi kolaylaştıran, verinizi tutarlı bir biçimde saklama yöntemi olan düzenli veri (tidy data) hakkında bilgi edineceksiniz.
-    Bu yaklaşımın altında yatan ilkeleri ve verinizi düzenli bir forma nasıl getireceğinizi öğreneceksiniz.
+-   @sec-data-tidy bölümünde, dönüştürmeyi, görselleştirmeyi ve modellemeyi kolaylaştıran tutarlı bir veri saklama yöntemi olan düzenli veri (tidy data) hakkında bilgi edineceksiniz.
+    Bu yaklaşımın temelindeki ilkeleri ve verilerinizi nasıl düzenli bir biçime getireceğinizi göreceksiniz.
 
--   Verinizi dönüştürüp görselleştirebilmeniz için önce onu R'a aktarmanız gerekir.
+-   Verilerinizi dönüştürüp görselleştirebilmek için önce R'a aktarmanız gerekir.
     @sec-data-import bölümünde, `.csv` dosyalarını R'a aktarmanın temellerini öğreneceksiniz.
 
-Bu bölümlerin arasına yerleştirilmiş dört bölüm daha, R iş akışınıza odaklanır.
-@sec-workflow-basics, @sec-workflow-style ve @sec-workflow-scripts-projects bölümlerinde, R kodunuzu yazmak ve düzenlemek için iyi iş akışı pratiklerini öğreneceksiniz.
-Bunlar, gerçek projelere giriştiğinizde düzenli kalmanız için gereken araçları size sağlayarak, uzun vadede başarılı olmanızı sağlayacaktır.
-Son olarak, @sec-workflow-getting-help bölümü size nasıl yardım alacağınızı ve öğrenmeye nasıl devam edeceğinizi öğretecektir.
+Bu bölümlerin arasına R iş akışınıza odaklanan dört bölüm daha serpiştirilmiştir.
+@sec-workflow-basics, @sec-workflow-style ve @sec-workflow-scripts-projects bölümlerinde R kodunuzu yazmaya ve düzenlemeye yönelik iyi iş akışı uygulamalarını öğreneceksiniz.
+Bu uygulamalar, gerçek projeler üzerinde çalışırken düzenli kalmanız için gereken araçları sağlayarak uzun vadeli başarınıza zemin hazırlayacak.
+Son olarak @sec-workflow-getting-help bölümü, nasıl yardım alacağınızı ve öğrenmeyi nasıl sürdüreceğinizi gösterecek.

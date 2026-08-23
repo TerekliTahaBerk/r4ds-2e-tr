@@ -1,39 +1,39 @@
-# Aktarma {#sec-import .unnumbered}
+# İçe aktarma {#sec-import .unnumbered}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-Kitabın bu bölümünde, R'a çok daha geniş bir veri yelpazesini nasıl aktaracağınızı ve bunu analiz için kullanışlı bir forma nasıl getireceğinizi öğreneceksiniz.
-Bazen bu, yalnızca uygun veri aktarma paketinden bir fonksiyon çağırmaktan ibarettir.
-Ancak daha karmaşık durumlarda, üzerinde çalışmayı tercih edeceğiniz düzenli (tidy) dikdörtgene ulaşmak için hem düzenleme hem de dönüştürme gerekebilir.
+Kitabın bu kısmında çok daha geniş bir veri yelpazesini R'a aktarmayı ve analiz için kullanışlı bir biçime getirmeyi öğreneceksiniz.
+Bazen bunun için uygun veri içe aktarma paketinden tek bir fonksiyon çağırmak yeterlidir.
+Daha karmaşık durumlarda ise üzerinde çalışmayı tercih edeceğiniz düzenli veri dikdörtgenine ulaşmak için hem düzenleme hem de dönüştürme gerekebilir.
 
 ```{r}
 #| label: fig-ds-import
 #| echo: false
 #| fig-cap: |
-#|   Veri aktarma, veri bilimi sürecinin başlangıcıdır; veri olmadan
+#|   Veri içe aktarma, veri bilimi sürecinin başlangıcıdır; veri olmadan
 #|   veri bilimi yapamazsınız!
 #| fig-alt: |
-#|   Veri bilimi modelimiz; aktarma aşaması mavi renkle vurgulanmıştır.
+#|   Veri bilimi modelimiz; içe aktarma aşaması mavi renkle vurgulanmıştır.
 #| out.width: NULL
 knitr::include_graphics("diagrams/data-science/import.png", dpi = 270)
 ```
 
-Kitabın bu bölümünde, aşağıdaki şekillerde saklanan verilere nasıl erişeceğinizi öğreneceksiniz:
+Kitabın bu kısmında, aşağıdaki biçimlerde saklanan verilere nasıl erişeceğinizi öğreneceksiniz:
 
--   @sec-import-spreadsheets bölümünde, Excel hesap çizelgelerinden ve Google E-Tablolar'dan veri nasıl aktarılır öğreneceksiniz.
+-   @sec-import-spreadsheets bölümünde Excel hesap çizelgelerinden ve Google E-Tablolar'dan veri aktarmayı öğreneceksiniz.
 
--   @sec-import-databases bölümünde, verinin bir veritabanından R'a nasıl aktarılacağını öğreneceksiniz (ayrıca verinin R'dan bir veritabanına nasıl aktarılacağı hakkında da biraz bilgi edineceksiniz).
+-   @sec-import-databases bölümünde verileri bir veritabanından R'a aktarmayı öğrenecek, R'dan veritabanına aktarma konusunda da kısaca bilgi edineceksiniz.
 
--   @sec-arrow bölümünde, özellikle parquet formatında saklandığında bellek dışı (out-of-memory) verilerle çalışmak için güçlü bir araç olan Arrow hakkında bilgi edineceksiniz.
+-   @sec-arrow bölümünde, özellikle Parquet biçiminde saklanan ve belleğe sığmayan verilerle çalışmak için güçlü bir araç olan Arrow'u öğreneceksiniz.
 
--   @sec-rectangling bölümünde, JSON formatında saklanan verilerin ürettiği derinlemesine iç içe geçmiş listeler de dahil olmak üzere hiyerarşik verilerle nasıl çalışılacağını öğreneceksiniz.
+-   @sec-rectangling bölümünde, JSON biçimindeki verilerin oluşturduğu derin iç içe listeler dâhil olmak üzere hiyerarşik verilerle çalışmayı öğreneceksiniz.
 
--   @sec-scraping bölümünde, web sayfalarından veri çıkarmanın sanatı ve bilimi olan web "kazımayı" (scraping) öğreneceksiniz.
+-   @sec-scraping bölümünde, web sayfalarından veri çıkarmanın sanatı ve bilimi olan web kazımayı öğreneceksiniz.
 
 Burada ele almadığımız iki önemli tidyverse paketi vardır: haven ve xml2.
 SPSS, Stata ve SAS dosyalarından verilerle çalışıyorsanız, **haven** paketine göz atın: <https://haven.tidyverse.org>.
 XML verileriyle çalışıyorsanız, **xml2** paketine göz atın: <https://xml2.r-lib.org>.
-Aksi takdirde, hangi paketi kullanmanız gerektiğini bulmak için biraz araştırma yapmanız gerekecek; google burada en iyi dostunuzdur 😃.
+Aksi durumda hangi paketi kullanmanız gerektiğini bulmak için biraz araştırma yapmanız gerekecek; Google burada en iyi dostunuzdur 😃.

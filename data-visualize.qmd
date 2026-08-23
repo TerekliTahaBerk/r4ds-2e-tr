@@ -1,4 +1,4 @@
-# Veri Görselleştirme {#sec-data-visualization}
+# Veri görselleştirme {#sec-data-visualization}
 
 ```{r}
 #| echo: false
@@ -7,18 +7,18 @@ source("_common.R")
 
 ## Giriş
 
-> "Basit bir grafik, veri analistinin zihnine başka herhangi bir araçtan daha fazla bilgi taşımıştır." --- John Tukey
+> “Basit bir grafik, veri analistinin zihnine başka herhangi bir araçtan daha fazla bilgi taşımıştır.” --- John Tukey
 
 R'ın grafik oluşturmak için birkaç sistemi vardır, ancak ggplot2 en zarif ve en çok yönlü olanlardan biridir.
-ggplot2, grafikleri tanımlamak ve oluşturmak için tutarlı bir sistem olan **grafik grameri**'ni (grammar of graphics) uygular.
+ggplot2, grafikleri tanımlamak ve oluşturmak için tutarlı bir sistem olan **grafik gramerini** uygular.
 ggplot2 ile, tek bir sistemi öğrenip pek çok yerde uygulayarak daha fazlasını daha hızlı yapabilirsiniz.
 
-Bu bölüm, verinizi **ggplot2** kullanarak nasıl görselleştireceğinizi öğretecektir.
-Basit bir saçılım grafiği (scatterplot) oluşturarak başlayacak ve bunu, ggplot2'nin temel yapı taşları olan estetik eşlemeleri ve geometrik nesneleri tanıtmak için kullanacağız.
-Ardından, tekli değişkenlerin dağılımlarını görselleştirmenin yanı sıra iki veya daha fazla değişken arasındaki ilişkileri görselleştirmeyi de size adım adım göstereceğiz.
-Grafiklerinizi kaydetmek ve sorun giderme ipuçlarıyla bölümü tamamlayacağız.
+Bu bölümde verilerinizi **ggplot2** kullanarak nasıl görselleştireceğinizi öğreneceksiniz.
+Basit bir saçılım grafiği (scatterplot) oluşturarak başlayacak ve bu grafik üzerinden ggplot2'nin temel yapı taşları olan estetik eşlemeleri ve geometrik nesneleri tanıtacağız.
+Ardından tek bir değişkenin dağılımını ve iki ya da daha fazla değişken arasındaki ilişkileri nasıl görselleştireceğinizi adım adım göstereceğiz.
+Bölümü, grafiklerinizi kaydetmeyi ve yaygın sorunları gidermeyi ele alarak tamamlayacağız.
 
-### Ön Koşullar
+### Ön koşullar
 
 Bu bölüm, tidyverse'in çekirdek paketlerinden biri olan ggplot2'ye odaklanır.
 Bu bölümde kullanılan veri kümelerine, yardım sayfalarına ve fonksiyonlara erişmek için tidyverse'i şu şekilde yükleyin:
@@ -28,10 +28,10 @@ Bu bölümde kullanılan veri kümelerine, yardım sayfalarına ve fonksiyonlara
 library(tidyverse)
 ```
 
-Bu tek satır kod, neredeyse her veri analizinde kullanacağınız paketleri, yani tidyverse'in çekirdeğini yükler.
-Ayrıca tidyverse'deki hangi fonksiyonların temel R'daki (base R) fonksiyonlarla (veya yüklemiş olabileceğiniz diğer paketlerdeki fonksiyonlarla) çakıştığını da size bildirir[^data-visualize-1].
+Bu tek satırlık kod, neredeyse her veri analizinde kullanacağınız paketleri, yani tidyverse'in çekirdeğini yükler.
+Ayrıca tidyverse'deki hangi fonksiyonların temel R fonksiyonlarıyla veya yüklediğiniz diğer paketlerdeki fonksiyonlarla çakıştığını bildirir[^data-visualize-1].
 
-[^data-visualize-1]: Bu mesajı ortadan kaldırabilir ve çakışma çözümünü talep üzerine gerçekleştirebilirsiniz; bunun için, daha fazla paket yükledikçe önemi artan conflicted paketini kullanabilirsiniz.
+[^data-visualize-1]: conflicted paketini kullanarak bu mesajı kaldırabilir ve çakışmaların yalnızca gerektiğinde çözülmesini sağlayabilirsiniz. Daha fazla paket yükledikçe conflicted paketinin önemi artar.
     conflicted hakkında daha fazla bilgiyi <https://conflicted.r-lib.org> adresinden edinebilirsiniz.
 
 Bu kodu çalıştırdığınızda `there is no package called 'tidyverse'` hata mesajını alırsanız, önce paketi kurmanız, ardından `library()`'i tekrar çalıştırmanız gerekir.
@@ -44,18 +44,18 @@ library(tidyverse)
 
 Bir paketi yalnızca bir kez kurmanız yeterlidir; ancak her yeni oturum başlattığınızda onu yeniden yüklemeniz gerekir.
 
-Tidyverse'e ek olarak, Palmer Takımadaları'ndaki üç adada yaşayan penguenlere ait vücut ölçümlerini içeren `penguins` veri kümesini barındıran **palmerpenguins** paketini ve renk körlüğüne duyarlı bir renk paleti sunan ggthemes paketini de kullanacağız.
+tidyverse'e ek olarak iki paket daha kullanacağız: Palmer Takımadaları'ndaki üç adada yaşayan penguenlerin vücut ölçümlerini içeren `penguins` veri kümesini sağlayan **palmerpenguins** ve renk görme farklılıklarına uygun bir renk paleti sunan ggthemes.
 
 ```{r}
 library(palmerpenguins)
 library(ggthemes)
 ```
 
-## İlk Adımlar
+## İlk adımlar
 
-Flipperi daha uzun olan penguenler, flipperi daha kısa olan penguenlerden daha mı ağır yoksa daha mı hafif tartar?
+Yüzgeci daha uzun olan penguenler, yüzgeci daha kısa olan penguenlerden daha ağır mı yoksa daha hafif midir?
 Muhtemelen zaten bir cevabınız var, ancak cevabınızı biraz daha kesinleştirmeye çalışın.
-Flipper uzunluğu ile vücut kütlesi arasındaki ilişki neye benziyor?
+Yüzgeç uzunluğu ile vücut kütlesi arasındaki ilişki nasıl görünüyor?
 Pozitif mi?
 Negatif mi?
 Doğrusal mı?
@@ -64,10 +64,10 @@ Bu ilişki penguenin türüne göre değişiyor mu?
 Peki ya penguenin yaşadığı adaya göre?
 Bu sorulara cevap vermek için kullanabileceğimiz görselleştirmeler oluşturalım.
 
-### `penguins` Veri Çerçevesi
+### `penguins` veri çerçevesi
 
-Bu sorulara verdiğiniz cevapları, palmerpenguins paketindeki `penguins` **veri çerçevesi** (a.k.a. `palmerpenguins::penguins`) ile sınayabilirsiniz.
-Bir veri çerçevesi, değişkenlerin (sütunlarda) ve gözlemlerin (satırlarda) dikdörtgen bir koleksiyonudur.
+Bu sorulara verdiğiniz yanıtları palmerpenguins paketindeki `penguins` **veri çerçevesiyle** (diğer adıyla `palmerpenguins::penguins`) sınayabilirsiniz.
+Bir veri çerçevesi, sütunlarda değişkenlerin ve satırlarda gözlemlerin yer aldığı dikdörtgen biçimli bir koleksiyondur.
 `penguins`, Dr. Kristen Gorman ve Palmer İstasyonu, Antarktika LTER tarafından toplanıp kullanıma sunulan `r nrow(penguins)` gözlem içerir[^data-visualize-2].
 
 [^data-visualize-2]: Horst AM, Hill AP, Gorman KB (2020).
@@ -87,14 +87,14 @@ Tartışmayı kolaylaştırmak için bazı terimleri tanımlayalım:
     Bir gözlem, her biri farklı bir değişkenle ilişkili birkaç değer içerir.
     Bir gözleme bazen veri noktası da diyeceğiz.
 
--   **Tablo verisi** (tabular data), her biri bir değişken ve bir gözlemle ilişkilendirilmiş bir değerler kümesidir.
-    Tablo verisi, her değer kendi "hücresine", her değişken kendi sütununa ve her gözlem kendi satırına yerleştirilmişse *düzenlidir* (tidy).
+-   **Tablo biçimindeki veri** (tabular data), her biri bir değişken ve bir gözlemle ilişkilendirilmiş değerler kümesidir.
+    Her değer kendi “hücresine”, her değişken kendi sütununa ve her gözlem kendi satırına yerleştirilmişse veri *düzenlidir* (tidy).
 
 Bu bağlamda bir değişken, tüm penguenlerin ortak bir özelliğini; bir gözlem ise tek bir penguenin tüm özelliklerini ifade eder.
 
-Veri çerçevesinin adını konsola yazın, R içeriğinin bir önizlemesini yazdıracaktır.
+Veri çerçevesinin adını konsola yazdığınızda R, içeriğinin bir önizlemesini gösterir.
 Bu önizlemenin üstünde `tibble` yazdığına dikkat edin.
-Tidyverse'de, yakında daha fazlasını öğreneceğiniz **tibble** adı verilen özel veri çerçeveleri kullanırız.
+tidyverse'de, yakında daha ayrıntılı öğreneceğiniz **tibble** adlı özel veri çerçeveleri kullanırız.
 
 ```{r}
 penguins
@@ -112,48 +112,48 @@ glimpse(penguins)
 
 1.  `species`: penguenin türü (Adelie, Chinstrap veya Gentoo).
 
-2.  `flipper_length_mm`: penguenin flipper uzunluğu, milimetre cinsinden.
+2.  `flipper_length_mm`: penguenin yüzgeç uzunluğu, milimetre cinsinden.
 
 3.  `body_mass_g`: penguenin vücut kütlesi, gram cinsinden.
 
 `penguins` hakkında daha fazla bilgi edinmek için `?penguins` çalıştırarak yardım sayfasını açın.
 
-### Nihai Hedef {#sec-ultimate-goal}
+### Nihai hedef {#sec-ultimate-goal}
 
-Bu bölümdeki nihai hedefimiz, penguenlerin türünü de dikkate alarak flipper uzunlukları ile vücut kütleleri arasındaki ilişkiyi gösteren aşağıdaki görselleştirmeyi yeniden oluşturmaktır.
+Bu bölümdeki nihai hedefimiz, penguenlerin türünü de dikkate alarak yüzgeç uzunluğu ile vücut kütlesi arasındaki ilişkiyi gösteren aşağıdaki görselleştirmeyi yeniden oluşturmaktır.
 
 ```{r}
 #| echo: false
 #| warning: false
 #| fig-alt: |
-#|   Penguenlerin vücut kütlesine karşı flipper uzunluğunun saçılım
+#|   Penguenlerin vücut kütlesine karşı yüzgeç uzunluğunun saçılım
 #|   grafiği; bu iki değişken arasındaki ilişkiye ait en iyi uyum çizgisi
 #|   üzerine bindirilmiştir. Grafik, bu iki değişken arasında pozitif,
 #|   oldukça doğrusal ve nispeten güçlü bir ilişki göstermektedir. Türler
 #|   (Adelie, Chinstrap ve Gentoo) farklı renk ve şekillerle temsil
-#|   edilmiştir. Vücut kütlesi ile flipper uzunluğu arasındaki ilişki bu
+#|   edilmiştir. Vücut kütlesi ile yüzgeç uzunluğu arasındaki ilişki bu
 #|   üç tür için kabaca aynıdır ve Gentoo penguenleri diğer iki türden
 #|   daha büyüktür.
 ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point(aes(color = species, shape = species)) +
   geom_smooth(method = "lm") +
   labs(
-    title = "Body mass and flipper length",
-    subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
-    x = "Flipper length (mm)",
-    y = "Body mass (g)",
-    color = "Species",
-    shape = "Species"
+    title = "Vücut kütlesi ve yüzgeç uzunluğu",
+    subtitle = "Adelie, Chinstrap ve Gentoo penguenlerinin ölçüleri",
+    x = "Yüzgeç uzunluğu (mm)",
+    y = "Vücut kütlesi (g)",
+    color = "Tür",
+    shape = "Tür"
   ) +
   scale_color_colorblind()
 ```
 
-### Bir ggplot Oluşturma
+### Bir ggplot oluşturma
 
 Bu grafiği adım adım yeniden oluşturalım.
 
-ggplot2 ile bir grafiğe, üzerine **katmanlar** (layers) ekleyeceğiniz bir grafik nesnesi tanımlayan `ggplot()` fonksiyonuyla başlarsınız.
-`ggplot()`'un ilk argümanı, grafikte kullanılacak veri kümesidir; dolayısıyla `ggplot(data = penguins)`, `penguins` verisini görüntülemeye hazır boş bir grafik oluşturur; ancak ona henüz veriyi nasıl görselleştireceğini söylemediğimiz için şimdilik boştur.
+ggplot2 ile grafik oluşturmaya, üzerine **katmanlar** ekleyeceğiniz bir grafik nesnesi tanımlayan `ggplot()` fonksiyonuyla başlarsınız.
+`ggplot()`'un ilk argümanı grafikte kullanılacak veri kümesidir. Dolayısıyla `ggplot(data = penguins)`, `penguins` verisini göstermeye hazır bir grafik oluşturur; ancak verileri nasıl görselleştireceğini henüz belirtmediğimiz için grafik şimdilik boştur.
 Bu pek heyecan verici bir grafik değil, ama bunu grafiğinizin kalan katmanlarını üzerine boyayacağınız boş bir tuval gibi düşünebilirsiniz.
 
 ```{r}
@@ -163,17 +163,17 @@ ggplot(data = penguins)
 ```
 
 Sırada, `ggplot()`'a verimizdeki bilginin görsel olarak nasıl temsil edileceğini söylemek var.
-`ggplot()` fonksiyonunun `mapping` argümanı, veri kümenizdeki değişkenlerin grafiğinizin görsel özelliklerine (**estetikler**, aesthetics) nasıl eşleneceğini tanımlar.
+`ggplot()` fonksiyonunun `mapping` argümanı, veri kümenizdeki değişkenlerin grafiğinizin görsel özelliklerine, yani **estetiklere** (aesthetics), nasıl eşleneceğini tanımlar.
 `mapping` argümanı her zaman `aes()` fonksiyonu içinde tanımlanır ve `aes()`'in `x` ve `y` argümanları, x ve y eksenlerine hangi değişkenlerin eşleneceğini belirtir.
-Şimdilik yalnızca flipper uzunluğunu `x` estetiğine, vücut kütlesini ise `y` estetiğine eşleyeceğiz.
+Şimdilik yalnızca yüzgeç uzunluğunu `x` estetiğine, vücut kütlesini ise `y` estetiğine eşleyeceğiz.
 ggplot2, eşlenen değişkenleri `data` argümanında, bu durumda `penguins` içinde arar.
 
 Aşağıdaki grafik, bu eşlemeleri eklemenin sonucunu gösterir.
 
 ```{r}
 #| fig-alt: |
-#|   Grafik, x ekseninde 170 ile 230 arasında değerler alan flipper
-#|   uzunluğunu ve y ekseninde 3000 ile 6000 arasında değerler alan vücut
+#|   Grafik, x ekseninde 170 ile 230 arasında değerler alan yüzgeç
+#|   uzunluğunu ve y ekseninde 3.000 ile 6.000 arasında değerler alan vücut
 #|   kütlesini göstermektedir.
 ggplot(
   data = penguins,
@@ -181,14 +181,14 @@ ggplot(
 )
 ```
 
-Boş tuvalimiz artık daha fazla yapıya sahip -- flipper uzunluklarının nerede (x ekseninde) ve vücut kütlelerinin nerede (y ekseninde) gösterileceği artık netleşti.
+Boş tuvalimiz artık daha fazla yapıya sahip: Yüzgeç uzunluklarının nerede (x ekseninde), vücut kütlelerinin nerede (y ekseninde) gösterileceği netleşti.
 Ama penguenlerin kendileri henüz grafikte değil.
 Bunun nedeni, veri çerçevemizdeki gözlemleri grafiğimizde nasıl temsil edeceğimizi kodumuzda henüz ifade etmemiş olmamız.
 
-Bunu yapmak için bir **geom** tanımlamamız gerekir: bir grafiğin veriyi temsil etmek için kullandığı geometrik nesne.
+Bunu yapmak için bir **geom**, yani grafiğin verileri temsil etmekte kullandığı geometrik nesneyi tanımlamamız gerekir.
 Bu geometrik nesneler, ggplot2'de `geom_` ile başlayan fonksiyonlar aracılığıyla kullanıma sunulur.
 İnsanlar genellikle grafikleri, kullandıkları geom türüne göre tanımlar.
-Örneğin, çubuk grafikler çubuk geom'ları (`geom_bar()`), çizgi grafikleri çizgi geom'ları (`geom_line()`), kutu grafikleri (boxplot) kutu geom'ları (`geom_boxplot()`), saçılım grafikleri nokta geom'ları (`geom_point()`) kullanır ve bu böyle devam eder.
+Örneğin çubuk grafikler çubuk geom'larını (`geom_bar()`), çizgi grafikleri çizgi geom'larını (`geom_line()`), kutu grafikleri kutu geom'larını (`geom_boxplot()`), saçılım grafikleri ise nokta geom'larını (`geom_point()`) kullanır.
 
 `geom_point()` fonksiyonu, grafiğinize bir nokta katmanı ekler ve bu da bir saçılım grafiği oluşturur.
 ggplot2, her biri bir grafiğe farklı bir katman türü ekleyen pek çok geom fonksiyonuyla birlikte gelir.
@@ -196,7 +196,7 @@ Kitap boyunca, özellikle @sec-layers bölümünde, pek çok geom öğreneceksin
 
 ```{r}
 #| fig-alt: |
-#|   Penguenlerin vücut kütlesine karşı flipper uzunluğunun saçılım
+#|   Penguenlerin vücut kütlesine karşı yüzgeç uzunluğunun saçılım
 #|   grafiği. Grafik, bu iki değişken arasında pozitif, doğrusal ve
 #|   nispeten güçlü bir ilişki göstermektedir.
 ggplot(
@@ -206,35 +206,35 @@ ggplot(
   geom_point()
 ```
 
-Artık bir "saçılım grafiği" olarak düşünebileceğimiz bir şeye sahibiz.
-Henüz "nihai hedef" grafiğimizle eşleşmiyor; ama bu grafiği kullanarak keşfimizi harekete geçiren soruyu yanıtlamaya başlayabiliriz: "Flipper uzunluğu ile vücut kütlesi arasındaki ilişki neye benziyor?" İlişki pozitif (flipper uzunluğu arttıkça vücut kütlesi de artıyor), oldukça doğrusal (noktalar bir eğri yerine bir çizgi etrafında kümelenmiş) ve orta düzeyde güçlü (böyle bir çizgi etrafında çok fazla saçılma yok) görünüyor.
-Flipperi daha uzun olan penguenler, vücut kütlesi bakımından genellikle daha büyüktür.
+Artık “saçılım grafiği” diyebileceğimiz bir grafiğimiz var.
+Henüz nihai hedefimizdeki grafikle aynı değil, ancak keşfimizi başlatan soruyu yanıtlamaya başlayabiliriz: “Yüzgeç uzunluğu ile vücut kütlesi arasındaki ilişki nasıl görünüyor?” İlişki pozitif (yüzgeç uzunluğu arttıkça vücut kütlesi de artıyor), oldukça doğrusal (noktalar bir eğri yerine bir çizgi etrafında kümelenmiş) ve orta düzeyde güçlü (bu çizginin çevresinde fazla saçılma yok) görünüyor.
+Yüzgeci daha uzun penguenler genellikle daha büyük vücut kütlesine sahiptir.
 
 Bu grafiğe daha fazla katman eklemeden önce, bir an durup aldığımız uyarı mesajını gözden geçirelim:
 
 > Removed 2 rows containing missing values (`geom_point()`).
 
-Bu mesajı görüyoruz, çünkü veri kümemizde vücut kütlesi ve/veya flipper uzunluğu değeri eksik olan iki penguen var ve ggplot2'nin bu iki değer olmadan onları grafikte temsil etmesinin bir yolu yok.
+Bu mesajı görmemizin nedeni, veri kümemizde vücut kütlesi ya da yüzgeç uzunluğu değerlerinden en az biri eksik olan iki penguen bulunmasıdır. ggplot2, her iki değer de olmadan penguenleri grafikte gösteremez.
 R gibi, ggplot2 de eksik değerlerin asla sessizce kaybolmaması gerektiği felsefesine bağlıdır.
-Bu tür bir uyarı, muhtemelen gerçek veriyle çalışırken karşılaşacağınız en yaygın uyarı türlerinden biridir -- eksik değerler çok yaygın bir sorundur ve bunlar hakkında kitap boyunca, özellikle @sec-missing-values bölümünde, daha fazla bilgi edineceksiniz.
-Bu bölümdeki geri kalan grafikler için, her tek grafiğimizin yanında yazdırılmaması adına bu uyarıyı bastıracağız.
+Bu, gerçek verilerle çalışırken karşılaşacağınız en yaygın uyarılardan biridir. Eksik değerler çok sık görülür; kitap boyunca, özellikle @sec-missing-values bölümünde, bu konu hakkında daha fazla bilgi edineceksiniz.
+Bu bölümdeki diğer grafiklerin her birinin yanında görünmemesi için bu uyarıyı bastıracağız.
 
-### Estetikler ve Katmanlar Ekleme {#sec-adding-aesthetics-layers}
+### Estetikler ve katmanlar ekleme {#sec-adding-aesthetics-layers}
 
 Saçılım grafikleri, iki sayısal değişken arasındaki ilişkiyi göstermek için kullanışlıdır; ancak iki değişken arasındaki görünürdeki her ilişkiye şüpheyle yaklaşmak ve bu görünürdeki ilişkinin doğasını açıklayabilecek veya değiştirebilecek başka değişkenler olup olmadığını sormak her zaman iyi bir fikirdir.
-Örneğin, flipper uzunluğu ile vücut kütlesi arasındaki ilişki türe göre farklılık gösteriyor mu?
-Türü grafiğimize dahil edelim ve bunun, bu değişkenler arasındaki görünürdeki ilişkiye dair ek içgörüler sunup sunmadığına bakalım.
+Örneğin yüzgeç uzunluğu ile vücut kütlesi arasındaki ilişki türe göre farklılık gösteriyor mu?
+Türü grafiğimize ekleyelim ve bunun, değişkenler arasındaki görünürdeki ilişkiye ilişkin yeni içgörüler sağlayıp sağlamadığına bakalım.
 Bunu, türleri farklı renkli noktalarla temsil ederek yapacağız.
 
-Bunu başarmak için estetiği mi yoksa geom'u mu değiştirmemiz gerekir?
-"Estetik eşlemede, `aes()` içinde" tahmininde bulunduysanız, ggplot2 ile veri görselleştirmeleri oluşturmanın püf noktasını çoktan kavramaya başlamışsınız demektir!
-Bulamadıysanız da hiç sorun değil.
+Bunu yapmak için estetik eşlemeyi mi yoksa geom'u mu değiştirmemiz gerekir?
+“Estetik eşlemeyi, `aes()` içinde” diye tahmin ettiyseniz ggplot2 ile veri görselleştirmeleri oluşturmanın püf noktasını kavramaya başlamışsınız demektir!
+Tahmin edemediyseniz hiç sorun değil.
 Kitap boyunca çok daha fazla ggplot yapacak ve bunları yaparken sezgilerinizi kontrol etmek için çok daha fazla fırsatınız olacak.
 
 ```{r}
 #| warning: false
 #| fig-alt: |
-#|   Penguenlerin vücut kütlesine karşı flipper uzunluğunun saçılım
+#|   Penguenlerin vücut kütlesine karşı yüzgeç uzunluğunun saçılım
 #|   grafiği. Grafik, bu iki değişken arasında pozitif, oldukça doğrusal
 #|   ve nispeten güçlü bir ilişki göstermektedir. Türler (Adelie,
 #|   Chinstrap ve Gentoo) farklı renklerle temsil edilmiştir.
@@ -245,10 +245,10 @@ ggplot(
   geom_point()
 ```
 
-Kategorik bir değişken bir estetiğe eşlendiğinde, ggplot2 otomatik olarak değişkenin her benzersiz düzeyine (üç türün her birine) estetiğin benzersiz bir değerini (burada benzersiz bir renk) atar; bu sürece **ölçekleme** (scaling) denir.
-ggplot2 ayrıca hangi değerlerin hangi düzeylere karşılık geldiğini açıklayan bir açıklama kutusu (legend) da ekler.
+Kategorik bir değişken bir estetiğe eşlendiğinde ggplot2, değişkenin her benzersiz düzeyine (üç türün her birine) estetiğin benzersiz bir değerini (burada farklı bir renk) otomatik olarak atar. Bu sürece **ölçekleme** (scaling) denir.
+ggplot2 ayrıca hangi değerlerin hangi düzeylere karşılık geldiğini açıklayan bir **gösterge** (legend) ekler.
 
-Şimdi bir katman daha ekleyelim: vücut kütlesi ile flipper uzunluğu arasındaki ilişkiyi gösteren düzgün bir eğri (smooth curve).
+Şimdi bir katman daha ekleyelim: vücut kütlesi ile yüzgeç uzunluğu arasındaki ilişkiyi gösteren düzgün bir eğri (smooth curve).
 Devam etmeden önce, yukarıdaki koda geri dönün ve bunu mevcut grafiğimize nasıl ekleyebileceğimizi düşünün.
 
 Bu, verimizi temsil eden yeni bir geometrik nesne olduğundan, nokta geom'umuzun üzerine bir katman olarak yeni bir geom ekleyeceğiz: `geom_smooth()`.
@@ -257,7 +257,7 @@ Ve `method = "lm"` ile doğrusal (`l`inear) bir `m`odele dayalı en iyi uyum çi
 ```{r}
 #| warning: false
 #| fig-alt: |
-#|   Penguenlerin vücut kütlesine karşı flipper uzunluğunun saçılım
+#|   Penguenlerin vücut kütlesine karşı yüzgeç uzunluğunun saçılım
 #|   grafiği. Saçılım grafiğinin üzerine, bu değişkenler arasındaki
 #|   ilişkiyi her tür (Adelie, Chinstrap ve Gentoo) için gösteren üç
 #|   düzgün eğri bindirilmiştir. Farklı penguen türleri, noktalar ve
@@ -270,19 +270,19 @@ ggplot(
   geom_smooth(method = "lm")
 ```
 
-Çizgileri başarıyla ekledik; ancak bu grafik, tüm veri kümesi için tek bir çizgiye sahip olan @sec-ultimate-goal bölümündeki grafiğe benzemiyor -- o grafikte her penguen türü için ayrı çizgiler yoktu.
+Çizgileri başarıyla ekledik, ancak bu grafik @sec-ultimate-goal bölümündeki grafiğe benzemiyor. O grafikte her penguen türü için ayrı çizgiler yerine tüm veri kümesi için tek bir çizgi vardı.
 
-Estetik eşlemeler `ggplot()` içinde, yani *global* düzeyde tanımlandığında, grafiğin sonraki tüm geom katmanlarına aktarılır.
-Ancak ggplot2'deki her geom fonksiyonu bir `mapping` argümanı da alabilir; bu da global düzeyden devralınanlara eklenen, *yerel* düzeyde estetik eşlemelere olanak tanır.
+Estetik eşlemeler `ggplot()` içinde, yani *genel* (global) düzeyde tanımlandığında grafiğin sonraki tüm geom katmanlarına aktarılır.
+Ancak ggplot2'deki her geom fonksiyonu bir `mapping` argümanı da alabilir; böylece genel düzeyden devralınan eşlemelere *yerel* düzeyde yeni estetik eşlemeler eklenebilir.
 Noktaların türe göre renklendirilmesini istediğimiz, ancak çizgilerin türlere göre ayrılmasını istemediğimiz için, `color = species`'i yalnızca `geom_point()` için belirtmeliyiz.
 
 ```{r}
 #| warning: false
 #| fig-alt: |
-#|   Penguenlerin vücut kütlesine karşı flipper uzunluğunun saçılım
+#|   Penguenlerin vücut kütlesine karşı yüzgeç uzunluğunun saçılım
 #|   grafiği. Saçılım grafiğinin üzerine, bu değişkenler arasındaki
-#|   ilişkiyi her tür (Adelie, Chinstrap ve Gentoo) için gösteren tek bir
-#|   en iyi uyum çizgisi bindirilmiştir. Farklı penguen türleri, yalnızca
+#|   genel ilişkiyi gösteren tek bir en iyi uyum çizgisi bindirilmiştir.
+#|   Farklı penguen türleri yalnızca
 #|   noktalar için farklı renklerle çizilmiştir.
 ggplot(
   data = penguins,
@@ -302,10 +302,10 @@ Bu yüzden, renge ek olarak `species`'i `shape` estetiğine de eşleyebiliriz.
 ```{r}
 #| warning: false
 #| fig-alt: |
-#|   Penguenlerin vücut kütlesine karşı flipper uzunluğunun saçılım
+#|   Penguenlerin vücut kütlesine karşı yüzgeç uzunluğunun saçılım
 #|   grafiği. Saçılım grafiğinin üzerine, bu değişkenler arasındaki
-#|   ilişkiyi her tür (Adelie, Chinstrap ve Gentoo) için gösteren tek bir
-#|   en iyi uyum çizgisi bindirilmiştir. Farklı penguen türleri, yalnızca
+#|   genel ilişkiyi gösteren tek bir en iyi uyum çizgisi bindirilmiştir.
+#|   Farklı penguen türleri yalnızca
 #|   noktalar için farklı renk ve şekillerle çizilmiştir.
 ggplot(
   data = penguins,
@@ -315,22 +315,22 @@ ggplot(
   geom_smooth(method = "lm")
 ```
 
-Açıklama kutusunun, noktaların farklı şekillerini de yansıtacak şekilde otomatik olarak güncellendiğine dikkat edin.
+Göstergenin, noktaların farklı şekillerini de yansıtacak biçimde otomatik olarak güncellendiğine dikkat edin.
 
 Son olarak, yeni bir katmanda `labs()` fonksiyonunu kullanarak grafiğimizin etiketlerini iyileştirebiliriz.
 `labs()`'a verilen argümanlardan bazıları kendini açıklıyor olabilir: `title` bir başlık, `subtitle` ise grafiğe bir alt başlık ekler.
-Diğer argümanlar estetik eşlemelerle örtüşür: `x` x ekseni etiketidir, `y` y ekseni etiketidir, `color` ve `shape` ise açıklama kutusunun etiketini tanımlar.
+Diğer argümanlar estetik eşlemelerle örtüşür: `x` ve `y` eksen etiketlerini, `color` ve `shape` ise göstergenin etiketini tanımlar.
 Ayrıca, ggthemes paketindeki `scale_color_colorblind()` fonksiyonuyla renk paletini renk körlüğüne duyarlı hale getirerek iyileştirebiliriz.
 
 ```{r}
 #| warning: false
 #| fig-alt: |
-#|   Penguenlerin vücut kütlesine karşı flipper uzunluğunun saçılım
+#|   Penguenlerin vücut kütlesine karşı yüzgeç uzunluğunun saçılım
 #|   grafiği; bu iki değişken arasındaki ilişkiye ait en iyi uyum çizgisi
 #|   üzerine bindirilmiştir. Grafik, bu iki değişken arasında pozitif,
 #|   oldukça doğrusal ve nispeten güçlü bir ilişki göstermektedir. Türler
 #|   (Adelie, Chinstrap ve Gentoo) farklı renk ve şekillerle temsil
-#|   edilmiştir. Vücut kütlesi ile flipper uzunluğu arasındaki ilişki bu
+#|   edilmiştir. Vücut kütlesi ile yüzgeç uzunluğu arasındaki ilişki bu
 #|   üç tür için kabaca aynıdır ve Gentoo penguenleri diğer iki türden
 #|   daha büyüktür.
 ggplot(
@@ -340,15 +340,15 @@ ggplot(
   geom_point(aes(color = species, shape = species)) +
   geom_smooth(method = "lm") +
   labs(
-    title = "Body mass and flipper length",
-    subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
-    x = "Flipper length (mm)", y = "Body mass (g)",
-    color = "Species", shape = "Species"
+    title = "Vücut kütlesi ve yüzgeç uzunluğu",
+    subtitle = "Adelie, Chinstrap ve Gentoo penguenlerinin ölçüleri",
+    x = "Yüzgeç uzunluğu (mm)", y = "Vücut kütlesi (g)",
+    color = "Tür", shape = "Tür"
   ) +
   scale_color_colorblind()
 ```
 
-Sonunda "nihai hedefimizle" tam olarak eşleşen bir grafiğe sahibiz!
+Sonunda nihai hedefimizle tam olarak eşleşen bir grafiğe sahibiz!
 
 ### Alıştırmalar
 
@@ -377,19 +377,19 @@ Sonunda "nihai hedefimizle" tam olarak eşleşen bir grafiğe sahibiz!
     Argümanın varsayılan değeri nedir?
     Bu argümanı `TRUE` olarak ayarlayarak başarıyla kullandığınız bir saçılım grafiği oluşturun.
 
-7.  Önceki alıştırmada yaptığınız grafiğe şu başlığı ekleyin: "Data come from the palmerpenguins package." İpucu: `labs()`'ın dokümantasyonuna göz atın.
+7.  Önceki alıştırmada yaptığınız grafiğe şu açıklamayı ekleyin: “Veriler palmerpenguins paketinden alınmıştır.” İpucu: `labs()` dokümantasyonuna göz atın.
 
 8.  Aşağıdaki görselleştirmeyi yeniden oluşturun.
     `bill_depth_mm` hangi estetiğe eşlenmeli?
-    Ve bu eşleme global düzeyde mi yoksa geom düzeyinde mi yapılmalı?
+    Bu eşleme genel düzeyde mi yoksa geom düzeyinde mi yapılmalı?
 
     ```{r}
     #| echo: false
     #| warning: false
     #| fig-alt: |
     #|   Gaga derinliğine göre renklendirilmiş, penguenlerin vücut
-    #|   kütlesine karşı flipper uzunluğunun saçılım grafiği. Vücut
-    #|   kütlesi ile flipper uzunluğu arasındaki ilişkiyi gösteren düzgün
+    #|   kütlesine karşı yüzgeç uzunluğunun saçılım grafiği. Vücut
+    #|   kütlesi ile yüzgeç uzunluğu arasındaki ilişkiyi gösteren düzgün
     #|   bir eğri üzerine bindirilmiştir. İlişki pozitif, oldukça
     #|   doğrusal ve orta düzeyde güçlüdür.
     ggplot(
@@ -414,7 +414,7 @@ Sonunda "nihai hedefimizle" tam olarak eşleşen bir grafiğe sahibiz!
     ```
 
 10. Bu iki grafik farklı görünecek mi?
-    Neden / neden değil?
+    Neden?
 
     ```{r}
     #| eval: false
@@ -436,10 +436,10 @@ Sonunda "nihai hedefimizle" tam olarak eşleşen bir grafiğe sahibiz!
       )
     ```
 
-## ggplot2 Çağrıları {#sec-ggplot2-calls}
+## ggplot2 çağrıları {#sec-ggplot2-calls}
 
-Bu tanıtım niteliğindeki bölümlerden ilerledikçe, ggplot2 kodunu daha özlü bir şekilde ifade etmeye geçeceğiz.
-Şimdiye kadar çok açık (explicit) olduk; bu, öğrenirken faydalıdır:
+Bu giriş bölümlerini geride bırakırken ggplot2 kodunu daha kısa yazmaya başlayacağız.
+Şimdiye kadar her şeyi açıkça yazdık; öğrenme aşamasında bu yaklaşım yararlıdır:
 
 ```{r}
 #| eval: false
@@ -452,10 +452,10 @@ ggplot(
 
 Genellikle bir fonksiyonun ilk bir veya iki argümanı o kadar önemlidir ki, onları ezbere bilmeniz gerekir.
 `ggplot()`'un ilk iki argümanı `data` ve `mapping`'dir; kitabın geri kalanında bu isimleri belirtmeyeceğiz.
-Bu, yazım işini azaltır ve fazladan metin miktarını düşürerek grafikler arasındaki farkı görmeyi kolaylaştırır.
-Bu, @sec-functions bölümünde tekrar döneceğimiz gerçekten önemli bir programlama meselesidir.
+Bu hem daha az yazmanızı sağlar hem de fazladan metni azaltarak grafikler arasındaki farkları görmeyi kolaylaştırır.
+Bu önemli programlama konusuna @sec-functions bölümünde yeniden döneceğiz.
 
-Önceki grafiği daha özlü bir şekilde yeniden yazmak şunu verir:
+Önceki grafiği daha kısa biçimde şöyle yazabiliriz:
 
 ```{r}
 #| eval: false
@@ -463,7 +463,7 @@ ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point()
 ```
 
-İlerde, o grafiği şu şekilde oluşturmanızı sağlayacak pipe'ı, `|>`, da öğreneceksiniz:
+İleride aynı grafiği aşağıdaki gibi oluşturmanızı sağlayan pipe operatörünü (`|>`) de öğreneceksiniz:
 
 ```{r}
 #| eval: false
@@ -472,11 +472,11 @@ penguins |>
   geom_point()
 ```
 
-## Dağılımları Görselleştirme
+## Dağılımları görselleştirme
 
 Bir değişkenin dağılımını nasıl görselleştireceğiniz, değişkenin türüne bağlıdır: kategorik veya sayısal.
 
-### Kategorik Bir Değişken
+### Kategorik bir değişken
 
 Bir değişken, yalnızca küçük bir değerler kümesinden birini alabiliyorsa **kategorik**tir.
 Kategorik bir değişkenin dağılımını incelemek için bir çubuk grafik kullanabilirsiniz.
@@ -490,8 +490,8 @@ ggplot(penguins, aes(x = species)) +
   geom_bar()
 ```
 
-Yukarıdaki penguen `species`'i gibi, düzeyleri sıralı olmayan kategorik değişkenlerin çubuk grafiklerinde, çubukları frekanslarına göre yeniden sıralamak genellikle tercih edilir.
-Bunu yapmak, değişkeni bir faktöre dönüştürmeyi (R'ın kategorik veriyi nasıl ele aldığı) ve ardından bu faktörün düzeylerini yeniden sıralamayı gerektirir.
+Yukarıdaki `species` değişkeni gibi düzeyleri sıralı olmayan kategorik değişkenlerin çubuk grafiklerinde, çubukları sıklıklarına göre yeniden sıralamak genellikle daha uygundur.
+Bunun için değişkeni bir faktöre (R'ın kategorik verileri işleme biçimi) dönüştürmeniz, ardından faktör düzeylerini yeniden sıralamanız gerekir.
 
 ```{r}
 #| fig-alt: |
@@ -505,7 +505,7 @@ ggplot(penguins, aes(x = fct_infreq(species))) +
 
 Faktörler ve faktörlerle ilgilenmek için kullanılan fonksiyonlar (yukarıda gösterilen `fct_infreq()` gibi) hakkında @sec-factors bölümünde daha fazla bilgi edineceksiniz.
 
-### Sayısal Bir Değişken
+### Sayısal bir değişken
 
 Bir değişken, geniş bir sayısal değer aralığı alabiliyorsa ve bu değerlerle toplama, çıkarma veya ortalama alma anlamlıysa **sayısal**dır (veya niceliksel).
 Sayısal değişkenler sürekli veya kesikli olabilir.
@@ -516,37 +516,37 @@ Sürekli değişkenlerin dağılımları için yaygın olarak kullanılan bir g�
 #| warning: false
 #| fig-alt: |
 #|   Penguenlerin vücut kütlelerinin bir histogramı. Dağılım tek modlu ve
-#|   sağa çarpık olup yaklaşık 2500 ile 6500 gram arasında değişmektedir.
+#|   sağa çarpık olup yaklaşık 2.500 ile 6.500 gram arasında değişmektedir.
 ggplot(penguins, aes(x = body_mass_g)) +
   geom_histogram(binwidth = 200)
 ```
 
-Bir histogram, x eksenini eşit aralıklı kutulara (bin) böler ve ardından her kutuya düşen gözlem sayısını göstermek için bir çubuğun yüksekliğini kullanır.
+Bir histogram, x eksenini eşit genişlikte aralıklara (bin) böler ve her aralığa düşen gözlem sayısını çubuğun yüksekliğiyle gösterir.
 Yukarıdaki grafikte, en yüksek çubuk, 39 gözlemin `body_mass_g` değerinin 3.500 ile 3.700 gram arasında olduğunu gösteriyor; bunlar çubuğun sol ve sağ kenarlarıdır.
 
-Bir histogramdaki aralıkların genişliğini, `x` değişkeninin birimleriyle ölçülen binwidth argümanıyla ayarlayabilirsiniz.
-Farklı bin genişlikleri farklı örüntüler ortaya çıkarabileceğinden, histogramlarla çalışırken her zaman çeşitli bin genişliklerini keşfetmelisiniz.
-Aşağıdaki grafiklerde, 20'lik bir bin genişliği çok dardır ve çok fazla çubuğa yol açarak dağılımın şeklini belirlemeyi zorlaştırır.
-Benzer şekilde, 2.000'lik bir bin genişliği çok yüksektir; bu da tüm verinin yalnızca üç çubuğa toplanmasına yol açar ve dağılımın şeklini belirlemeyi yine zorlaştırır.
-200'lük bir bin genişliği makul bir denge sağlar.
+Histogramdaki aralıkların genişliğini, `x` değişkeninin birimleriyle ölçülen `binwidth` argümanıyla ayarlayabilirsiniz.
+Farklı aralık genişlikleri farklı örüntüler ortaya çıkarabildiğinden histogramları çeşitli genişliklerle incelemelisiniz.
+Aşağıdaki grafiklerde 20 birimlik genişlik fazla dardır; çok fazla çubuk oluştuğu için dağılımın şeklini belirlemek zorlaşır.
+Benzer biçimde 2.000 birimlik genişlik fazla büyüktür; tüm veriler yalnızca üç çubukta toplandığından dağılımın şeklini belirlemek yine zorlaşır.
+200 birimlik genişlik makul bir denge sağlar.
 
 ```{r}
 #| warning: false
 #| layout-ncol: 2
 #| fig-width: 3
 #| fig-alt: |
-#|   Penguenlerin vücut kütlelerine ait iki histogram; biri 20'lik
-#|   (solda), diğeri 2000'lik (sağda) bin genişliğiyle. 20'lik bin
-#|   genişliğine sahip histogram, kutuların yüksekliklerinde pek çok
-#|   iniş çıkış göstererek pürüzlü bir çizgi oluşturur. 2000'lik bin
-#|   genişliğine sahip histogram ise yalnızca üç kutu gösterir.
+#|   Penguenlerin vücut kütlelerine ait iki histogram; biri 20 birimlik
+#|   (solda), diğeri 2.000 birimlik (sağda) aralık genişliğiyle. 20 birimlik
+#|   genişliğe sahip histogram, aralıkların yüksekliklerinde pek çok
+#|   iniş çıkış göstererek pürüzlü bir çizgi oluşturur. 2.000 birimlik
+#|   genişliğe sahip histogram ise yalnızca üç aralık gösterir.
 ggplot(penguins, aes(x = body_mass_g)) +
   geom_histogram(binwidth = 20)
 ggplot(penguins, aes(x = body_mass_g)) +
   geom_histogram(binwidth = 2000)
 ```
 
-Sayısal değişkenlerin dağılımları için alternatif bir görselleştirme yoğunluk grafiğidir (density plot).
+Sayısal değişkenlerin dağılımları için bir başka görselleştirme yoğunluk grafiğidir (density plot).
 Bir yoğunluk grafiği, bir histogramın yumuşatılmış bir versiyonudur ve özellikle altta yatan düzgün bir dağılımdan gelen sürekli veriler için pratik bir alternatiftir.
 `geom_density()`'nin yoğunluğu nasıl tahmin ettiğine girmeyeceğiz (bu konuda daha fazlasını fonksiyonun dokümantasyonunda okuyabilirsiniz); ama yoğunluk eğrisinin nasıl çizildiğini bir benzetmeyle açıklayalım.
 Tahta bloklardan yapılmış bir histogram hayal edin.
@@ -557,7 +557,7 @@ Bir histogramdan daha az ayrıntı gösterir; ama özellikle modlar ve çarpıkl
 ```{r}
 #| fig-alt: |
 #|   Penguenlerin vücut kütlelerinin bir yoğunluk grafiği. Dağılım tek
-#|   modlu ve sağa çarpık olup yaklaşık 2500 ile 6500 gram arasında
+#|   modlu ve sağa çarpık olup yaklaşık 2.500 ile 6.500 gram arasında
 #|   değişmektedir.
 ggplot(penguins, aes(x = body_mass_g)) +
   geom_density()
@@ -565,7 +565,7 @@ ggplot(penguins, aes(x = body_mass_g)) +
 
 ### Alıştırmalar
 
-1.  `penguins`'in `species`'inin, `species`'i `y` estetiğine atadığınız bir çubuk grafiğini yapın.
+1.  `penguins` veri çerçevesindeki `species` değişkenini `y` estetiğine eşleyerek bir çubuk grafik oluşturun.
     Bu grafik nasıl farklı?
 
 2.  Aşağıdaki iki grafik birbirinden nasıl farklı?
@@ -582,16 +582,16 @@ ggplot(penguins, aes(x = body_mass_g)) +
 
 3.  `geom_histogram()`'daki `bins` argümanı ne işe yarar?
 
-4.  tidyverse paketini yüklediğinizde kullanılabilir hale gelen `diamonds` veri kümesindeki `carat` değişkeninin bir histogramını yapın.
+4.  tidyverse paketini yüklediğinizde kullanılabilen `diamonds` veri kümesindeki `carat` değişkeninin histogramını oluşturun.
     Farklı bin genişlikleriyle deneyler yapın.
     Hangi bin genişliği en ilginç örüntüleri ortaya çıkarıyor?
 
-## İlişkileri Görselleştirme
+## İlişkileri görselleştirme
 
 Bir ilişkiyi görselleştirmek için bir grafiğin estetiklerine eşlenmiş en az iki değişkene ihtiyacımız vardır.
 Aşağıdaki bölümlerde, iki veya daha fazla değişken arasındaki ilişkileri görselleştirmek için yaygın olarak kullanılan grafikleri ve bunları oluşturmak için kullanılan geom'ları öğreneceksiniz.
 
-### Sayısal ve Kategorik Bir Değişken
+### Sayısal ve kategorik bir değişken
 
 Sayısal ve kategorik bir değişken arasındaki ilişkiyi görselleştirmek için yan yana kutu grafikleri (box plots) kullanabiliriz.
 Bir **kutu grafiği** (boxplot), bir dağılımı tanımlayan konum ölçülerinin (yüzdelik dilimlerin) bir tür görsel kısayoludur.
@@ -602,7 +602,7 @@ Potansiyel aykırı değerleri belirlemek için de kullanışlıdır.
     Kutunun ortasında, dağılımın medyanını, yani 50. yüzdelik dilimini gösteren bir çizgi vardır.
     Bu üç çizgi, size dağılımın yayılımı ve dağılımın medyan etrafında simetrik mi yoksa bir yöne çarpık mı olduğu hakkında bir fikir verir.
 
--   Kutunun her iki kenarından IQR'nin 1,5 katından daha fazla uzakta kalan gözlemleri gösteren görsel noktalar.
+-   Kutunun her iki kenarından IQR'nin 1,5 katından daha uzakta kalan gözlemleri gösteren noktalar.
     Bu aykırı noktalar sıra dışı olduğundan, ayrı ayrı çizilirler.
 
 -   Kutunun her iki ucundan uzanan ve dağılımdaki en uzak aykırı olmayan noktaya kadar giden bir çizgi (veya bıyık).
@@ -625,9 +625,9 @@ knitr::include_graphics("images/EDA-boxplot.png")
 #| fig-alt: |
 #|   Adelie, Chinstrap ve Gentoo penguenlerinin vücut kütlesi
 #|   dağılımlarının yan yana kutu grafikleri. Adelie ve Chinstrap
-#|   penguenlerinin vücut kütlesi dağılımları, medyanları yaklaşık 3750
+#|   penguenlerinin vücut kütlesi dağılımları, medyanları yaklaşık 3.750
 #|   gram olacak şekilde simetrik görünmektedir. Gentoo penguenlerinin
-#|   medyan vücut kütlesi çok daha yüksek olup yaklaşık 5000 gramdır ve
+#|   medyan vücut kütlesi çok daha yüksek olup yaklaşık 5.000 gramdır ve
 #|   bu penguenlerin vücut kütlesi dağılımı biraz sağa çarpık
 #|   görünmektedir.
 ggplot(penguins, aes(x = species, y = body_mass_g)) +
@@ -646,7 +646,7 @@ ggplot(penguins, aes(x = body_mass_g, color = species)) +
   geom_density(linewidth = 0.75)
 ```
 
-Çizgileri arka plana karşı biraz daha belirgin hale getirmek için `linewidth` argümanını kullanarak çizgilerin kalınlığını da özelleştirdik.
+Çizgileri arka planda biraz daha belirgin kılmak için `linewidth` argümanıyla kalınlıklarını da özelleştirdik.
 
 Ayrıca, `species`'i hem `color` hem de `fill` estetiklerine eşleyebilir ve dolgulu yoğunluk eğrilerine saydamlık eklemek için `alpha` estetiğini kullanabiliriz.
 Bu estetik, 0 (tamamen saydam) ile 1 (tamamen opak) arasında değerler alır.
@@ -668,13 +668,13 @@ Burada kullandığımız terminolojiye dikkat edin:
 -   Bir estetiğin temsil ettiği görsel özelliğin, o değişkenin değerlerine göre değişmesini istiyorsak değişkenleri estetiklere *eşleriz* (map).
 -   Aksi takdirde, bir estetiğin değerini *ayarlarız* (set).
 
-### İki Kategorik Değişken
+### İki kategorik değişken
 
 İki kategorik değişken arasındaki ilişkiyi görselleştirmek için yığılmış çubuk grafikleri kullanabiliriz.
-Örneğin, aşağıdaki iki yığılmış çubuk grafiği de `island` ile `species` arasındaki ilişkiyi gösterir; daha spesifik olarak, her adadaki `species` dağılımını görselleştirir.
+Örneğin aşağıdaki iki yığılmış çubuk grafik de `island` ile `species` arasındaki ilişkiyi, daha açık ifadeyle her adadaki tür dağılımını gösterir.
 
-İlk grafik, her adadaki her penguen türünün frekanslarını gösterir.
-Frekans grafiği, her adada eşit sayıda Adelie olduğunu gösteriyor.
+İlk grafik, her adadaki penguen türlerinin sıklıklarını gösterir.
+Sıklık grafiği, her adada eşit sayıda Adelie olduğunu gösteriyor.
 Ama her adadaki yüzdesel dengeye dair iyi bir fikrimiz yok.
 
 ```{r}
@@ -685,34 +685,34 @@ ggplot(penguins, aes(x = island, fill = species)) +
   geom_bar()
 ```
 
-İkinci grafik, geom'da `position = "fill"` ayarlanarak oluşturulan bir göreceli frekans grafiğidir; adalar arasındaki eşit olmayan penguen sayılarından etkilenmediği için tür dağılımlarını adalar arasında karşılaştırmak için daha kullanışlıdır.
+İkinci grafik, geom'da `position = "fill"` ayarlanarak oluşturulan bir göreli sıklık grafiğidir. Adalardaki penguen sayılarının eşit olmamasından etkilenmediği için tür dağılımlarını karşılaştırmaya daha uygundur.
 Bu grafiği kullanarak, Gentoo penguenlerinin tamamının Biscoe adasında yaşadığını ve o adadaki penguenlerin yaklaşık %75'ini oluşturduğunu; Chinstrap'lerin tamamının Dream adasında yaşadığını ve o adadaki penguenlerin yaklaşık %50'sini oluşturduğunu; Adelie'lerin ise her üç adada da yaşadığını ve Torgersen'deki penguenlerin tamamını oluşturduğunu görebiliriz.
 
 ```{r}
 #| fig-alt: |
 #|   Adaya (Biscoe, Dream ve Torgersen) göre penguen türlerinin çubuk
 #|   grafikleri; çubuklar aynı yüksekliğe ölçeklenerek göreceli
-#|   frekanslar grafiği haline getirilmiştir. Y ekseni varsayılan olarak
+#|   sıklık grafiği hâline getirilmiştir. Y ekseni varsayılan olarak
 #|   "count" ile etiketlenmiştir.
 ggplot(penguins, aes(x = island, fill = species)) +
   geom_bar(position = "fill")
 ```
 
 Bu çubuk grafikleri oluştururken, çubuklara ayrılacak değişkeni `x` estetiğine, çubukların içindeki renkleri değiştirecek değişkeni ise `fill` estetiğine eşleriz.
-Ne yazık ki ggplot2, y eksenini varsayılan olarak `"count"` ile etiketler; ancak y ekseni etiketini `"proportion"` olarak belirttiğimiz bir `labs()` katmanı ekleyerek bunun üzerine yazabiliriz.
+ggplot2, y eksenini varsayılan olarak `"count"` ile etiketler. Bu etiketi `"Oran"` olarak belirleyen bir `labs()` katmanı ekleyerek değiştirebiliriz.
 
 ```{r}
 #| fig-alt: |
 #|   Adaya (Biscoe, Dream ve Torgersen) göre penguen türlerinin çubuk
 #|   grafikleri; çubuklar aynı yüksekliğe ölçeklenerek göreceli
-#|   frekanslar grafiği haline getirilmiştir. Y ekseni "proportion" ile
+#|   sıklık grafiği hâline getirilmiştir. Y ekseni "Oran" ile
 #|   etiketlenmiştir.
 ggplot(penguins, aes(x = island, fill = species)) +
   geom_bar(position = "fill") +
-  labs(y = "proportion")
+  labs(y = "Oran")
 ```
 
-### İki Sayısal Değişken
+### İki sayısal değişken
 
 Şimdiye kadar, iki sayısal değişken arasındaki ilişkiyi görselleştirmek için saçılım grafikleri (`geom_point()` ile oluşturulur) ve düzgün eğriler (`geom_smooth()` ile oluşturulur) hakkında bilgi edindiniz.
 İki sayısal değişken arasındaki ilişkiyi görselleştirmek için muhtemelen en yaygın kullanılan grafik saçılım grafiğidir.
@@ -720,14 +720,14 @@ ggplot(penguins, aes(x = island, fill = species)) +
 ```{r}
 #| warning: false
 #| fig-alt: |
-#|   Penguenlerin vücut kütlesine karşı flipper uzunluğunun saçılım
+#|   Penguenlerin vücut kütlesine karşı yüzgeç uzunluğunun saçılım
 #|   grafiği. Grafik, bu iki değişken arasında pozitif, doğrusal,
 #|   nispeten güçlü bir ilişki göstermektedir.
 ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point()
 ```
 
-### Üç veya Daha Fazla Değişken
+### Üç veya daha fazla değişken
 
 @sec-adding-aesthetics-layers bölümünde gördüğümüz gibi, değişkenleri ek estetiklere eşleyerek bir grafiğe daha fazla değişken dahil edebiliriz.
 Örneğin, aşağıdaki saçılım grafiğinde noktaların renkleri türü, noktaların şekilleri ise adaları temsil eder.
@@ -735,7 +735,7 @@ ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
 ```{r}
 #| warning: false
 #| fig-alt: |
-#|   Penguenlerin vücut kütlesine karşı flipper uzunluğunun saçılım
+#|   Penguenlerin vücut kütlesine karşı yüzgeç uzunluğunun saçılım
 #|   grafiği. Grafik, bu iki değişken arasında pozitif, doğrusal,
 #|   nispeten güçlü bir ilişki göstermektedir. Noktalar penguenlerin
 #|   türüne göre renklendirilmiştir ve noktaların şekilleri adaları
@@ -746,10 +746,10 @@ ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point(aes(color = species, shape = island))
 ```
 
-Ancak bir grafiğe çok fazla estetik eşleme eklemek, onu karmaşık ve anlaşılması zor hale getirir.
-Özellikle kategorik değişkenler için kullanışlı olan bir başka yol, grafiğinizi her biri verinin bir alt kümesini gösteren alt grafiklere, yani **facet**'lere bölmektir.
+Ancak bir grafiğe çok fazla estetik eşleme eklemek, grafiği karmaşık ve anlaşılması zor hâle getirir.
+Özellikle kategorik değişkenler için kullanışlı bir başka yöntem, grafiği her biri verilerin bir alt kümesini gösteren **panellere** (facets) bölmektir.
 
-Grafiğinizi tek bir değişkene göre facet'lemek için `facet_wrap()` kullanın.
+Grafiğinizi tek bir değişkene göre panellere ayırmak için `facet_wrap()` kullanın.
 `facet_wrap()`'in ilk argümanı, `~` ve ardından bir değişken adıyla oluşturduğunuz bir formüldür[^data-visualize-3].
 `facet_wrap()`'e verdiğiniz değişken kategorik olmalıdır.
 
@@ -760,10 +760,10 @@ Grafiğinizi tek bir değişkene göre facet'lemek için `facet_wrap()` kullanı
 #| fig-width: 8
 #| fig-asp: 0.33
 #| fig-alt: |
-#|   Penguenlerin vücut kütlesine karşı flipper uzunluğunun saçılım
+#|   Penguenlerin vücut kütlesine karşı yüzgeç uzunluğunun saçılım
 #|   grafiği. Noktaların şekilleri ve renkleri türü temsil eder. Her
-#|   adadaki penguenler ayrı bir facet'te yer alır. Her facet içinde,
-#|   vücut kütlesi ile flipper uzunluğu arasındaki ilişki pozitif,
+#|   adadaki penguenler ayrı bir panelde yer alır. Her panelde,
+#|   vücut kütlesi ile yüzgeç uzunluğu arasındaki ilişki pozitif,
 #|   doğrusal, nispeten güçlüdür.
 ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point(aes(color = species, shape = species)) +
@@ -789,10 +789,10 @@ ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
 
 5.  `bill_depth_mm`'e karşı `bill_length_mm`'in bir saçılım grafiğini yapın ve noktaları `species`'e göre renklendirin.
     Türe göre renklendirme eklemek, bu iki değişken arasındaki ilişki hakkında neyi ortaya çıkarıyor?
-    Peki ya `species`'e göre facet'leme?
+    Peki ya `species` değişkenine göre panellere ayırmak?
 
-6.  Aşağıdaki kod neden iki ayrı açıklama kutusu (legend) veriyor?
-    İki açıklama kutusunu birleştirmek için bunu nasıl düzeltirsiniz?
+6.  Aşağıdaki kod neden iki ayrı gösterge veriyor?
+    İki göstergeyi birleştirmek için kodu nasıl düzeltirsiniz?
 
     ```{r}
     #| warning: false
@@ -805,7 +805,7 @@ ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
       )
     ) +
       geom_point() +
-      labs(color = "Species")
+      labs(color = "Tür")
     ```
 
 7.  Aşağıdaki iki yığılmış çubuk grafiğini oluşturun.
@@ -820,10 +820,10 @@ ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
       geom_bar(position = "fill")
     ```
 
-## Grafiklerinizi Kaydetme {#sec-ggsave}
+## Grafiklerinizi kaydetme {#sec-ggsave}
 
-Bir grafik yaptıktan sonra, başka bir yerde kullanabileceğiniz bir görüntü olarak kaydederek onu R'dan çıkarmak isteyebilirsiniz.
-Bu, en son oluşturulan grafiği diske kaydeden `ggsave()`'in işidir:
+Bir grafik oluşturduktan sonra onu başka bir yerde kullanmak üzere görüntü olarak kaydetmek isteyebilirsiniz.
+En son oluşturulan grafiği diske kaydetmek `ggsave()` fonksiyonunun işidir:
 
 ```{r}
 #| fig-show: hide
@@ -838,13 +838,13 @@ ggsave(filename = "penguin-plot.png")
 file.remove("penguin-plot.png")
 ```
 
-Bu, grafiğinizi çalışma dizininize (working directory) kaydedecektir; bu kavram hakkında @sec-workflow-scripts-projects bölümünde daha fazla bilgi edineceksiniz.
+Bu kod grafiğinizi çalışma dizininize (working directory) kaydeder; bu kavramı @sec-workflow-scripts-projects bölümünde daha ayrıntılı öğreneceksiniz.
 
-`width` ve `height`'ı belirtmezseniz, bunlar mevcut çizim aygıtının boyutlarından alınır.
-Yeniden üretilebilir kod için bunları belirtmek isteyeceksiniz.
-`ggsave()` hakkında daha fazlasını dokümantasyonda öğrenebilirsiniz.
+`width` ve `height` değerlerini belirtmezseniz mevcut çizim aygıtının boyutları kullanılır.
+Yeniden üretilebilir kod yazmak için bu değerleri açıkça belirtmelisiniz.
+`ggsave()` hakkında daha fazla bilgiyi dokümantasyonunda bulabilirsiniz.
 
-Ancak genel olarak, nihai raporlarınızı; kodunuzu ve düz metninizi iç içe geçirmenize olanak tanıyan ve grafiklerinizi yazılarınıza otomatik olarak dahil eden, yeniden üretilebilir bir yazım sistemi olan Quarto kullanarak hazırlamanızı öneririz.
+Ancak genel olarak nihai raporlarınızı Quarto ile hazırlamanızı öneriyoruz. Quarto, kodunuzla açıklamalarınızı iç içe geçirmenizi ve grafikleri metninize otomatik olarak eklemenizi sağlayan, yeniden üretilebilir bir yazım sistemidir.
 Quarto hakkında @sec-quarto bölümünde daha fazla bilgi edineceksiniz.
 
 ### Alıştırmalar
@@ -865,9 +865,9 @@ Quarto hakkında @sec-quarto bölümünde daha fazla bilgi edineceksiniz.
 2.  Grafiği PNG yerine PDF olarak kaydetmek için yukarıdaki kodda neyi değiştirmeniz gerekir?
     `ggsave()`'de hangi görüntü dosyası türlerinin işe yarayacağını nasıl öğrenebilirsiniz?
 
-## Yaygın Sorunlar
+## Yaygın sorunlar
 
-R kodu çalıştırmaya başladıkça, sorunlarla karşılaşmanız olası.
+R kodu çalıştırmaya başladıkça sorunlarla karşılaşmanız olasıdır.
 Endişelenmeyin --- bu herkesin başına gelir.
 Hepimiz yıllardır R kodu yazıyoruz; ama her gün hâlâ ilk denemede çalışmayan kod yazıyoruz!
 
@@ -875,8 +875,8 @@ Hepimiz yıllardır R kodu yazıyoruz; ama her gün hâlâ ilk denemede çalış
 R son derece titizdir ve yanlış yerleştirilmiş tek bir karakter büyük fark yaratabilir.
 Her `(`'in bir `)` ile eşleştiğinden ve her `"`'in başka bir `"` ile eşleştiğinden emin olun.
 Bazen kodu çalıştırırsınız ve hiçbir şey olmaz.
-Konsolunuzun sol tarafını kontrol edin: eğer bir `+` ise, bu R'ın tam bir ifade yazdığınızı düşünmediği ve ifadeyi tamamlamanızı beklediği anlamına gelir.
-Bu durumda, ESCAPE tuşuna basarak mevcut komutun işlenmesini iptal edip genellikle baştan başlamak kolaydır.
+Konsolunuzun sol tarafını kontrol edin: Burada `+` varsa R, henüz eksiksiz bir ifade yazmadığınızı düşünüyor ve tamamlamanızı bekliyor demektir.
+Bu durumda `Esc` tuşuna basarak geçerli komutun işlenmesini iptal edip baştan başlayabilirsiniz.
 
 ggplot2 grafikleri oluştururken karşılaşılan yaygın bir sorun, `+`'ı yanlış yere koymaktır: satırın sonunda olması gerekir, başında değil.
 Başka bir deyişle, yanlışlıkla şöyle bir kod yazmadığınızdan emin olun:
@@ -888,22 +888,22 @@ ggplot(data = mpg)
 ```
 
 Hâlâ takıldıysanız, yardıma başvurun.
-Konsolda `?fonksiyon_adı` çalıştırarak veya RStudio'da fonksiyon adını vurgulayıp F1'e basarak herhangi bir R fonksiyonu hakkında yardım alabilirsiniz.
-Yardım pek yardımcı görünmüyorsa endişelenmeyin - bunun yerine örneklere atlayın ve yapmaya çalıştığınız şeyle eşleşen kodu arayın.
+Konsolda `?function_name` çalıştırarak veya RStudio'da fonksiyon adını seçip `F1` tuşuna basarak herhangi bir R fonksiyonu hakkında yardım alabilirsiniz.
+Yardım pek yararlı görünmüyorsa endişelenmeyin; doğrudan örneklere geçip yapmaya çalıştığınız işe benzeyen kodu arayın.
 
 Bu da yardımcı olmazsa, hata mesajını dikkatlice okuyun.
 Bazen cevap orada gizlidir!
 Ama R'da yeniyseniz, cevap hata mesajında olsa bile onu nasıl anlayacağınızı henüz bilmiyor olabilirsiniz.
-Bir başka harika araç da Google'dır: hata mesajını Google'da aramayı deneyin, çünkü muhtemelen başka biri de aynı sorunu yaşamış ve çevrimiçi yardım almıştır.
+Bir başka yararlı araç da Google'dır: Hata mesajını aratmayı deneyin; büyük olasılıkla başka biri de aynı sorunla karşılaşmış ve çevrimiçi yardım almıştır.
 
 ## Özet
 
 Bu bölümde, ggplot2 ile veri görselleştirmenin temellerini öğrendiniz.
 ggplot2'nin dayandığı temel fikirle başladık: bir görselleştirme, verinizdeki değişkenlerden konum, renk, boyut ve şekil gibi estetik özelliklere yapılan bir eşlemedir.
 Ardından, grafiklerinizin karmaşıklığını artırmayı ve sunumunu katman katman iyileştirmeyi öğrendiniz.
-Ayrıca, ek estetik eşlemelerden yararlanarak ve/veya facet'leme kullanarak grafiğinizi küçük çoklulara bölerek, tek bir değişkenin dağılımını görselleştirmenin yanı sıra iki veya daha fazla değişken arasındaki ilişkileri görselleştirmek için yaygın olarak kullanılan grafikleri de öğrendiniz.
+Ayrıca ek estetik eşlemelerden yararlanarak veya grafiği panellerle küçük çoklu grafiklere bölerek tek bir değişkenin dağılımını ve iki ya da daha fazla değişken arasındaki ilişkileri görselleştirmekte sık kullanılan grafikleri öğrendiniz.
 
-Bu kitap boyunca görselleştirmeleri tekrar tekrar kullanacağız; ihtiyaç duydukça yeni teknikler tanıtacağız ve @sec-layers'tan @sec-communication'a kadar ggplot2 ile görselleştirme oluşturmaya daha derinlemesine dalacağız.
+Kitap boyunca görselleştirmeleri tekrar tekrar kullanacak, ihtiyaç duydukça yeni teknikler tanıtacağız. Ayrıca @sec-layers ile @sec-communication arasındaki bölümlerde ggplot2 ile görselleştirme oluşturmayı çok daha ayrıntılı ele alacağız.
 
-Görselleştirmenin temellerini öğrendiğinize göre, bir sonraki bölümde biraz vites değiştirip size bazı pratik iş akışı tavsiyeleri vereceğiz.
-İş akışı tavsiyelerini kitabın bu bölümü boyunca veri bilimi araçlarıyla iç içe sunuyoruz; çünkü bu, giderek artan miktarda R kodu yazarken düzenli kalmanıza yardımcı olacaktır.
+Görselleştirmenin temellerini öğrendiğinize göre bir sonraki bölümde biraz vites değiştirip uygulamaya yönelik iş akışı önerileri vereceğiz.
+Kitabın bu kısmında iş akışı önerilerini veri bilimi araçlarının arasına serpiştiriyoruz; çünkü bu öneriler giderek daha fazla R kodu yazarken düzenli kalmanıza yardımcı olacak.

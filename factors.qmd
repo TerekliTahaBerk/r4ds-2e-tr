@@ -1,25 +1,25 @@
-# Factors {#sec-factors}
+# Faktörler {#sec-factors}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## Giriş
 
-Factors are used for categorical variables, variables that have a fixed and known set of possible values.
-They are also useful when you want to display character vectors in a non-alphabetical order.
+Faktörler, olası değerleri sabit ve bilinen kategorik değişkenler için kullanılır.
+Karakter vektörlerini alfabetik olmayan bir sırada görüntülemek istediğinizde de yararlıdır.
 
-We'll start by motivating why factors are needed for data analysis[^factors-1] and how you can create them with `factor()`. We'll then introduce you to the `gss_cat` dataset which contains a bunch of categorical variables to experiment with.
-You'll then use that dataset to practice modifying the order and values of factors, before we finish up with a discussion of ordered factors.
+Önce veri analizinde faktörlere neden ihtiyaç duyulduğunu[^factors-1] ve `factor()` ile nasıl oluşturulduklarını açıklayacağız. Ardından, üzerinde denemeler yapabileceğiniz birçok kategorik değişken içeren `gss_cat` veri kümesini tanıtacağız.
+Sonrasında bu veri kümesini kullanarak faktörlerin sırasını ve değerlerini değiştirme alıştırmaları yapacak, bölümü sıralı faktörleri ele alarak bitireceğiz.
 
-[^factors-1]: They're also really important for modelling.
+[^factors-1]: Faktörler modelleme için de çok önemlidir.
 
-### Prerequisites
+### Ön koşullar
 
-Base R provides some basic tools for creating and manipulating factors.
-We'll supplement these with the **forcats** package, which is part of the core tidyverse.
-It provides tools for dealing with **cat**egorical variables (and it's an anagram of factors!) using a wide range of helpers for working with factors.
+Temel R, faktörleri oluşturmak ve işlemek için bazı temel araçlar sağlar.
+Bunları, temel tidyverse'in bir parçası olan **forcats** paketiyle tamamlayacağız.
+Bu paket, faktörlerle çalışmaya yönelik çok çeşitli yardımcılar aracılığıyla kategorik değişkenleri ele alan araçlar sunar. Adı, İngilizce **cat**egorical sözcüğündeki *cat* bölümüne gönderme yapar ve aynı zamanda *factors* sözcüğünün anagramıdır!
 
 ```{r}
 #| label: setup
@@ -27,30 +27,30 @@ It provides tools for dealing with **cat**egorical variables (and it's an anagra
 library(tidyverse)
 ```
 
-## Factor basics
+## Faktörlerin temelleri
 
-Imagine that you have a variable that records month:
+Ay bilgisini kaydeden bir değişkeniniz olduğunu düşünün:
 
 ```{r}
 x1 <- c("Dec", "Apr", "Jan", "Mar")
 ```
 
-Using a string to record this variable has two problems:
+Bu değişkeni bir karakter dizisiyle kaydetmenin iki sorunu vardır:
 
-1.  There are only twelve possible months, and there's nothing saving you from typos:
+1.  Yalnızca on iki olası ay vardır ancak yazım hatası yapmanızı önleyen hiçbir şey yoktur:
 
     ```{r}
     x2 <- c("Dec", "Apr", "Jam", "Mar")
     ```
 
-2.  It doesn't sort in a useful way:
+2.  Yararlı bir biçimde sıralanmaz:
 
     ```{r}
     sort(x1)
     ```
 
-You can fix both of these problems with a factor.
-To create a factor, you must start by creating a list of the valid **levels**:
+Bu iki sorunu da bir faktörle çözebilirsiniz.
+Faktör oluşturmak için önce geçerli **düzeylerin** bir listesini oluşturmalısınız:
 
 ```{r}
 month_levels <- c(
@@ -59,7 +59,7 @@ month_levels <- c(
 )
 ```
 
-Now you can create a factor:
+Artık bir faktör oluşturabilirsiniz:
 
 ```{r}
 y1 <- factor(x1, levels = month_levels)
@@ -68,40 +68,40 @@ y1
 sort(y1)
 ```
 
-And any values not in the level will be silently converted to NA:
+Düzeylerde bulunmayan değerler herhangi bir uyarı verilmeden NA'ya dönüştürülür:
 
 ```{r}
 y2 <- factor(x2, levels = month_levels)
 y2
 ```
 
-This seems risky, so you might want to use `forcats::fct()` instead:
+Bu riskli göründüğünden bunun yerine `forcats::fct()` kullanmak isteyebilirsiniz:
 
 ```{r}
 #| error: true
 y2 <- fct(x2, levels = month_levels)
 ```
 
-If you omit the levels, they'll be taken from the data in alphabetical order:
+Düzeyleri belirtmezseniz verilerden alfabetik sırayla alınırlar:
 
 ```{r}
 factor(x1)
 ```
 
-Sorting alphabetically is slightly risky because not every computer will sort strings in the same way.
-So `forcats::fct()` orders by first appearance:
+Her bilgisayar karakter dizilerini aynı şekilde sıralamayacağı için alfabetik sıralama biraz risklidir.
+Bu nedenle `forcats::fct()` ilk görünme sırasını kullanır:
 
 ```{r}
 fct(x1)
 ```
 
-If you ever need to access the set of valid levels directly, you can do so with `levels()`:
+Geçerli düzeyler kümesine doğrudan erişmeniz gerekirse `levels()` kullanabilirsiniz:
 
 ```{r}
 levels(y2)
 ```
 
-You can also create a factor when reading your data with readr with `col_factor()`:
+Verilerinizi readr ile okurken `col_factor()` kullanarak da faktör oluşturabilirsiniz:
 
 ```{r}
 csv <- "
@@ -114,52 +114,52 @@ df <- read_csv(csv, col_types = cols(month = col_factor(month_levels)))
 df$month
 ```
 
-## General Social Survey
+## Genel Sosyal Araştırma
 
-For the rest of this chapter, we're going to use `forcats::gss_cat`.
-It's a sample of data from the [General Social Survey](https://gss.norc.org), a long-running US survey conducted by the independent research organization NORC at the University of Chicago.
-The survey has thousands of questions, so in `gss_cat` Hadley selected a handful that will illustrate some common challenges you'll encounter when working with factors.
+Bu bölümün geri kalanında `forcats::gss_cat` veri kümesini kullanacağız.
+Bu, Chicago Üniversitesindeki bağımsız araştırma kuruluşu NORC tarafından uzun süredir yürütülen ABD merkezli [General Social Survey](https://gss.norc.org) araştırmasından alınmış bir veri örneğidir.
+Araştırma binlerce soru içerdiğinden Hadley, faktörlerle çalışırken karşılaşacağınız bazı yaygın güçlükleri gösterecek küçük bir bölümü `gss_cat` için seçmiştir.
 
 ```{r}
 gss_cat
 ```
 
-(Remember, since this dataset is provided by a package, you can get more information about the variables with `?gss_cat`.)
+(Bu veri kümesi bir paket tarafından sağlandığı için değişkenler hakkında `?gss_cat` ile daha fazla bilgi alabileceğinizi unutmayın.)
 
-When factors are stored in a tibble, you can't see their levels so easily.
-One way to view them is with `count()`:
+Faktörler bir tibble'da saklandığında düzeylerini kolayca göremezsiniz.
+Bunları görüntülemenin bir yolu `count()` kullanmaktır:
 
 ```{r}
 gss_cat |>
   count(race)
 ```
 
-When working with factors, the two most common operations are changing the order of the levels and changing the values of the levels.
-Those operations are described in the sections below.
+Faktörlerle çalışırken en sık yapılan iki işlem, düzeylerin sırasını ve değerlerini değiştirmektir.
+Bu işlemler aşağıdaki bölümlerde açıklanmaktadır.
 
-### Exercises
+### Alıştırmalar
 
-1.  Explore the distribution of `rincome` (reported income).
-    What makes the default bar chart hard to understand?
-    How could you improve the plot?
+1.  `rincome` (bildirilen gelir) dağılımını inceleyin.
+    Varsayılan çubuk grafiği anlamayı zorlaştıran nedir?
+    Grafiği nasıl iyileştirebilirsiniz?
 
-2.  What is the most common `relig` in this survey?
-    What's the most common `partyid`?
+2.  Bu araştırmada en yaygın `relig` nedir?
+    En yaygın `partyid` nedir?
 
-3.  Which `relig` does `denom` (denomination) apply to?
-    How can you find out with a table?
-    How can you find out with a visualization?
+3.  `denom` (mezhep) hangi `relig` için geçerlidir?
+    Bunu bir tabloyla nasıl bulabilirsiniz?
+    Bir görselleştirmeyle nasıl bulabilirsiniz?
 
-## Modifying factor order {#sec-modifying-factor-order}
+## Faktör sırasını değiştirme {#sec-modifying-factor-order}
 
-It's often useful to change the order of the factor levels in a visualization.
-For example, imagine you want to explore the average number of hours spent watching TV per day across religions:
+Bir görselleştirmede faktör düzeylerinin sırasını değiştirmek çoğu zaman yararlıdır.
+Örneğin dinlere göre günde ortalama kaç saat televizyon izlendiğini incelemek istediğinizi düşünün:
 
 ```{r}
 #| fig-alt: |
-#|   A scatterplot with tvhours on the x-axis and religion on the y-axis.
-#|   The y-axis is ordered seemingly arbitrarily, making it hard to get
-#|   any sense of overall pattern.
+#|   X ekseninde tvhours, y ekseninde din bulunan bir dağılım grafiği.
+#|   Y ekseni görünüşte gelişigüzel sıralandığından genel örüntüyü anlamak
+#|   zordur.
 relig_summary <- gss_cat |>
   group_by(relig) |>
   summarize(
@@ -171,27 +171,27 @@ ggplot(relig_summary, aes(x = tvhours, y = relig)) +
   geom_point()
 ```
 
-It is hard to read this plot because there's no overall pattern.
-We can improve it by reordering the levels of `relig` using `fct_reorder()`.
-`fct_reorder()` takes three arguments:
+Genel bir örüntü olmadığı için bu grafiği okumak zordur.
+`fct_reorder()` kullanarak `relig` düzeylerini yeniden sıralayıp grafiği iyileştirebiliriz.
+`fct_reorder()` üç argüman alır:
 
--   `.f`, the factor whose levels you want to modify.
--   `.x`, a numeric vector that you want to use to reorder the levels.
--   Optionally, `.fun`, a function that's used if there are multiple values of `.x` for each value of `.f`. The default value is `median`.
+-   `.f`: Düzeylerini değiştirmek istediğiniz faktör.
+-   `.x`: Düzeyleri yeniden sıralamak için kullanmak istediğiniz sayısal vektör.
+-   İsteğe bağlı `.fun`: Her `.f` değeri için birden çok `.x` değeri varsa kullanılan fonksiyon. Varsayılan değeri `median`'dır.
 
 ```{r}
 #| fig-alt: |
-#|   The same scatterplot as above, but now the religion is displayed in
-#|   increasing order of tvhours. "Other eastern" has the fewest tvhours
-#|   under 2, and "Don't know" has the highest (over 5).
+#|   Yukarıdakiyle aynı dağılım grafiği; ancak dinler artık tvhours artışına
+#|   göre sıralanmıştır. "Other eastern" 2'nin altındaki değerle en az,
+#|   "Don't know" ise 5'in üzerindeki değerle en çok tvhours değerine sahiptir.
 ggplot(relig_summary, aes(x = tvhours, y = fct_reorder(relig, tvhours))) +
   geom_point()
 ```
 
-Reordering religion makes it much easier to see that people in the "Don't know" category watch much more TV, and Hinduism & Other Eastern religions watch much less.
+Dinleri yeniden sıralamak, "Don't know" kategorisindeki kişilerin çok daha fazla; Hinduizm ve diğer Doğu dinlerindeki kişilerin ise çok daha az televizyon izlediğini görmeyi kolaylaştırır.
 
-As you start making more complicated transformations, we recommend moving them out of `aes()` and into a separate `mutate()` step.
-For example, you could rewrite the plot above as:
+Daha karmaşık dönüşümler yapmaya başladığınızda bunları `aes()` dışına, ayrı bir `mutate()` adımına taşımanızı öneririz.
+Örneğin yukarıdaki grafiği şöyle yeniden yazabilirsiniz:
 
 ```{r}
 #| eval: false
@@ -203,14 +203,14 @@ relig_summary |>
   geom_point()
 ```
 
-What if we create a similar plot showing how average age varies across reported income levels?
+Bildirilen gelir düzeylerine göre ortalama yaşın nasıl değiştiğini gösteren benzer bir grafik oluştursak ne olur?
 
 ```{r}
 #| fig-alt: |
-#|   A scatterplot with age on the x-axis and income on the y-axis. Income
-#|   has been reordered in order of average age, which doesn't make much
-#|   sense. One section of the y-axis goes from $6000-6999, then <$1000,
-#|   then $8000-9999.
+#|   X ekseninde yaş, y ekseninde gelir bulunan bir dağılım grafiği. Gelir,
+#|   pek anlamlı olmayacak biçimde ortalama yaşa göre yeniden sıralanmıştır.
+#|   Y ekseninin bir bölümü $6000-6999, ardından <$1000 ve sonra $8000-9999
+#|   biçiminde ilerler.
 rincome_summary <- gss_cat |>
   group_by(rincome) |>
   summarize(
@@ -222,44 +222,41 @@ ggplot(rincome_summary, aes(x = age, y = fct_reorder(rincome, age))) +
   geom_point()
 ```
 
-Here, arbitrarily reordering the levels isn't a good idea!
-That's because `rincome` already has a principled order that we shouldn't mess with.
-Reserve `fct_reorder()` for factors whose levels are arbitrarily ordered.
+Burada düzeyleri gelişigüzel yeniden sıralamak iyi bir fikir değildir!
+Çünkü `rincome` zaten bozmamamız gereken anlamlı bir sıraya sahiptir.
+`fct_reorder()` fonksiyonunu düzeyleri gelişigüzel sıralanmış faktörler için kullanın.
 
-However, it does make sense to pull "Not applicable" to the front with the other special levels.
-You can use `fct_relevel()`.
-It takes a factor, `.f`, and then any number of levels that you want to move to the front of the line.
+Ancak "Not applicable" düzeyini diğer özel düzeylerle birlikte öne almak anlamlıdır.
+Bunun için `fct_relevel()` kullanabilirsiniz.
+Bu fonksiyon bir `.f` faktörü ve ardından sıranın önüne taşımak istediğiniz herhangi bir sayıda düzey alır.
 
 ```{r}
 #| fig-alt: |
-#|   The same scatterplot but now "Not Applicable" is displayed at the
-#|   bottom of the y-axis. Generally, there is a positive association
-#|   between income and age, and the income band with the highest average
-#|   age is "Not applicable".
+#|   Aynı dağılım grafiği; ancak "Not Applicable" artık y ekseninin altında
+#|   gösterilmektedir. Genel olarak gelir ile yaş arasında pozitif bir ilişki
+#|   vardır ve ortalama yaşı en yüksek gelir aralığı "Not applicable"dır.
 ggplot(rincome_summary, aes(x = age, y = fct_relevel(rincome, "Not applicable"))) +
   geom_point()
 ```
 
-Why do you think the average age for "Not applicable" is so high?
+"Not applicable" için ortalama yaşın neden bu kadar yüksek olduğunu düşünüyorsunuz?
 
-Another type of reordering is useful when you are coloring the lines on a plot.
-`fct_reorder2(.f, .x, .y)` reorders the factor `.f` by the `.y` values associated with the largest `.x` values.
-This makes the plot easier to read because the colors of the line on the far right of the plot will match the legend.
+Bir grafikteki çizgileri renklendirirken başka bir yeniden sıralama türü yararlıdır.
+`fct_reorder2(.f, .x, .y)`, `.f` faktörünü en büyük `.x` değerleriyle ilişkili `.y` değerlerine göre yeniden sıralar.
+Grafiğin en sağındaki çizgilerin renkleri göstergeyle eşleşeceği için bu, grafiğin okunmasını kolaylaştırır.
 
 ```{r}
 #| layout-ncol: 2
 #| fig-width: 3
 #| fig-alt: |
-#|     A line plot with age on the x-axis and proportion on the y-axis.
-#|     There is one line for each category of marital status: no answer,
-#|     never married, separated, divorced, widowed, and married. It is
-#|     a little hard to read the plot because the order of the legend is
-#|     unrelated to the lines on the plot. Rearranging the legend makes
-#|     the plot easier to read because the legend colors now match the
-#|     order of the lines on the far right of the plot. You can see some
-#|     unsurprising patterns: the proportion never married decreases with
-#|     age, married forms an upside-down U shape, and widowed starts off
-#|     low but increases steeply after age 60.
+#|     X ekseninde yaş, y ekseninde oran bulunan bir çizgi grafiği. Medeni
+#|     durumun her kategorisi için bir çizgi vardır: yanıt yok, hiç evlenmemiş,
+#|     ayrı, boşanmış, dul ve evli. Göstergenin sırası grafikteki çizgilerle
+#|     ilişkili olmadığından grafiği okumak biraz zordur. Göstergeyi yeniden
+#|     düzenlemek okumayı kolaylaştırır; çünkü gösterge renkleri artık grafiğin
+#|     en sağındaki çizgilerin sırasıyla eşleşir. Şaşırtıcı olmayan bazı
+#|     örüntüler görülür: Hiç evlenmemişlerin oranı yaşla azalır, evliler ters U
+#|     biçimi oluşturur ve dulların oranı düşük başlayıp 60 yaştan sonra hızla artar.
 by_age <- gss_cat |>
   filter(!is.na(age)) |>
   count(age, marital) |>
@@ -278,44 +275,44 @@ ggplot(by_age, aes(x = age, y = prop, color = fct_reorder2(marital, age, prop)))
   labs(color = "marital")
 ```
 
-Finally, for bar plots, you can use `fct_infreq()` to order levels in decreasing frequency: this is the simplest type of reordering because it doesn't need any extra variables.
-Combine it with `fct_rev()` if you want them in increasing frequency so that in the bar plot, the largest values are on the right, not the left.
+Son olarak çubuk grafiklerde düzeyleri azalan sıklığa göre sıralamak için `fct_infreq()` kullanabilirsiniz. Ek bir değişken gerektirmediği için bu, en basit yeniden sıralama türüdür.
+Çubuk grafikte en büyük değerlerin solda değil sağda yer alması için düzeyleri artan sıklığa göre sıralamak istiyorsanız bunu `fct_rev()` ile birleştirin.
 
 ```{r}
 #| fig-alt: |
-#|   A bar chart of marital status ordered from least to most common:
-#|   no answer (~0), separated (~1,000), widowed (~2,000), divorced
-#|   (~3,000), never married (~5,000), married (~10,000).
+#|   Medeni durumları en azdan en yaygına doğru sıralayan bir çubuk grafik:
+#|   yanıt yok (~0), ayrı (~1.000), dul (~2.000), boşanmış (~3.000), hiç
+#|   evlenmemiş (~5.000), evli (~10.000).
 gss_cat |>
   mutate(marital = marital |> fct_infreq() |> fct_rev()) |>
   ggplot(aes(x = marital)) +
   geom_bar()
 ```
 
-### Exercises
+### Alıştırmalar
 
-1.  There are some suspiciously high numbers in `tvhours`.
-    Is the mean a good summary?
+1.  `tvhours` içinde kuşku uyandıracak kadar yüksek bazı sayılar vardır.
+    Ortalama iyi bir özet midir?
 
-2.  For each factor in `gss_cat` identify whether the order of the levels is arbitrary or principled.
+2.  `gss_cat` içindeki her faktör için düzey sırasının gelişigüzel mi yoksa anlamlı mı olduğunu belirleyin.
 
-3.  Why did moving "Not applicable" to the front of the levels move it to the bottom of the plot?
+3.  "Not applicable" düzeyini sıranın önüne taşımak neden grafiğin en altına taşıdı?
 
-## Modifying factor levels
+## Faktör düzeylerini değiştirme
 
-More powerful than changing the orders of the levels is changing their values.
-This allows you to clarify labels for publication, and collapse levels for high-level displays.
-The most general and powerful tool is `fct_recode()`.
-It allows you to recode, or change, the value of each level.
-For example, take the `partyid` variable from the `gss_cat` data frame:
+Düzeylerin sırasını değiştirmekten daha güçlü olan işlem, değerlerini değiştirmektir.
+Bu işlem yayımlama için etiketleri netleştirmenize ve üst düzey gösterimler için düzeyleri birleştirmenize olanak tanır.
+En genel ve güçlü araç `fct_recode()` fonksiyonudur.
+Her düzeyin değerini yeniden kodlamanızı, yani değiştirmenizi sağlar.
+Örneğin `gss_cat` veri çerçevesindeki `partyid` değişkenini ele alalım:
 
 ```{r}
 gss_cat |> count(partyid)
 ```
 
-The levels are terse and inconsistent.
-Let's tweak them to be longer and use a parallel construction.
-Like most rename and recoding functions in the tidyverse, the new values go on the left, and the old values go on the right:
+Düzeyler kısa ve tutarsızdır.
+Bunları daha uzun ve paralel bir yapıda olacak biçimde düzenleyelim.
+tidyverse'teki çoğu yeniden adlandırma ve kodlama fonksiyonunda olduğu gibi yeni değerler sola, eski değerler sağa yazılır:
 
 ```{r}
 gss_cat |>
@@ -332,9 +329,9 @@ gss_cat |>
   count(partyid)
 ```
 
-`fct_recode()` will leave the levels that aren't explicitly mentioned as is, and will warn you if you accidentally refer to a level that doesn't exist.
+`fct_recode()`, açıkça belirtilmeyen düzeyleri olduğu gibi bırakır ve yanlışlıkla var olmayan bir düzeye başvurursanız sizi uyarır.
 
-To combine groups, you can assign multiple old levels to the same new level:
+Grupları birleştirmek için birden çok eski düzeyi aynı yeni düzeye atayabilirsiniz:
 
 ```{r}
 #| results: false
@@ -354,10 +351,10 @@ gss_cat |>
   )
 ```
 
-Use this technique with care: if you group together categories that are truly different, you will end up with misleading results.
+Bu tekniği dikkatle kullanın: Gerçekten farklı kategorileri bir araya getirirseniz yanıltıcı sonuçlar elde edersiniz.
 
-If you want to collapse a lot of levels, `fct_collapse()` is a useful variant of `fct_recode()`.
-For each new variable, you can provide a vector of old levels:
+Çok sayıda düzeyi birleştirmek istiyorsanız `fct_collapse()`, `fct_recode()` fonksiyonunun yararlı bir çeşididir.
+Her yeni değişken için eski düzeylerden oluşan bir vektör sağlayabilirsiniz:
 
 ```{r}
 gss_cat |>
@@ -372,9 +369,9 @@ gss_cat |>
   count(partyid)
 ```
 
-Sometimes you just want to lump together the small groups to make a plot or table simpler.
-That's the job of the `fct_lump_*()` family of functions.
-`fct_lump_lowfreq()` is a simple starting point that progressively lumps the smallest group categories into "Other", always keeping "Other" as the smallest category.
+Bazen bir grafiği ya da tabloyu basitleştirmek için yalnızca küçük grupları bir araya getirmek istersiniz.
+Bu, `fct_lump_*()` fonksiyon ailesinin görevidir.
+`fct_lump_lowfreq()`, en küçük grup kategorilerini aşamalı olarak "Other" altında birleştiren ve "Other"ı her zaman en küçük kategori olarak tutan basit bir başlangıç noktasıdır.
 
 ```{r}
 gss_cat |>
@@ -382,8 +379,8 @@ gss_cat |>
   count(relig)
 ```
 
-In this case it's not very helpful: it is true that the majority of Americans in this survey are Protestant, but we'd probably like to see some more details!
-Instead, we can use the `fct_lump_n()` to specify that we want exactly 10 groups:
+Bu durumda pek yararlı değildir: Araştırmadaki Amerikalıların çoğunluğunun Protestan olduğu doğrudur ancak muhtemelen biraz daha ayrıntı görmek isteriz!
+Bunun yerine tam olarak 10 grup istediğimizi belirtmek için `fct_lump_n()` kullanabiliriz:
 
 ```{r}
 gss_cat |>
@@ -391,48 +388,48 @@ gss_cat |>
   count(relig, sort = TRUE)
 ```
 
-Read the documentation to learn about `fct_lump_min()` and `fct_lump_prop()` which are useful in other cases.
+Başka durumlarda yararlı olan `fct_lump_min()` ve `fct_lump_prop()` hakkında bilgi edinmek için belgelendirmeyi okuyun.
 
-### Exercises
+### Alıştırmalar
 
-1.  How have the proportions of people identifying as Democrat, Republican, and Independent changed over time?
+1.  Kendini Demokrat, Cumhuriyetçi ve Bağımsız olarak tanımlayan kişilerin oranları zaman içinde nasıl değişmiştir?
 
-2.  How could you collapse `rincome` into a small set of categories?
+2.  `rincome` değişkenini az sayıda kategori altında nasıl birleştirebilirsiniz?
 
-3.  Notice there are 9 groups (excluding other) in the `fct_lump` example above.
-    Why not 10?
-    (Hint: type `?fct_lump`, and find the default for the argument `other_level` is "Other".)
+3.  Yukarıdaki `fct_lump` örneğinde other dışında 9 grup olduğuna dikkat edin.
+    Neden 10 değil?
+    (İpucu: `?fct_lump` yazın ve `other_level` argümanının varsayılan değerinin "Other" olduğunu bulun.)
 
-## Ordered factors {#sec-ordered-factors}
+## Sıralı faktörler {#sec-ordered-factors}
 
-Before we continue, it's important to briefly mention a special type of factor: ordered factors.
-Created with the `ordered()` function, ordered factors imply a strict ordering between levels, but don't specify anything about the magnitude of the differences between the levels.
-You use ordered factors when you know the levels are ranked, but there's no precise numerical ranking.
+Devam etmeden önce özel bir faktör türünden kısaca söz etmek önemlidir: sıralı faktörler.
+`ordered()` fonksiyonuyla oluşturulan sıralı faktörler, düzeyler arasında kesin bir sıra bulunduğunu belirtir ancak düzeyler arasındaki farkların büyüklüğü hakkında bilgi vermez.
+Düzeylerin sıralı olduğunu bildiğiniz ancak kesin bir sayısal sıralamanın bulunmadığı durumlarda sıralı faktörleri kullanırsınız.
 
-You can identify an ordered factor when it's printed because it uses `<` symbols between the factor levels:
+Yazdırılan bir sıralı faktörü, faktör düzeyleri arasında `<` işaretleri kullanmasından tanıyabilirsiniz:
 
 ```{r}
 ordered(c("a", "b", "c"))
 ```
 
-In both base R and the tidyverse, ordered factors behave very similarly to regular factors.
-There are only two places where you might notice different behavior:
+Hem temel R'da hem de tidyverse'te sıralı faktörler normal faktörlere çok benzer davranır.
+Farklı davranışı yalnızca iki yerde fark edebilirsiniz:
 
--   If you map an ordered factor to color or fill in ggplot2, it will default to `scale_color_viridis()`/`scale_fill_viridis()`, a color scale that implies a ranking.
--   If you use an ordered predictor in a linear model, it will use "polynomial contrasts". These are mildly useful, but you are unlikely to have heard of them unless you have a PhD in Statistics, and even then you probably don't routinely interpret them. If you want to learn more, we recommend `vignette("contrasts", package = "faux")` by Lisa DeBruine.
+-   Sıralı bir faktörü ggplot2'de renk veya dolguya eşlerseniz varsayılan olarak sıralama belirten bir renk ölçeği olan `scale_color_viridis()`/`scale_fill_viridis()` kullanılır.
+-   Doğrusal bir modelde sıralı bir yordayıcı kullanırsanız model "polinom karşıtlıklarını" kullanır. Bunlar bir ölçüde yararlıdır ancak istatistik doktoranız yoksa adlarını duymuş olmanız pek olası değildir; doktoranız olsa bile muhtemelen bunları düzenli olarak yorumlamıyorsunuzdur. Daha fazla bilgi edinmek için Lisa DeBruine'in `vignette("contrasts", package = "faux")` belgesini öneririz.
 
-For the purposes of this book, correctly distinguishing between regular and ordered factors is not particularly important.
-More broadly, however, certain fields (particularly the social sciences) do use ordered factors extensively.
-In these contexts, it's important to correctly identify them so that other analysis packages can offer the appropriate behavior.
+Bu kitabın amaçları açısından normal ve sıralı faktörleri doğru ayırt etmek özellikle önemli değildir.
+Ancak daha genel olarak bazı alanlar, özellikle sosyal bilimler, sıralı faktörleri yaygın biçimde kullanır.
+Bu bağlamlarda diğer analiz paketlerinin uygun davranışı sunabilmesi için onları doğru tanımlamak önemlidir.
 
-## Summary
+## Özet
 
-This chapter introduced you to the handy forcats package for working with factors and covered the most commonly used functions.
-forcats contains a wide range of other helpers that we didn't have space to discuss here, so whenever you're facing a factor analysis challenge that you haven't encountered before, I highly recommend skimming the [reference index](https://forcats.tidyverse.org/reference/index.html) to see if there's a canned function that can help solve your problem.
+Bu bölüm faktörlerle çalışmaya yönelik kullanışlı forcats paketini tanıttı ve en sık kullanılan fonksiyonları ele aldı.
+forcats burada ele almaya yer bulamadığımız çok çeşitli başka yardımcılar da içerir. Bu nedenle daha önce karşılaşmadığınız bir faktör analizi problemiyle uğraşırken sorununuzu çözmeye yardımcı olacak hazır bir fonksiyon bulunup bulunmadığını görmek için [referans dizinine](https://forcats.tidyverse.org/reference/index.html) göz atmanızı önemle öneririz.
 
-If you want to learn more about factors after reading this chapter, we recommend reading Amelia McNamara and Nicholas Horton's paper, [*Wrangling categorical data in R*](https://peerj.com/preprints/3163/).
-This paper lays out some of the history discussed in [*stringsAsFactors: An unauthorized biography*](https://simplystatistics.org/posts/2015-07-24-stringsasfactors-an-unauthorized-biography/) and [*stringsAsFactors = \<sigh\>*](https://notstatschat.tumblr.com/post/124987394001/stringsasfactors-sigh), and compares the tidy approaches to categorical data outlined in this book with base R methods.
-An early version of the paper helped motivate and scope the forcats package; thanks, Amelia & Nick!
+Bu bölümü okuduktan sonra faktörler hakkında daha fazla bilgi edinmek isterseniz Amelia McNamara ve Nicholas Horton'ın [*Wrangling categorical data in R*](https://peerj.com/preprints/3163/) makalesini öneririz.
+Bu makale [*stringsAsFactors: An unauthorized biography*](https://simplystatistics.org/posts/2015-07-24-stringsasfactors-an-unauthorized-biography/) ile [*stringsAsFactors = \<sigh\>*](https://notstatschat.tumblr.com/post/124987394001/stringsasfactors-sigh) yazılarında ele alınan tarihçenin bir bölümünü aktarır ve bu kitapta açıklanan kategorik verilere yönelik tidy yaklaşımlarını temel R yöntemleriyle karşılaştırır.
+Makalenin erken bir sürümü forcats paketinin gerekçesini ve kapsamını belirlemeye yardımcı oldu; teşekkürler Amelia ve Nick!
 
-In the next chapter we'll switch gears to start learning about dates and times in R.
-Dates and times seem deceptively simple, but as you'll soon see, the more you learn about them, the more complex they seem to get!
+Bir sonraki bölümde yön değiştirip R'da tarih ve saatleri öğrenmeye başlayacağız.
+Tarih ve saatler aldatıcı biçimde basit görünür; ancak birazdan göreceğiniz gibi onlar hakkında daha fazla şey öğrendikçe daha karmaşık hâle gelirler!

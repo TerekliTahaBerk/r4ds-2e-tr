@@ -8,13 +8,13 @@ source("_common.R")
 ## Giriş
 
 @sec-exploratory-data-analysis içinde, grafikleri *keşif* araçları olarak nasıl kullanacağınızı öğrendiniz.
-Keşifçi grafikler yaptığınızda, bakmadan önce bile, grafiğin hangi değişkenleri göstereceğini bilirsiniz.
-Her grafiği bir amaç için yaptınız, hızlıca ona bakabildiniz ve ardından bir sonraki grafiğe geçebildiniz.
+Keşifçi grafikler oluştururken, daha grafiğe bakmadan hangi değişkenleri göstereceğini bilirsiniz.
+Her grafiği belirli bir amaçla oluşturur, hızla inceleyip bir sonrakine geçersiniz.
 Çoğu analiz sürecinde, çoğu hemen atılan onlarca veya yüzlerce grafik üreteceksiniz.
 
 Artık verinizi anladığınıza göre, anlayışınızı başkalarına *iletmeniz* gerekir.
-İzleyicileriniz muhtemelen sizin ön bilginizi paylaşmayacak ve veriye derinlemesine yatırım yapmış olmayacaktır.
-Başkalarının veri hakkında hızlıca iyi bir zihinsel model oluşturmasına yardımcı olmak için, grafiklerinizi mümkün olduğunca kendi kendini açıklar hale getirmeye önemli bir çaba harcamanız gerekecektir.
+Okuyucularınız muhtemelen sizin ön bilgilerinize sahip olmayacak ve veriye sizin kadar hâkim olmayacaktır.
+Başkalarının veriye ilişkin doğru bir zihinsel modeli hızla oluşturmasına yardımcı olmak için grafiklerinizi olabildiğince kendi kendini açıklar hâle getirmeye ciddi emek vermeniz gerekir.
 Bu bölümde, ggplot2'nin bunu yapmak için sağladığı bazı araçları öğreneceksiniz.
 
 Bu bölüm, iyi grafikler oluşturmak için ihtiyaç duyduğunuz araçlara odaklanır.
@@ -23,10 +23,10 @@ Bu nedenle, bu bölümü iyi bir genel görselleştirme kitabıyla eşleştirmen
 Albert Cairo'nun [The Truthful Art](https://www.amazon.com/gp/product/0321934075/) kitabını özellikle beğeniyoruz.
 Bu kitap, görselleştirmeler oluşturmanın mekaniğini öğretmez; bunun yerine etkili grafikler oluşturmak için ne düşünmeniz gerektiğine odaklanır.
 
-### Ön Koşullar
+### Ön koşullar
 
 Bu bölümde, bir kez daha ggplot2'ye odaklanacağız.
-Ayrıca veri manipülasyonu için biraz dplyr, varsayılan break'leri, etiketleri, dönüşümleri ve paletleri geçersiz kılmak için **scales**'i ve Kamil Slowikowski'nin **ggrepel**'i ([https://ggrepel.slowkow.com](https://ggrepel.slowkow.com/)) ile Thomas Lin Pedersen'in **patchwork**'ü ([https://patchwork.data-imaginist.com](https://patchwork.data-imaginist.com/)) dahil birkaç ggplot2 uzantı paketini kullanacağız.
+Ayrıca veri işleme için biraz dplyr; varsayılan kesme noktalarını, etiketleri, dönüşümleri ve paletleri değiştirmek için **scales**; Kamil Slowikowski'nin **ggrepel** ([https://ggrepel.slowkow.com](https://ggrepel.slowkow.com/)) ve Thomas Lin Pedersen'in **patchwork** ([https://patchwork.data-imaginist.com](https://patchwork.data-imaginist.com/)) paketleri dâhil birkaç ggplot2 uzantısı kullanacağız.
 Bu paketlere zaten sahip değilseniz, onları `install.packages()` ile kurmanız gerekeceğini unutmayın.
 
 ```{r}
@@ -49,32 +49,32 @@ Etiketleri `labs()` fonksiyonuyla eklersiniz.
 #|   Araçların otoyol yakıt verimliliğine karşı motor hacminin,
 #|   noktaların araç sınıfına göre renklendirildiği bir saçılım
 #|   grafiği. Otoyol yakıt verimliliği ile motor hacmi arasındaki
-#|   ilişkinin izlediği yolu takip eden düzgün bir eğri üzerine
-#|   bindirilmiştir. X ekseni "Engine displacement (L)" olarak, y
-#|   ekseni ise "Highway fuel economy (mpg)" olarak etiketlenmiştir.
-#|   Açıklama kutusu "Car type" olarak etiketlenmiştir. Grafiğin
-#|   başlığı "Fuel efficiency generally decreases with engine
-#|   size"dır. Alt başlığı "Two seaters (sports cars) are an
-#|   exception because of their light weight" ve altyazısı "Data from
-#|   fueleconomy.gov"dır.
+#|   ilişkiyi izleyen pürüzsüz bir eğri üzerine bindirilmiştir. X ekseni
+#|   "Motor hacmi (L)", y ekseni ise "Otoyol yakıt verimliliği (mpg)"
+#|   olarak etiketlenmiştir.
+#|   Gösterge "Araç türü" olarak etiketlenmiştir. Grafiğin başlığı
+#|   "Motor büyüdükçe yakıt verimliliği genellikle düşer"dir. Alt
+#|   başlığı "İki koltuklu araçlar (spor otomobiller), hafif oldukları
+#|   için bu eğilimin dışındadır" ve alt yazısı "Veri kaynağı:
+#|   fueleconomy.gov"dur.
 ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_point(aes(color = class)) +
   geom_smooth(se = FALSE) +
   labs(
-    x = "Engine displacement (L)",
-    y = "Highway fuel economy (mpg)",
-    color = "Car type",
-    title = "Fuel efficiency generally decreases with engine size",
-    subtitle = "Two seaters (sports cars) are an exception because of their light weight",
-    caption = "Data from fueleconomy.gov"
+    x = "Motor hacmi (L)",
+    y = "Otoyol yakıt verimliliği (mpg)",
+    color = "Araç türü",
+    title = "Motor büyüdükçe yakıt verimliliği genellikle düşer",
+    subtitle = "İki koltuklu araçlar (spor otomobiller), hafif oldukları için bu eğilimin dışındadır",
+    caption = "Veri kaynağı: fueleconomy.gov"
   )
 ```
 
 Bir grafik başlığının amacı, ana bulguyu özetlemektir.
 Grafiğin ne olduğunu yalnızca tanımlayan başlıklardan kaçının, örneğin, "Motor hacmine karşı yakıt verimliliğinin bir saçılım grafiği".
 
-Daha fazla metin eklemeniz gerekiyorsa, iki başka kullanışlı etiket vardır: `subtitle`, başlığın altına daha küçük bir fontla ek ayrıntı ekler ve `caption`, genellikle verinin kaynağını tanımlamak için kullanılan, grafiğin sağ altına metin ekler.
-Ayrıca eksen ve açıklama kutusu başlıklarını değiştirmek için `labs()`'i kullanabilirsiniz.
+Daha fazla metin eklemeniz gerekiyorsa iki kullanışlı etiket daha vardır: `subtitle`, başlığın altına daha küçük bir yazı tipiyle ek ayrıntı; `caption` ise grafiğin sağ altına, genellikle veri kaynağını belirten bir metin ekler.
+Ayrıca eksen ve gösterge başlıklarını değiştirmek için `labs()`'i kullanabilirsiniz.
 Kısa değişken adlarını daha ayrıntılı açıklamalarla değiştirmek ve birimleri dahil etmek genellikle iyi bir fikirdir.
 
 Metin dizeleri yerine matematiksel denklemler kullanmak mümkündür.
@@ -117,16 +117,16 @@ ggplot(df, aes(x, y)) +
     ggplot(mpg, aes(x = cty, y = hwy, color = drv, shape = drv)) +
       geom_point() +
       labs(
-        x = "City MPG",
-        y = "Highway MPG",
-        shape = "Type of\ndrive train",
-        color = "Type of\ndrive train"
+        x = "Şehir içi yakıt verimliliği (mpg)",
+        y = "Otoyol yakıt verimliliği (mpg)",
+        shape = "Tahrik\nsistemi türü",
+        color = "Tahrik\nsistemi türü"
       )
     ```
 
 3.  Geçen ay oluşturduğunuz keşifçi bir grafiği alın ve başkalarının anlamasını kolaylaştırmak için bilgilendirici başlıklar ekleyin.
 
-## Açıklama Notları
+## Açıklama notları
 
 Grafiğinizin ana bileşenlerini etiketlemenin yanı sıra, tek tek gözlemleri veya gözlem gruplarını etiketlemek de genellikle kullanışlıdır.
 Kullanabileceğiniz ilk araç `geom_text()`'tir.
@@ -144,9 +144,9 @@ label_info <- mpg |>
   slice_head(n = 1) |>
   mutate(
     drive_type = case_when(
-      drv == "f" ~ "front-wheel drive",
-      drv == "r" ~ "rear-wheel drive",
-      drv == "4" ~ "4-wheel drive"
+      drv == "f" ~ "önden çekiş",
+      drv == "r" ~ "arkadan çekiş",
+      drv == "4" ~ "dört çeker"
     )
   ) |>
   select(displ, hwy, drv, drive_type)
@@ -154,15 +154,15 @@ label_info <- mpg |>
 label_info
 ```
 
-Ardından, bu yeni veri çerçevesini, açıklama kutusunu doğrudan grafiğin üzerine yerleştirilmiş etiketlerle değiştirmek üzere üç grubu doğrudan etiketlemek için kullanırız.
+Ardından bu yeni veri çerçevesini, gösterge yerine doğrudan grafiğe yerleştirilen etiketlerle üç grubu tanımlamak için kullanırız.
 `fontface` ve `size` argümanlarını kullanarak metin etiketlerinin görünümünü özelleştirebiliriz.
-Grafikteki diğer metinlerden daha büyükler ve kalın (bold).
-(`theme(legend.position = "none"`), tüm açıklama kutularını kapatır --- bundan kısa süre sonra daha fazla bahsedeceğiz.)
+Bu etiketler grafikteki diğer metinlerden daha büyük ve kalındır.
+`theme(legend.position = "none")` tüm göstergeleri kapatır; buna birazdan yeniden değineceğiz.
 
 ```{r}
 #| fig-alt: |
 #|   Noktaların tahrik türüne göre renklendirildiği, otoyol yakıt
-#|   tüketimine karşı motor hacminin bir saçılım grafiği. Her tahrik
+#|   verimliliğine karşı motor hacminin bir saçılım grafiği. Her tahrik
 #|   türü için düzgün eğriler üzerine bindirilmiştir. Metin etiketleri
 #|   eğrileri ön çekiş, arka çekiş ve 4 çeker olarak tanımlar.
 ggplot(mpg, aes(x = displ, y = hwy, color = drv)) +
@@ -185,7 +185,7 @@ Bu kullanışlı paket, etiketleri çakışmayacak şekilde otomatik olarak ayar
 ```{r}
 #| fig-alt: |
 #|   Noktaların tahrik türüne göre renklendirildiği, otoyol yakıt
-#|   tüketimine karşı motor hacminin bir saçılım grafiği. Her tahrik
+#|   verimliliğine karşı motor hacminin bir saçılım grafiği. Her tahrik
 #|   türü için düzgün eğriler üzerine bindirilmiştir. Metin etiketleri
 #|   eğrileri ön çekiş, arka çekiş ve 4 çeker olarak tanımlar. Etiketler
 #|   beyaz arka planlı kutular şeklindedir ve çakışmayacak şekilde
@@ -207,7 +207,7 @@ Burada kullanılan başka bir kullanışlı tekniğe dikkat edin: etiketlenen no
 ```{r}
 #| fig-alt: |
 #|   Araçların otoyol yakıt verimliliğine karşı motor hacminin bir
-#|   saçılım grafiği. Otoyol yakıt tüketimi 40'ın üzerinde olan ve
+#|   saçılım grafiği. Otoyol yakıt verimliliği 40'ın üzerinde olan ve
 #|   motor hacmi 5'in üzerindeyken 20'nin üzerinde olan noktalar
 #|   kırmızı, içi boş kırmızı bir daireyle işaretlenmiş ve aracın model
 #|   adıyla etiketlenmiştir.
@@ -233,7 +233,7 @@ Birkaç fikir:
 
 -   İlgi çekici noktaların etrafına bir dikdörtgen çizmek için `geom_rect()`'i kullanın.
     Dikdörtgenin sınırları `xmin`, `xmax`, `ymin`, `ymax` estetikleriyle tanımlanır.
-    Alternatif olarak, nokta alt kümelerini hull'larla (dış hat) açıklama notu eklemenize izin veren [ggforce paketine](https://ggforce.data-imaginist.com/index.html), özellikle [`geom_mark_hull()`](https://ggforce.data-imaginist.com/reference/geom_mark_hull.html)'a bakın.
+    Alternatif olarak, nokta alt kümelerini dışbükey zarflarla (hulls) belirtmenizi sağlayan [ggforce paketine](https://ggforce.data-imaginist.com/index.html), özellikle de [`geom_mark_hull()`](https://ggforce.data-imaginist.com/reference/geom_mark_hull.html) fonksiyonuna bakın.
 
 -   Bir noktaya bir okla dikkat çekmek için `arrow` argümanıyla `geom_segment()`'i kullanın.
     Başlangıç konumunu tanımlamak için `x` ve `y` estetiklerini, bitiş konumunu tanımlamak için ise `xend` ve `yend` estetiklerini kullanın.
@@ -245,12 +245,12 @@ Genel bir kural olarak, geom'lar verinin bir alt kümesini vurgulamak için gene
 Metin biraz uzun, bu yüzden satır başına istediğiniz karakter sayısına göre otomatik olarak satır sonları eklemek için `stringr::str_wrap()`'i kullanacağız:
 
 ```{r}
-trend_text <- "Larger engine sizes tend to have lower fuel economy." |>
+trend_text <- "Motor büyüdükçe yakıt verimliliği düşme eğilimindedir." |>
   str_wrap(width = 30)
 trend_text
 ```
 
-Ardından, iki açıklama notu katmanı ekliyoruz: biri bir label geom'uyla, diğeri bir segment geom'uyla.
+Ardından iki açıklama notu katmanı ekliyoruz: biri etiket, diğeri doğru parçası geom'uyla.
 Her ikisindeki `x` ve `y` estetikleri açıklama notunun nerede başlayacağını tanımlar, segment açıklama notundaki `xend` ve `yend` estetikleri ise segmentin bitiş konumunu tanımlar.
 Segmentin bir ok olarak biçimlendirildiğine de dikkat edin.
 
@@ -259,7 +259,7 @@ Segmentin bir ok olarak biçimlendirildiğine de dikkat edin.
 #|   Araçların otoyol yakıt verimliliğine karşı motor hacminin bir
 #|   saçılım grafiği. Aşağı işaret eden kırmızı bir ok, noktaların
 #|   eğilimini takip eder ve okun yanına yerleştirilen açıklama notu
-#|   "Larger engine sizes tend to have lower fuel economy" yazıyor. Ok
+#|   "Motor büyüdükçe yakıt verimliliği düşme eğilimindedir" yazıyor. Ok
 #|   ve açıklama notu metni kırmızı.
 ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_point() +
@@ -282,12 +282,12 @@ Tek sınır hayal gücünüzdür (ve açıklama notlarını estetik olarak hoş 
 
 1.  Grafiğin dört köşesine metin yerleştirmek için sonsuz konumlarla `geom_text()`'i kullanın.
 
-2.  Bir tibble oluşturmak zorunda kalmadan son grafiğinizin ortasına bir point geom'u eklemek için `annotate()`'i kullanın.
+2.  Bir tibble oluşturmak zorunda kalmadan son grafiğinizin ortasına bir nokta geom'u eklemek için `annotate()`'i kullanın.
     Noktanın şeklini, boyutunu veya rengini özelleştirin.
 
-3.  `geom_text()` ile etiketler facetlemeyle nasıl etkileşir?
-    Tek bir facet'e nasıl etiket ekleyebilirsiniz?
-    Her facet'e farklı bir etiket nasıl koyabilirsiniz?
+3.  `geom_text()` ile etiketler panellemeyle nasıl etkileşir?
+    Tek bir panele nasıl etiket ekleyebilirsiniz?
+    Her panele farklı bir etiketi nasıl yerleştirebilirsiniz?
     (İpucu: `geom_text()`'e aktarılan veri kümesini düşünün.)
 
 4.  `geom_label()`'e hangi argümanlar arka plan kutusunun görünümünü kontrol eder?
@@ -296,14 +296,14 @@ Tek sınır hayal gücünüzdür (ve açıklama notlarını estetik olarak hoş 
     Nasıl çalışırlar?
     En önemli seçenekleri gösteren bir dizi grafik oluşturun.
 
-## Scale'ler
+## Ölçekler
 
-Grafiğinizi iletişim için daha iyi hale getirmenin üçüncü yolu, scale'leri ayarlamaktır.
-Scale'ler, estetik eşlemelerin görsel olarak nasıl ortaya çıktığını kontrol eder.
+Grafiğinizi iletişim için daha etkili kılmanın üçüncü yolu ölçekleri ayarlamaktır.
+Ölçekler, estetik eşlemelerin görsel olarak nasıl gösterileceğini belirler.
 
-### Varsayılan Scale'ler
+### Varsayılan ölçekler
 
-Normalde, ggplot2 sizin için otomatik olarak scale'ler ekler.
+Normalde ggplot2, ölçekleri sizin için otomatik olarak ekler.
 Örneğin, şunu yazdığınızda:
 
 ```{r}
@@ -313,7 +313,7 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_point(aes(color = class))
 ```
 
-ggplot2, perde arkasında otomatik olarak varsayılan scale'leri ekler:
+ggplot2, arka planda varsayılan ölçekleri otomatik olarak ekler:
 
 ```{r}
 #| fig-show: hide
@@ -324,35 +324,34 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
   scale_color_discrete()
 ```
 
-Scale'ler için adlandırma şemasına dikkat edin: `scale_`'i takip eden estetiğin adı, ardından `_`, ardından scale'in adı.
-Varsayılan scale'ler, hizalandıkları değişken türüne göre adlandırılır: continuous, discrete, datetime veya date.
+Ölçeklerin adlandırma düzenine dikkat edin: `scale_` önekini estetiğin adı, `_` ve ölçeğin adı izler.
+Varsayılan ölçekler, eşleştirildikleri değişken türüne göre adlandırılır: sürekli (`continuous`), kesikli (`discrete`), tarih-saat (`datetime`) veya tarih (`date`).
 `scale_x_continuous()`, `displ`'den gelen sayısal değerleri x ekseninde sürekli bir sayı doğrusuna yerleştirir, `scale_color_discrete()` her araç `class`'ı için renkler seçer, vb.
-Aşağıda öğreneceğiniz, varsayılan olmayan pek çok scale vardır.
+Aşağıda öğreneceğiniz, varsayılan olmayan pek çok ölçek vardır.
 
-Varsayılan scale'ler, geniş bir girdi yelpazesi için iyi bir iş çıkarmak üzere dikkatlice seçilmiştir.
+Varsayılan ölçekler, geniş bir girdi yelpazesinde iyi sonuç verecek biçimde özenle seçilmiştir.
 Yine de, iki nedenden dolayı varsayılanları geçersiz kılmak isteyebilirsiniz:
 
--   Varsayılan scale'in bazı parametrelerini ince ayar yapmak isteyebilirsiniz.
-    Bu, eksenlerdeki break'leri veya açıklama kutusundaki anahtar etiketlerini değiştirmek gibi şeyler yapmanızı sağlar.
+-   Varsayılan ölçeğin bazı parametrelerinde ince ayar yapmak isteyebilirsiniz.
+    Böylece eksenlerdeki kesme noktalarını veya göstergedeki anahtar etiketlerini değiştirebilirsiniz.
 
--   Scale'i tamamen değiştirmek ve tamamen farklı bir algoritma kullanmak isteyebilirsiniz.
+-   Ölçeği tamamen değiştirip bambaşka bir algoritma kullanmak isteyebilirsiniz.
     Genellikle veri hakkında daha fazla bilgi sahibi olduğunuzdan, varsayılandan daha iyisini yapabilirsiniz.
 
-### Eksen Tikleri ve Açıklama Kutusu Anahtarları
+### Eksen işaretleri ve gösterge anahtarları
 
-Eksenler ve açıklama kutuları topluca **guide**'lar (kılavuzlar) olarak adlandırılır.
-Eksenler x ve y estetikleri için kullanılır; açıklama kutuları ise geri kalan her şey için kullanılır.
+Eksenler ve göstergeler topluca **kılavuzlar** (guides) olarak adlandırılır.
+Eksenler x ve y estetikleri, göstergeler ise diğer estetikler için kullanılır.
 
-Eksenlerdeki tiklerin ve açıklama kutusundaki anahtarların görünümünü etkileyen iki temel argüman vardır: `breaks` ve `labels`.
-Breaks, tiklerin konumunu veya anahtarlarla ilişkili değerleri kontrol eder.
-Labels, her tik/anahtarla ilişkili metin etiketini kontrol eder.
-`breaks`'in en yaygın kullanımı, varsayılan seçimi geçersiz kılmaktır:
+Eksen işaretlerinin ve gösterge anahtarlarının görünümünü etkileyen iki temel argüman vardır: `breaks` ve `labels`.
+`breaks`, işaretlerin konumunu veya anahtarlarla ilişkili değerleri; `labels` ise her işaret ya da anahtarla ilişkili metni belirler.
+`breaks` en sık varsayılan seçimi değiştirmek için kullanılır:
 
 ```{r}
 #| fig-alt: |
 #|   Araçların otoyol yakıt verimliliğine karşı motor hacminin, drive'a
 #|   göre renklendirilmiş bir saçılım grafiği. Y ekseni, 15'te başlayıp
-#|   40'ta biten ve 5'er artan break'lere sahip.
+#|   40'ta biten ve 5'er artan kesme noktalarına sahip.
 ggplot(mpg, aes(x = displ, y = hwy, color = drv)) +
   geom_point() +
   scale_y_continuous(breaks = seq(15, 40, by = 5)) 
@@ -360,26 +359,26 @@ ggplot(mpg, aes(x = displ, y = hwy, color = drv)) +
 
 `labels`'i aynı şekilde kullanabilirsiniz (`breaks` ile aynı uzunlukta bir karakter vektörü); ama etiketleri tamamen bastırmak için onu `NULL` olarak da ayarlayabilirsiniz.
 Bu, haritalar için veya mutlak sayıları paylaşamayacağınız grafikleri yayımlamak için kullanışlı olabilir.
-Açıklama kutularının görünümünü kontrol etmek için de `breaks` ve `labels`'i kullanabilirsiniz.
-Kategorik değişkenler için discrete scale'lerde, `labels`, mevcut düzey adlarının ve onlar için istenen etiketlerin adlandırılmış bir listesi olabilir.
+Göstergelerin görünümünü belirlemek için de `breaks` ve `labels`'i kullanabilirsiniz.
+Kategorik değişkenlere ait kesikli ölçeklerde `labels`, mevcut düzey adlarını istenen etiketlerle eşleyen adlandırılmış bir liste olabilir.
 
 ```{r}
 #| fig-alt: |
 #|   Araçların otoyol yakıt verimliliğine karşı motor hacminin, drive'a
 #|   göre renklendirilmiş bir saçılım grafiği. X ve y eksenlerinin
-#|   eksen tiklerinde herhangi bir etiket yok. Açıklama kutusunun özel
-#|   etiketleri var: 4-wheel, front, rear.
+#|   eksen işaretlerinde herhangi bir etiket yok. Göstergenin özel
+#|   etiketleri var: dört çeker, önden çekiş, arkadan çekiş.
 ggplot(mpg, aes(x = displ, y = hwy, color = drv)) +
   geom_point() +
   scale_x_continuous(labels = NULL) +
   scale_y_continuous(labels = NULL) +
-  scale_color_discrete(labels = c("4" = "4-wheel", "f" = "front", "r" = "rear"))
+  scale_color_discrete(labels = c("4" = "dört çeker", "f" = "önden çekiş", "r" = "arkadan çekiş"))
 ```
 
 `labels` argümanı, scales paketindeki etiketleme fonksiyonlarıyla birlikte, sayıları para birimi, yüzde vb. olarak biçimlendirmek için de kullanışlıdır.
 Soldaki grafik, bir dolar işareti ve bir binlik ayırıcı virgül ekleyen `label_dollar()` ile varsayılan etiketlemeyi gösteriyor.
-Sağdaki grafik, dolar değerlerini 1.000'e bölerek ve "K" ("thousands", yani binler için) son ekini ekleyerek ve özel break'ler ekleyerek daha fazla özelleştirme yapıyor.
-`breaks`'in verinin orijinal scale'inde olduğuna dikkat edin.
+Sağdaki grafik, dolar değerlerini 1.000'e bölüp binleri belirtmek için "K" son ekini kullanarak ve özel kesme noktaları ekleyerek daha ileri bir özelleştirme yapıyor.
+`breaks` değerlerinin verinin özgün ölçeğinde olduğuna dikkat edin.
 
 ```{r}
 #| layout-ncol: 2
@@ -411,10 +410,10 @@ Başka bir kullanışlı etiketleme fonksiyonu `label_percent()`'tir:
 #| fig-alt: |
 #|   clarity düzeyleriyle doldurulmuş, cut'ın bölümlere ayrılmış çubuk
 #|   grafikleri. Y ekseni etiketleri %0'da başlayıp %100'de biter ve
-#|   %25'er artar. Y ekseni etiket adı "Percentage"dir.
+#|   %25'er artar. Y ekseni etiket adı "Yüzde"dir.
 ggplot(diamonds, aes(x = cut, fill = clarity)) +
   geom_bar(position = "fill") +
-  scale_y_continuous(name = "Percentage", labels = label_percent())
+  scale_y_continuous(name = "Yüzde", labels = label_percent())
 ```
 
 `breaks`'in bir başka kullanımı, nispeten az veri noktanız olduğunda ve gözlemlerin tam olarak nerede gerçekleştiğini vurgulamak istediğinizde ortaya çıkar.
@@ -436,20 +435,20 @@ presidential |>
 ```
 
 `breaks` argümanı için, bu argüman için bir estetik eşleme yapamadığımızdan, `start` değişkenini `presidential$start` ile bir vektör olarak çıkardığımıza dikkat edin.
-Ayrıca date ve datetime scale'leri için break ve label belirtiminin biraz farklı olduğuna dikkat edin:
+Ayrıca tarih ve tarih-saat ölçeklerinde kesme noktalarıyla etiketlerin biraz farklı belirtildiğine dikkat edin:
 
 -   `date_labels`, `parse_datetime()` ile aynı biçimde bir format belirtimi alır.
 
 -   `date_breaks` (burada gösterilmemiştir), "2 days" veya "1 month" gibi bir dize alır.
 
-### Açıklama Kutusu Yerleşimi
+### Gösterge yerleşimi
 
 Eksenlerde ince ayar yapmak için çoğunlukla `breaks` ve `labels`'i kullanacaksınız.
-İkisi de açıklama kutuları için de çalışsa da, kullanmanız daha olası birkaç başka teknik vardır.
+Her ikisi de göstergelerde çalışır; ancak göstergeler için daha sık kullanacağınız birkaç teknik daha vardır.
 
-Açıklama kutusunun genel konumunu kontrol etmek için, bir `theme()` ayarı kullanmanız gerekir.
-Bölümün sonunda tema'lara geri döneceğiz; ama kısaca, grafiğin veri olmayan kısımlarını kontrol ederler.
-`legend.position` tema ayarı, açıklama kutusunun nereye çizileceğini kontrol eder:
+Göstergenin genel konumunu belirlemek için bir `theme()` ayarı kullanmanız gerekir.
+Bölümün sonunda temalara döneceğiz; kısaca söylemek gerekirse temalar, grafiğin veri dışındaki bölümlerini denetler.
+`legend.position` tema ayarı, göstergenin nereye çizileceğini belirler:
 
 ```{r}
 #| layout-ncol: 2
@@ -457,7 +456,7 @@ Bölümün sonunda tema'lara geri döneceğiz; ama kısaca, grafiğin veri olmay
 #| fig-alt: |
 #|   Noktaların araç sınıfına göre renklendirildiği, araçların otoyol
 #|   yakıt verimliliğine karşı motor hacminin dört saçılım grafiği.
-#|   Saat yönünde, açıklama kutusu grafiğin sağına, soluna, altına ve
+#|   Saat yönünde, gösterge grafiğin sağına, soluna, altına ve
 #|   üstüne yerleştirilmiştir.
 base <- ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_point(aes(color = class))
@@ -472,20 +471,20 @@ base +
   guides(color = guide_legend(nrow = 3))
 ```
 
-Grafiğiniz kısa ve genişse, açıklama kutusunu üste veya alta yerleştirin; uzun ve darsa, açıklama kutusunu sola veya sağa yerleştirin.
-Açıklama kutusunun görüntülenmesini tamamen bastırmak için `legend.position = "none"`'ı da kullanabilirsiniz.
+Grafiğiniz kısa ve genişse göstergeyi üste veya alta; uzun ve darsa sola veya sağa yerleştirin.
+Göstergeyi tümüyle gizlemek için `legend.position = "none"` seçeneğini kullanabilirsiniz.
 
-Tek tek açıklama kutularının görüntülenmesini kontrol etmek için, `guide_legend()` veya `guide_colorbar()` ile birlikte `guides()`'i kullanın.
-Aşağıdaki örnek iki önemli ayarı gösteriyor: `nrow` ile açıklama kutusunun kullandığı satır sayısını kontrol etmek ve noktaları büyütmek için estetiklerden birini geçersiz kılmak.
+Tek tek göstergelerin görüntülenmesini denetlemek için `guides()` fonksiyonunu `guide_legend()` veya `guide_colorbar()` ile birlikte kullanın.
+Aşağıdaki örnek iki önemli ayarı gösterir: `nrow` ile göstergenin kullandığı satır sayısını belirlemek ve noktaları büyütmek için estetiklerden birini geçersiz kılmak.
 Bu, bir grafikte pek çok noktayı göstermek için düşük bir `alpha` kullandıysanız özellikle kullanışlıdır.
 
 ```{r}
 #| fig-alt: |
 #|   Noktaların araç sınıfına göre renklendirildiği, araçların otoyol
 #|   yakıt verimliliğine karşı motor hacminin bir saçılım grafiği.
-#|   Grafiğin üzerine düzgün bir eğri bindirilmiştir. Açıklama kutusu
+#|   Grafiğin üzerine düzgün bir eğri bindirilmiştir. Gösterge
 #|   altta ve sınıflar yatay olarak iki satırda listelenmiştir.
-#|   Açıklama kutusundaki noktalar, grafikteki noktalardan daha
+#|   Göstergedeki noktalar, grafikteki noktalardan daha
 #|   büyüktür.
 ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_point(aes(color = class)) +
@@ -496,11 +495,11 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
 
 `guides()`'teki argümanın adının, tıpkı `labs()`'te olduğu gibi, estetiğin adıyla eşleştiğine dikkat edin.
 
-### Bir Scale'i Değiştirmek
+### Bir ölçeği değiştirmek
 
-Ayrıntılarda yalnızca biraz ince ayar yapmak yerine, scale'i tamamen değiştirebilirsiniz.
-Değiştirmek isteyebileceğiniz iki tür scale vardır: sürekli konum scale'leri ve renk scale'leri.
-Neyse ki, aynı ilkeler diğer tüm estetikler için de geçerlidir; bu yüzden konum ve rengi öğrendikten sonra, diğer scale değişikliklerini de hızla kavrayabileceksiniz.
+Ayrıntılarda ince ayar yapmak yerine ölçeği tümüyle değiştirebilirsiniz.
+Değiştirmek isteyebileceğiniz iki ölçek türü vardır: sürekli konum ölçekleri ve renk ölçekleri.
+Neyse ki aynı ilkeler diğer tüm estetikler için de geçerlidir; dolayısıyla konum ve renk ölçeklerini öğrendikten sonra diğer ölçek değişikliklerini de hızla kavrayabilirsiniz.
 
 Değişkeninizin dönüşümlerini çizmek çok kullanışlıdır.
 Örneğin, `carat` ve `price`'ı logaritmik olarak dönüştürürsek, aralarındaki kesin ilişkiyi görmek daha kolaydır:
@@ -511,8 +510,8 @@ Değişkeninizin dönüşümlerini çizmek çok kullanışlıdır.
 #| fig-width: 3
 #| fig-alt: |
 #|   Elmasların carat'ına karşı price'ının iki grafiği. Veri kutulanmış
-#|   ve dikdörtgenlerin rengi, o kutuya düşen nokta sayısına göre her
-#|   kutuyu temsil ediyor. Sağdaki grafikte, price ve carat değerleri
+#|   ve dikdörtgenlerin rengi, o aralığa düşen nokta sayısını temsil
+#|   ediyor. Sağdaki grafikte, price ve carat değerlerinin
 #|   logaritmik alınmış ve eksen etiketleri logaritmik değerleri
 #|   gösteriyor.
 # Sol
@@ -525,24 +524,23 @@ ggplot(diamonds, aes(x = log10(carat), y = log10(price))) +
 ```
 
 Ancak, bu dönüşümün dezavantajı, eksenlerin artık dönüştürülmüş değerlerle etiketlenmesi ve bu da grafiği yorumlamayı zorlaştırmasıdır.
-Dönüşümü estetik eşlemede yapmak yerine, bunun yerine scale ile yapabiliriz.
-Eksenlerin verinin orijinal scale'inde etiketlenmesi dışında, bu görsel olarak aynıdır.
+Dönüşümü estetik eşlemede yapmak yerine ölçek üzerinde uygulayabiliriz.
+Eksenlerin verinin özgün ölçeğinde etiketlenmesi dışında sonuç görsel olarak aynıdır.
 
 ```{r}
 #| fig-alt: |
 #|   Elmasların carat'ına karşı price'ının bir grafiği. Veri kutulanmış
-#|   ve dikdörtgenlerin rengi, o kutuya düşen nokta sayısına göre her
-#|   kutuyu temsil ediyor. Eksen etiketleri, verinin orijinal
-#|   scale'inde.
+#|   ve dikdörtgenlerin rengi, o aralığa düşen nokta sayısını temsil
+#|   ediyor. Eksen etiketleri verinin özgün ölçeğinde.
 ggplot(diamonds, aes(x = carat, y = price)) +
   geom_bin2d() + 
   scale_x_log10() + 
   scale_y_log10()
 ```
 
-Sıkça özelleştirilen başka bir scale de renktir.
-Varsayılan kategorik scale, renk çemberi etrafında eşit aralıklı renkler seçer.
-Yaygın renk körlüğü türlerine sahip insanlar için daha iyi çalışacak şekilde elle ayarlanmış ColorBrewer scale'leri kullanışlı alternatiflerdir.
+Sık özelleştirilen bir başka ölçek de renktir.
+Varsayılan kategorik ölçek, renk çemberi üzerinde eşit aralıklarla yer alan renkleri seçer.
+Yaygın renk görme bozukluklarında daha iyi çalışacak biçimde elle ayarlanmış ColorBrewer ölçekleri kullanışlı alternatiflerdir.
 Aşağıdaki iki grafik benzer görünüyor; ama kırmızı ve yeşil tonlarında, sağdaki noktaların kırmızı-yeşil renk körlüğü olan insanlar tarafından bile ayırt edilebileceği kadar fark var.[^communication-1]
 
 [^communication-1]: Bu görüntüleri test etmek için renk körlüğünü simüle etmek üzere [SimDaltonism](https://michelf.ca/projects/sim-daltonism/) gibi bir araç kullanabilirsiniz.
@@ -553,7 +551,7 @@ Aşağıdaki iki grafik benzer görünüyor; ama kırmızı ve yeşil tonlarınd
 #| fig-width: 3
 #| fig-alt: |
 #|   Noktaların tahrik türüne göre renklendirildiği, otoyol yakıt
-#|   tüketimine karşı motor hacminin iki saçılım grafiği. Soldaki
+#|   verimliliğine karşı motor hacminin iki saçılım grafiği. Soldaki
 #|   grafik varsayılan ggplot2 renk paletini kullanıyor, sağdaki grafik
 #|   ise farklı bir renk paleti kullanıyor.
 ggplot(mpg, aes(x = displ, y = hwy)) +
@@ -565,34 +563,34 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
 ```
 
 Erişilebilirliği artırmak için daha basit teknikleri unutmayın.
-Yalnızca birkaç renk varsa, gereksiz (redundant) bir şekil eşlemesi ekleyebilirsiniz.
+Yalnızca birkaç renk varsa, aynı bilgiyi yeniden kodlayan bir şekil eşlemesi ekleyebilirsiniz.
 Bu, grafiğinizin siyah beyaz olarak da yorumlanabilir olmasını sağlamaya yardımcı olacaktır.
 
 ```{r}
 #| fig-alt: |
 #|   Noktaların hem renginin hem de şeklinin tahrik türüne dayandığı,
-#|   otoyol yakıt tüketimine karşı motor hacminin bir saçılım grafiği.
+#|   otoyol yakıt verimliliğine karşı motor hacminin bir saçılım grafiği.
 #|   Renk paleti varsayılan ggplot2 paleti değil.
 ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_point(aes(color = drv, shape = drv)) +
   scale_color_brewer(palette = "Set1")
 ```
 
-ColorBrewer scale'leri <https://colorbrewer2.org/> adresinde çevrimiçi olarak belgelenmiştir ve Erich Neuwirth'in **RColorBrewer** paketi aracılığıyla R'da kullanılabilir hale getirilmiştir.
+ColorBrewer ölçekleri <https://colorbrewer2.org/> adresinde belgelenmiştir ve Erich Neuwirth'in **RColorBrewer** paketi aracılığıyla R'da kullanılabilir.
 @fig-brewer, tüm paletlerin eksiksiz listesini gösterir.
-Sequential (üstteki) ve diverging (alttaki) paletler, kategorik değerleriniz sıralıysa veya bir "ortası" varsa özellikle kullanışlıdır.
+Sıralı (sequential; üstteki) ve ayrışan (diverging; alttaki) paletler, kategorik değerleriniz sıralıysa veya anlamlı bir "orta" noktası varsa özellikle kullanışlıdır.
 Bu genellikle, sürekli bir değişkeni kategorik bir değişkene dönüştürmek için `cut()` kullandıysanız ortaya çıkar.
 
 ```{r}
 #| label: fig-brewer
 #| echo: false
-#| fig-cap: Tüm colorBrewer scale'leri.
+#| fig-cap: Tüm ColorBrewer ölçekleri.
 #| fig-asp: 2.5
 #| fig-alt: |
-#|   Tüm colorBrewer scale'leri. Bir grup açık renklerden koyu
+#|   Tüm ColorBrewer ölçekleri. Bir grup açık renklerden koyu
 #|   renklere gidiyor. Başka bir grup, sırasız (non ordinal) bir renk
-#|   kümesi. Ve son grup, diverging scale'lere sahip (koyudan açığa,
-#|   tekrar koyuya). Her kümenin içinde bir dizi palet var.
+#|   kümesi. Son grup ise ayrışan ölçeklere sahip (koyudan açığa,
+#|   yeniden koyuya). Her kümenin içinde bir dizi palet var.
 par(mar = c(0, 3, 0, 0))
 RColorBrewer::display.brewer.all()
 ```
@@ -616,14 +614,14 @@ presidential |>
   scale_color_manual(values = c(Republican = "#E81B23", Democratic = "#00AEF3"))
 ```
 
-Sürekli renk için, yerleşik `scale_color_gradient()` veya `scale_fill_gradient()`'i kullanabilirsiniz.
-Diverging bir scale'iniz varsa, `scale_color_gradient2()`'yi kullanabilirsiniz.
+Sürekli renkler için yerleşik `scale_color_gradient()` veya `scale_fill_gradient()` fonksiyonunu kullanabilirsiniz.
+Ayrışan bir ölçeğiniz varsa `scale_color_gradient2()` fonksiyonunu kullanabilirsiniz.
 Bu, örneğin, pozitif ve negatif değerlere farklı renkler vermenizi sağlar.
 Bu, ortalamanın üzerindeki veya altındaki noktaları ayırt etmek istediğinizde de bazen kullanışlıdır.
 
-Başka bir seçenek viridis renk scale'lerini kullanmaktır.
+Başka bir seçenek viridis renk ölçeklerini kullanmaktır.
 Tasarımcılar Nathaniel Smith ve Stéfan van der Walt, çeşitli renk körlüğü biçimlerine sahip insanlar tarafından algılanabilen ve hem renkte hem de siyah beyazda algısal olarak tekdüze olan sürekli renk şemalarını dikkatlice hazırladılar.
-Bu scale'ler, ggplot2'de continuous (`c`), discrete (`d`) ve binned (`b`) paletler olarak mevcuttur.
+Bu ölçekler ggplot2'de sürekli (`c`), kesikli (`d`) ve aralıklara ayrılmış (`b`) paletler olarak bulunur.
 
 ```{r}
 #| fig-align: default
@@ -631,10 +629,10 @@ Bu scale'ler, ggplot2'de continuous (`c`), discrete (`d`) ve binned (`b`) paletl
 #| fig-width: 3
 #| fig-asp: 0.75
 #| fig-alt: |
-#|   Altıgenlerin renginin, o altıgen kutuya düşen gözlem sayısını
-#|   gösterdiği üç hex grafiği. İlk grafik, varsayılan, continuous
-#|   ggplot2 scale'ini kullanıyor. İkinci grafik viridis, continuous
-#|   scale'ini kullanıyor ve üçüncü grafik viridis, binned scale'ini
+#|   Altıgenlerin renginin, o altıgen aralığa düşen gözlem sayısını
+#|   gösterdiği üç altıgen grafik. İlk grafik varsayılan sürekli
+#|   ggplot2 ölçeğini kullanıyor. İkinci grafik sürekli, üçüncü grafik
+#|   ise aralıklara ayrılmış viridis ölçeğini
 #|   kullanıyor.
 df <- tibble(
   x = rnorm(10000),
@@ -644,35 +642,35 @@ df <- tibble(
 ggplot(df, aes(x, y)) +
   geom_hex() +
   coord_fixed() +
-  labs(title = "Default, continuous", x = NULL, y = NULL)
+  labs(title = "Varsayılan, sürekli", x = NULL, y = NULL)
 
 ggplot(df, aes(x, y)) +
   geom_hex() +
   coord_fixed() +
   scale_fill_viridis_c() +
-  labs(title = "Viridis, continuous", x = NULL, y = NULL)
+  labs(title = "Viridis, sürekli", x = NULL, y = NULL)
 
 ggplot(df, aes(x, y)) +
   geom_hex() +
   coord_fixed() +
   scale_fill_viridis_b() +
-  labs(title = "Viridis, binned", x = NULL, y = NULL)
+  labs(title = "Viridis, aralıklı", x = NULL, y = NULL)
 ```
 
-Tüm renk scale'lerinin iki çeşitte geldiğine dikkat edin: sırasıyla `color` ve `fill` estetikleri için `scale_color_*()` ve `scale_fill_*()` (renk scale'leri hem İngiliz hem de Amerikan yazımlarında mevcuttur).
+Tüm renk ölçeklerinin iki çeşidi olduğuna dikkat edin: sırasıyla `color` ve `fill` estetikleri için `scale_color_*()` ile `scale_fill_*()` (renk ölçekleri hem İngiliz hem de Amerikan yazımlarıyla kullanılabilir).
 
 ### Yakınlaştırma
 
 Grafik sınırlarını kontrol etmenin üç yolu vardır:
 
 1.  Hangi verinin çizildiğini ayarlamak.
-2.  Her scale'deki sınırları ayarlamak.
+2.  Her ölçekteki sınırları ayarlamak.
 3.  `coord_cartesian()` içinde `xlim` ve `ylim`'i ayarlamak.
 
 Bu seçenekleri bir dizi grafikte göstereceğiz.
 Soldaki grafik, tahrik sistemi türüne göre renklendirilmiş, motor hacmi ile yakıt verimliliği arasındaki ilişkiyi gösteriyor.
 Sağdaki grafik aynı değişkenleri gösteriyor; ama çizilen veriyi alt kümeliyor.
-Veriyi alt kümelemek, x ve y scale'lerini olduğu kadar düzgün eğriyi de etkiledi.
+Veriyi alt kümeye ayırmak, pürüzsüz eğrinin yanı sıra x ve y ölçeklerini de etkiledi.
 
 ```{r}
 #| layout-ncol: 2
@@ -680,11 +678,11 @@ Veriyi alt kümelemek, x ve y scale'lerini olduğu kadar düzgün eğriyi de etk
 #| message: false
 #| fig-alt: |
 #|   Solda, noktaların tahrik türüne göre renklendirildiği, otoyol
-#|   yakıt tüketiminin motor hacmine karşı bir saçılım grafiği. Üzerine
+#|   yakıt verimliliğinin motor hacmine karşı bir saçılım grafiği. Üzerine
 #|   bindirilen düzgün eğri, hokey sopası gibi önce azalan sonra artan
 #|   bir eğilim gösteriyor. Sağda, aynı değişkenler yalnızca 5 ile 6
 #|   arasında değişen motor hacmi ve yalnızca 10 ile 25 arasında
-#|   değişen otoyol yakıt tüketimiyle çizilmiş. Üzerine bindirilen
+#|   değişen otoyol yakıt verimliliğiyle çizilmiş. Üzerine bindirilen
 #|   düzgün eğri, önce hafifçe artan sonra azalan bir eğilim gösteriyor.
 # Sol
 ggplot(mpg, aes(x = displ, y = hwy)) +
@@ -699,7 +697,7 @@ mpg |>
   geom_smooth()
 ```
 
-Bunları, soldaki grafiğin tek tek scale'lerde `limits`'i ayarladığı ve sağdaki grafiğin bunları `coord_cartesian()` içinde ayarladığı aşağıdaki iki grafikle karşılaştıralım.
+Bunları, soldaki grafiğin tek tek ölçeklerde `limits` değerini; sağdaki grafiğin ise `coord_cartesian()` içindeki sınırları ayarladığı aşağıdaki iki grafikle karşılaştıralım.
 Sınırları azaltmanın veriyi alt kümelemeye eşdeğer olduğunu görebiliriz.
 Bu nedenle, grafiğin bir bölgesine yakınlaşmak için genellikle `coord_cartesian()`'ı kullanmak en iyisidir.
 
@@ -709,8 +707,8 @@ Bu nedenle, grafiğin bir bölgesine yakınlaşmak için genellikle `coord_carte
 #| message: false
 #| warning: false
 #| fig-alt: |
-#|   Solda, motor hacmi 5 ile 6 arasında ve otoyol yakıt tüketimi 10 ile
-#|   25 arasında değişen, otoyol yakıt tüketiminin motor hacmine karşı
+#|   Solda, motor hacmi 5 ile 6 arasında ve otoyol yakıt verimliliği 10 ile
+#|   25 arasında değişen, otoyol yakıt verimliliğinin motor hacmine karşı
 #|   bir saçılım grafiği. Üzerine bindirilen düzgün eğri, önce hafifçe
 #|   artan sonra azalan bir eğilim gösteriyor. Sağda, aynı değişkenler
 #|   aynı sınırlarla çizilmiş; ancak üzerine bindirilen düzgün eğri,
@@ -730,20 +728,20 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
   coord_cartesian(xlim = c(5, 6), ylim = c(10, 25))
 ```
 
-Öte yandan, tek tek scale'lerde `limits`'i ayarlamak, sınırları *genişletmek* istediğinizde, örneğin farklı grafikler arasında scale'leri eşleştirmek için genellikle daha kullanışlıdır.
-Örneğin, iki araç sınıfını çıkarıp ayrı ayrı çizersek, üç scale'in de (x ekseni, y ekseni ve color estetiği) farklı aralıklara sahip olması nedeniyle grafikleri karşılaştırmak zordur.
+Öte yandan tek tek ölçeklerde `limits` ayarlamak, örneğin farklı grafiklerin ölçeklerini eşleştirmek üzere sınırları *genişletmek* istediğinizde daha kullanışlıdır.
+Örneğin iki araç sınıfını ayırıp ayrı ayrı çizersek üç ölçeğin de (x ekseni, y ekseni ve `color` estetiği) farklı aralıklara sahip olması, grafikleri karşılaştırmayı zorlaştırır.
 
 ```{r}
 #| layout-ncol: 2
 #| fig-width: 4
 #| fig-alt: |
-#|   Solda, SUV'ların motor hacmine karşı otoyol yakıt tüketiminin bir
+#|   Solda, SUV'ların motor hacmine karşı otoyol yakıt verimliliğinin bir
 #|   saçılım grafiği. Sağda, compact araçlar için aynı değişkenlerin
 #|   bir saçılım grafiği. Her iki grafikte de noktalar tahrik türüne
 #|   göre renklendirilmiştir. SUV'lar arasında araçların çoğu 4 çeker
 #|   ve diğerleri arka çekiş, compact araçlar arasında ise araçların
 #|   çoğu ön çekiş ve diğerleri 4 çeker. SUV grafiği, otoyol yakıt
-#|   tüketimi ile motor hacmi arasında belirgin bir negatif ilişki
+#|   verimliliği ile motor hacmi arasında belirgin bir negatif ilişki
 #|   gösterirken, compact araçlar grafiğinde ilişki çok daha düz.
 suv <- mpg |> filter(class == "suv")
 compact <- mpg |> filter(class == "compact")
@@ -757,21 +755,21 @@ ggplot(compact, aes(x = displ, y = hwy, color = drv)) +
   geom_point()
 ```
 
-Bu sorunun üstesinden gelmenin bir yolu, scale'leri tüm verinin `limits`'i ile eğiterek birden fazla grafik arasında paylaşmaktır.
+Bu sorunu aşmanın bir yolu, ölçekleri tüm verinin `limits` değerleriyle eğiterek birden fazla grafik arasında paylaşmaktır.
 
 ```{r}
 #| layout-ncol: 2
 #| fig-width: 4
 #| fig-alt: |
-#|   Solda, SUV'ların motor hacmine karşı otoyol yakıt tüketiminin bir
+#|   Solda, SUV'ların motor hacmine karşı otoyol yakıt verimliliğinin bir
 #|   saçılım grafiği. Sağda, compact araçlar için aynı değişkenlerin
 #|   bir saçılım grafiği. Her iki grafikte de noktalar tahrik türüne
-#|   göre renklendirilmiştir. Her iki grafik de otoyol yakıt tüketimi,
-#|   motor hacmi ve tahrik türü için aynı scale'de çizilmiştir, bu da
+#|   göre renklendirilmiştir. Her iki grafik de otoyol yakıt verimliliği,
+#|   motor hacmi ve tahrik türü için aynı ölçekte çizilmiştir; bu da
 #|   ön çekişli SUV veya arka çekişli compact araç olmamasına rağmen
-#|   açıklama kutusunun her iki grafik için de üç türü de (front, rear
-#|   ve 4-wheel drive) göstermesiyle sonuçlanır. X ve y scale'leri aynı
-#|   olduğundan ve minimum veya maksimum otoyol yakıt tüketimi ile
+#|   göstergenin her iki grafik için de üç türü de (önden çekiş,
+#|   arkadan çekiş ve dört çeker) göstermesiyle sonuçlanır. X ve y
+#|   ölçekleri aynı olduğundan ve en düşük ya da en yüksek otoyol yakıt verimliliği ile
 #|   motor hacminin çok ötesine gittiğinden, noktalar tüm çizim alanını
 #|   kaplamaz.
 x_scale <- scale_x_continuous(limits = range(mpg$displ))
@@ -793,11 +791,11 @@ ggplot(compact, aes(x = displ, y = hwy, color = drv)) +
   col_scale
 ```
 
-Bu özel durumda, basitçe facetleme kullanabilirdiniz; ama bu teknik, örneğin bir raporun birden çok sayfasına grafikleri yaymak istiyorsanız daha genel olarak kullanışlıdır.
+Bu özel durumda yalnızca panelleme kullanabilirdiniz; ancak bu teknik, örneğin grafikleri bir raporun birden çok sayfasına yaymak istediğinizde daha genel bir çözüm sunar.
 
 ### Alıştırmalar
 
-1.  Aşağıdaki kod, varsayılan scale'i neden geçersiz kılmıyor?
+1.  Aşağıdaki kod varsayılan ölçeği neden değiştirmiyor?
 
     ```{r}
     #| fig-show: hide
@@ -812,19 +810,19 @@ Bu özel durumda, basitçe facetleme kullanabilirdiniz; ama bu teknik, örneğin
       coord_fixed()
     ```
 
-2.  Her scale'in ilk argümanı nedir?
+2.  Her ölçeğin ilk argümanı nedir?
     Bu, `labs()` ile nasıl karşılaştırılır?
 
 3.  Başkanlık dönemlerinin görüntüsünü şu şekilde değiştirin:
 
-    a.  Renkleri ve x ekseni break'lerini özelleştiren iki varyantı birleştirerek.
+    a.  Renkleri ve x ekseni kesme noktalarını özelleştiren iki varyantı birleştirerek.
     b.  Y ekseninin görüntüsünü iyileştirerek.
     c.  Her dönemi başkanın adıyla etiketleyerek.
     d.  Bilgilendirici grafik etiketleri ekleyerek.
     e.  Break'leri her 4 yılda bir yerleştirerek (bu göründüğünden daha zor!).
 
 4.  Önce, aşağıdaki grafiği oluşturun.
-    Ardından, açıklama kutusunu daha kolay görmek için `override.aes` kullanarak kodu değiştirin.
+    Ardından göstergeyi daha kolay okunur kılmak için `override.aes` kullanarak kodu değiştirin.
 
     ```{r}
     #| fig-show: hide
@@ -839,7 +837,7 @@ Son olarak, bir tema ile grafiğinizin veri olmayan öğelerini özelleştirebil
 ```{r}
 #| message: false
 #| fig-alt: |
-#|   Araçların otoyol yakıt tüketiminin motor hacmine karşı, araç
+#|   Araçların otoyol yakıt verimliliğinin motor hacmine karşı, araç
 #|   sınıfına göre renklendirilmiş bir saçılım grafiği. Grafik arka
 #|   planı beyaz, gri ızgara çizgileriyle.
 ggplot(mpg, aes(x = displ, y = hwy)) +
@@ -874,12 +872,12 @@ Belirli bir kurumsal veya dergi stiline uymaya çalışıyorsanız, kendi temala
 knitr::include_graphics("images/visualization-themes.png")
 ```
 
-Her temanın, y ekseninde kullanılan fontun boyutu ve rengi gibi tek tek bileşenlerini kontrol etmek de mümkündür.
-`legend.position`'ın açıklama kutusunun nereye çizileceğini kontrol ettiğini zaten gördük.
-Açıklama kutusunun `theme()` ile özelleştirilebilecek pek çok başka yönü vardır.
-Örneğin, aşağıdaki grafikte açıklama kutusunun yönünü değiştiriyoruz ve etrafına siyah bir kenarlık koyuyoruz.
-Temanın açıklama kutusu ve grafik başlığı öğelerinin özelleştirilmesinin `element_*()` fonksiyonlarıyla yapıldığına dikkat edin.
-Bu fonksiyonlar, veri olmayan bileşenlerin stilini belirtir; örneğin, başlık metni `element_text()`'in `face` argümanında kalınlaştırılır ve açıklama kutusu kenarlık rengi `element_rect()`'in `color` argümanında tanımlanır.
+Her temanın, y eksenindeki yazı tipinin boyutu ve rengi gibi tek tek bileşenlerini denetlemek de mümkündür.
+`legend.position` seçeneğinin göstergenin nereye çizileceğini belirlediğini zaten gördük.
+Göstergenin `theme()` ile özelleştirilebilecek daha pek çok yönü vardır.
+Örneğin aşağıdaki grafikte göstergenin yönünü değiştiriyor ve çevresine siyah bir kenarlık ekliyoruz.
+Temanın gösterge ve grafik başlığı öğelerinin `element_*()` fonksiyonlarıyla özelleştirildiğine dikkat edin.
+Bu fonksiyonlar veri dışı bileşenlerin stilini belirtir; örneğin başlık metni `element_text()` fonksiyonunun `face` argümanıyla kalınlaştırılır, gösterge kenarlığının rengi ise `element_rect()` fonksiyonunun `color` argümanıyla tanımlanır.
 Başlığın ve altyazının konumunu kontrol eden tema öğeleri sırasıyla `plot.title.position` ve `plot.caption.position`'dır.
 Aşağıdaki grafikte bunlar, bu öğelerin (varsayılan olan) grafik panelinin yerine tüm grafik alanına hizalandığını belirtmek için `"plot"` olarak ayarlanmıştır.
 Başlık ve altyazı metninin biçimi için yerleşimini değiştirmek üzere kullanılan birkaç yardımcı `theme()` bileşeni daha vardır.
@@ -890,13 +888,13 @@ Başlık ve altyazı metninin biçimi için yerleşimini değiştirmek üzere ku
 #|   drive'a göre renklendirilmiş bir saçılım grafiği. Grafiğin başlığı
 #|   'Larger engine sizes tend to have lower fuel economy'dir ve
 #|   altyazı, verinin kaynağı olan fueleconomy.gov'a işaret eder.
-#|   Altyazı ve başlık sola hizalanmıştır, açıklama kutusu siyah
+#|   Alt yazı ve başlık sola hizalanmıştır, gösterge siyah
 #|   kenarlıkla grafiğin içindedir.
 ggplot(mpg, aes(x = displ, y = hwy, color = drv)) +
   geom_point() +
   labs(
-    title = "Larger engine sizes tend to have lower fuel economy",
-    caption = "Source: https://fueleconomy.gov."
+    title = "Motor büyüdükçe yakıt verimliliği düşme eğilimindedir",
+    caption = "Kaynak: https://fueleconomy.gov."
   ) +
   theme(
     legend.position = c(0.6, 0.7),
@@ -932,15 +930,15 @@ Ardından, onları `+` ile yan yana yerleştirirsiniz.
 #| fig-width: 6
 #| fig-asp: 0.5
 #| fig-alt: |
-#|   Yan yana yerleştirilmiş iki grafik (otoyol yakıt tüketiminin motor
-#|   hacmine karşı bir saçılım grafiği ve otoyol yakıt tüketiminin
+#|   Yan yana yerleştirilmiş iki grafik (otoyol yakıt verimliliğinin motor
+#|   hacmine karşı bir saçılım grafiği ve otoyol yakıt verimliliğinin
 #|   tahrik sistemine karşı yan yana kutu grafikleri).
 p1 <- ggplot(mpg, aes(x = displ, y = hwy)) + 
   geom_point() + 
-  labs(title = "Plot 1")
+  labs(title = "Grafik 1")
 p2 <- ggplot(mpg, aes(x = drv, y = hwy)) + 
   geom_boxplot() + 
-  labs(title = "Plot 2")
+  labs(title = "Grafik 2")
 p1 + p2
 ```
 
@@ -956,24 +954,24 @@ Aşağıda, `|`, `p1` ve `p3`'ü yan yana yerleştirir ve `/`, `p2`'yi bir sonra
 #| fig-alt: |
 #|   İlk ve üçüncü grafiğin yan yana olduğu ve ikinci grafiğin bunların
 #|   altına yayıldığı şekilde yerleştirilmiş üç grafik. İlk grafik,
-#|   otoyol yakıt tüketiminin motor hacmine karşı bir saçılım grafiği,
-#|   üçüncü grafik, otoyol yakıt tüketiminin şehir içi yakıt tüketimine
+#|   otoyol yakıt verimliliğinin motor hacmine karşı bir saçılım grafiği,
+#|   üçüncü grafik, otoyol yakıt verimliliğinin şehir içi yakıt verimliliğine
 #|   karşı bir saçılım grafiği ve ikinci grafik, otoyol yakıt
-#|   tüketiminin tahrik sistemine karşı yan yana kutu grafikleridir.
+#|   verimliliğinin tahrik sistemine karşı yan yana kutu grafikleridir.
 p3 <- ggplot(mpg, aes(x = cty, y = hwy)) + 
   geom_point() + 
-  labs(title = "Plot 3")
+  labs(title = "Grafik 3")
 (p1 | p3) / p2
 ```
 
-Ayrıca, patchwork, birden fazla grafikteki açıklama kutularını tek bir ortak açıklama kutusunda toplamanızı, açıklama kutusunun yerleşimini ve grafiklerin boyutlarını özelleştirmenizi ve grafiklerinize ortak bir başlık, alt başlık, altyazı vb. eklemenizi sağlar.
+Ayrıca patchwork, birden fazla grafikteki göstergeleri tek bir ortak göstergede toplamanıza, göstergenin yerleşimini ve grafiklerin boyutlarını özelleştirmenize, grafiklere ortak bir başlık, alt başlık, alt yazı vb. eklemenize olanak tanır.
 Aşağıda 5 grafik oluşturuyoruz.
-Kutu grafiklerindeki ve saçılım grafiğindeki açıklama kutularını kapattık ve `& theme(legend.position = "top")` ile density grafiklerinin açıklama kutularını grafiğin üstünde topladık.
+Kutu ve saçılım grafiklerindeki göstergeleri kapattık; `& theme(legend.position = "top")` ile yoğunluk grafiklerinin göstergelerini grafiğin üstünde topladık.
 Burada her zamanki `+` yerine `&` operatörünün kullanımına dikkat edin.
 Bunun nedeni, tek tek ggplot'lar yerine patchwork grafiği için temayı değiştiriyor olmamızdır.
-Açıklama kutusu üstte, `guide_area()`'nın içine yerleştirilmiştir.
-Son olarak, patchwork'ümüzün çeşitli bileşenlerinin yüksekliklerini de özelleştirdik -- guide'ın yüksekliği 1, kutu grafiklerinin 3, density grafiklerinin 2 ve facet'lenmiş saçılım grafiğinin 4.
-Patchwork, grafiğiniz için ayırdığınız alanı bu scale'i kullanarak böler ve bileşenleri buna göre yerleştirir.
+Gösterge üstteki `guide_area()` alanına yerleştirilmiştir.
+Son olarak patchwork düzenindeki bileşenlerin yüksekliklerini de özelleştirdik: kılavuz alanının yüksekliği 1, kutu grafiklerinin 3, yoğunluk grafiklerinin 2 ve panellere ayrılmış saçılım grafiğinin 4'tür.
+Patchwork, grafik için ayırdığınız alanı bu oranlara göre böler ve bileşenleri buna göre yerleştirir.
 
 ```{r}
 #| fig-width: 8
@@ -981,40 +979,41 @@ Patchwork, grafiğiniz için ayırdığınız alanı bu scale'i kullanarak böle
 #| fig-alt: |
 #|   İlk iki grafiğin yan yana olduğu şekilde yerleştirilmiş beş
 #|   grafik. Üçüncü ve dördüncü grafikler bunların altında. Ve beşinci
-#|   grafik bunların altına yayılıyor. patchwork'lenmiş grafiğin
-#|   başlığı "City and highway mileage for cars with different drive
-#|   trains" ve altyazısı "Source: https://fueleconomy.gov"dur. İlk
-#|   iki grafik yan yana kutu grafikleridir. 3 ve 4. grafikler density
-#|   grafikleridir. Ve beşinci grafik facet'lenmiş bir saçılım
+#|   grafik bunların altına yayılıyor. Birleştirilmiş grafiğin başlığı
+#|   "Farklı tahrik sistemlerine sahip araçlarda şehir içi ve otoyol
+#|   yakıt verimliliği", alt yazısı ise "Kaynak:
+#|   https://fueleconomy.gov"dur. İlk iki grafik yan yana kutu
+#|   grafikleridir. 3. ve 4. grafikler yoğunluk grafikleridir. Beşinci
+#|   grafik ise panellere ayrılmış bir saçılım
 #|   grafiğidir. Bu grafiklerin her biri tahrik türüne göre
-#|   renklendirilmiş geom'lar gösterir; ama patchwork'lenmiş grafiğin,
+#|   renklendirilmiş geom'lar gösterir; ancak birleştirilmiş grafiğin,
 #|   grafiklerin üstünde ve başlığın altında, hepsine uygulanan tek bir
-#|   açıklama kutusu vardır.
+#|   göstergesi vardır.
 p1 <- ggplot(mpg, aes(x = drv, y = cty, color = drv)) + 
   geom_boxplot(show.legend = FALSE) + 
-  labs(title = "Plot 1")
+  labs(title = "Grafik 1")
 
 p2 <- ggplot(mpg, aes(x = drv, y = hwy, color = drv)) + 
   geom_boxplot(show.legend = FALSE) + 
-  labs(title = "Plot 2")
+  labs(title = "Grafik 2")
 
 p3 <- ggplot(mpg, aes(x = cty, color = drv, fill = drv)) + 
   geom_density(alpha = 0.5) + 
-  labs(title = "Plot 3")
+  labs(title = "Grafik 3")
 
 p4 <- ggplot(mpg, aes(x = hwy, color = drv, fill = drv)) + 
   geom_density(alpha = 0.5) + 
-  labs(title = "Plot 4")
+  labs(title = "Grafik 4")
 
 p5 <- ggplot(mpg, aes(x = cty, y = hwy, color = drv)) + 
   geom_point(show.legend = FALSE) + 
   facet_wrap(~drv) +
-  labs(title = "Plot 5")
+  labs(title = "Grafik 5")
 
 (guide_area() / (p1 + p2) / (p3 + p4) / p5) +
   plot_annotation(
-    title = "City and highway mileage for cars with different drive trains",
-    caption = "Source: https://fueleconomy.gov."
+    title = "Farklı tahrik sistemlerine sahip araçlarda şehir içi ve otoyol yakıt verimliliği",
+    caption = "Kaynak: https://fueleconomy.gov."
   ) +
   plot_layout(
     guides = "collect",
@@ -1034,13 +1033,13 @@ patchwork ile birden fazla grafiği birleştirme ve yerleştirme hakkında daha 
     #| fig-show: hide
     p1 <- ggplot(mpg, aes(x = displ, y = hwy)) + 
       geom_point() + 
-      labs(title = "Plot 1")
+      labs(title = "Grafik 1")
     p2 <- ggplot(mpg, aes(x = drv, y = hwy)) + 
       geom_boxplot() + 
-      labs(title = "Plot 2")
+      labs(title = "Grafik 2")
     p3 <- ggplot(mpg, aes(x = cty, y = hwy)) + 
       geom_point() + 
-      labs(title = "Plot 3")
+      labs(title = "Grafik 3")
 
     (p1 | p2) / p3
     ```
@@ -1052,26 +1051,27 @@ patchwork ile birden fazla grafiği birleştirme ve yerleştirme hakkında daha 
     #| fig-asp: 0.8
     #| echo: false
     #| fig-alt: |
-    #|   Üç grafik: Grafik 1, otoyol yakıt tüketiminin motor hacmine
+    #|   Üç grafik: Grafik 1, otoyol yakıt verimliliğinin motor hacmine
     #|   karşı bir saçılım grafiğidir. Grafik 2, otoyol yakıt
-    #|   tüketiminin tahrik sistemine karşı yan yana kutu grafikleridir.
-    #|   Grafik 3, şehir içi yakıt tüketiminin tahrik sistemine karşı
+    #|   verimliliğinin tahrik sistemine karşı yan yana kutu grafikleridir.
+    #|   Grafik 3, şehir içi yakıt verimliliğinin tahrik sistemine karşı
     #|   yan yana kutu grafikleridir. Grafik 1 ilk satırda. Grafik 2 ve
     #|   3 bir sonraki satırda, her biri Grafik 1'in genişliğinin
-    #|   yarısını kaplıyor. Grafik 1 "Fig. A" olarak, Grafik 2 "Fig. B"
-    #|   olarak ve Grafik 3 "Fig. C" olarak etiketlenmiştir.
+    #|   yarısını kaplıyor. Grafik 1 "Şek. A", Grafik 2 "Şek. B",
+    #|   Grafik 3 ise "Şek. C" olarak etiketlenmiştir.
     p1 / (p2 + p3) +
       plot_annotation(
         tag_levels = c("A"), 
-        tag_prefix = "Fig. ",
+        tag_prefix = "Şek. ",
         tag_suffix = ":"
       )
     ```
 
 ## Özet
 
-Bu bölümde, title, subtitle, caption gibi grafik etiketleri eklemenin yanı sıra varsayılan eksen etiketlerini değiştirmeyi, grafiğinize bilgilendirici metin eklemek veya belirli veri noktalarını vurgulamak için açıklama notu kullanmayı, eksen scale'lerini özelleştirmeyi ve grafiğinizin temasını değiştirmeyi öğrendiniz.
+Bu bölümde `title`, `subtitle` ve `caption` gibi grafik etiketleri eklemenin yanı sıra varsayılan eksen etiketlerini değiştirmeyi; grafiğe bilgilendirici metin eklemek ya da belirli veri noktalarını vurgulamak için açıklama notları kullanmayı; eksen ölçeklerini ve grafiğin temasını özelleştirmeyi öğrendiniz.
 Ayrıca hem basit hem de karmaşık grafik yerleşimleri kullanarak birden fazla grafiği tek bir grafikte birleştirmeyi de öğrendiniz.
 
 Şimdiye kadar pek çok farklı grafik türünü nasıl yapacağınızı ve çeşitli tekniklerle onları nasıl özelleştireceğinizi öğrenmiş olsanız da, ggplot2 ile oluşturabileceklerinizin yüzeyini henüz zar zor kazıdık.
 ggplot2 hakkında kapsamlı bir anlayış edinmek isterseniz, [*ggplot2: Elegant Graphics for Data Analysis*](https://ggplot2-book.org) kitabını okumanızı öneririz.
+Winston Chang'in [*R Graphics Cookbook*](https://r-graphics.org) ve Claus Wilke'nin [*Fundamentals of Data Visualization*](https://clauswilke.com/dataviz/) kitapları da yararlı kaynaklardır.

@@ -1,31 +1,31 @@
-# Iteration {#sec-iteration}
+# İterasyon {#sec-iteration}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## Giriş
 
-In this chapter, you'll learn tools for iteration, repeatedly performing the same action on different objects.
-Iteration in R generally tends to look rather different from other programming languages because so much of it is implicit and we get it for free.
-For example, if you want to double a numeric vector `x` in R, you can just write `2 * x`.
-In most other languages, you'd need to explicitly double each element of `x` using some sort of for loop.
+Bu bölümde aynı işlemi farklı nesneler üzerinde tekrar tekrar gerçekleştirmeyi sağlayan iterasyon araçlarını öğreneceksiniz.
+R'da iterasyon genellikle diğer programlama dillerinden oldukça farklı görünür; çünkü büyük bir bölümü örtüktür ve kendiliğinden gerçekleşir.
+Örneğin R'da sayısal bir `x` vektörünü iki katına çıkarmak isterseniz yalnızca `2 * x` yazabilirsiniz.
+Diğer dillerin çoğunda bir tür for döngüsü kullanarak `x` içindeki her öğeyi açıkça iki katına çıkarmanız gerekir.
 
-This book has already given you a small but powerful number of tools that perform the same action for multiple "things":
+Bu kitap size aynı işlemi birden çok “şey” için gerçekleştiren az sayıda ancak güçlü araç sundu:
 
--   `facet_wrap()` and `facet_grid()` draws a plot for each subset.
--   `group_by()` plus `summarize()` computes summary statistics for each subset.
--   `unnest_wider()` and `unnest_longer()` create new rows and columns for each element of a list-column.
+-   `facet_wrap()` ve `facet_grid()` her alt küme için bir grafik çizer.
+-   `group_by()` ile `summarize()` her alt küme için özet istatistikleri hesaplar.
+-   `unnest_wider()` ve `unnest_longer()` liste sütununun her öğesi için yeni satırlar ve sütunlar oluşturur.
 
-Now it's time to learn some more general tools, often called **functional programming** tools because they are built around functions that take other functions as inputs.
-Learning functional programming can easily veer into the abstract, but in this chapter we'll keep things concrete by focusing on three common tasks: modifying multiple columns, reading multiple files, and saving multiple objects.
+Artık başka fonksiyonları girdi olarak alan fonksiyonların çevresinde kurulduğu için genellikle **fonksiyonel programlama** araçları denen daha genel araçları öğrenme zamanı.
+Fonksiyonel programlamayı öğrenmek kolayca soyut bir yöne kayabilir; ancak bu bölümde üç yaygın göreve odaklanarak konuyu somut tutacağız: birden çok sütunu değiştirme, birden çok dosyayı okuma ve birden çok nesneyi kaydetme.
 
-### Prerequisites
+### Ön koşullar
 
-In this chapter, we'll focus on tools provided by dplyr and purrr, both core members of the tidyverse.
-You've seen dplyr before, but [purrr](http://purrr.tidyverse.org/) is new.
-We're just going to use a couple of purrr functions in this chapter, but it's a great package to explore as you improve your programming skills.
+Bu bölümde tidyverse'in temel üyeleri olan dplyr ve purrr'ın sağladığı araçlara odaklanacağız.
+dplyr'ı daha önce gördünüz, ancak [purrr](http://purrr.tidyverse.org/) yeni.
+Bu bölümde yalnızca birkaç purrr fonksiyonu kullanacağız; yine de programlama becerilerinizi geliştirirken keşfetmeye değer harika bir pakettir.
 
 ```{r}
 #| label: setup
@@ -33,9 +33,9 @@ We're just going to use a couple of purrr functions in this chapter, but it's a 
 library(tidyverse)
 ```
 
-## Modifying multiple columns {#sec-across}
+## Birden çok sütunu değiştirme {#sec-across}
 
-Imagine you have this simple tibble and you want to count the number of observations and compute the median of every column.
+Aşağıdaki basit tibble'a sahip olduğunuzu, gözlem sayısını ve her sütunun medyanını hesaplamak istediğinizi düşünün.
 
 ```{r}
 set.seed(1014)
@@ -47,7 +47,7 @@ df <- tibble(
 )
 ```
 
-You could do it with copy-and-paste:
+Bunu kopyala-yapıştır ile yapabilirsiniz:
 
 ```{r}
 df |> summarize(
@@ -59,8 +59,8 @@ df |> summarize(
 )
 ```
 
-That breaks our rule of thumb to never copy and paste more than twice, and you can imagine that this will get very tedious if you have tens or even hundreds of columns.
-Instead, you can use `across()`:
+Bu, hiçbir şeyi ikiden fazla kez kopyalayıp yapıştırmama genel kuralımızı çiğner; onlarca, hatta yüzlerce sütununuz varsa işlemin çok zahmetli olacağını tahmin edebilirsiniz.
+Bunun yerine `across()` kullanabilirsiniz:
 
 ```{r}
 df |> summarize(
@@ -69,18 +69,18 @@ df |> summarize(
 )
 ```
 
-`across()` has three particularly important arguments, which we'll discuss in detail in the following sections.
-You'll use the first two every time you use `across()`: the first argument, `.cols`, specifies which columns you want to iterate over, and the second argument, `.fns`, specifies what to do with each column.
-You can use the `.names` argument when you need additional control over the names of output columns, which is particularly important when you use `across()` with `mutate()`.
-We'll also discuss two important variations, `if_any()` and `if_all()`, which work with `filter()`.
+`across()` fonksiyonunun aşağıdaki kısımlarda ayrıntılı olarak ele alacağımız özellikle önemli üç argümanı vardır.
+`across()` fonksiyonunu her kullandığınızda ilk ikisini kullanırsınız: İlk argüman `.cols`, hangi sütunlar üzerinde iterasyon yapmak istediğinizi; ikinci argüman `.fns` ise her sütunla ne yapılacağını belirtir.
+Özellikle `across()` fonksiyonunu `mutate()` ile kullandığınızda önemli olan çıktı sütunu adları üzerinde ek denetime ihtiyaç duyarsanız `.names` argümanını kullanabilirsiniz.
+Ayrıca `filter()` ile çalışan iki önemli çeşidi, `if_any()` ve `if_all()` fonksiyonlarını ele alacağız.
 
-### Selecting columns with `.cols`
+### `.cols` ile sütun seçme
 
-The first argument to `across()`, `.cols`, selects the columns to transform.
-This uses the same specifications as `select()`, @sec-select, so you can use functions like `starts_with()` and `ends_with()` to select columns based on their name.
+`across()` fonksiyonunun ilk argümanı `.cols`, dönüştürülecek sütunları seçer.
+Bu argüman `select()` ile aynı belirtimleri kullanır (@sec-select); dolayısıyla sütunları adlarına göre seçmek için `starts_with()` ve `ends_with()` gibi fonksiyonlardan yararlanabilirsiniz.
 
-There are two additional selection techniques that are particularly useful for `across()`: `everything()` and `where()`.
-`everything()` is straightforward: it selects every (non-grouping) column:
+`across()` için özellikle kullanışlı iki ek seçim tekniği vardır: `everything()` ve `where()`.
+`everything()` doğrudandır: Gruplama sütunları dışındaki tüm sütunları seçer:
 
 ```{r}
 set.seed(1014)
@@ -97,29 +97,29 @@ df |>
   summarize(across(everything(), median))
 ```
 
-Note grouping columns (`grp` here) are not included in `across()`, because they're automatically preserved by `summarize()`.
+Gruplama sütunlarının (burada `grp`) `across()` içine dahil edilmediğine dikkat edin; çünkü `summarize()` bunları otomatik olarak korur.
 
-`where()` allows you to select columns based on their type:
+`where()` sütunları türlerine göre seçmenizi sağlar:
 
--   `where(is.numeric)` selects all numeric columns.
--   `where(is.character)` selects all string columns.
--   `where(is.Date)` selects all date columns.
--   `where(is.POSIXct)` selects all date-time columns.
--   `where(is.logical)` selects all logical columns.
+-   `where(is.numeric)` tüm sayısal sütunları seçer.
+-   `where(is.character)` tüm karakter dizisi sütunlarını seçer.
+-   `where(is.Date)` tüm tarih sütunlarını seçer.
+-   `where(is.POSIXct)` tüm tarih-saat sütunlarını seçer.
+-   `where(is.logical)` tüm mantıksal sütunları seçer.
 
-Just like other selectors, you can combine these with Boolean algebra.
-For example, `!where(is.numeric)` selects all non-numeric columns, and `starts_with("a") & where(is.logical)` selects all logical columns whose name starts with "a".
+Diğer seçicilerde olduğu gibi bunları Boole cebiriyle birleştirebilirsiniz.
+Örneğin `!where(is.numeric)` sayısal olmayan tüm sütunları, `starts_with("a") & where(is.logical)` ise adı "a" ile başlayan tüm mantıksal sütunları seçer.
 
-### Calling a single function
+### Tek bir fonksiyon çağırma
 
-The second argument to `across()` defines how each column will be transformed.
-In simple cases, as above, this will be a single existing function.
-This is a pretty special feature of R: we're passing one function (`median`, `mean`, `str_flatten`, ...) to another function (`across`).
-This is one of the features that makes R a functional programming language.
+`across()` fonksiyonunun ikinci argümanı her sütunun nasıl dönüştürüleceğini tanımlar.
+Yukarıdaki gibi basit durumlarda bu, var olan tek bir fonksiyon olur.
+Bu, R'ın oldukça özel bir özelliğidir: Bir fonksiyonu (`median`, `mean`, `str_flatten`, ...) başka bir fonksiyona (`across`) aktarırız.
+R'ı fonksiyonel bir programlama dili yapan özelliklerden biri budur.
 
-It's important to note that we're passing this function to `across()`, so `across()` can call it; we're not calling it ourselves.
-That means the function name should never be followed by `()`.
-If you forget, you'll get an error:
+Bu fonksiyonu kendimiz çağırmadığımızı, `across()` çağırabilsin diye ona aktardığımızı unutmamak önemlidir.
+Bu nedenle fonksiyon adının ardından hiçbir zaman `()` gelmemelidir.
+Unutursanız hata alırsınız:
 
 ```{r}
 #| error: true
@@ -128,18 +128,18 @@ df |>
   summarize(across(everything(), median()))
 ```
 
-This error arises because you're calling the function with no input, e.g.:
+Bu hata fonksiyonu girdisiz çağırdığınız için oluşur; örneğin:
 
 ```{r}
 #| error: true
 median()
 ```
 
-### Calling multiple functions
+### Birden çok fonksiyon çağırma
 
-In more complex cases, you might want to supply additional arguments or perform multiple transformations.
-Let's motivate this problem with a simple example: what happens if we have some missing values in our data?
-`median()` propagates those missing values, giving us a suboptimal output:
+Daha karmaşık durumlarda ek argümanlar sağlamak ya da birden çok dönüşüm gerçekleştirmek isteyebilirsiniz.
+Bu sorunu basit bir örnekle ele alalım: Verilerimizde bazı eksik değerler varsa ne olur?
+`median()` bu eksik değerleri yayarak istediğimizden kötü bir çıktı verir:
 
 ```{r}
 set.seed(1014)
@@ -160,8 +160,8 @@ df_miss |>
   )
 ```
 
-It would be nice if we could pass along `na.rm = TRUE` to `median()` to remove these missing values.
-To do so, instead of calling `median()` directly, we need to create a new function that calls `median()` with the desired arguments:
+Bu eksik değerleri kaldırmak için `median()` fonksiyonuna `na.rm = TRUE` aktarabilsek iyi olurdu.
+Bunu yapmak için `median()` fonksiyonunu doğrudan çağırmak yerine onu istediğimiz argümanlarla çağıran yeni bir fonksiyon oluşturmamız gerekir:
 
 ```{r}
 df_miss |> 
@@ -171,14 +171,14 @@ df_miss |>
   )
 ```
 
-This is a little verbose, so R comes with a handy shortcut: for this sort of throw away, or **anonymous**[^iteration-1], function you can replace `function` with `\`[^iteration-2]:
+Bu biraz uzundur; dolayısıyla R kullanışlı bir kısayol sunar: Bu tür tek kullanımlık ya da **anonim**[^iteration-1] fonksiyonlarda `function` yerine `\` kullanabilirsiniz[^iteration-2]:
 
-[^iteration-1]: Anonymous, because we never explicitly gave it a name with `<-`.
-    Another term programmers use for this is "lambda function".
+[^iteration-1]: Anonimdir; çünkü `<-` ile ona açıkça bir ad vermedik.
+    Programcıların bunun için kullandığı bir başka terim “lambda fonksiyonu”dur.
 
-[^iteration-2]: In older code you might see syntax that looks like `~ .x + 1`.
-    This is another way to write anonymous functions but it only works inside tidyverse functions and always uses the variable name `.x`.
-    We now recommend the base syntax, `\(x) x + 1`.
+[^iteration-2]: Eski kodlarda `~ .x + 1` biçiminde bir sözdizimi görebilirsiniz.
+    Bu, anonim fonksiyon yazmanın başka bir yoludur; ancak yalnızca tidyverse fonksiyonları içinde çalışır ve her zaman `.x` değişken adını kullanır.
+    Artık temel R sözdizimi olan `\(x) x + 1` kullanımını öneriyoruz.
 
 ```{r}
 #| results: false
@@ -189,7 +189,7 @@ df_miss |>
   )
 ```
 
-In either case, `across()` effectively expands to the following code:
+Her iki durumda da `across()` fiilen aşağıdaki koda genişler:
 
 ```{r}
 #| eval: false
@@ -203,9 +203,9 @@ df_miss |>
   )
 ```
 
-When we remove the missing values from the `median()`, it would be nice to know just how many values were removed.
-We can find that out by supplying two functions to `across()`: one to compute the median and the other to count the missing values.
-You supply multiple functions by using a named list to `.fns`:
+Eksik değerleri `median()` hesabından çıkardığımızda tam olarak kaç değerin kaldırıldığını bilmek iyi olurdu.
+Bunu `across()` fonksiyonuna iki fonksiyon sağlayarak bulabiliriz: biri medyanı hesaplar, diğeri eksik değerleri sayar.
+`.fns` argümanına adlandırılmış bir liste vererek birden çok fonksiyon sağlarsınız:
 
 ```{r}
 df_miss |> 
@@ -218,16 +218,16 @@ df_miss |>
   )
 ```
 
-If you look carefully, you might intuit that the columns are named using a glue specification (@sec-glue) like `{.col}_{.fn}` where `.col` is the name of the original column and `.fn` is the name of the function.
-That's not a coincidence!
-As you'll learn in the next section, you can use the `.names` argument to supply your own glue spec.
+Dikkatle bakarsanız sütunların, `.col` özgün sütunun ve `.fn` fonksiyonun adı olacak biçimde `{.col}_{.fn}` gibi bir glue belirtimiyle (@sec-glue) adlandırıldığını sezebilirsiniz.
+Bu bir rastlantı değildir!
+Sonraki kısımda öğreneceğiniz gibi kendi glue belirtiminizi sağlamak için `.names` argümanını kullanabilirsiniz.
 
-### Column names
+### Sütun adları
 
-The result of `across()` is named according to the specification provided in the `.names` argument.
-We could specify our own if we wanted the name of the function to come first[^iteration-3]:
+`across()` sonucu `.names` argümanında sağlanan belirtime göre adlandırılır.
+Fonksiyon adının önce gelmesini istersek kendi belirtimimizi sağlayabiliriz[^iteration-3]:
 
-[^iteration-3]: You can't currently change the order of the columns, but you could reorder them after the fact using `relocate()` or similar.
+[^iteration-3]: Şu anda sütunların sırasını doğrudan değiştiremezsiniz; ancak daha sonra `relocate()` veya benzeri bir fonksiyonla yeniden sıralayabilirsiniz.
 
 ```{r}
 df_miss |> 
@@ -244,10 +244,10 @@ df_miss |>
   )
 ```
 
-The `.names` argument is particularly important when you use `across()` with `mutate()`.
-By default, the output of `across()` is given the same names as the inputs.
-This means that `across()` inside of `mutate()` will replace existing columns.
-For example, here we use `coalesce()` to replace `NA`s with `0`:
+`.names` argümanı özellikle `across()` fonksiyonunu `mutate()` ile kullandığınızda önemlidir.
+Varsayılan olarak `across()` çıktısına girdilerle aynı adlar verilir.
+Bu, `mutate()` içindeki `across()` çağrısının var olan sütunları değiştireceği anlamına gelir.
+Örneğin burada `NA` değerlerini `0` ile değiştirmek için `coalesce()` kullanırız:
 
 ```{r}
 df_miss |> 
@@ -256,7 +256,7 @@ df_miss |>
   )
 ```
 
-If you'd like to instead create new columns, you can use the `.names` argument to give the output new names:
+Bunun yerine yeni sütunlar oluşturmak isterseniz çıktıya yeni adlar vermek için `.names` argümanını kullanabilirsiniz:
 
 ```{r}
 df_miss |> 
@@ -265,24 +265,24 @@ df_miss |>
   )
 ```
 
-### Filtering
+### Süzme
 
-`across()` is a great match for `summarize()` and `mutate()` but it's more awkward to use with `filter()`, because you usually combine multiple conditions with either `|` or `&`.
-It's clear that `across()` can help to create multiple logical columns, but then what?
-So dplyr provides two variants of `across()` called `if_any()` and `if_all()`:
+`across()`, `summarize()` ve `mutate()` için çok uygundur; ancak birden çok koşulu genellikle `|` ya da `&` ile birleştirdiğinizden `filter()` ile kullanılması daha zordur.
+`across()` fonksiyonunun birden çok mantıksal sütun oluşturmaya yardımcı olabileceği açıktır; peki sonra ne olacak?
+Bu nedenle dplyr, `across()` fonksiyonunun `if_any()` ve `if_all()` adlı iki çeşidini sağlar:
 
 ```{r}
-# same as df_miss |> filter(is.na(a) | is.na(b) | is.na(c) | is.na(d))
+# df_miss |> filter(is.na(a) | is.na(b) | is.na(c) | is.na(d)) ile aynı
 df_miss |> filter(if_any(a:d, is.na))
 
-# same as df_miss |> filter(is.na(a) & is.na(b) & is.na(c) & is.na(d))
+# df_miss |> filter(is.na(a) & is.na(b) & is.na(c) & is.na(d)) ile aynı
 df_miss |> filter(if_all(a:d, is.na))
 ```
 
-### `across()` in functions
+### Fonksiyonların içinde `across()`
 
-`across()` is particularly useful to program with because it allows you to operate on multiple columns.
-For example, [Jacob Scott](https://twitter.com/_wurli/status/1571836746899283969) uses this little helper which wraps a bunch of lubridate functions to expand all date columns into year, month, and day columns:
+`across()` birden çok sütun üzerinde işlem yapmanızı sağladığı için programlamada özellikle kullanışlıdır.
+Örneğin [Jacob Scott](https://twitter.com/_wurli/status/1571836746899283969), tüm tarih sütunlarını yıl, ay ve gün sütunlarına genişletmek üzere çeşitli lubridate fonksiyonlarını bir araya getiren bu küçük yardımcıyı kullanır:
 
 ```{r}
 expand_dates <- function(df) {
@@ -301,9 +301,9 @@ df_date |>
   expand_dates()
 ```
 
-`across()` also makes it easy to supply multiple columns in a single argument because the first argument uses tidy-select; you just need to remember to embrace that argument, as we discussed in @sec-embracing.
-For example, this function will compute the means of numeric columns by default.
-But by supplying the second argument you can choose to summarize just selected columns:
+`across()` fonksiyonunun ilk argümanı tidy seçimi kullandığından tek bir argümanda birden çok sütun sağlamak da kolaydır; @sec-embracing bölümünde ele aldığımız gibi yalnızca bu argümanı sarmalamayı hatırlamanız gerekir.
+Örneğin bu fonksiyon varsayılan olarak sayısal sütunların ortalamalarını hesaplar.
+Ancak ikinci argümanı sağlayarak yalnızca seçtiğiniz sütunları özetleyebilirsiniz:
 
 ```{r}
 summarize_means <- function(df, summary_vars = where(is.numeric)) {
@@ -323,18 +323,18 @@ diamonds |>
   summarize_means(c(carat, x:z))
 ```
 
-### Compare with `pivot_longer()`
+### `pivot_longer()` ile karşılaştırma
 
-Before we go on, it's worth pointing out an interesting connection between `across()` and `pivot_longer()` (@sec-pivoting).
-In many cases, you perform the same calculations by first pivoting the data and then performing the operations by group rather than by column.
-For example, take this multi-function summary:
+Devam etmeden önce `across()` ile `pivot_longer()` arasındaki ilginç bir bağlantıya dikkat çekmekte yarar var (@sec-pivoting).
+Birçok durumda önce verileri döndürüp ardından işlemleri sütuna göre değil gruba göre yaparak aynı hesaplamaları gerçekleştirebilirsiniz.
+Örneğin bu çok fonksiyonlu özeti ele alın:
 
 ```{r}
 df |> 
   summarize(across(a:d, list(median = median, mean = mean)))
 ```
 
-We could compute the same values by pivoting longer and then summarizing:
+Verileri uzun biçime döndürüp ardından özetleyerek aynı değerleri hesaplayabiliriz:
 
 ```{r}
 long <- df |> 
@@ -347,7 +347,7 @@ long <- df |>
 long
 ```
 
-And if you wanted the same structure as `across()` you could pivot again:
+`across()` ile aynı yapıyı istiyorsanız yeniden döndürebilirsiniz:
 
 ```{r}
 long |> 
@@ -359,8 +359,8 @@ long |>
   )
 ```
 
-This is a useful technique to know about because sometimes you'll hit a problem that's not currently possible to solve with `across()`: when you have groups of columns that you want to compute with simultaneously.
-For example, imagine that our data frame contains both values and weights and we want to compute a weighted mean:
+Bu, bilinmesi yararlı bir tekniktir; çünkü bazen `across()` ile şu anda çözülemeyen bir problemle karşılaşırsınız: Aynı anda hesaplama yapmak istediğiniz sütun grupları olduğunda.
+Örneğin veri çerçevemizin hem değerleri hem ağırlıkları içerdiğini ve ağırlıklı ortalama hesaplamak istediğimizi düşünün:
 
 ```{r}
 set.seed(1014)
@@ -376,9 +376,9 @@ df_paired <- tibble(
 )
 ```
 
-There's currently no way to do this with `across()`[^iteration-4], but it's relatively straightforward with `pivot_longer()`:
+Şu anda bunu `across()` ile yapmanın bir yolu yoktur[^iteration-4], ancak `pivot_longer()` ile oldukça kolaydır:
 
-[^iteration-4]: Maybe there will be one day, but currently we don't see how.
+[^iteration-4]: Belki bir gün olacaktır; ancak şu anda nasıl yapılacağını göremiyoruz.
 
 ```{r}
 df_long <- df_paired |> 
@@ -394,26 +394,26 @@ df_long |>
   summarize(mean = weighted.mean(val, wts))
 ```
 
-If needed, you could `pivot_wider()` this back to the original form.
+Gerekirse bunu `pivot_wider()` ile yeniden özgün biçimine döndürebilirsiniz.
 
-### Exercises
+### Alıştırmalar
 
-1.  Practice your `across()` skills by:
+1.  Aşağıdakileri yaparak `across()` becerilerinizi geliştirin:
 
-    1.  Computing the number of unique values in each column of `palmerpenguins::penguins`.
+    1.  `palmerpenguins::penguins` veri kümesinin her sütunundaki benzersiz değer sayısını hesaplayın.
 
-    2.  Computing the mean of every column in `mtcars`.
+    2.  `mtcars` veri kümesindeki her sütunun ortalamasını hesaplayın.
 
-    3.  Grouping `diamonds` by `cut`, `clarity`, and `color` then counting the number of observations and computing the mean of each numeric column.
+    3.  `diamonds` veri kümesini `cut`, `clarity` ve `color` değişkenlerine göre gruplandırın; ardından gözlem sayısını ve her sayısal sütunun ortalamasını hesaplayın.
 
-2.  What happens if you use a list of functions in `across()`, but don't name them?
-    How is the output named?
+2.  `across()` içinde bir fonksiyon listesi kullanır, ancak fonksiyonları adlandırmazsanız ne olur?
+    Çıktı nasıl adlandırılır?
 
-3.  Adjust `expand_dates()` to automatically remove the date columns after they've been expanded.
-    Do you need to embrace any arguments?
+3.  `expand_dates()` fonksiyonunu genişletildikten sonra tarih sütunlarını otomatik olarak kaldıracak biçimde düzenleyin.
+    Herhangi bir argümanı sarmalamanız gerekiyor mu?
 
-4.  Explain what each step of the pipeline in this function does.
-    What special feature of `where()` are we taking advantage of?
+4.  Bu fonksiyondaki işlem hattının her adımının ne yaptığını açıklayın.
+    `where()` fonksiyonunun hangi özel özelliğinden yararlanıyoruz?
 
     ```{r}
     #| results: false
@@ -429,14 +429,14 @@ If needed, you could `pivot_wider()` this back to the original form.
     nycflights13::flights |> show_missing(c(year, month, day))
     ```
 
-## Reading multiple files
+## Birden çok dosyayı okuma
 
-In the previous section, you learned how to use `dplyr::across()` to repeat a transformation on multiple columns.
-In this section, you'll learn how to use `purrr::map()` to do something to every file in a directory.
-Let's start with a little motivation: imagine you have a directory full of excel spreadsheets[^iteration-5] you want to read.
-You could do it with copy and paste:
+Önceki kısımda bir dönüşümü birden çok sütunda yinelemek için `dplyr::across()` kullanmayı öğrendiniz.
+Bu kısımda bir dizindeki her dosya üzerinde işlem yapmak için `purrr::map()` kullanmayı öğreneceksiniz.
+Önce gereksinimi ortaya koyalım: Okumak istediğiniz Excel hesap çizelgeleriyle dolu bir dizininiz olduğunu düşünün[^iteration-5].
+Bunu kopyala-yapıştır ile yapabilirsiniz:
 
-[^iteration-5]: If you instead had a directory of csv files with the same format, you can use the technique from @sec-readr-directory.
+[^iteration-5]: Bunun yerine aynı biçime sahip CSV dosyalarından oluşan bir dizininiz olsaydı @sec-readr-directory bölümündeki tekniği kullanabilirdiniz.
 
 ```{r}
 #| eval: false
@@ -446,44 +446,44 @@ data2021 <- readxl::read_excel("data/y2021.xlsx")
 data2022 <- readxl::read_excel("data/y2022.xlsx")
 ```
 
-And then use `dplyr::bind_rows()` to combine them all together:
+Ardından tümünü birleştirmek için `dplyr::bind_rows()` kullanabilirsiniz:
 
 ```{r}
 #| eval: false
 data <- bind_rows(data2019, data2020, data2021, data2022)
 ```
 
-You can imagine that this would get tedious quickly, especially if you had hundreds of files, not just four.
-The following sections show you how to automate this sort of task.
-There are three basic steps: use `list.files()` to list all the files in a directory, then use `purrr::map()` to read each of them into a list, then use `purrr::list_rbind()` to combine them into a single data frame.
-We'll then discuss how you can handle situations of increasing heterogeneity, where you can't do exactly the same thing to every file.
+Özellikle yalnızca dört değil yüzlerce dosyanız varsa bunun kısa sürede zahmetli olacağını tahmin edebilirsiniz.
+Aşağıdaki kısımlar bu tür bir görevi nasıl otomatikleştireceğinizi gösterir.
+Üç temel adım vardır: Bir dizindeki tüm dosyaları listelemek için `list.files()`, her birini bir listeye okumak için `purrr::map()`, ardından bunları tek bir veri çerçevesinde birleştirmek için `purrr::list_rbind()` kullanmak.
+Sonrasında her dosyaya tamamen aynı işlemi uygulayamadığınız, heterojenliğin arttığı durumları nasıl ele alabileceğinizi tartışacağız.
 
-### Listing files in a directory
+### Bir dizindeki dosyaları listeleme
 
-As the name suggests, `list.files()` lists the files in a directory.
-You'll almost always use three arguments:
+Adından anlaşılacağı gibi `list.files()` bir dizindeki dosyaları listeler.
+Neredeyse her zaman üç argüman kullanırsınız:
 
--   The first argument, `path`, is the directory to look in.
+-   İlk argüman `path`, aranacak dizindir.
 
--   `pattern` is a regular expression used to filter the file names.
-    The most common pattern is something like `[.]xlsx$` or `[.]csv$` to find all files with a specified extension.
+-   `pattern`, dosya adlarını süzmek için kullanılan düzenli ifadedir.
+    En yaygın örüntü, belirli bir uzantıya sahip tüm dosyaları bulmak için `[.]xlsx$` veya `[.]csv$` gibi bir ifadedir.
 
--   `full.names` determines whether or not the directory name should be included in the output.
-    You almost always want this to be `TRUE`.
+-   `full.names`, dizin adının çıktıya dahil edilip edilmeyeceğini belirler.
+    Neredeyse her zaman bunun `TRUE` olmasını istersiniz.
 
-To make our motivating example concrete, this book contains a folder with 12 excel spreadsheets containing data from the gapminder package.
-This folder can be found at <https://github.com/hadley/r4ds/tree/main/data/gapminder>.
-Each file contains one year's worth of data for 142 countries.
-We can list them all with the appropriate call to `list.files()`:
+Örneğimizi somutlaştırmak için bu kitapta gapminder paketindeki verileri içeren 12 Excel hesap çizelgesinden oluşan bir klasör bulunur.
+Bu klasörü <https://github.com/hadley/r4ds/tree/main/data/gapminder> adresinde bulabilirsiniz.
+Her dosya 142 ülkenin bir yıllık verilerini içerir.
+Uygun bir `list.files()` çağrısıyla tümünü listeleyebiliriz:
 
 ```{r}
 paths <- list.files("data/gapminder", pattern = "[.]xlsx$", full.names = TRUE)
 paths
 ```
 
-### Lists
+### Listeler
 
-Now that we have these 12 paths, we could call `read_excel()` 12 times to get 12 data frames:
+Bu 12 yola sahip olduğumuza göre 12 veri çerçevesi elde etmek için `read_excel()` fonksiyonunu 12 kez çağırabiliriz:
 
 ```{r}
 #| eval: false
@@ -494,9 +494,9 @@ gapminder_1962 <- readxl::read_excel("data/gapminder/1962.xlsx")
 gapminder_2007 <- readxl::read_excel("data/gapminder/2007.xlsx")
 ```
 
-But putting each sheet into its own variable is going to make it hard to work with them a few steps down the road.
-Instead, they'll be easier to work with if we put them into a single object.
-A list is the perfect tool for this job:
+Ancak her çalışma sayfasını kendi değişkenine koymak, birkaç adım sonra onlarla çalışmayı zorlaştıracaktır.
+Bunun yerine tümünü tek bir nesneye koyarsak çalışmak daha kolay olur.
+Liste bu iş için kusursuz bir araçtır:
 
 ```{r}
 #| eval: false
@@ -514,20 +514,20 @@ files <- list(
 files <- map(paths, readxl::read_excel)
 ```
 
-Now that you have these data frames in a list, how do you get one out?
-You can use `files[[i]]` to extract the i<sup>th</sup> element:
+Bu veri çerçeveleri artık bir listede olduğuna göre içlerinden birini nasıl alırsınız?
+i. öğeyi çıkarmak için `files[[i]]` kullanabilirsiniz:
 
 ```{r}
 files[[3]]
 ```
 
-We'll come back to `[[` in more detail in @sec-subset-one.
+`[[` işlecine @sec-subset-one bölümünde daha ayrıntılı döneceğiz.
 
-### `purrr::map()` and `list_rbind()`
+### `purrr::map()` ve `list_rbind()`
 
-The code to collect those data frames in a list "by hand" is basically just as tedious to type as code that reads the files one-by-one.
-Happily, we can use `purrr::map()` to make even better use of our `paths` vector.
-`map()` is similar to`across()`, but instead of doing something to each column in a data frame, it does something to each element of a vector.`map(x, f)` is shorthand for:
+Bu veri çerçevelerini bir listede “elle” toplama kodunu yazmak, temelde dosyaları tek tek okuyan kodu yazmak kadar zahmetlidir.
+Neyse ki `paths` vektörümüzden daha iyi yararlanmak için `purrr::map()` kullanabiliriz.
+`map()`, `across()` fonksiyonuna benzer; ancak veri çerçevesinin her sütununda değil, bir vektörün her öğesinde işlem yapar. `map(x, f)` aşağıdakinin kısa yazımıdır:
 
 ```{r}
 #| eval: false
@@ -539,7 +539,7 @@ list(
 )
 ```
 
-So we can use `map()` to get a list of 12 data frames:
+Dolayısıyla 12 veri çerçevesinden oluşan bir liste elde etmek için `map()` kullanabiliriz:
 
 ```{r}
 files <- map(paths, readxl::read_excel)
@@ -548,15 +548,15 @@ length(files)
 files[[1]]
 ```
 
-(This is another data structure that doesn't display particularly compactly with `str()` so you might want to load it into RStudio and inspect it with `View()`).
+(Bu da `str()` ile pek kısa görüntülenmeyen bir veri yapısıdır; dolayısıyla RStudio'ya yükleyip `View()` ile incelemek isteyebilirsiniz.)
 
-Now we can use `purrr::list_rbind()` to combine that list of data frames into a single data frame:
+Artık veri çerçeveleri listesini tek bir veri çerçevesinde birleştirmek için `purrr::list_rbind()` kullanabiliriz:
 
 ```{r}
 list_rbind(files)
 ```
 
-Or we could do both steps at once in a pipeline:
+Ya da iki adımı bir işlem hattında aynı anda yapabiliriz:
 
 ```{r}
 #| results: false
@@ -565,9 +565,9 @@ paths |>
   list_rbind()
 ```
 
-What if we want to pass in extra arguments to `read_excel()`?
-We use the same technique that we used with `across()`.
-For example, it's often useful to peek at the first few rows of the data with `n_max = 1`:
+Peki `read_excel()` fonksiyonuna ek argümanlar aktarmak istersek ne olur?
+`across()` ile kullandığımız tekniğin aynısını kullanırız.
+Örneğin `n_max = 1` ile verilerin ilk birkaç satırına göz atmak çoğu zaman kullanışlıdır:
 
 ```{r}
 paths |> 
@@ -575,24 +575,24 @@ paths |>
   list_rbind()
 ```
 
-This makes it clear that something is missing: there's no `year` column because that value is recorded in the path, not in the individual files.
-We'll tackle that problem next.
+Bu, bir şeyin eksik olduğunu açıkça gösterir: Değer tek tek dosyalarda değil dosya yolunda kaydedildiği için `year` sütunu yoktur.
+Sırada bu sorunu ele alacağız.
 
-### Data in the path {#sec-data-in-the-path}
+### Dosya yolundaki veriler {#sec-data-in-the-path}
 
-Sometimes the name of the file is data itself.
-In this example, the file name contains the year, which is not otherwise recorded in the individual files.
-To get that column into the final data frame, we need to do two things:
+Bazen dosyanın adı başlı başına veridir.
+Bu örnekte dosya adı, tek tek dosyalarda başka bir yerde kaydedilmeyen yılı içerir.
+Bu sütunu son veri çerçevesine almak için iki şey yapmamız gerekir:
 
-First, we name the vector of paths.
-The easiest way to do this is with the `set_names()` function, which can take a function.
-Here we use `basename()` to extract just the file name from the full path:
+Önce yollar vektörünü adlandırırız.
+Bunu yapmanın en kolay yolu, bir fonksiyon alabilen `set_names()` fonksiyonudur.
+Burada tam yoldan yalnızca dosya adını çıkarmak için `basename()` kullanırız:
 
 ```{r}
 paths |> set_names(basename) 
 ```
 
-Those names are automatically carried along by all the map functions, so the list of data frames will have those same names:
+Bu adlar tüm map fonksiyonları tarafından otomatik olarak taşınır; dolayısıyla veri çerçeveleri listesi aynı adlara sahip olur:
 
 ```{r}
 files <- paths |> 
@@ -600,7 +600,7 @@ files <- paths |>
   map(readxl::read_excel)
 ```
 
-That makes this call to `map()` shorthand for:
+Bu durumda `map()` çağrısı aşağıdakinin kısa yazımı olur:
 
 ```{r}
 #| eval: false
@@ -613,13 +613,13 @@ files <- list(
 )
 ```
 
-You can also use `[[` to extract elements by name:
+Öğeleri adlarına göre çıkarmak için `[[` işlecini de kullanabilirsiniz:
 
 ```{r}
 files[["1962.xlsx"]]
 ```
 
-Then we use the `names_to` argument to `list_rbind()` to tell it to save the names into a new column called `year` then use `readr::parse_number()` to extract the number from the string.
+Ardından `list_rbind()` fonksiyonunun `names_to` argümanıyla adları `year` adlı yeni bir sütuna kaydetmesini söyler, karakter dizisindeki sayıyı çıkarmak için `readr::parse_number()` kullanırız.
 
 ```{r}
 paths |> 
@@ -629,8 +629,8 @@ paths |>
   mutate(year = parse_number(year))
 ```
 
-In more complicated cases, there might be other variables stored in the directory name, or maybe the file name contains multiple bits of data.
-In that case, use `set_names()` (without any arguments) to record the full path, and then use `tidyr::separate_wider_delim()` and friends to turn them into useful columns.
+Daha karmaşık durumlarda dizin adında saklanan başka değişkenler bulunabilir veya dosya adı birden çok veri parçası içerebilir.
+Bu durumda tam yolu kaydetmek için argümansız `set_names()`, ardından bunları kullanışlı sütunlara dönüştürmek için `tidyr::separate_wider_delim()` ve benzeri fonksiyonları kullanın.
 
 ```{r}
 paths |> 
@@ -641,9 +641,9 @@ paths |>
   separate_wider_delim(file, delim = ".", names = c("file", "ext"))
 ```
 
-### Save your work
+### Çalışmanızı kaydetme
 
-Now that you've done all this hard work to get to a nice tidy data frame, it's a great time to save your work:
+Düzenli ve güzel bir veri çerçevesine ulaşmak için tüm bu zorlu çalışmayı yaptığınıza göre çalışmanızı kaydetmenin tam zamanıdır:
 
 ```{r}
 gapminder <- paths |> 
@@ -655,27 +655,27 @@ gapminder <- paths |>
 write_csv(gapminder, "gapminder.csv")
 ```
 
-Now when you come back to this problem in the future, you can read in a single csv file.
-For large and richer datasets, using parquet might be a better choice than `.csv`, as discussed in @sec-parquet.
+Gelecekte bu probleme döndüğünüzde tek bir CSV dosyasını okuyabilirsiniz.
+@sec-parquet bölümünde ele alındığı gibi büyük ve daha zengin veri kümeleri için Parquet kullanmak `.csv` biçiminden daha iyi bir seçim olabilir.
 
 ```{r}
 #| include: false
 unlink("gapminder.csv")
 ```
 
-If you're working in a project, we suggest calling the file that does this sort of data prep work something like `0-cleanup.R`.
-The `0` in the file name suggests that this should be run before anything else.
+Bir projede çalışıyorsanız bu tür veri hazırlama işlerini yapan dosyaya `0-cleanup.R` gibi bir ad vermenizi öneririz.
+Dosya adındaki `0`, bu dosyanın her şeyden önce çalıştırılması gerektiğini gösterir.
 
-If your input data files change over time, you might consider learning a tool like [targets](https://docs.ropensci.org/targets/) to set up your data cleaning code to automatically re-run whenever one of the input files is modified.
+Girdi veri dosyalarınız zaman içinde değişiyorsa veri temizleme kodunuzu girdi dosyalarından biri değiştirildiğinde otomatik olarak yeniden çalışacak biçimde ayarlamak için [targets](https://docs.ropensci.org/targets/) gibi bir araç öğrenmeyi düşünebilirsiniz.
 
-### Many simple iterations
+### Çok sayıda basit iterasyon
 
-Here we've just loaded the data directly from disk, and were lucky enough to get a tidy dataset.
-In most cases, you'll need to do some additional tidying, and you have two basic options: you can do one round of iteration with a complex function, or do multiple rounds of iteration with simple functions.
-In our experience most folks reach first for one complex iteration, but you're often better by doing multiple simple iterations.
+Burada verileri doğrudan diskten yükledik ve düzenli bir veri kümesi elde edecek kadar şanslıydık.
+Çoğu durumda biraz daha düzenleme yapmanız gerekir ve iki temel seçeneğiniz vardır: Karmaşık bir fonksiyonla tek tur iterasyon ya da basit fonksiyonlarla birden çok tur iterasyon yapabilirsiniz.
+Deneyimlerimize göre çoğu kişi önce tek bir karmaşık iterasyona yönelir; ancak birden çok basit iterasyon yapmak çoğu zaman daha iyidir.
 
-For example, imagine that you want to read in a bunch of files, filter out missing values, pivot, and then combine.
-One way to approach the problem is to write a function that takes a file and does all those steps then call `map()` once:
+Örneğin bir grup dosyayı okumak, eksik değerleri süzmek, verileri döndürmek ve ardından birleştirmek istediğinizi düşünün.
+Probleme yaklaşmanın bir yolu, bir dosya alıp tüm bu adımları uygulayan fonksiyon yazmak ve sonra `map()` fonksiyonunu bir kez çağırmaktır:
 
 ```{r}
 #| eval: false
@@ -693,7 +693,7 @@ paths |>
   list_rbind()
 ```
 
-Alternatively, you could perform each step of `process_file()` to every file:
+Alternatif olarak `process_file()` fonksiyonunun her adımını tüm dosyalara uygulayabilirsiniz:
 
 ```{r}
 #| eval: false
@@ -705,11 +705,11 @@ paths |>
   list_rbind()
 ```
 
-We recommend this approach because it stops you getting fixated on getting the first file right before moving on to the rest.
-By considering all of the data when doing tidying and cleaning, you're more likely to think holistically and end up with a higher quality result.
+Diğer dosyalara geçmeden önce ilk dosyayı kusursuz hâle getirmeye saplanmanızı önlediği için bu yaklaşımı öneriyoruz.
+Düzenleme ve temizleme sırasında tüm verileri dikkate alarak bütüncül düşünme ve daha kaliteli bir sonuç elde etme olasılığınızı artırırsınız.
 
-In this particular example, there's another optimization you could make, by binding all the data frames together earlier.
-Then you can rely on regular dplyr behavior:
+Bu örnekte tüm veri çerçevelerini daha erken birleştirerek yapabileceğiniz başka bir eniyileme vardır.
+Ardından olağan dplyr davranışından yararlanabilirsiniz:
 
 ```{r}
 #| eval: false
@@ -721,10 +721,10 @@ paths |>
   pivot_longer(jan:dec, names_to = "month")
 ```
 
-### Heterogeneous data
+### Heterojen veriler
 
-Unfortunately, sometimes it's not possible to go from `map()` straight to `list_rbind()` because the data frames are so heterogeneous that `list_rbind()` either fails or yields a data frame that's not very useful.
-In that case, it's still useful to start by loading all of the files:
+Ne yazık ki veri çerçeveleri bazen o kadar heterojen olur ki `list_rbind()` ya başarısız olur ya da pek kullanışlı olmayan bir veri çerçevesi üretir; bu nedenle `map()` fonksiyonundan doğrudan `list_rbind()` fonksiyonuna geçmek mümkün olmaz.
+Bu durumda da işe tüm dosyaları yükleyerek başlamak yararlıdır:
 
 ```{r}
 #| eval: false
@@ -732,10 +732,10 @@ files <- paths |>
   map(readxl::read_excel) 
 ```
 
-Then a very useful strategy is to capture the structure of the data frames so that you can explore it using your data science skills.
-One way to do so is with this handy `df_types` function[^iteration-6] that returns a tibble with one row for each column:
+Ardından veri bilimi becerilerinizle inceleyebilmeniz için veri çerçevelerinin yapısını yakalamak çok kullanışlı bir stratejidir.
+Bunu yapmanın bir yolu, her sütun için bir satır içeren tibble döndüren bu kullanışlı `df_types` fonksiyonudur[^iteration-6]:
 
-[^iteration-6]: We're not going to explain how it works, but if you look at the docs for the functions used, you should be able to puzzle it out.
+[^iteration-6]: Nasıl çalıştığını açıklamayacağız; ancak kullanılan fonksiyonların belgelerine bakarsanız çözebilmeniz gerekir.
 
 ```{r}
 df_types <- function(df) {
@@ -749,8 +749,8 @@ df_types <- function(df) {
 df_types(gapminder)
 ```
 
-You can then apply this function to all of the files, and maybe do some pivoting to make it easier to see where the differences are.
-For example, this makes it easy to verify that the gapminder spreadsheets that we've been working with are all quite homogeneous:
+Ardından bu fonksiyonu tüm dosyalara uygulayabilir ve farklılıkların nerede olduğunu görmeyi kolaylaştırmak için verileri döndürebilirsiniz.
+Örneğin bu, üzerinde çalıştığımız gapminder hesap çizelgelerinin tümünün oldukça homojen olduğunu doğrulamayı kolaylaştırır:
 
 ```{r}
 files |> 
@@ -760,20 +760,20 @@ files |>
   pivot_wider(names_from = col_name, values_from = col_type)
 ```
 
-If the files have heterogeneous formats, you might need to do more processing before you can successfully merge them.
-Unfortunately, we're now going to leave you to figure that out on your own, but you might want to read about `map_if()` and `map_at()`.
-`map_if()` allows you to selectively modify elements of a list based on their values; `map_at()` allows you to selectively modify elements based on their names.
+Dosyalar heterojen biçimlere sahipse onları başarıyla birleştirmeden önce daha fazla işlem yapmanız gerekebilir.
+Ne yazık ki bunu kendi başınıza çözmeniz gerekecek; ancak `map_if()` ve `map_at()` hakkında bilgi edinmek isteyebilirsiniz.
+`map_if()` bir listenin öğelerini değerlerine, `map_at()` ise adlarına göre seçerek değiştirmenizi sağlar.
 
-### Handling failures
+### Başarısızlıkları ele alma
 
-Sometimes the structure of your data might be sufficiently wild that you can't even read all the files with a single command.
-And then you'll encounter one of the downsides of `map()`: it succeeds or fails as a whole.
-`map()` will either successfully read all of the files in a directory or fail with an error, reading zero files.
-This is annoying: why does one failure prevent you from accessing all the other successes?
+Bazen verilerinizin yapısı o kadar değişken olabilir ki tüm dosyaları tek bir komutla okuyamazsınız.
+Bu durumda `map()` fonksiyonunun dezavantajlarından biriyle karşılaşırsınız: Ya bütünüyle başarılı olur ya da bütünüyle başarısız olur.
+`map()` bir dizindeki tüm dosyaları başarıyla okur ya da hata verip hiçbir dosyayı okumaz.
+Bu can sıkıcıdır: Tek bir başarısızlık neden diğer tüm başarılı sonuçlara erişmenizi engellesin?
 
-Luckily, purrr comes with a helper to tackle this problem: `possibly()`.
-`possibly()` is what's known as a function operator: it takes a function and returns a function with modified behavior.
-In particular, `possibly()` changes a function from erroring to returning a value that you specify:
+Neyse ki purrr bu sorunu ele alan bir yardımcı sunar: `possibly()`.
+`possibly()`, fonksiyon işleci olarak bilinen bir araçtır: Bir fonksiyon alır ve değiştirilmiş davranışa sahip bir fonksiyon döndürür.
+Özellikle `possibly()`, hata veren bir fonksiyonu belirttiğiniz değeri döndüren bir fonksiyona dönüştürür:
 
 ```{r}
 files <- paths |> 
@@ -782,35 +782,35 @@ files <- paths |>
 data <- files |> list_rbind()
 ```
 
-This works particularly well here because `list_rbind()`, like many tidyverse functions, automatically ignores `NULL`s.
+Birçok tidyverse fonksiyonu gibi `list_rbind()` de `NULL` değerlerini otomatik olarak yok saydığından bu yaklaşım burada özellikle iyi çalışır.
 
-Now you have all the data that can be read easily, and it's time to tackle the hard part of figuring out why some files failed to load and what to do about it.
-Start by getting the paths that failed:
+Artık kolayca okunabilen tüm verilere sahipsiniz; bazı dosyaların neden yüklenemediğini ve bunlar için ne yapılacağını belirleyen zor bölümü ele alma zamanı.
+Başarısız olan yolları alarak başlayın:
 
 ```{r}
 failed <- map_vec(files, is.null)
 paths[failed]
 ```
 
-Then call the import function again for each failure and figure out what went wrong.
+Ardından her başarısız dosya için içe aktarma fonksiyonunu yeniden çağırın ve neyin yanlış gittiğini belirleyin.
 
-## Saving multiple outputs
+## Birden çok çıktıyı kaydetme
 
-In the last section, you learned about `map()`, which is useful for reading multiple files into a single object.
-In this section, we'll now explore sort of the opposite problem: how can you take one or more R objects and save it to one or more files?
-We'll explore this challenge using three examples:
+Önceki kısımda birden çok dosyayı tek bir nesneye okumak için kullanışlı olan `map()` fonksiyonunu öğrendiniz.
+Bu kısımda bunun bir bakıma tersi olan problemi inceleyeceğiz: Bir ya da daha fazla R nesnesini alıp bir ya da daha fazla dosyaya nasıl kaydedebilirsiniz?
+Bu problemi üç örnekle inceleyeceğiz:
 
--   Saving multiple data frames into one database.
--   Saving multiple data frames into multiple `.csv` files.
--   Saving multiple plots to multiple `.png` files.
+-   Birden çok veri çerçevesini tek bir veritabanına kaydetme.
+-   Birden çok veri çerçevesini birden çok `.csv` dosyasına kaydetme.
+-   Birden çok grafiği birden çok `.png` dosyasına kaydetme.
 
-### Writing to a database {#sec-save-database}
+### Veritabanına yazma {#sec-save-database}
 
-Sometimes when working with many files at once, it's not possible to fit all your data into memory at once, and you can't do `map(files, read_csv)`.
-One approach to deal with this problem is to load your data into a database so you can access just the bits you need with dbplyr.
+Bazen aynı anda birçok dosyayla çalışırken tüm verilerinizi bir kerede belleğe sığdırmak mümkün olmaz ve `map(files, read_csv)` kullanamazsınız.
+Bu sorunu ele almanın bir yolu, dbplyr ile yalnızca ihtiyaç duyduğunuz bölümlere erişebilmek için verilerinizi bir veritabanına yüklemektir.
 
-If you're lucky, the database package you're using will provide a handy function that takes a vector of paths and loads them all into the database.
-This is the case with duckdb's `duckdb_read_csv()`:
+Şanslıysanız kullandığınız veritabanı paketi bir yollar vektörü alıp tümünü veritabanına yükleyen kullanışlı bir fonksiyon sağlar.
+duckdb'nin `duckdb_read_csv()` fonksiyonu buna örnektir:
 
 ```{r}
 #| eval: false
@@ -818,13 +818,13 @@ con <- DBI::dbConnect(duckdb::duckdb())
 duckdb::duckdb_read_csv(con, "gapminder", paths)
 ```
 
-This would work well here, but we don't have csv files, instead we have excel spreadsheets.
-So we're going to have to do it "by hand".
-Learning to do it by hand will also help you when you have a bunch of csvs and the database that you're working with doesn't have one function that will load them all in.
+Bu burada iyi çalışırdı; ancak CSV dosyalarımız değil, Excel hesap çizelgelerimiz var.
+Bu nedenle işlemi “elle” yapmamız gerekecek.
+Elle yapmayı öğrenmek, çok sayıda CSV dosyanız olduğunda ve çalıştığınız veritabanında tümünü yükleyen tek bir fonksiyon bulunmadığında da size yardımcı olacaktır.
 
-We need to start by creating a table that we will fill in with data.
-The easiest way to do this is by creating a template, a dummy data frame that contains all the columns we want, but only a sampling of the data.
-For the gapminder data, we can make that template by reading a single file and adding the year to it:
+İşe verilerle dolduracağımız bir tablo oluşturarak başlamamız gerekir.
+Bunu yapmanın en kolay yolu, istediğimiz tüm sütunları ancak verilerin yalnızca bir örneğini içeren sahte bir veri çerçevesi, yani şablon oluşturmaktır.
+gapminder verileri için tek bir dosyayı okuyup yılı ekleyerek bu şablonu oluşturabiliriz:
 
 ```{r}
 template <- readxl::read_excel(paths[[1]])
@@ -832,22 +832,22 @@ template$year <- 1952
 template
 ```
 
-Now we can connect to the database, and use `DBI::dbCreateTable()` to turn our template into a database table:
+Artık veritabanına bağlanıp şablonumuzu veritabanı tablosuna dönüştürmek için `DBI::dbCreateTable()` kullanabiliriz:
 
 ```{r}
 con <- DBI::dbConnect(duckdb::duckdb())
 DBI::dbCreateTable(con, "gapminder", template)
 ```
 
-`dbCreateTable()` doesn't use the data in `template`, just the variable names and types.
-So if we inspect the `gapminder` table now you'll see that it's empty but it has the variables we need with the types we expect:
+`dbCreateTable()` `template` içindeki verileri değil, yalnızca değişken adlarını ve türlerini kullanır.
+Dolayısıyla `gapminder` tablosunu şimdi incelerseniz boş olduğunu, ancak ihtiyaç duyduğumuz değişkenlere beklediğimiz türlerle sahip olduğunu görürsünüz:
 
 ```{r}
 con |> tbl("gapminder")
 ```
 
-Next, we need a function that takes a single file path, reads it into R, and adds the result to the `gapminder` table.
-We can do that by combining `read_excel()` with `DBI::dbAppendTable()`:
+Sırada tek bir dosya yolunu alan, dosyayı R'a okuyan ve sonucu `gapminder` tablosuna ekleyen bir fonksiyona ihtiyacımız var.
+Bunu `read_excel()` ile `DBI::dbAppendTable()` fonksiyonlarını birleştirerek yapabiliriz:
 
 ```{r}
 append_file <- function(path) {
@@ -858,22 +858,22 @@ append_file <- function(path) {
 }
 ```
 
-Now we need to call `append_file()` once for each element of `paths`.
-That's certainly possible with `map()`:
+Artık `paths` içindeki her öğe için `append_file()` fonksiyonunu bir kez çağırmamız gerekir.
+Bunu `map()` ile elbette yapabiliriz:
 
 ```{r}
 #| eval: false
 paths |> map(append_file)
 ```
 
-But we don't care about the output of `append_file()`, so instead of `map()` it's slightly nicer to use `walk()`.
-`walk()` does exactly the same thing as `map()` but throws the output away:
+Ancak `append_file()` çıktısıyla ilgilenmediğimiz için `map()` yerine `walk()` kullanmak biraz daha uygundur.
+`walk()`, `map()` ile tamamen aynı işi yapar ancak çıktıyı atar:
 
 ```{r}
 paths |> walk(append_file)
 ```
 
-Now we can see if we have all the data in our table:
+Artık tablomuzda tüm verilerin bulunup bulunmadığını görebiliriz:
 
 ```{r}
 con |> 
@@ -886,12 +886,12 @@ con |>
 DBI::dbDisconnect(con, shutdown = TRUE)
 ```
 
-### Writing csv files
+### CSV dosyaları yazma
 
-The same basic principle applies if we want to write multiple csv files, one for each group.
-Let's imagine that we want to take the `ggplot2::diamonds` data and save one csv file for each `clarity`.
-First we need to make those individual datasets.
-There are many ways you could do that, but there's one way we particularly like: `group_nest()`.
+Her grup için bir tane olmak üzere birden çok CSV dosyası yazmak istediğimizde de aynı temel ilke geçerlidir.
+`ggplot2::diamonds` verilerini alıp her `clarity` değeri için bir CSV dosyası kaydetmek istediğimizi düşünelim.
+Önce bu ayrı veri kümelerini oluşturmamız gerekir.
+Bunu yapmanın birçok yolu vardır; ancak özellikle sevdiğimiz yöntem `group_nest()` fonksiyonudur.
 
 ```{r}
 by_clarity <- diamonds |> 
@@ -900,14 +900,14 @@ by_clarity <- diamonds |>
 by_clarity
 ```
 
-This gives us a new tibble with eight rows and two columns.
-`clarity` is our grouping variable and `data` is a list-column containing one tibble for each unique value of `clarity`:
+Bu bize sekiz satırlı ve iki sütunlu yeni bir tibble verir.
+`clarity` gruplama değişkenimizdir; `data` ise `clarity` değişkeninin her benzersiz değeri için bir tibble içeren liste sütunudur:
 
 ```{r}
 by_clarity$data[[1]]
 ```
 
-While we're here, let's create a column that gives the name of output file, using `mutate()` and `str_glue()`:
+Buradayken `mutate()` ve `str_glue()` kullanarak çıktı dosyasının adını veren bir sütun oluşturalım:
 
 ```{r}
 by_clarity <- by_clarity |> 
@@ -916,7 +916,7 @@ by_clarity <- by_clarity |>
 by_clarity
 ```
 
-So if we were going to save these data frames by hand, we might write something like:
+Bu veri çerçevelerini elle kaydedecek olsaydık şuna benzer bir kod yazabilirdik:
 
 ```{r}
 #| eval: false
@@ -927,10 +927,10 @@ write_csv(by_clarity$data[[3]], by_clarity$path[[3]])
 write_csv(by_clarity$data[[8]], by_clarity$path[[8]])
 ```
 
-This is a little different to our previous uses of `map()` because there are two arguments that are changing, not just one.
-That means we need a new function: `map2()`, which varies both the first and second arguments.
-And because we again don't care about the output, we want `walk2()` rather than `map2()`.
-That gives us:
+Bu, önceki `map()` kullanımlarımızdan biraz farklıdır; çünkü yalnızca bir değil, değişen iki argüman vardır.
+Bu nedenle hem ilk hem ikinci argümanı değiştiren yeni bir fonksiyona, `map2()` fonksiyonuna ihtiyacımız vardır.
+Yine çıktıyla ilgilenmediğimiz için `map2()` yerine `walk2()` isteriz.
+Sonuç şöyledir:
 
 ```{r}
 walk2(by_clarity$data, by_clarity$path, write_csv)
@@ -941,16 +941,16 @@ walk2(by_clarity$data, by_clarity$path, write_csv)
 unlink(by_clarity$path)
 ```
 
-### Saving plots
+### Grafikleri kaydetme
 
-We can take the same basic approach to create many plots.
-Let's first make a function that draws the plot we want:
+Çok sayıda grafik oluşturmak için aynı temel yaklaşımı kullanabiliriz.
+Önce istediğimiz grafiği çizen bir fonksiyon oluşturalım:
 
 ```{r}
 #| fig-alt: |
-#|   Histogram of carats of diamonds from the by_clarity dataset, ranging from 
-#|   0 to 5 carats. The distribution is unimodal and right skewed with a peak 
-#|   around 1 carat.
+#|   by_clarity veri kümesindeki elmasların 0 ile 5 arasında değişen karat
+#|   değerlerinin histogramı. Dağılım tek modlu ve sağa çarpıktır; yaklaşık 1
+#|   karatta tepe yapar.
 
 carat_histogram <- function(df) {
   ggplot(df, aes(x = carat)) + geom_histogram(binwidth = 0.1)  
@@ -959,10 +959,10 @@ carat_histogram <- function(df) {
 carat_histogram(by_clarity$data[[1]])
 ```
 
-Now we can use `map()` to create a list of many plots[^iteration-7] and their eventual file paths:
+Artık çok sayıda grafikten[^iteration-7] ve bunların kaydedileceği dosya yollarından oluşan bir liste oluşturmak için `map()` kullanabiliriz:
 
-[^iteration-7]: You can print `by_clarity$plot` to get a crude animation --- you'll get one plot for each element of `plots`.
-    NOTE: this didn't happen for me.
+[^iteration-7]: Basit bir animasyon elde etmek için `by_clarity$plot` nesnesini yazdırabilirsiniz; `plots` içindeki her öğe için bir grafik elde edersiniz.
+    NOT: Bu bende gerçekleşmedi.
 
 ```{r}
 by_clarity <- by_clarity |> 
@@ -972,7 +972,7 @@ by_clarity <- by_clarity |>
   )
 ```
 
-Then use `walk2()` with `ggsave()` to save each plot:
+Ardından her grafiği kaydetmek için `ggsave()` ile `walk2()` kullanın:
 
 ```{r}
 walk2(
@@ -982,7 +982,7 @@ walk2(
 )
 ```
 
-This is shorthand for:
+Bu, aşağıdakinin kısa yazımıdır:
 
 ```{r}
 #| eval: false
@@ -1000,19 +1000,19 @@ unlink(by_clarity$path)
 
 ```{=html}
 <!-- 
-### Exercises
+### Alıştırmalar
 
-1.  Imagine you have a table of student data containing (amongst other variables) `school_name` and `student_id`. Sketch out what code you'd write if you want to save all the information for each student in file called `{student_id}.csv` in the `{school}` directory.
+1.  Diğer değişkenlerin yanı sıra `school_name` ve `student_id` içeren bir öğrenci verileri tablonuz olduğunu düşünün. Her öğrencinin tüm bilgilerini `{school}` dizinindeki `{student_id}.csv` adlı dosyaya kaydetmek için yazacağınız kodun taslağını çıkarın.
 -->
 ```
 
-## Summary
+## Özet
 
-In this chapter, you've seen how to use explicit iteration to solve three problems that come up frequently when doing data science: manipulating multiple columns, reading multiple files, and saving multiple outputs.
-But in general, iteration is a super power: if you know the right iteration technique, you can easily go from fixing one problem to fixing all the problems.
-Once you've mastered the techniques in this chapter, we highly recommend learning more by reading the [Functionals chapter](https://adv-r.hadley.nz/functionals.html) of *Advanced R* and consulting the [purrr website](https://purrr.tidyverse.org).
+Bu bölümde veri bilimi yaparken sık karşılaşılan üç problemi çözmek için açık iterasyonu nasıl kullanacağınızı gördünüz: birden çok sütunu işlemek, birden çok dosyayı okumak ve birden çok çıktıyı kaydetmek.
+Genel olarak iterasyon bir süper güçtür: Doğru iterasyon tekniğini biliyorsanız tek bir problemi çözmekten tüm problemleri çözmeye kolayca geçebilirsiniz.
+Bu bölümdeki tekniklerde ustalaştıktan sonra *Advanced R* kitabının [Functionals bölümünü](https://adv-r.hadley.nz/functionals.html) okuyarak ve [purrr web sitesine](https://purrr.tidyverse.org) başvurarak daha fazlasını öğrenmenizi önemle öneririz.
 
-If you know much about iteration in other languages, you might be surprised that we didn't discuss the `for` loop.
-That's because R's orientation towards data analysis changes how we iterate: in most cases you can rely on an existing idiom to do something to each column or each group.
-And when you can't, you can often use a functional programming tool like `map()` that does something to each element of a list.
-However, you will see `for` loops in wild-caught code, so you'll learn about them in the next chapter where we'll discuss some important base R tools.
+Diğer dillerdeki iterasyon hakkında çok şey biliyorsanız `for` döngüsünü ele almamamıza şaşırabilirsiniz.
+Bunun nedeni R'ın veri çözümleme yöneliminin iterasyon yapma biçimimizi değiştirmesidir: Çoğu durumda her sütun ya da grup üzerinde işlem yapmak için var olan bir kalıptan yararlanabilirsiniz.
+Bunu yapamadığınızda ise çoğu zaman listenin her öğesi üzerinde işlem yapan `map()` gibi bir fonksiyonel programlama aracını kullanabilirsiniz.
+Ancak doğal ortamında karşınıza çıkan kodlarda `for` döngülerini göreceksiniz; bu nedenle bazı önemli temel R araçlarını ele alacağımız sonraki bölümde bunları öğreneceksiniz.

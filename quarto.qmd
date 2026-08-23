@@ -5,31 +5,31 @@
 source("_common.R")
 ```
 
-## Introduction
+## Giriş
 
-Quarto provides a unified authoring framework for data science, combining your code, its results, and your prose.
-Quarto documents are fully reproducible and support dozens of output formats, like PDFs, Word files, presentations, and more.
+Quarto; kodunuzu, kodun sonuçlarını ve düz yazınızı birleştiren, veri bilimi için bütünleşik bir yazarlık çerçevesi sağlar.
+Quarto belgeleri bütünüyle yeniden üretilebilirdir ve PDF, Word dosyası ve sunum gibi onlarca çıktı biçimini destekler.
 
-Quarto files are designed to be used in three ways:
+Quarto dosyaları üç biçimde kullanılmak üzere tasarlanmıştır:
 
-1.  For communicating to decision-makers, who want to focus on the conclusions, not the code behind the analysis.
+1.  Çözümlemenin arkasındaki koda değil sonuçlara odaklanmak isteyen karar vericilerle iletişim kurmak için.
 
-2.  For collaborating with other data scientists (including future you!), who are interested in both your conclusions, and how you reached them (i.e. the code).
+2.  Hem sonuçlarınızla hem bu sonuçlara nasıl ulaştığınızla (yani kodla) ilgilenen diğer veri bilimcilerle (gelecekteki hâliniz dahil!) işbirliği yapmak için.
 
-3.  As an environment in which to *do* data science, as a modern-day lab notebook where you can capture not only what you did, but also what you were thinking.
+3.  Yalnızca ne yaptığınızı değil, ne düşündüğünüzü de kaydedebileceğiniz günümüzün laboratuvar defteri ve veri bilimi *yapma* ortamı olarak.
 
-Quarto is a command line interface tool, not an R package.
-This means that help is, by-and-large, not available through `?`.
-Instead, as you work through this chapter, and use Quarto in the future, you should refer to the [Quarto documentation](https://quarto.org).
+Quarto bir R paketi değil, komut satırı arayüzü aracıdır.
+Bu, yardımın çoğunlukla `?` aracılığıyla kullanılamadığı anlamına gelir.
+Bu bölümü çalışırken ve gelecekte Quarto kullanırken bunun yerine [Quarto belgelerine](https://quarto.org) başvurmalısınız.
 
-If you're an R Markdown user, you might be thinking "Quarto sounds a lot like R Markdown".
-You're not wrong!
-Quarto unifies the functionality of many packages from the R Markdown ecosystem (rmarkdown, bookdown, distill, xaringan, etc.) into a single consistent system as well as extends it with native support for multiple programming languages like Python and Julia in addition to R.
-In a way, Quarto reflects everything that was learned from expanding and supporting the R Markdown ecosystem over a decade.
+R Markdown kullanıcısıysanız “Quarto, R Markdown'e çok benziyor” diye düşünebilirsiniz.
+Haksız değilsiniz!
+Quarto, R Markdown ekosistemindeki birçok paketin (rmarkdown, bookdown, distill, xaringan vb.) işlevlerini tek ve tutarlı bir sistemde birleştirir; ayrıca R'ın yanı sıra Python ve Julia gibi birden çok programlama diline yerleşik destek sunar.
+Bir bakıma Quarto, R Markdown ekosistemini on yıl boyunca genişletip desteklerken öğrenilen her şeyi yansıtır.
 
-### Prerequisites
+### Ön koşullar
 
-You need the Quarto command line interface (Quarto CLI), but you don't need to explicitly install it or load it, as RStudio automatically does both when needed.
+Quarto komut satırı arayüzüne (Quarto CLI) ihtiyacınız vardır; ancak RStudio gerektiğinde kurma ve yükleme işlemlerini otomatik olarak yaptığından onu açıkça kurmanız ya da yüklemeniz gerekmez.
 
 ```{r}
 #| label: setup
@@ -39,172 +39,163 @@ inline <- function(x = "") paste0("`` `r ", x, "` ``")
 library(tidyverse)
 ```
 
-## Quarto basics
+## Quarto temelleri
 
-This is a Quarto file -- a plain text file that has the extension `.qmd`:
+Bu, `.qmd` uzantısına sahip bir düz metin dosyası olan Quarto dosyasıdır:
 
 ```{r echo = FALSE, comment = ""}
 cat(readr::read_file("quarto/diamond-sizes.qmd"))
 ```
 
-It contains three important types of content:
+Üç önemli içerik türü barındırır:
 
-1.  An (optional) **YAML header** surrounded by `---`s.
-2.  **Chunks** of R code surrounded by ```` ``` ````.
-3.  Text mixed with simple text formatting like `# heading` and `_italics_`.
+1.  `---` işaretleriyle çevrili, isteğe bağlı **YAML üst bilgisi**.
+2.  ```` ``` ```` işaretleriyle çevrili R kodu **blokları**.
+3.  `# başlık` ve `_italik_` gibi basit metin biçimlendirmeleriyle karışık metin.
 
-@fig-diamond-sizes-notebook shows a `.qmd` document in RStudio with notebook interface where code and output are interleaved.
-You can run each code chunk by clicking the Run icon (it looks like a play button at the top of the chunk), or by pressing Cmd/Ctrl + Shift + Enter.
-RStudio executes the code and displays the results inline with the code.
+@fig-diamond-sizes-notebook, RStudio'da kodla çıktının iç içe gösterildiği defter arayüzündeki bir `.qmd` belgesini gösterir.
+Her kod bloğunu Run simgesine (bloğun üstünde oynat düğmesine benzer) tıklayarak ya da Cmd/Ctrl + Shift + Enter tuşlarına basarak çalıştırabilirsiniz.
+RStudio kodu çalıştırır ve sonuçları kodla birlikte satır içinde gösterir.
 
 ```{r}
 #| label: fig-diamond-sizes-notebook
 #| echo: false
 #| out-width: "90%"
 #| fig-cap: |
-#|   A Quarto document in RStudio. Code and output interleaved in 
-#|   the document, with the plot output appearing right underneath the code.
+#|   RStudio'da bir Quarto belgesi. Kod ve çıktı belge içinde iç içedir;
+#|   grafik çıktısı kodun hemen altında görünür.
 #| fig-alt: |
-#|   RStudio window with a Quarto document titled "diamond-sizes.qmd" 
-#|   on the left and a blank Viewer window on the right. The Quarto 
-#|   document has a code chunk that creates a frequency plot of diamonds 
-#|   that weigh less than 2.5 carats. The plot shows that the frequency 
-#|   decreases as the weight increases.
+#|   Solda "diamond-sizes.qmd" başlıklı Quarto belgesi, sağda boş Viewer
+#|   penceresi bulunan RStudio penceresi. Quarto belgesindeki kod bloğu 2,5
+#|   karattan hafif elmasların sıklık grafiğini oluşturur. Grafik, ağırlık
+#|   arttıkça sıklığın azaldığını gösterir.
 knitr::include_graphics("quarto/diamond-sizes-notebook.png")
 ```
 
-If you don't like seeing your plots and output in your document and would rather make use of RStudio's Console and Plot panes, you can click on the gear icon next to "Render" and switch to "Chunk Output in Console", as shown in @fig-diamond-sizes-console-output.
+Grafiklerinizi ve çıktıyı belgenin içinde görmek istemiyor, RStudio'nun Console ve Plot bölmelerini kullanmayı tercih ediyorsanız @fig-diamond-sizes-console-output içinde gösterildiği gibi Render düğmesinin yanındaki dişli simgesine tıklayıp Chunk Output in Console seçeneğine geçebilirsiniz.
 
 ```{r}
 #| label: fig-diamond-sizes-console-output
 #| echo: false
 #| out-width: "90%"
 #| fig-cap: |
-#|   A Quarto document in RStudio with the plot output in the Plots pane.
+#|   Grafik çıktısı Plots bölmesinde bulunan bir RStudio Quarto belgesi.
 #| fig-alt: |
-#|   RStudio window with a Quarto document titled "diamond-sizes.qmd" 
-#|   on the left and the Plot pane on the bottom right. The Quarto 
-#|   document has a code chunk that creates a frequency plot of diamonds 
-#|   that weigh less than 2.5 carats. The plot is displayed in the Plot 
-#|   pane and shows that the frequency decreases as the weight increases. 
-#|   The RStudio option to show Chunk Output in Console is also 
-#|   highlighted.
+#|   Solda "diamond-sizes.qmd" başlıklı Quarto belgesi, sağ altta Plot bölmesi
+#|   bulunan RStudio penceresi. Quarto belgesindeki kod bloğu 2,5 karattan hafif
+#|   elmasların sıklık grafiğini oluşturur. Plot bölmesindeki grafik ağırlık
+#|   arttıkça sıklığın azaldığını gösterir. RStudio'nun Chunk Output in Console
+#|   seçeneği de vurgulanmıştır.
 knitr::include_graphics("quarto/diamond-sizes-console-output.png")
 ```
 
-To produce a complete report containing all text, code, and results, click "Render" or press Cmd/Ctrl + Shift + K.
-You can also do this programmatically with `quarto::quarto_render("diamond-sizes.qmd")`.
-This will display the report in the viewer pane as shown in @fig-diamond-sizes-report and create an HTML file.
+Tüm metni, kodu ve sonuçları içeren eksiksiz bir rapor üretmek için Render düğmesine tıklayın ya da Cmd/Ctrl + Shift + K tuşlarına basın.
+Bunu `quarto::quarto_render("diamond-sizes.qmd")` ile programlı olarak da yapabilirsiniz.
+Bu işlem raporu @fig-diamond-sizes-report içinde gösterildiği gibi Viewer bölmesinde görüntüler ve bir HTML dosyası oluşturur.
 
 ```{r}
 #| label: fig-diamond-sizes-report
 #| echo: false
 #| out-width: "90%"
 #| fig-cap: |
-#|   A Quarto document in RStudio with the rendered document in the 
-#|   Viewer pane.
+#|   İşlenmiş belge Viewer bölmesinde bulunan bir RStudio Quarto belgesi.
 #| fig-alt: |
-#|   RStudio window with a Quarto document titled "diamond-sizes.qmd" 
-#|   on the left and the Plot pane on the bottom right. The rendered 
-#|   document does not show any of the code, but the code is visible 
-#|   in the source document.
+#|   Solda "diamond-sizes.qmd" başlıklı Quarto belgesi, sağ altta Plot bölmesi
+#|   bulunan RStudio penceresi. İşlenmiş belge kodu göstermez; ancak kod kaynak
+#|   belgede görünür.
 knitr::include_graphics("quarto/diamond-sizes-report.png")
 ```
 
-When you render the document, Quarto sends the `.qmd` file to **knitr**, <https://yihui.org/knitr/>, which executes all of the code chunks and creates a new markdown (`.md`) document which includes the code and its output.
-The markdown file generated by knitr is then processed by **pandoc**, [https://pandoc.org](https://pandoc.org/){.uri}, which is responsible for creating the finished file.
-This process is shown in @fig-quarto-flow.
-The advantage of this two step workflow is that you can create a very wide range of output formats, as you'll learn about in @sec-quarto-formats.
+Belgeyi işlediğinizde Quarto `.qmd` dosyasını tüm kod bloklarını çalıştırıp kodla çıktısını içeren yeni bir Markdown (`.md`) belgesi oluşturan **knitr**'a, <https://yihui.org/knitr/>, gönderir.
+knitr'ın oluşturduğu Markdown dosyası daha sonra tamamlanmış dosyayı üretmekten sorumlu **pandoc** tarafından işlenir: [https://pandoc.org](https://pandoc.org/){.uri}.
+Bu süreç @fig-quarto-flow içinde gösterilmiştir.
+Bu iki adımlı iş akışının avantajı, @sec-quarto-formats bölümünde öğreneceğiniz gibi çok çeşitli çıktı biçimleri oluşturabilmenizdir.
 
 ```{r}
 #| label: fig-quarto-flow
 #| echo: false
 #| out-width: "75%"
 #| fig-alt: |
-#|   Workflow diagram starting with a qmd file, then knitr, then md, 
-#|   then pandoc, then PDF, MS Word, or HTML.
+#|   qmd dosyasıyla başlayıp knitr, md ve pandoc üzerinden PDF, MS Word ya da
+#|   HTML çıktısına ilerleyen iş akışı diyagramı.
 #| fig-cap: |
-#|   Diagram of Quarto workflow from qmd, to knitr, to md, to pandoc, 
-#|   to output in PDF, MS Word, or HTML formats.
+#|   qmd'den knitr'a, md'ye, pandoc'a ve PDF, MS Word ya da HTML biçimindeki
+#|   çıktıya uzanan Quarto iş akışı diyagramı.
 knitr::include_graphics("images/quarto-flow.png")
 ```
 
-To get started with your own `.qmd` file, select *File \> New File \> Quarto Document...* in the menu bar.
-RStudio will launch a wizard that you can use to pre-populate your file with useful content that reminds you how the key features of Quarto work.
+Kendi `.qmd` dosyanızı oluşturmaya başlamak için menü çubuğunda *File \> New File \> Quarto Document...* seçeneğini belirleyin.
+RStudio, Quarto'nun temel özelliklerinin nasıl çalıştığını hatırlatan kullanışlı içerikleri dosyanıza önceden ekleyebileceğiniz bir sihirbaz açar.
 
-The following sections dive into the three components of a Quarto document in more details: the markdown text, the code chunks, and the YAML header.
+Aşağıdaki kısımlar Quarto belgesinin üç bileşenini daha ayrıntılı ele alır: Markdown metni, kod blokları ve YAML üst bilgisi.
 
-### Exercises
+### Alıştırmalar
 
-1.  Create a new Quarto document using *File \> New File \> Quarto Document*.
-    Read the instructions.
-    Practice running the chunks individually.
-    Then render the document by clicking the appropriate button and then by using the appropriate keyboard shortcut.
-    Verify that you can modify the code, re-run it, and see modified output.
+1.  *File \> New File \> Quarto Document* seçeneğini kullanarak yeni bir Quarto belgesi oluşturun.
+    Yönergeleri okuyun.
+    Blokları tek tek çalıştırma alıştırması yapın.
+    Ardından önce uygun düğmeye tıklayarak, sonra uygun klavye kısayolunu kullanarak belgeyi işleyin.
+    Kodu değiştirip yeniden çalıştırabildiğinizi ve değişen çıktıyı görebildiğinizi doğrulayın.
 
-2.  Create one new Quarto document for each of the three built-in formats: HTML, PDF and Word.
-    Render each of the three documents.
-    How do the outputs differ?
-    How do the inputs differ?
-    (You may need to install LaTeX in order to build the PDF output --- RStudio will prompt you if this is necessary.)
+2.  Üç yerleşik biçimin her biri için yeni bir Quarto belgesi oluşturun: HTML, PDF ve Word.
+    Üç belgeyi de işleyin.
+    Çıktılar nasıl farklılaşıyor?
+    Girdiler nasıl farklılaşıyor?
+    (PDF çıktısını oluşturmak için LaTeX kurmanız gerekebilir; gerekliyse RStudio sizi yönlendirecektir.)
 
-## Visual editor
+## Görsel düzenleyici
 
-The Visual editor in RStudio provides a [WYSIWYM](https://en.wikipedia.org/wiki/WYSIWYM) interface for authoring Quarto documents.
-Under the hood, prose in Quarto documents (`.qmd` files) is written in Markdown, a lightweight set of conventions for formatting plain text files.
-In fact, Quarto uses Pandoc markdown (a slightly extended version of Markdown that Quarto understands), including tables, citations, cross-references, footnotes, divs/spans, definition lists, attributes, raw HTML/TeX, and more as well as support for executing code cells and viewing their output inline.
-While Markdown is designed to be easy to read and write, as you will see in @sec-source-editor, it still requires learning new syntax.
-Therefore, if you're new to computational documents like `.qmd` files but have experience using tools like Google Docs or MS Word, the easiest way to get started with Quarto in RStudio is the visual editor.
+RStudio'daki görsel düzenleyici, Quarto belgeleri yazmak için [WYSIWYM](https://en.wikipedia.org/wiki/WYSIWYM) arayüzü sağlar.
+Perde arkasında Quarto belgelerindeki (`.qmd` dosyalarındaki) düz yazı, düz metin dosyalarını biçimlendirmeye yönelik hafif bir kurallar kümesi olan Markdown ile yazılır.
+Quarto; tabloları, alıntıları, çapraz başvuruları, dipnotları, div/span öğelerini, tanım listelerini, öznitelikleri, ham HTML/TeX'i ve daha fazlasını içeren Pandoc Markdown'u (Markdown'un Quarto'nun anladığı biraz genişletilmiş sürümünü) kullanır; ayrıca kod hücrelerini çalıştırmayı ve çıktılarını satır içinde görüntülemeyi destekler.
+Markdown kolay okunup yazılmak üzere tasarlanmış olsa da @sec-source-editor bölümünde göreceğiniz gibi yeni bir sözdizimi öğrenmeyi gerektirir.
+Bu nedenle `.qmd` dosyaları gibi hesaplamalı belgelerde yeniyseniz ancak Google Docs veya MS Word gibi araçları kullanma deneyiminiz varsa RStudio'da Quarto'ya başlamanın en kolay yolu görsel düzenleyicidir.
 
-In the visual editor you can either use the buttons on the menu bar to insert images, tables, cross-references, etc. or you can use the catch-all <kbd>⌘</kbd> + <kbd>/</kbd> or <kbd>Ctrl</kbd> + <kbd>/</kbd> shortcut to insert just about anything.
-If you are at the beginning of a line (as shown in @fig-visual-editor), you can also enter just <kbd>/</kbd> to invoke the shortcut.
+Görsel düzenleyicide görsel, tablo, çapraz başvuru vb. eklemek için menü çubuğundaki düğmeleri ya da hemen her şeyi ekleyen <kbd>⌘</kbd> + <kbd>/</kbd> veya <kbd>Ctrl</kbd> + <kbd>/</kbd> kısayolunu kullanabilirsiniz.
+Bir satırın başındaysanız (@fig-visual-editor içinde gösterildiği gibi) kısayolu çağırmak için yalnızca <kbd>/</kbd> da yazabilirsiniz.
 
 ```{r}
 #| label: fig-visual-editor
 #| echo: false
 #| out-width: "75%"
 #| fig-cap: |
-#|   Quarto visual editor.
+#|   Quarto görsel düzenleyicisi.
 #| fig-alt: |
-#|   A Quarto document displaying various features of the 
-#|   visual editor such as text formatting (italic, bold, 
-#|   underline, small caps, code, superscript, and subscript),
-#|   first through third level headings, bulleted and numbered
-#|   lists, links, linked phrases, and images (along with a 
-#|   pop-up window for customizing image size, adding a 
-#|   caption and alt text, etc.), tables with a header row, 
-#|   and the insert anything tool with options to insert an 
-#|   R code chunk, a Python code chunk, a div, a bullet list, 
-#|   a numbered list, or a first level heading (the top few 
-#|   choices in the tool).
+#|   İtalik, kalın, altı çizili, küçük büyük harf, kod, üst simge ve alt simge
+#|   gibi metin biçimlendirmelerini; birinci ile üçüncü düzey başlıkları; madde
+#|   işaretli ve numaralı listeleri; bağlantıları, bağlantılı ifadeleri ve
+#|   görselleri; başlık satırlı tabloları ve her şeyi ekleme aracını gösteren
+#|   Quarto belgesi. Görsel boyutunu, açıklamasını ve alternatif metnini
+#|   ayarlayan pencere ile R/Python kod bloğu, div, liste veya birinci düzey
+#|   başlık ekleme seçenekleri de görünür.
 knitr::include_graphics("quarto/quarto-visual-editor.png")
 ```
 
-Inserting images and customizing how they are displayed is also facilitated with the visual editor.
-You can either paste an image from your clipboard directly into the visual editor (and RStudio will place a copy of that image in the project directory and link to it) or you can use the visual editor's Insert \> Figure / Image menu to browse to the image you want to insert or paste its URL.
-In addition, using the same menu you can resize the image as well as add a caption, alternative text, and a link.
+Görsel eklemek ve nasıl görüntüleneceğini özelleştirmek de görsel düzenleyiciyle kolaylaşır.
+Panodaki bir görseli doğrudan görsel düzenleyiciye yapıştırabilir (RStudio görselin bir kopyasını proje dizinine yerleştirip ona bağlantı verir) ya da eklemek istediğiniz görsele göz atmak veya URL'sini yapıştırmak için Insert \> Figure / Image menüsünü kullanabilirsiniz.
+Aynı menüyle görseli yeniden boyutlandırabilir; açıklama, alternatif metin ve bağlantı ekleyebilirsiniz.
 
-The visual editor has many more features that we haven't enumerated here that you might find useful as you gain experience authoring with it.
+Görsel düzenleyici, onunla yazma deneyimi kazandıkça yararlı bulabileceğiniz ve burada sıralamadığımız daha birçok özelliğe sahiptir.
 
-Most importantly, while the visual editor displays your content with formatting, under the hood, it saves your content in plain Markdown and you can switch back and forth between the visual and source editors to view and edit your content using either tool.
+En önemlisi, görsel düzenleyici içeriğinizi biçimlendirilmiş olarak gösterse de perde arkasında düz Markdown biçiminde kaydeder. İçeriğinizi her iki araçla görüntüleyip düzenlemek için görsel ve kaynak düzenleyiciler arasında geçiş yapabilirsiniz.
 
-### Exercises
+### Alıştırmalar
 
-1.  Re-create the document in @fig-visual-editor using the visual editor.
-2.  Using the visual editor, insert a code chunk using the Insert menu and then the insert anything tool.
-3.  Using the visual editor, figure out how to:
-    a.  Add a footnote.
-    b.  Add a horizontal rule.
-    c.  Add a block quote.
-4.  In the visual editor, go to Insert \> Citation and insert a citation to the paper titled [Welcome to the Tidyverse](https://joss.theoj.org/papers/10.21105/joss.01686) using its DOI (digital object identifier), which is [10.21105/joss.01686](https://doi.org/10.21105/joss.01686). Render the document and observe how the reference shows up in the document. What change do you observe in the YAML of your document?
+1.  @fig-visual-editor içindeki belgeyi görsel düzenleyiciyle yeniden oluşturun.
+2.  Görsel düzenleyicide önce Insert menüsünü, ardından her şeyi ekleme aracını kullanarak bir kod bloğu ekleyin.
+3.  Görsel düzenleyiciyi kullanarak aşağıdakileri nasıl yapacağınızı bulun:
+    a.  Dipnot ekleme.
+    b.  Yatay çizgi ekleme.
+    c.  Blok alıntı ekleme.
+4.  Görsel düzenleyicide Insert \> Citation seçeneğine gidin ve [Welcome to the Tidyverse](https://joss.theoj.org/papers/10.21105/joss.01686) başlıklı makaleye [10.21105/joss.01686](https://doi.org/10.21105/joss.01686) DOI'sini (dijital nesne tanımlayıcısını) kullanarak alıntı ekleyin. Belgeyi işleyin ve kaynağın belgede nasıl göründüğünü inceleyin. Belgenizin YAML bölümünde nasıl bir değişiklik görüyorsunuz?
 
-## Source editor {#sec-source-editor}
+## Kaynak düzenleyici {#sec-source-editor}
 
-You can also edit Quarto documents using the Source editor in RStudio, without the assistance of the Visual editor.
-While the Visual editor will feel familiar to those with experience writing in tools like Google docs, the Source editor will feel familiar to those with experience writing R scripts or R Markdown documents.
-The Source editor can also be useful for debugging any Quarto syntax errors since it's often easier to catch these in plain text.
+Quarto belgelerini RStudio'daki kaynak düzenleyicide, görsel düzenleyicinin yardımı olmadan da düzenleyebilirsiniz.
+Görsel düzenleyici Google Docs gibi araçlarda yazma deneyimi olanlara, kaynak düzenleyici ise R scriptleri veya R Markdown belgeleri yazanlara tanıdık gelecektir.
+Quarto sözdizimi hatalarını düz metinde yakalamak çoğu zaman daha kolay olduğundan kaynak düzenleyici bu hataları ayıklamak için de kullanışlıdır.
 
-The guide below shows how to use Pandoc's Markdown for authoring Quarto documents in the source editor.
+Aşağıdaki kılavuz, kaynak düzenleyicide Quarto belgeleri yazmak için Pandoc Markdown'un nasıl kullanılacağını gösterir.
 
 ```{r}
 #| echo: false
@@ -212,54 +203,54 @@ The guide below shows how to use Pandoc's Markdown for authoring Quarto document
 cat(readr::read_file("quarto/markdown.qmd"))
 ```
 
-The best way to learn these is simply to try them out.
-It will take a few days, but soon they will become second nature, and you won't need to think about them.
-If you forget, you can get to a handy reference sheet with *Help \> Markdown Quick Reference*.
+Bunları öğrenmenin en iyi yolu denemektir.
+Birkaç gün sürecektir; ancak kısa süre sonra doğal hâle gelecek ve üzerlerinde düşünmeniz gerekmeyecektir.
+Unutursanız *Help \> Markdown Quick Reference* ile kullanışlı bir başvuru sayfasına ulaşabilirsiniz.
 
-### Exercises
+### Alıştırmalar
 
-1.  Practice what you've learned by creating a brief CV.
-    The title should be your name, and you should include headings for (at least) education or employment.
-    Each of the sections should include a bulleted list of jobs/degrees.
-    Highlight the year in bold.
+1.  Kısa bir özgeçmiş oluşturarak öğrendiklerinizi uygulayın.
+    Başlık adınız olmalı ve en azından eğitim ya da iş deneyimi başlıklarını içermelidir.
+    Her kısım işlerin/derecelerin madde işaretli listesini içermelidir.
+    Yılı kalın yazıyla vurgulayın.
 
-2.  Using the source editor and the Markdown quick reference, figure out how to:
+2.  Kaynak düzenleyiciyi ve Markdown hızlı başvurusunu kullanarak aşağıdakileri nasıl yapacağınızı bulun:
 
-    a.  Add a footnote.
-    b.  Add a horizontal rule.
-    c.  Add a block quote.
+    a.  Dipnot ekleme.
+    b.  Yatay çizgi ekleme.
+    c.  Blok alıntı ekleme.
 
-3.  Copy and paste the contents of `diamond-sizes.qmd` from <https://github.com/hadley/r4ds/tree/main/quarto> into a local R Quarto document.
-    Check that you can run it, then add text after the frequency polygon that describes its most striking features.
+3.  <https://github.com/hadley/r4ds/tree/main/quarto> adresindeki `diamond-sizes.qmd` içeriğini kopyalayıp yerel bir R Quarto belgesine yapıştırın.
+    Çalıştırabildiğinizi denetleyin, ardından sıklık çokgeninin en çarpıcı özelliklerini açıklayan bir metin ekleyin.
 
-4.  Create a document in a Google doc or MS Word (or locate a document you have created previously) with some content in it such as headings, hyperlinks, formatted text, etc.
-    Copy the contents of this document and paste it into a Quarto document in the visual editor.
-    Then, switch over to the source editor and inspect the source code.
+4.  Google Docs veya MS Word'de başlıklar, köprüler ve biçimlendirilmiş metin gibi içeriklere sahip bir belge oluşturun (ya da daha önce oluşturduğunuz bir belgeyi bulun).
+    Belgenin içeriğini kopyalayıp görsel düzenleyicideki bir Quarto belgesine yapıştırın.
+    Ardından kaynak düzenleyiciye geçip kaynak kodunu inceleyin.
 
-## Code chunks
+## Kod blokları
 
-To run code inside a Quarto document, you need to insert a chunk.
-There are three ways to do so:
+Bir Quarto belgesinde kod çalıştırmak için kod bloğu eklemeniz gerekir.
+Bunu yapmanın üç yolu vardır:
 
-1.  The keyboard shortcut Cmd + Option + I / Ctrl + Alt + I.
+1.  Cmd + Option + I / Ctrl + Alt + I klavye kısayolu.
 
-2.  The "Insert" button icon in the editor toolbar.
+2.  Düzenleyici araç çubuğundaki Insert düğmesi simgesi.
 
-3.  By manually typing the chunk delimiters ```` ```{r} ```` and ```` ``` ````.
+3.  ```` ```{r} ```` ve ```` ``` ```` blok sınırlayıcılarını elle yazmak.
 
-We'd recommend you learn the keyboard shortcut.
-It will save you a lot of time in the long run!
+Klavye kısayolunu öğrenmenizi öneririz.
+Uzun vadede size çok zaman kazandıracaktır!
 
-You can continue to run the code using the keyboard shortcut that by now (we hope!) you know and love: Cmd/Ctrl + Enter.
-However, chunks get a new keyboard shortcut: Cmd/Ctrl + Shift + Enter, which runs all the code in the chunk.
-Think of a chunk like a function.
-A chunk should be relatively self-contained, and focused around a single task.
+Kodu artık bildiğinizi ve sevdiğinizi umduğumuz Cmd/Ctrl + Enter kısayoluyla çalıştırmayı sürdürebilirsiniz.
+Ancak blokların yeni bir kısayolu vardır: Bloktaki tüm kodu çalıştıran Cmd/Ctrl + Shift + Enter.
+Bir bloğu fonksiyon gibi düşünün.
+Blok görece kendi kendine yeterli olmalı ve tek bir göreve odaklanmalıdır.
 
-The following sections describe the chunk header which consists of ```` ```{r} ````, followed by an optional chunk label and various other chunk options, each on their own line, marked by `#|`.
+Aşağıdaki kısımlar ```` ```{r} ```` ifadesinden, ardından isteğe bağlı blok etiketinden ve her biri kendi satırında `#|` ile işaretlenen çeşitli blok seçeneklerinden oluşan blok üst bilgisini açıklar.
 
-### Chunk label
+### Blok etiketi
 
-Chunks can be given an optional label, e.g.
+Bloklara isteğe bağlı bir etiket verilebilir; örneğin:
 
 ```{r}
 #| echo: fenced
@@ -267,65 +258,64 @@ Chunks can be given an optional label, e.g.
 1 + 1
 ```
 
-This has three advantages:
+Bunun üç avantajı vardır:
 
-1.  You can more easily navigate to specific chunks using the drop-down code navigator in the bottom-left of the script editor:
+1.  Script düzenleyicinin sol altındaki açılır kod gezginini kullanarak belirli bloklara daha kolay gidebilirsiniz:
 
     ```{r}
     #| echo: false
     #| out-width: "30%"
     #| fig-alt: |
-    #|   Snippet of RStudio IDE showing only the drop-down code navigator 
-    #|   which shows three chunks. Chunk 1 is setup. Chunk 2 is cars and 
-    #|   it is in a section called Quarto. Chunk 3 is pressure and it is in 
-    #|   a section called Including plots.
+    #|   RStudio IDE'nin yalnızca üç blok gösteren açılır kod gezginini içeren
+    #|   kesiti. 1. blok setup'tır. 2. blok cars'tır ve Quarto adlı kısımdadır.
+    #|   3. blok pressure'dır ve Including plots adlı kısımdadır.
     knitr::include_graphics("screenshots/quarto-chunk-nav.png")
     ```
 
-2.  Graphics produced by the chunks will have useful names that make them easier to use elsewhere.
-    More on that in @sec-figures.
+2.  Blokların ürettiği grafikler, başka yerlerde kullanılmalarını kolaylaştıran yararlı adlara sahip olur.
+    Bu konu @sec-figures bölümünde ayrıntılı ele alınacaktır.
 
-3.  You can set up networks of cached chunks to avoid re-performing expensive computations on every run.
-    More on that in @sec-caching.
+3.  Maliyetli hesaplamaları her çalıştırmada yeniden yapmamak için önbelleğe alınmış blok ağları kurabilirsiniz.
+    Bu konu @sec-caching bölümünde ayrıntılı ele alınacaktır.
 
-Your chunk labels should be short but evocative and should not contain spaces.
-We recommend using dashes (`-`) to separate words (instead of underscores, `_`) and avoiding other special characters in chunk labels.
+Blok etiketleriniz kısa ancak açıklayıcı olmalı ve boşluk içermemelidir.
+Sözcükleri ayırmak için alt çizgi (`_`) yerine kısa çizgi (`-`) kullanmanızı ve blok etiketlerinde diğer özel karakterlerden kaçınmanızı öneririz.
 
-You are generally free to label your chunk however you like, but there is one chunk name that imbues special behavior: `setup`.
-When you're in a notebook mode, the chunk named setup will be run automatically once, before any other code is run.
+Genel olarak bloğunuzu istediğiniz gibi etiketleyebilirsiniz; ancak özel davranış kazandıran bir blok adı vardır: `setup`.
+Defter kipindeyken setup adlı blok, diğer kodlardan önce bir kez otomatik olarak çalıştırılır.
 
-Additionally, chunk labels cannot be duplicated.
-Each chunk label must be unique.
+Ayrıca blok etiketleri yinelenemez.
+Her blok etiketi benzersiz olmalıdır.
 
-### Chunk options
+### Blok seçenekleri
 
-Chunk output can be customized with **options**, fields supplied to chunk header.
-Knitr provides almost 60 options that you can use to customize your code chunks.
-Here we'll cover the most important chunk options that you'll use frequently.
-You can see the full list at [https://yihui.org/knitr/options](https://yihui.org/knitr/options/){.uri}.
+Blok çıktısı, blok üst bilgisine sağlanan alanlar olan **seçeneklerle** özelleştirilebilir.
+Knitr, kod bloklarınızı özelleştirmek için kullanabileceğiniz yaklaşık 60 seçenek sağlar.
+Burada sık kullanacağınız en önemli blok seçeneklerini ele alacağız.
+Tam listeyi [https://yihui.org/knitr/options](https://yihui.org/knitr/options/){.uri} adresinde görebilirsiniz.
 
-The most important set of options controls if your code block is executed and what results are inserted in the finished report:
+En önemli seçenek kümesi, kod bloğunuzun çalıştırılıp çalıştırılmayacağını ve tamamlanan rapora hangi sonuçların ekleneceğini denetler:
 
--   `eval: false` prevents code from being evaluated.
-    (And obviously if the code is not run, no results will be generated).
-    This is useful for displaying example code, or for disabling a large block of code without commenting each line.
+-   `eval: false` kodun değerlendirilmesini önler.
+    (Kod çalıştırılmazsa elbette hiçbir sonuç üretilmez.)
+    Örnek kodu göstermek veya her satırı yoruma almadan büyük bir kod bloğunu devre dışı bırakmak için kullanışlıdır.
 
--   `include: false` runs the code, but doesn't show the code or results in the final document.
-    Use this for setup code that you don't want cluttering your report.
+-   `include: false` kodu çalıştırır, ancak son belgede kodu ya da sonuçları göstermez.
+    Raporunuzu kalabalıklaştırmasını istemediğiniz kurulum kodu için kullanın.
 
--   `echo: false` prevents code, but not the results, from appearing in the finished file.
-    Use this when writing reports aimed at people who don't want to see the underlying R code.
+-   `echo: false`, sonuçları değil kodu tamamlanan dosyadan gizler.
+    Temelindeki R kodunu görmek istemeyen kişilere yönelik raporlar yazarken kullanın.
 
--   `message: false` or `warning: false` prevents messages or warnings from appearing in the finished file.
+-   `message: false` veya `warning: false`, iletilerin ya da uyarıların tamamlanan dosyada görünmesini önler.
 
--   `results: hide` hides printed output; `fig-show: hide` hides plots.
+-   `results: hide` yazdırılan çıktıyı, `fig-show: hide` ise grafikleri gizler.
 
--   `error: true` causes the render to continue even if code returns an error.
-    This is rarely something you'll want to include in the final version of your report, but can be very useful if you need to debug exactly what is going on inside your `.qmd`.
-    It's also useful if you're teaching R and want to deliberately include an error.
-    The default, `error: false` causes rendering to fail if there is a single error in the document.
+-   `error: true`, kod hata döndürse bile işleme sürecinin sürmesini sağlar.
+    Raporunuzun son sürümünde bunu nadiren istersiniz; ancak `.qmd` dosyanızın içinde tam olarak neler olduğunu hata ayıklayarak belirlemeniz gerekiyorsa çok kullanışlıdır.
+    R öğretiyor ve kasıtlı olarak hata eklemek istiyorsanız da yararlıdır.
+    Varsayılan `error: false`, belgede tek bir hata olduğunda işleme sürecinin başarısız olmasına neden olur.
 
-Each of these chunk options get added to the header of the chunk, following `#|`, e.g., in the following chunk the result is not printed since `eval` is set to false.
+Bu blok seçeneklerinin her biri blok üst bilgisine `#|` sonrasında eklenir. Örneğin aşağıdaki blokta `eval` false olarak ayarlandığından sonuç yazdırılmaz.
 
 ```{r}
 #| echo: fenced
@@ -334,9 +324,9 @@ Each of these chunk options get added to the header of the chunk, following `#|`
 2 * 2
 ```
 
-The following table summarizes which types of output each option suppresses:
+Aşağıdaki tablo her seçeneğin hangi çıktı türlerini gizlediğini özetler:
 
-| Option           | Run code | Show code | Output | Plots | Messages | Warnings |
+| Seçenek          | Kodu çalıştır | Kodu göster | Çıktı | Grafikler | İletiler | Uyarılar |
 |------------------|:--------:|:---------:|:------:|:-----:|:--------:|:--------:|
 | `eval: false`    |    X     |           |   X    |   X   |    X     |    X     |
 | `include: false` |          |     X     |   X    |   X   |    X     |    X     |
@@ -346,54 +336,54 @@ The following table summarizes which types of output each option suppresses:
 | `message: false` |          |           |        |       |    X     |          |
 | `warning: false` |          |           |        |       |          |    X     |
 
-### Global options
+### Genel seçenekler
 
-As you work more with knitr, you will discover that some of the default chunk options don't fit your needs and you want to change them.
+knitr ile daha fazla çalıştıkça bazı varsayılan blok seçeneklerinin ihtiyaçlarınıza uymadığını ve onları değiştirmek istediğinizi keşfedeceksiniz.
 
-You can do this by adding the preferred options in the document YAML, under `execute`.
-For example, if you are preparing a report for an audience who does not need to see your code but only your results and narrative, you might set `echo: false` at the document level.
-That will hide the code by default, so only showing the chunks you deliberately choose to show (with `echo: true`).
-You might consider setting `message: false` and `warning: false`, but that would make it harder to debug problems because you wouldn't see any messages in the final document.
+Tercih ettiğiniz seçenekleri belge YAML'ında `execute` altına ekleyerek bunu yapabilirsiniz.
+Örneğin kodunuzu değil yalnızca sonuçlarınızla anlatınızı görmesi gereken bir kitle için rapor hazırlıyorsanız belge düzeyinde `echo: false` ayarlayabilirsiniz.
+Bu, kodu varsayılan olarak gizler ve yalnızca özellikle göstermeyi seçtiğiniz (`echo: true` kullanan) blokları gösterir.
+`message: false` ve `warning: false` ayarlarını kullanmayı düşünebilirsiniz; ancak son belgede hiçbir ileti görmeyeceğiniz için bu, problemlerde hata ayıklamayı zorlaştırır.
 
 ``` yaml
-title: "My report"
+title: "Raporum"
 execute:
   echo: false
 ```
 
-Since Quarto is designed to be multi-lingual (works with R as well as other languages like Python, Julia, etc.), all of the knitr options are not available at the document execution level since some of them only work with knitr and not other engines Quarto uses for running code in other languages (e.g., Jupyter).
-You can, however, still set these as global options for your document under the `knitr` field, under `opts_chunk`.
-For example, when writing books and tutorials we set:
+Quarto çok dilli olacak biçimde tasarlandığından (R'ın yanı sıra Python, Julia vb. dillerle çalışır) knitr seçeneklerinin tümü belge yürütme düzeyinde kullanılamaz. Bunlardan bazıları yalnızca knitr ile çalışır; Quarto'nun diğer dillerde kod çalıştırmak için kullandığı Jupyter gibi motorlarla çalışmaz.
+Bununla birlikte bu seçenekleri belgeniz için `knitr` alanının `opts_chunk` bölümü altında genel seçenek olarak yine de ayarlayabilirsiniz.
+Örneğin kitap ve öğretici yazarken şunları ayarlarız:
 
 ``` yaml
-title: "Tutorial"
+title: "Öğretici"
 knitr:
   opts_chunk:
     comment: "#>"
     collapse: true
 ```
 
-This uses our preferred comment formatting and ensures that the code and output are kept closely entwined.
+Bu, tercih ettiğimiz yorum biçimlendirmesini kullanır ve kodla çıktının birbirine yakın tutulmasını sağlar.
 
-### Inline code
+### Satır içi kod
 
-There is one other way to embed R code into a Quarto document: directly into the text, with: `r inline()`.
-This can be very useful if you mention properties of your data in the text.
-For example, the example document used at the start of the chapter had:
+R kodunu Quarto belgesine gömmenin başka bir yolu daha vardır: `r inline()` ile doğrudan metnin içine yerleştirmek.
+Metinde verilerinizin özelliklerinden söz ediyorsanız bu çok kullanışlı olabilir.
+Örneğin bölümün başında kullanılan örnek belgede şunlar vardı:
 
-> We have data about `r inline('nrow(diamonds)')` diamonds.
-> Only `r inline('nrow(diamonds) - nrow(smaller)')` are larger than 2.5 carats.
-> The distribution of the remainder is shown below:
+> `r inline('nrow(diamonds)')` elmas hakkında verimiz var.
+> Yalnızca `r inline('nrow(diamonds) - nrow(smaller)')` tanesi 2,5 karattan büyüktür.
+> Geri kalanların dağılımı aşağıda gösterilmiştir:
 
-When the report is rendered, the results of these computations are inserted into the text:
+Rapor işlendiğinde bu hesaplamaların sonuçları metne eklenir:
 
-> We have data about 53940 diamonds.
-> Only 126 are larger than 2.5 carats.
-> The distribution of the remainder is shown below:
+> 53940 elmas hakkında verimiz var.
+> Yalnızca 126 tanesi 2,5 karattan büyüktür.
+> Geri kalanların dağılımı aşağıda gösterilmiştir:
 
-When inserting numbers into text, `format()` is your friend.
-It allows you to set the number of `digits` so you don't print to a ridiculous degree of precision, and a `big.mark` to make numbers easier to read.
-You might combine these into a helper function:
+Metne sayı eklerken `format()` en iyi dostunuzdur.
+Gereksiz derecede yüksek duyarlılıkta yazdırmamak için `digits` sayısını ve sayıları daha kolay okunur kılmak için `big.mark` işaretini ayarlamanızı sağlar.
+Bunları bir yardımcı fonksiyonda birleştirebilirsiniz:
 
 ```{r}
 comma <- function(x) format(x, digits = 2, big.mark = ",")
@@ -401,52 +391,52 @@ comma(3452345)
 comma(.12358124331)
 ```
 
-### Exercises
+### Alıştırmalar
 
-1.  Add a section that explores how diamond sizes vary by cut, color, and clarity.
-    Assume you're writing a report for someone who doesn't know R, and instead of setting `echo: false` on each chunk, set a global option.
+1.  Elmas boyutlarının kesim, renk ve berraklığa göre nasıl değiştiğini inceleyen bir kısım ekleyin.
+    R bilmeyen biri için rapor yazdığınızı varsayın ve her blokta `echo: false` ayarlamak yerine genel bir seçenek kullanın.
 
-2.  Download `diamond-sizes.qmd` from <https://github.com/hadley/r4ds/tree/main/quarto>.
-    Add a section that describes the largest 20 diamonds, including a table that displays their most important attributes.
+2.  `diamond-sizes.qmd` dosyasını <https://github.com/hadley/r4ds/tree/main/quarto> adresinden indirin.
+    En büyük 20 elması açıklayan ve en önemli özniteliklerini gösteren bir tablo içeren kısım ekleyin.
 
-3.  Modify `diamonds-sizes.qmd` to use `label_comma()` to produce nicely formatted output.
-    Also include the percentage of diamonds that are larger than 2.5 carats.
+3.  Düzgün biçimlendirilmiş çıktı üretmek için `diamonds-sizes.qmd` dosyasını `label_comma()` kullanacak biçimde değiştirin.
+    Ayrıca 2,5 karattan büyük elmasların yüzdesini ekleyin.
 
-## Figures {#sec-figures}
+## Şekiller {#sec-figures}
 
-The figures in a Quarto document can be embedded (e.g., a PNG or JPEG file) or generated as a result of a code chunk.
+Quarto belgesindeki şekiller gömülü (örneğin PNG ya da JPEG dosyası) olabilir veya bir kod bloğunun sonucu olarak üretilebilir.
 
-To embed an image from an external file, you can use the Insert menu in the Visual Editor in RStudio and select Figure / Image.
-This will pop open a menu where you can browse to the image you want to insert as well as add alternative text or caption to it and adjust its size.
-In the visual editor you can also simply paste an image from your clipboard into your document and RStudio will place a copy of that image in your project folder.
+Harici bir dosyadaki görseli gömmek için RStudio'daki görsel düzenleyicinin Insert menüsünden Figure / Image seçeneğini belirleyebilirsiniz.
+Bu, eklemek istediğiniz görsele göz atabileceğiniz, alternatif metin ya da açıklama ekleyebileceğiniz ve boyutunu ayarlayabileceğiniz bir menü açar.
+Görsel düzenleyicide panodaki bir görseli doğrudan belgenize de yapıştırabilirsiniz; RStudio görselin bir kopyasını proje klasörünüze yerleştirir.
 
-If you include a code chunk that generates a figure (e.g., includes a `ggplot()` call), the resulting figure will be automatically included in your Quarto document.
+Şekil üreten (`ggplot()` çağrısı içeren gibi) bir kod bloğu eklerseniz ortaya çıkan şekil Quarto belgenize otomatik olarak eklenir.
 
-### Figure sizing
+### Şekil boyutlandırma
 
-The biggest challenge of graphics in Quarto is getting your figures the right size and shape.
-There are five main options that control figure sizing: `fig-width`, `fig-height`, `fig-asp`, `out-width` and `out-height`.
-Image sizing is challenging because there are two sizes (the size of the figure created by R and the size at which it is inserted in the output document), and multiple ways of specifying the size (i.e. height, width, and aspect ratio: pick two of three).
+Quarto'daki grafiklerin en büyük zorluğu şekilleri doğru boyut ve biçime getirmektir.
+Şekil boyutlandırmayı denetleyen beş temel seçenek vardır: `fig-width`, `fig-height`, `fig-asp`, `out-width` ve `out-height`.
+Görsel boyutlandırma zordur; çünkü iki boyut (R'ın oluşturduğu şeklin boyutu ve çıktı belgesine eklendiği boyut) ve boyutu belirtmenin birden çok yolu (yükseklik, genişlik ve en-boy oranı; üçünden ikisini seçin) vardır.
 
-We recommend three of the five options:
+Beş seçenekten üçünü öneriyoruz:
 
--   Plots tend to be more aesthetically pleasing if they have consistent width.
-    To enforce this, set `fig-width: 6` (6") and `fig-asp: 0.618` (the golden ratio) in the defaults.
-    Then in individual chunks, only adjust `fig-asp`.
+-   Grafikler tutarlı genişliğe sahip olduklarında estetik açıdan daha hoş görünme eğilimindedir.
+    Bunu sağlamak için varsayılanlarda `fig-width: 6` (6 inç) ve `fig-asp: 0.618` (altın oran) ayarlayın.
+    Ardından tek tek bloklarda yalnızca `fig-asp` değerini değiştirin.
 
--   Control the output size with `out-width` and set it to a percentage of the body width of the output document.
-    We suggest to `out-width: "70%"` and `fig-align: center`.
+-   Çıktı boyutunu `out-width` ile denetleyin ve çıktı belgesinin gövde genişliğinin yüzdesi olarak ayarlayın.
+    `out-width: "70%"` ve `fig-align: center` ayarlarını öneriyoruz.
 
-    That gives plots room to breathe, without taking up too much space.
+    Bu, grafiklere çok fazla yer kaplamadan nefes alacak alan verir.
 
--   To put multiple plots in a single row, set the `layout-ncol` to 2 for two plots, 3 for three plots, etc.
-    This effectively sets `out-width` to "50%" for each of your plots if `layout-ncol` is 2, "33%" if `layout-ncol` is 3, etc.
-    Depending on what you're trying to illustrate (e.g., show data or show plot variations), you might also tweak `fig-width`, as discussed below.
+-   Birden çok grafiği tek satıra koymak için `layout-ncol` değerini iki grafik için 2, üç grafik için 3 vb. olarak ayarlayın.
+    Bu, `layout-ncol` 2 olduğunda her grafiğin `out-width` değerini fiilen "%50", 3 olduğunda "%33" vb. olarak ayarlar.
+    Göstermeye çalıştığınız şeye bağlı olarak (verileri ya da grafik çeşitlerini göstermek gibi) aşağıda ele alındığı üzere `fig-width` değerini de değiştirebilirsiniz.
 
-If you find that you're having to squint to read the text in your plot, you need to tweak `fig-width`.
-If `fig-width` is larger than the size the figure is rendered in the final doc, the text will be too small; if `fig-width` is smaller, the text will be too big.
-You'll often need to do a little experimentation to figure out the right ratio between the `fig-width` and the eventual width in your document.
-To illustrate the principle, the following three plots have `fig-width` of 4, 6, and 8 respectively:
+Grafiğinizdeki metni okumak için gözlerinizi kısmak zorunda kalıyorsanız `fig-width` değerini değiştirmeniz gerekir.
+`fig-width`, şeklin son belgede işlendiği boyuttan büyükse metin çok küçük; küçükse metin çok büyük olur.
+`fig-width` ile belgenizdeki son genişlik arasındaki doğru oranı bulmak için çoğu zaman biraz deneme yapmanız gerekir.
+İlkeyi göstermek için aşağıdaki üç grafiğin `fig-width` değerleri sırasıyla 4, 6 ve 8'dir:
 
 ```{r}
 #| include: false
@@ -458,9 +448,9 @@ plot <- ggplot(mpg, aes(x = displ, y = hwy)) + geom_point()
 #| fig-width: 4
 #| out-width: "50%"
 #| fig-alt: |
-#|   Scatterplot of highway mileage vs. displacement of cars, where the points 
-#|   are normally sized and the axis text and labels are in similar font size 
-#|   to the surrounding text.
+#|   Otomobillerin motor hacmi ile otoyol yakıt verimliliğinin dağılım grafiği.
+#|   Noktalar normal boyuttadır; eksen metni ve etiketleri çevredeki metne benzer
+#|   yazı tipi boyutundadır.
 plot
 ```
 
@@ -469,9 +459,9 @@ plot
 #| fig-width: 6
 #| out-width: "50%"
 #| fig-alt: |
-#|   Scatterplot of highway mileage vs. displacement of cars, where the points 
-#|   are smaller than in the previous plot and the axis text and labels are 
-#|   smaller than the surrounding text.
+#|   Otomobillerin motor hacmi ile otoyol yakıt verimliliğinin dağılım grafiği.
+#|   Noktalar önceki grafikten daha küçüktür; eksen metni ve etiketleri çevredeki
+#|   metinden daha küçüktür.
 plot
 ```
 
@@ -480,40 +470,40 @@ plot
 #| fig-width: 8
 #| out-width: "50%"
 #| fig-alt: |
-#|   Scatterplot of highway mileage vs. displacement of cars, where the points 
-#|   are even smaller than in the previous plot and the axis text and labels are 
-#|   even smaller than the surrounding text.
+#|   Otomobillerin motor hacmi ile otoyol yakıt verimliliğinin dağılım grafiği.
+#|   Noktalar önceki grafikten de küçüktür; eksen metni ve etiketleri çevredeki
+#|   metinden daha da küçüktür.
 plot
 ```
 
-If you want to make sure the font size is consistent across all your figures, whenever you set `out-width`, you'll also need to adjust `fig-width` to maintain the same ratio with your default `out-width`.
-For example, if your default `fig-width` is 6 and `out-width` is "70%", when you set `out-width: "50%"` you'll need to set `fig-width` to 4.3 (6 \* 0.5 / 0.7).
+Yazı tipi boyutunun tüm şekillerde tutarlı olduğundan emin olmak istiyorsanız `out-width` ayarladığınız her seferde varsayılan `out-width` ile aynı oranı korumak için `fig-width` değerini de ayarlamanız gerekir.
+Örneğin varsayılan `fig-width` değeriniz 6 ve `out-width` değeriniz "%70" ise `out-width: "50%"` ayarladığınızda `fig-width` değerini 4,3 (6 \* 0,5 / 0,7) olarak ayarlamalısınız.
 
-Figure sizing and scaling is an art and science and getting things right can require an iterative trial-and-error approach.
-You can learn more about figure sizing in the [taking control of plot scaling blog post](https://www.tidyverse.org/blog/2020/08/taking-control-of-plot-scaling/).
+Şekil boyutlandırma ve ölçekleme hem sanat hem bilimdir; doğru sonucu elde etmek iterasyonlu bir deneme-yanılma yaklaşımı gerektirebilir.
+[Grafik ölçeklemesini denetleme blog yazısından](https://www.tidyverse.org/blog/2020/08/taking-control-of-plot-scaling/) şekil boyutlandırma hakkında daha fazla bilgi edinebilirsiniz.
 
-### Other important options
+### Diğer önemli seçenekler
 
-When mingling code and text, like in this book, you can set `fig-show: hold` so that plots are shown after the code.
-This has the pleasant side effect of forcing you to break up large blocks of code with their explanations.
+Bu kitapta olduğu gibi kod ile metni bir arada kullanırken grafiklerin koddan sonra gösterilmesi için `fig-show: hold` ayarını kullanabilirsiniz.
+Bu ayarın hoş bir yan etkisi de büyük kod bloklarını açıklamalarıyla birlikte daha küçük parçalara ayırmaya sizi teşvik etmesidir.
 
-To add a caption to the plot, use `fig-cap`.
-In Quarto this will change the figure from inline to "floating".
+Grafiğe açıklama eklemek için `fig-cap` seçeneğini kullanın.
+Quarto'da bu seçenek şekli satır içi olmaktan çıkarıp "yüzen" bir şekle dönüştürür.
 
-If you're producing PDF output, the default graphics type is PDF.
-This is a good default because PDFs are high quality vector graphics.
-However, they can produce very large and slow plots if you are displaying thousands of points.
-In that case, set `fig-format: "png"` to force the use of PNGs.
-They are slightly lower quality, but will be much more compact.
+PDF çıktısı üretiyorsanız varsayılan grafik türü PDF'dir.
+PDF'ler yüksek kaliteli vektör grafikleri olduğu için bu iyi bir varsayılandır.
+Ancak binlerce noktayı görüntülerken çok büyük ve yavaş grafikler oluşturabilirler.
+Bu durumda PNG kullanımını zorunlu kılmak için `fig-format: "png"` ayarını kullanın.
+PNG'lerin kalitesi biraz daha düşüktür ancak dosya boyutları çok daha küçüktür.
 
-It's a good idea to name code chunks that produce figures, even if you don't routinely label other chunks.
-The chunk label is used to generate the file name of the graphic on disk, so naming your chunks makes it much easier to pick out plots and reuse in other circumstances (e.g., if you want to quickly drop a single plot into an email).
+Diğer blokları düzenli olarak etiketlemeseniz bile şekil üreten kod bloklarını adlandırmak iyi bir fikirdir.
+Blok etiketi, grafiğin diskteki dosya adını oluşturmak için kullanılır. Bu nedenle blokları adlandırmak grafikleri bulmayı ve başka durumlarda yeniden kullanmayı çok kolaylaştırır (örneğin tek bir grafiği hızla bir e-postaya eklemek istediğinizde).
 
-### Exercises
+### Alıştırmalar
 
-1.  Open `diamond-sizes.qmd` in the visual editor, find an image of a diamond, copy it, and paste it into the document. Double click on the image and add a caption. Resize the image and render your document. Observe how the image is saved in your current working directory.
-2.  Edit the label of the code chunk in `diamond-sizes.qmd` that generates a plot to start with the prefix `fig-` and add a caption to the figure with the chunk option `fig-cap`. Then, edit the text above the code chunk to add a cross-reference to the figure with Insert \> Cross Reference.
-3.  Change the size of the figure with the following chunk options, one at a time, render your document, and describe how the figure changes.
+1.  `diamond-sizes.qmd` dosyasını görsel düzenleyicide açın, bir elmas görseli bulun, kopyalayın ve belgeye yapıştırın. Görsele çift tıklayıp bir açıklama ekleyin. Görseli yeniden boyutlandırın ve belgenizi işleyin. Görselin geçerli çalışma dizininize nasıl kaydedildiğini gözlemleyin.
+2.  `diamond-sizes.qmd` içindeki grafik üreten kod bloğunun etiketini `fig-` önekiyle başlayacak biçimde düzenleyin ve `fig-cap` blok seçeneğiyle şekle bir açıklama ekleyin. Ardından kod bloğunun üzerindeki metni düzenleyerek Insert \> Cross Reference aracılığıyla şekle bir çapraz başvuru ekleyin.
+3.  Aşağıdaki blok seçeneklerini sırayla uygulayarak şeklin boyutunu değiştirin, her seferinde belgenizi işleyin ve şeklin nasıl değiştiğini açıklayın.
     a.  `fig-width: 10`
 
     b.  `fig-height: 3`
@@ -522,67 +512,67 @@ The chunk label is used to generate the file name of the graphic on disk, so nam
 
     d.  `out-width: "20%"`
 
-## Tables
+## Tablolar
 
-Similar to figures, you can include two types of tables in a Quarto document.
-They can be markdown tables that you create directly in your Quarto document (using the Insert Table menu) or they can be tables generated as a result of a code chunk.
-In this section we will focus on the latter, tables generated via computation.
+Şekillerde olduğu gibi Quarto belgesine iki tür tablo ekleyebilirsiniz.
+Bunlar doğrudan Quarto belgesinde oluşturduğunuz markdown tabloları (Insert Table menüsünü kullanarak) veya bir kod bloğunun sonucunda üretilen tablolar olabilir.
+Bu bölümde ikincisine, yani hesaplama yoluyla üretilen tablolara odaklanacağız.
 
-By default, Quarto prints data frames and matrices as you'd see them in the console:
+Quarto varsayılan olarak veri çerçevelerini ve matrisleri konsolda göreceğiniz biçimde yazdırır:
 
 ```{r}
 mtcars[1:5, ]
 ```
 
-If you prefer that data be displayed with additional formatting you can use the `knitr::kable()` function.
-The code below generates @tbl-kable.
+Verilerin ek biçimlendirmeyle görüntülenmesini tercih ediyorsanız `knitr::kable()` fonksiyonunu kullanabilirsiniz.
+Aşağıdaki kod @tbl-kable tablosunu üretir.
 
 ```{r}
 #| label: tbl-kable
-#| tbl-cap: A knitr kable.
+#| tbl-cap: Bir knitr kable tablosu.
 knitr::kable(mtcars[1:5, ], )
 ```
 
-Read the documentation for `?knitr::kable` to see the other ways in which you can customize the table.
-For even deeper customization, consider the **gt**, **huxtable**, **reactable**, **kableExtra**, **xtable**, **stargazer**, **pander**, **tables**, and **ascii** packages.
-Each provides a set of tools for returning formatted tables from R code.
+Tabloyu başka hangi yollarla özelleştirebileceğinizi görmek için `?knitr::kable` belgelendirmesini okuyun.
+Daha kapsamlı özelleştirmeler için **gt**, **huxtable**, **reactable**, **kableExtra**, **xtable**, **stargazer**, **pander**, **tables** ve **ascii** paketlerini değerlendirin.
+Bu paketlerin her biri R kodundan biçimlendirilmiş tablolar döndürmek için bir araç takımı sunar.
 
-### Exercises
+### Alıştırmalar
 
-1.  Open `diamond-sizes.qmd` in the visual editor, insert a code chunk, and add a table with `knitr::kable()` that shows the first 5 rows of the `diamonds` data frame.
-2.  Display the same table with `gt::gt()` instead.
-3.  Add a chunk label that starts with the prefix `tbl-` and add a caption to the table with the chunk option `tbl-cap`. Then, edit the text above the code chunk to add a cross-reference to the table with Insert \> Cross Reference.
+1.  `diamond-sizes.qmd` dosyasını görsel düzenleyicide açın, bir kod bloğu ekleyin ve `diamonds` veri çerçevesinin ilk 5 satırını gösteren bir tabloyu `knitr::kable()` ile ekleyin.
+2.  Aynı tabloyu bu kez `gt::gt()` ile görüntüleyin.
+3.  `tbl-` önekiyle başlayan bir blok etiketi ekleyin ve `tbl-cap` blok seçeneğiyle tabloya bir açıklama ekleyin. Ardından kod bloğunun üzerindeki metni düzenleyerek Insert \> Cross Reference aracılığıyla tabloya bir çapraz başvuru ekleyin.
 
-## Caching {#sec-caching}
+## Önbelleğe alma {#sec-caching}
 
-Normally, each render of a document starts from a completely clean slate.
-This is great for reproducibility, because it ensures that you've captured every important computation in code.
-However, it can be painful if you have some computations that take a long time.
-The solution is `cache: true`.
+Normalde bir belgenin her işlenişi tamamen temiz bir başlangıç yapar.
+Bu, önemli her hesaplamayı kodla kaydettiğinizden emin olduğu için yeniden üretilebilirlik açısından harikadır.
+Ancak uzun süren hesaplamalarınız varsa zahmetli olabilir.
+Çözüm `cache: true` ayarıdır.
 
-You can enable the Knitr cache at the document level for caching the results of all computations in a document using standard YAML options:
+Standart YAML seçeneklerini kullanarak belgedeki tüm hesaplamaların sonuçlarını önbelleğe almak üzere Knitr önbelleğini belge düzeyinde etkinleştirebilirsiniz:
 
 ``` yaml
 ---
-title: "My Document"
+title: "Belgem"
 execute: 
   cache: true
 ---
 ```
 
-You can also enable caching at the chunk level for caching the results of computation in a specific chunk:
+Belirli bir bloktaki hesaplama sonuçlarını önbelleğe almak için önbelleği blok düzeyinde de etkinleştirebilirsiniz:
 
 ```{r}
 #| echo: fenced
 #| cache: true
-# code for lengthy computation...
+# uzun süren hesaplamanın kodu...
 ```
 
-When set, this will save the output of the chunk to a specially named file on disk.
-On subsequent runs, knitr will check to see if the code has changed, and if it hasn't, it will reuse the cached results.
+Bu ayar etkinleştirildiğinde bloğun çıktısı diskte özel olarak adlandırılmış bir dosyaya kaydedilir.
+Sonraki çalıştırmalarda knitr kodun değişip değişmediğini denetler; değişmediyse önbelleğe alınmış sonuçları yeniden kullanır.
 
-The caching system must be used with care, because by default it is based on the code only, not its dependencies.
-For example, here the `processed_data` chunk depends on the `raw-data` chunk:
+Önbellek sistemi dikkatle kullanılmalıdır; çünkü varsayılan olarak yalnızca kodu temel alır, kodun bağımlılıklarını değil.
+Örneğin burada `processed_data` bloğu `raw-data` bloğuna bağlıdır:
 
 ````         
 ``` {{r}}
@@ -602,8 +592,8 @@ processed_data <- rawdata |>
 ```
 ````
 
-Caching the `processed_data` chunk means that it will get re-run if the dplyr pipeline is changed, but it won't get rerun if the `read_csv()` call changes.
-You can avoid that problem with the `dependson` chunk option:
+`processed_data` bloğunu önbelleğe almak, dplyr veri hattı değiştiğinde bloğun yeniden çalıştırılacağı; ancak `read_csv()` çağrısı değiştiğinde çalıştırılmayacağı anlamına gelir.
+Bu sorunu `dependson` blok seçeneğiyle önleyebilirsiniz:
 
 ````         
 ``` {{r}}
@@ -616,14 +606,14 @@ processed_data <- rawdata |>
 ```
 ````
 
-`dependson` should contain a character vector of *every* chunk that the cached chunk depends on.
-Knitr will update the results for the cached chunk whenever it detects that one of its dependencies have changed.
+`dependson`, önbelleğe alınan bloğun bağlı olduğu *tüm* bloklardan oluşan bir karakter vektörü içermelidir.
+Knitr, bağımlılıklardan birinin değiştiğini algıladığında önbelleğe alınan bloğun sonuçlarını günceller.
 
-Note that the chunks won't update if `a_very_large_file.csv` changes, because knitr caching only tracks changes within the `.qmd` file.
-If you want to also track changes to that file you can use the `cache.extra` option.
-This is an arbitrary R expression that will invalidate the cache whenever it changes.
-A good function to use is `file.mtime()`: it returns when it was last modified.
-Then you can write:
+Knitr önbelleği yalnızca `.qmd` dosyasındaki değişiklikleri izlediği için `a_very_large_file.csv` değiştiğinde blokların güncellenmeyeceğini unutmayın.
+Bu dosyadaki değişiklikleri de izlemek istiyorsanız `cache.extra` seçeneğini kullanabilirsiniz.
+Bu seçenek, değiştiği her seferinde önbelleği geçersiz kılacak herhangi bir R ifadesi olabilir.
+Bu amaçla kullanılabilecek iyi bir fonksiyon `file.mtime()`'dır: dosyanın en son ne zaman değiştirildiğini döndürür.
+Ardından şunu yazabilirsiniz:
 
 ````         
 ``` {{r}}
@@ -634,49 +624,49 @@ rawdata <- readr::read_csv("a_very_large_file.csv")
 ```
 ````
 
-We've followed the advice of [David Robinson](https://twitter.com/drob/status/738786604731490304) to name these chunks: each chunk is named after the primary object that it creates.
-This makes it easier to understand the `dependson` specification.
+[David Robinson'ın](https://twitter.com/drob/status/738786604731490304) tavsiyesine uyarak bu blokları adlandırdık: her blok, oluşturduğu ana nesnenin adını taşıyor.
+Bu yaklaşım `dependson` tanımını anlamayı kolaylaştırır.
 
-As your caching strategies get progressively more complicated, it's a good idea to regularly clear out all your caches with `knitr::clean_cache()`.
+Önbelleğe alma stratejileriniz giderek karmaşıklaştıkça tüm önbelleklerinizi `knitr::clean_cache()` ile düzenli olarak temizlemek iyi bir fikirdir.
 
-### Exercises
+### Alıştırmalar
 
-1.  Set up a network of chunks where `d` depends on `c` and `b`, and both `b` and `c` depend on `a`. Have each chunk print `lubridate::now()`, set `cache: true`, then verify your understanding of caching.
+1.  `d` bloğunun `c` ve `b` bloklarına, `b` ile `c` bloklarının da `a` bloğuna bağlı olduğu bir blok ağı kurun. Her bloğun `lubridate::now()` sonucunu yazdırmasını sağlayın, `cache: true` ayarını kullanın ve ardından önbelleğe alma konusundaki anlayışınızı sınayın.
 
-## Troubleshooting
+## Sorun giderme
 
-Troubleshooting Quarto documents can be challenging because you are no longer in an interactive R environment, and you will need to learn some new tricks.
-Additionally, the error could be due to issues with the Quarto document itself or due to the R code in the Quarto document.
+Artık etkileşimli bir R ortamında olmadığınız ve bazı yeni yöntemler öğrenmeniz gerektiği için Quarto belgelerindeki sorunları gidermek zor olabilir.
+Ayrıca hata, Quarto belgesinin kendisindeki sorunlardan veya belgedeki R kodundan kaynaklanabilir.
 
-One common error in documents with code chunks is duplicated chunk labels, which are especially pervasive if your workflow involves copying and pasting code chunks.
-To address this issue, all you need to do is to change one of your duplicated labels.
+Kod blokları içeren belgelerde sık rastlanan hatalardan biri yinelenen blok etiketleridir; özellikle iş akışınız kod bloklarını kopyalayıp yapıştırmayı içeriyorsa bu sorun çok yaygındır.
+Sorunu çözmek için yinelenen etiketlerden birini değiştirmeniz yeterlidir.
 
-If the errors are due to the R code in the document, the first thing you should always try is to recreate the problem in an interactive session.
-Restart R, then "Run all chunks", either from the Code menu, under Run region or with the keyboard shortcut Ctrl + Alt + R.
-If you're lucky, that will recreate the problem, and you can figure out what's going on interactively.
+Hatalar belgedeki R kodundan kaynaklanıyorsa her zaman ilk denemeniz gereken şey sorunu etkileşimli bir oturumda yeniden oluşturmaktır.
+R'yi yeniden başlatın; ardından Code menüsündeki Run Region bölümünden veya Ctrl + Alt + R klavye kısayoluyla "Run All Chunks" komutunu çalıştırın.
+Şanslıysanız sorun yeniden oluşur ve neler olduğunu etkileşimli olarak çözebilirsiniz.
 
-If that doesn't help, there must be something different between your interactive environment and the Quarto environment.
-You're going to need to systematically explore the options.
-The most common difference is the working directory: the working directory of a Quarto is the directory in which it lives.
-Check the working directory is what you expect by including `getwd()` in a chunk.
+Bu işe yaramazsa etkileşimli ortamınız ile Quarto ortamı arasında farklı bir şey olmalıdır.
+Olasılıkları sistematik biçimde araştırmanız gerekir.
+En sık rastlanan fark çalışma dizinidir: Bir Quarto belgesinin çalışma dizini, belgenin bulunduğu dizindir.
+Bir bloğa `getwd()` ekleyerek çalışma dizininin beklediğiniz dizin olup olmadığını denetleyin.
 
-Next, brainstorm all the things that might cause the bug.
-You'll need to systematically check that they're the same in your R session and your Quarto session.
-The easiest way to do that is to set `error: true` on the chunk causing the problem, then use `print()` and `str()` to check that settings are as you expect.
+Ardından hataya yol açabilecek her şeyi düşünün.
+Bunların R ve Quarto oturumlarınızda aynı olup olmadığını sistematik biçimde denetlemeniz gerekir.
+Bunu yapmanın en kolay yolu, soruna neden olan blokta `error: true` ayarını kullanmak ve ardından ayarların beklediğiniz gibi olduğunu `print()` ve `str()` ile denetlemektir.
 
-## YAML header
+## YAML üst bilgisi
 
-You can control many other "whole document" settings by tweaking the parameters of the YAML header.
-You might wonder what YAML stands for: it's "YAML Ain't Markup Language", which is designed for representing hierarchical data in a way that's easy for humans to read and write.
-Quarto uses it to control many details of the output.
-Here we'll discuss three: self-contained documents, document parameters, and bibliographies.
+YAML üst bilgisinin parametrelerini değiştirerek "belgenin tamamına" ilişkin daha birçok ayarı denetleyebilirsiniz.
+YAML'ın açılımını merak edebilirsiniz: "YAML Ain't Markup Language" (YAML bir işaretleme dili değildir). İnsanların kolayca okuyup yazabileceği biçimde hiyerarşik verileri temsil etmek için tasarlanmıştır.
+Quarto, çıktının pek çok ayrıntısını denetlemek için YAML'ı kullanır.
+Burada üç konuyu ele alacağız: kendi kendine yeterli belgeler, belge parametreleri ve kaynakçalar.
 
-### Self-contained
+### Kendi kendine yeterli belgeler
 
-HTML documents typically have a number of external dependencies (e.g., images, CSS style sheets, JavaScript, etc.) and, by default, Quarto places these dependencies in a `_files` folder in the same directory as your `.qmd` file.
-If you publish the HTML file on a hosting platform (e.g., QuartoPub, <https://quartopub.com/>), the dependencies in this directory are published with your document and hence are available in the published report.
-However, if you want to email the report to a colleague, you might prefer to have a single, self-contained, HTML document that embeds all of its dependencies.
-You can do this by specifying the `embed-resources` option:
+HTML belgelerinin genellikle çeşitli dış bağımlılıkları (ör. görseller, CSS stil sayfaları, JavaScript vb.) vardır. Quarto varsayılan olarak bu bağımlılıkları `.qmd` dosyanızla aynı dizindeki bir `_files` klasörüne yerleştirir.
+HTML dosyasını bir barındırma platformunda (ör. QuartoPub, <https://quartopub.com/>) yayımlarsanız bu dizindeki bağımlılıklar belgenizle birlikte yayımlanır ve dolayısıyla yayımlanan raporda kullanılabilir.
+Ancak raporu bir çalışma arkadaşınıza e-postayla göndermek istiyorsanız tüm bağımlılıklarını içine gömen, tek parça ve kendi kendine yeterli bir HTML belgesini tercih edebilirsiniz.
+Bunu `embed-resources` seçeneğini belirterek yapabilirsiniz:
 
 ``` yaml
 format:
@@ -684,16 +674,16 @@ format:
     embed-resources: true
 ```
 
-The resulting file will be self-contained, such that it will need no external files and no internet access to be displayed properly by a browser.
+Ortaya çıkan dosya kendi kendine yeterli olur; tarayıcıda doğru biçimde görüntülenmesi için dış dosyalara veya internet erişimine ihtiyaç duymaz.
 
-### Parameters
+### Parametreler
 
-Quarto documents can include one or more parameters whose values can be set when you render the report.
-Parameters are useful when you want to re-render the same report with distinct values for various key inputs.
-For example, you might be producing sales reports per branch, exam results by student, or demographic summaries by country.
-To declare one or more parameters, use the `params` field.
+Quarto belgeleri, değerleri raporu işlerken ayarlanabilen bir veya daha fazla parametre içerebilir.
+Parametreler, aynı raporu çeşitli temel girdiler için farklı değerlerle yeniden işlemek istediğinizde kullanışlıdır.
+Örneğin şube bazında satış raporları, öğrenci bazında sınav sonuçları veya ülke bazında demografik özetler üretiyor olabilirsiniz.
+Bir veya daha fazla parametre tanımlamak için `params` alanını kullanın.
 
-This example uses a `my_class` parameter to determine which class of cars to display:
+Bu örnek, hangi otomobil sınıfının görüntüleneceğini belirlemek için `my_class` parametresini kullanır:
 
 ```{r}
 #| echo: false
@@ -702,11 +692,11 @@ This example uses a `my_class` parameter to determine which class of cars to dis
 cat(readr::read_file("quarto/fuel-economy.qmd"))
 ```
 
-As you can see, parameters are available within the code chunks as a read-only list named `params`.
+Gördüğünüz gibi parametreler, kod bloklarında `params` adlı salt okunur bir liste olarak kullanılabilir.
 
-You can write atomic vectors directly into the YAML header.
-You can also run arbitrary R expressions by prefacing the parameter value with `!expr`.
-This is a good way to specify date/time parameters.
+Atomik vektörleri doğrudan YAML üst bilgisine yazabilirsiniz.
+Parametre değerinin önüne `!expr` getirerek herhangi bir R ifadesini de çalıştırabilirsiniz.
+Bu, tarih/saat parametrelerini belirtmenin iyi bir yoludur.
 
 ``` yaml
 params:
@@ -714,140 +704,140 @@ params:
   snapshot: !expr lubridate::ymd_hms("2015-01-01 12:30:00")
 ```
 
-### Bibliographies and Citations
+### Kaynakçalar ve alıntılar
 
-Quarto can automatically generate citations and a bibliography in a number of styles.
-The most straightforward way of adding citations and bibliographies to a Quarto document is using the visual editor in RStudio.
+Quarto, çeşitli stillerde alıntıları ve kaynakçayı otomatik olarak oluşturabilir.
+Bir Quarto belgesine alıntı ve kaynakça eklemenin en kolay yolu RStudio'daki görsel düzenleyiciyi kullanmaktır.
 
-To add a citation using the visual editor, go to Insert \> Citation.
-Citations can be inserted from a variety of sources:
+Görsel düzenleyiciyi kullanarak alıntı eklemek için Insert \> Citation yolunu izleyin.
+Alıntılar çeşitli kaynaklardan eklenebilir:
 
-1.  [DOI](https://quarto.org/docs/visual-editor/technical.html#citations-from-dois) (Document Object Identifier) references.
+1.  [DOI](https://quarto.org/docs/visual-editor/technical.html#citations-from-dois) (Dijital Nesne Tanımlayıcısı) referansları.
 
-2.  [Zotero](https://quarto.org/docs/visual-editor/technical.html#citations-from-zotero) personal or group libraries.
+2.  Kişisel veya grup [Zotero](https://quarto.org/docs/visual-editor/technical.html#citations-from-zotero) kütüphaneleri.
 
-3.  Searches of [Crossref](https://www.crossref.org/), [DataCite](https://datacite.org/), or [PubMed](https://pubmed.ncbi.nlm.nih.gov/).
+3.  [Crossref](https://www.crossref.org/), [DataCite](https://datacite.org/) veya [PubMed](https://pubmed.ncbi.nlm.nih.gov/) aramaları.
 
-4.  Your document bibliography (a `.bib` file in the directory of your document)
+4.  Belgenizin kaynakçası (belgenizin dizinindeki bir `.bib` dosyası)
 
-Under the hood, the visual mode uses the standard Pandoc markdown representation for citations (e.g., `[@citation]`).
+Görsel mod arka planda alıntılar için standart Pandoc markdown gösterimini (ör. `[@citation]`) kullanır.
 
-If you add a citation using one of the first three methods, the visual editor will automatically create a `bibliography.bib` file for you and add the reference to it.
-It will also add a `bibliography` field to the document YAML.
-As you add more references, this file will get populated with their citations.
-You can also directly edit this file using many common bibliography formats including BibLaTeX, BibTeX, EndNote, Medline.
+İlk üç yöntemden biriyle alıntı eklerseniz görsel düzenleyici sizin için otomatik olarak bir `bibliography.bib` dosyası oluşturur ve referansı bu dosyaya ekler.
+Ayrıca belge YAML'ına bir `bibliography` alanı ekler.
+Daha fazla referans ekledikçe bu dosya onların alıntı kayıtlarıyla doldurulur.
+Dosyayı BibLaTeX, BibTeX, EndNote ve Medline gibi yaygın kaynakça biçimlerini kullanarak doğrudan da düzenleyebilirsiniz.
 
-To create a citation within your .qmd file in the source editor, use a key composed of '\@' + the citation identifier from the bibliography file.
-Then place the citation in square brackets.
-Here are some examples:
+Kaynak düzenleyicide `.qmd` dosyanızın içinde alıntı oluşturmak için `'\@' + kaynakça dosyasındaki alıntı tanımlayıcısı` biçiminde bir anahtar kullanın.
+Ardından alıntıyı köşeli parantez içine alın.
+İşte birkaç örnek:
 
 ``` markdown
-Separate multiple citations with a `;`: Blah blah [@smith04; @doe99].
+Birden çok alıntıyı `;` ile ayırın: Örnek metin [@smith04; @doe99].
 
-You can add arbitrary comments inside the square brackets: 
-Blah blah [see @doe99, pp. 33-35; also @smith04, ch. 1].
+Köşeli parantezlerin içine istediğiniz açıklamayı ekleyebilirsiniz:
+Örnek metin [bkz. @doe99, ss. 33-35; ayrıca @smith04, böl. 1].
 
-Remove the square brackets to create an in-text citation: @smith04 
-says blah, or @smith04 [p. 33] says blah.
+Metin içi alıntı oluşturmak için köşeli parantezleri kaldırın: @smith04
+şunu söyler veya @smith04 [s. 33] şunu söyler.
 
-Add a `-` before the citation to suppress the author's name: 
-Smith says blah [-@smith04].
+Yazarın adını gizlemek için alıntının önüne `-` ekleyin:
+Smith şunu söyler [-@smith04].
 ```
 
-When Quarto renders your file, it will build and append a bibliography to the end of your document.
-The bibliography will contain each of the cited references from your bibliography file, but it will not contain a section heading.
-As a result it is common practice to end your file with a section header for the bibliography, such as `# References` or `# Bibliography`.
+Quarto dosyanızı işlerken bir kaynakça oluşturur ve bunu belgenizin sonuna ekler.
+Kaynakça, kaynakça dosyanızdaki alıntı yapılmış her referansı içerir ancak bir bölüm başlığı içermez.
+Bu nedenle dosyayı kaynakça için `# Kaynaklar` veya `# Kaynakça` gibi bir bölüm başlığıyla bitirmek yaygın bir uygulamadır.
 
-You can change the style of your citations and bibliography by referencing a CSL (citation style language) file in the `csl` field:
+`csl` alanında bir CSL (alıntı stili dili) dosyasına başvurarak alıntılarınızın ve kaynakçanızın stilini değiştirebilirsiniz:
 
 ``` yaml
 bibliography: rmarkdown.bib
 csl: apa.csl
 ```
 
-As with the bibliography field, your csl file should contain a path to the file.
-Here we assume that the csl file is in the same directory as the .qmd file.
-A good place to find CSL style files for common bibliography styles is <https://github.com/citation-style-language/styles>.
+Kaynakça alanında olduğu gibi csl alanınız da dosyanın yolunu içermelidir.
+Burada csl dosyasının `.qmd` dosyasıyla aynı dizinde olduğunu varsayıyoruz.
+Yaygın kaynakça stillerine ait CSL stil dosyalarını bulmak için <https://github.com/citation-style-language/styles> iyi bir kaynaktır.
 
-## Workflow
+## İş akışı
 
-Earlier, we discussed a basic workflow for capturing your R code where you work interactively in the *console*, then capture what works in the *script editor*.
-Quarto brings together the console and the script editor, blurring the lines between interactive exploration and long-term code capture.
-You can rapidly iterate within a chunk, editing and re-executing with Cmd/Ctrl + Shift + Enter.
-When you're happy, you move on and start a new chunk.
+Daha önce, *konsolda* etkileşimli olarak çalışıp işe yarayan kodu *script düzenleyicide* kaydettiğiniz temel bir R kodu kaydetme iş akışını ele almıştık.
+Quarto, konsol ile script düzenleyiciyi bir araya getirerek etkileşimli keşif ile kodu uzun vadeli kaydetme arasındaki sınırları bulanıklaştırır.
+Bir blok içinde hızla yineleme yapabilir; Cmd/Ctrl + Shift + Enter ile kodu düzenleyip yeniden çalıştırabilirsiniz.
+Sonuçtan memnun kaldığınızda ilerleyip yeni bir blok başlatırsınız.
 
-Quarto is also important because it so tightly integrates prose and code.
-This makes it a great **analysis notebook** because it lets you develop code and record your thoughts.
-An analysis notebook shares many of the same goals as a classic lab notebook in the physical sciences.
-It:
+Quarto, düz yazı ile kodu sıkı biçimde bütünleştirdiği için de önemlidir.
+Kod geliştirmenize ve düşüncelerinizi kaydetmenize olanak tanıdığından harika bir **analiz defteridir**.
+Bir analiz defteri, doğa bilimlerindeki klasik laboratuvar defteriyle aynı amaçların çoğunu paylaşır.
+Analiz defteri:
 
--   Records what you did and why you did it.
-    Regardless of how great your memory is, if you don't record what you do, there will come a time when you have forgotten important details.
-    Write them down so you don't forget!
+-   Ne yaptığınızı ve neden yaptığınızı kaydeder.
+    Hafızanız ne kadar güçlü olursa olsun yaptıklarınızı kaydetmezseniz önemli ayrıntıları unuttuğunuz bir zaman gelecektir.
+    Unutmamak için bunları yazın!
 
--   Supports rigorous thinking.
-    You are more likely to come up with a strong analysis if you record your thoughts as you go, and continue to reflect on them.
-    This also saves you time when you eventually write up your analysis to share with others.
+-   Titiz düşünmeyi destekler.
+    İlerlerken düşüncelerinizi kaydeder ve üzerlerinde düşünmeye devam ederseniz güçlü bir analiz ortaya koyma olasılığınız artar.
+    Bu ayrıca analizinizi başkalarıyla paylaşmak üzere yazıya dökerken size zaman kazandırır.
 
--   Helps others understand your work.
-    It is rare to do data analysis by yourself, and you'll often be working as part of a team.
-    A lab notebook helps you share not only what you've done, but why you did it with your colleagues or lab mates.
+-   Başkalarının çalışmanızı anlamasına yardımcı olur.
+    Veri analizini tek başınıza yapmanız nadirdir; çoğu zaman bir ekibin parçası olarak çalışırsınız.
+    Laboratuvar defteri, çalışma veya laboratuvar arkadaşlarınızla yalnızca ne yaptığınızı değil, neden yaptığınızı da paylaşmanıza yardımcı olur.
 
-Much of the good advice about using lab notebooks effectively can also be translated to analysis notebooks.
-We've drawn on our own experiences and Colin Purrington's advice on lab notebooks (<https://colinpurrington.com/tips/lab-notebooks>) to come up with the following tips:
+Laboratuvar defterlerini etkili kullanmaya ilişkin iyi tavsiyelerin çoğu analiz defterlerine de uyarlanabilir.
+Aşağıdaki ipuçlarını oluştururken kendi deneyimlerimizden ve Colin Purrington'ın laboratuvar defterleri hakkındaki tavsiyelerinden (<https://colinpurrington.com/tips/lab-notebooks>) yararlandık:
 
--   Ensure each notebook has a descriptive title, an evocative file name, and a first paragraph that briefly describes the aims of the analysis.
+-   Her defterin açıklayıcı bir başlığa, anlamlı bir dosya adına ve analizin amaçlarını kısaca açıklayan bir ilk paragrafa sahip olduğundan emin olun.
 
--   Use the YAML header date field to record the date you started working on the notebook:
+-   Defter üzerinde çalışmaya başladığınız tarihi kaydetmek için YAML üst bilgisindeki tarih alanını kullanın:
 
     ``` yaml
     date: 2016-08-23
     ```
 
-    Use ISO8601 YYYY-MM-DD format so that's there no ambiguity.
-    Use it even if you don't normally write dates that way!
+    Belirsizlik olmaması için ISO8601 YYYY-AA-GG biçimini kullanın.
+    Tarihleri normalde böyle yazmasanız bile bu biçimi kullanın!
 
--   If you spend a lot of time on an analysis idea and it turns out to be a dead end, don't delete it!
-    Write up a brief note about why it failed and leave it in the notebook.
-    That will help you avoid going down the same dead end when you come back to the analysis in the future.
+-   Bir analiz fikrine çok zaman harcadıktan sonra fikrin çıkmaza girdiğini anlarsanız onu silmeyin!
+    Neden işe yaramadığına ilişkin kısa bir not yazıp defterde bırakın.
+    Bu, gelecekte analize döndüğünüzde aynı çıkmaza yeniden girmenizi önler.
 
--   Generally, you're better off doing data entry outside of R.
-    But if you do need to record a small snippet of data, clearly lay it out using `tibble::tribble()`.
+-   Genellikle veri girişini R dışında yapmak daha iyidir.
+    Ancak küçük bir veri parçasını kaydetmeniz gerekiyorsa `tibble::tribble()` kullanarak açıkça düzenleyin.
 
--   If you discover an error in a data file, never modify it directly, but instead write code to correct the value.
-    Explain why you made the fix.
+-   Bir veri dosyasında hata bulursanız dosyayı asla doğrudan değiştirmeyin; bunun yerine değeri düzelten kod yazın.
+    Düzeltmeyi neden yaptığınızı açıklayın.
 
--   Before you finish for the day, make sure you can render the notebook.
-    If you're using caching, make sure to clear the caches.
-    That will let you fix any problems while the code is still fresh in your mind.
+-   Günlük çalışmanızı bitirmeden önce defteri işleyebildiğinizden emin olun.
+    Önbelleğe alma kullanıyorsanız önbellekleri temizlemeyi unutmayın.
+    Böylece kod hâlâ zihninizde tazeyken sorunları düzeltebilirsiniz.
 
--   If you want your code to be reproducible in the long-run (i.e. so you can come back to run it next month or next year), you'll need to track the versions of the packages that your code uses.
-    A rigorous approach is to use **renv**, <https://rstudio.github.io/renv/index.html>, which stores packages in your project directory.
-    A quick and dirty hack is to include a chunk that runs `sessionInfo()` --- that won't let you easily recreate your packages as they are today, but at least you'll know what they were.
+-   Kodunuzun uzun vadede yeniden üretilebilir olmasını (yani gelecek ay veya gelecek yıl dönüp çalıştırabilmeyi) istiyorsanız kodun kullandığı paketlerin sürümlerini izlemeniz gerekir.
+    Titiz bir yaklaşım, paketleri proje dizininizde saklayan **renv**'i (<https://rstudio.github.io/renv/index.html>) kullanmaktır.
+    Hızlı ve pratik bir çözüm ise `sessionInfo()` çalıştıran bir blok eklemektir. Bu, paketlerinizi bugünkü hâlleriyle kolayca yeniden oluşturmanızı sağlamaz ama en azından hangi sürümler olduklarını bilirsiniz.
 
--   You are going to create many, many, many analysis notebooks over the course of your career.
-    How are you going to organize them so you can find them again in the future?
-    We recommend storing them in individual projects, and coming up with a good naming scheme.
+-   Kariyeriniz boyunca çok ama çok sayıda analiz defteri oluşturacaksınız.
+    Gelecekte yeniden bulabilmek için bunları nasıl düzenleyeceksiniz?
+    Defterleri ayrı projelerde saklamanızı ve iyi bir adlandırma düzeni geliştirmenizi öneririz.
 
-## Summary
+## Özet
 
-In this chapter we introduced you to Quarto for authoring and publishing reproducible computational documents that include your code and your prose in one place.
-You've learned about writing Quarto documents in RStudio with the visual or the source editor, how code chunks work and how to customize options for them, how to include figures and tables in your Quarto documents, and options for caching for computations.
-Additionally, you've learned about adjusting YAML header options for creating self-contained or parametrized documents as well as including citations and bibliography.
-We have also given you some troubleshooting and workflow tips.
+Bu bölümde kodunuzu ve düz yazınızı tek bir yerde içeren, yeniden üretilebilir hesaplamalı belgeleri yazmak ve yayımlamak için Quarto'yu tanıttık.
+RStudio'da görsel veya kaynak düzenleyiciyle Quarto belgeleri yazmayı, kod bloklarının nasıl çalıştığını ve seçeneklerinin nasıl özelleştirileceğini, Quarto belgelerine şekil ve tablo eklemeyi ve hesaplamaları önbelleğe alma seçeneklerini öğrendiniz.
+Ayrıca kendi kendine yeterli ya da parametreli belgeler oluşturmak ve alıntılarla kaynakça eklemek için YAML üst bilgisi seçeneklerini ayarlamayı öğrendiniz.
+Bazı sorun giderme ve iş akışı ipuçları da sunduk.
 
-While this introduction should be sufficient to get you started with Quarto, there is still a lot more to learn.
-Quarto is still relatively young, and is still growing rapidly.
-The best place to stay on top of innovations is the official Quarto website: [https://quarto.org](https://quarto.org/){.uri}.
+Bu giriş Quarto'yu kullanmaya başlamanız için yeterli olsa da öğrenilecek daha çok şey var.
+Quarto hâlâ görece genç ve hızla gelişiyor.
+Yenilikleri takip etmek için en iyi yer resmî Quarto web sitesidir: [https://quarto.org](https://quarto.org/){.uri}.
 
-There are two important topics that we haven't covered here: collaboration and the details of accurately communicating your ideas to other humans.
-Collaboration is a vital part of modern data science, and you can make your life much easier by using version control tools, like Git and GitHub.
-We recommend "Happy Git with R", a user friendly introduction to Git and GitHub from R users, by Jenny Bryan.
-The book is freely available online: <https://happygitwithr.com>.
+Burada ele almadığımız iki önemli konu var: iş birliği ve fikirlerinizi diğer insanlara doğru biçimde aktarmanın ayrıntıları.
+İş birliği modern veri biliminin hayati bir parçasıdır; Git ve GitHub gibi sürüm kontrol araçlarını kullanarak işinizi çok kolaylaştırabilirsiniz.
+Jenny Bryan'ın R kullanıcıları için hazırladığı kullanıcı dostu Git ve GitHub giriş kitabı "Happy Git with R"ı öneririz.
+Kitaba internetten ücretsiz erişebilirsiniz: <https://happygitwithr.com>.
 
-We have also not touched on what you should actually write in order to clearly communicate the results of your analysis.
-To improve your writing, we highly recommend reading either [*Style: Lessons in Clarity and Grace*](https://www.amazon.com/Style-Lessons-Clarity-Grace-12th/dp/0134080416) by Joseph M. Williams & Joseph Bizup, or [*The Sense of Structure: Writing from the Reader's Perspective*](https://www.amazon.com/Sense-Structure-Writing-Readers-Perspective/dp/0205296327) by George Gopen.
-Both books will help you understand the structure of sentences and paragraphs, and give you the tools to make your writing more clear.
-(These books are rather expensive if purchased new, but they're used by many English classes so there are plenty of cheap second-hand copies).
-George Gopen also has a number of short articles on writing at <https://www.georgegopen.com/litigation-articles.html>.
-They are aimed at lawyers, but almost everything applies to data scientists too.
+Analizinizin sonuçlarını açıkça iletmek için gerçekte ne yazmanız gerektiğine de değinmedik.
+Yazınızı geliştirmek için Joseph M. Williams ile Joseph Bizup'ın [*Style: Lessons in Clarity and Grace*](https://www.amazon.com/Style-Lessons-Clarity-Grace-12th/dp/0134080416) ya da George Gopen'ın [*The Sense of Structure: Writing from the Reader's Perspective*](https://www.amazon.com/Sense-Structure-Writing-Readers-Perspective/dp/0205296327) kitabını okumanızı önemle öneririz.
+Her iki kitap da cümlelerin ve paragrafların yapısını anlamanıza yardımcı olur ve yazınızı daha açık hâle getirecek araçlar sunar.
+(Bu kitapların yenileri oldukça pahalıdır ancak birçok İngilizce dersinde kullanıldıkları için uygun fiyatlı ikinci el kopyaları bolca bulunur.)
+George Gopen'ın <https://www.georgegopen.com/litigation-articles.html> adresinde yazma üzerine bir dizi kısa makalesi de vardır.
+Bu makaleler avukatlara yöneliktir ancak neredeyse tamamı veri bilimciler için de geçerlidir.

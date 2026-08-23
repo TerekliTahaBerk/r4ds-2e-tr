@@ -6,8 +6,8 @@
 source("_common.R")
 ```
 
-Kitabın ikinci bölümü, veri görselleştirmeye derinlemesine bir dalıştı.
-Kitabın bu bölümünde, bir veri çerçevesi (data frame) içinde karşılaşacağınız en önemli değişken türlerini ve bunlarla çalışmak için kullanabileceğiniz araçları öğreneceksiniz.
+Kitabın ikinci kısmında veri görselleştirmeyi derinlemesine ele aldık.
+Bu kısımda ise bir veri çerçevesinde karşılaşacağınız en önemli değişken türlerini ve bunlarla çalışmanızı sağlayan araçları öğreneceksiniz.
 
 ```{r}
 #| label: fig-ds-transform
@@ -21,29 +21,29 @@ Kitabın bu bölümünde, bir veri çerçevesi (data frame) içinde karşılaşa
 knitr::include_graphics("diagrams/data-science/transform.png", dpi = 270)
 ```
 
-Bu bölümleri ihtiyaç duydukça okuyabilirsiniz; büyük ölçüde bağımsız olacak şekilde tasarlanmışlardır, dolayısıyla sırasız da okunabilirler.
+Bu bölümleri ihtiyaç duydukça okuyabilirsiniz. Büyük ölçüde birbirinden bağımsız tasarlandıkları için belirli bir sırayı izlemeniz gerekmez.
 
--   @sec-logicals bölümü size mantıksal vektörleri (logical vectors) öğretir.
+-   @sec-logicals bölümünde mantıksal vektörleri (logical vectors) öğreneceksiniz.
     Bunlar vektörlerin en basit türüdür, ancak son derece güçlüdürler.
-    Onları sayısal karşılaştırmalarla nasıl oluşturacağınızı, Boole cebiriyle nasıl birleştireceğinizi, özetlerde nasıl kullanacağınızı ve koşullu dönüştürmeler için nasıl kullanacağınızı öğreneceksiniz.
+    Bu vektörleri sayısal karşılaştırmalarla oluşturmayı, Boole cebiriyle birleştirmeyi, özetlerde kullanmayı ve koşullu dönüştürmeler uygulamayı göreceksiniz.
 
--   @sec-numbers bölümü, veri biliminin güç kaynağı olan sayı vektörleri için araçlara derinlemesine dalar.
+-   @sec-numbers bölümünde, veri biliminin temel gücünü sağlayan sayısal vektörlerle çalışmaya yönelik araçları ayrıntılı biçimde inceleyeceksiniz.
     Sayma işlemi ve bir dizi önemli dönüştürme ve özetleme fonksiyonu hakkında daha fazla bilgi edineceksiniz.
 
--   @sec-strings, karakter dizileriyle (strings) çalışmanız için size gereken araçları verir: onları dilimleyecek, parçalayacak ve yeniden bir araya getireceksiniz.
+-   @sec-strings bölümünde karakter dizileriyle (strings) çalışmak için gereken araçları öğrenecek; karakter dizilerini dilimleyecek, parçalara ayıracak ve yeniden birleştireceksiniz.
     Bu bölüm ağırlıklı olarak stringr paketine odaklanır; ancak karakter dizilerinden veri çıkarmaya adanmış birkaç tidyr fonksiyonunu da öğreneceksiniz.
 
--   @sec-regular-expressions, karakter dizilerini işlemek için güçlü bir araç olan düzenli ifadeleri (regular expressions) size tanıtır.
-    Bu bölüm sizi, "klavyenin üzerinden bir kedi mi geçti" dedirten görüntüden, karmaşık karakter dizisi kalıplarını okuyup yazabilecek noktaya taşıyacaktır.
+-   @sec-regular-expressions bölümünde, karakter dizilerini işlemek için güçlü bir araç olan düzenli ifadelerle (regular expressions) tanışacaksınız.
+    Bölümün sonunda, ilk bakışta "Klavyenin üzerinden bir kedi mi geçti?" dedirten bu ifadelerle karmaşık karakter dizisi kalıplarını okuyup yazabilir hâle geleceksiniz.
 
--   @sec-factors, faktörleri (factors) tanıtır: R'ın kategorik verileri saklamak için kullandığı veri türü.
+-   @sec-factors bölümünde, R'ın kategorik verileri saklamak için kullandığı veri türü olan faktörleri (factors) öğreneceksiniz.
     Bir değişkenin sabit bir olası değerler kümesi olduğunda veya bir karakter dizisi için alfabetik olmayan bir sıralama kullanmak istediğinizde faktör kullanırsınız.
 
--   @sec-dates-and-times, tarihler ve tarih-saatlerle çalışmak için size temel araçları verir.
-    Ne yazık ki tarih-saatler hakkında öğrendikçe daha karmaşık hale geliyormuş gibi görünürler; ancak lubridate paketinin yardımıyla en yaygın zorlukların üstesinden nasıl geleceğinizi öğreneceksiniz.
+-   @sec-dates-and-times bölümünde tarihler ve tarih-saatlerle çalışmak için gereken temel araçları öğreneceksiniz.
+    Ne yazık ki tarih-saatler, onları öğrendikçe daha da karmaşık görünmeye başlar; ancak lubridate paketinin yardımıyla en yaygın zorlukların üstesinden gelebileceksiniz.
 
--   @sec-missing-values, eksik değerleri derinlemesine ele alır.
-    Bunlardan daha önce birkaç kez, ayrı ayrı bahsetmiştik; ancak şimdi onları bütünsel olarak ele alma, örtük (implicit) ve açık (explicit) eksik değerler arasındaki farkı kavramanıza ve bunlar arasında nasıl ve neden dönüşüm yapabileceğinizi anlamanıza yardımcı olma zamanı.
+-   @sec-missing-values bölümünde eksik değerleri derinlemesine ele alacağız.
+    Daha önce farklı yerlerde değindiğimiz bu konuyu şimdi bir bütün olarak inceleyecek; örtük (implicit) ve açık (explicit) eksik değerler arasındaki farkı ve bunlar arasında nasıl ve neden dönüşüm yapabileceğinizi öğreneceksiniz.
 
--   @sec-joins, size iki (veya daha fazla) veri çerçevesini birleştirmek için araçlar vererek kitabın bu bölümünü tamamlar.
-    Birleştirmeleri (joins) öğrenmek, sizi anahtar (key) kavramıyla uğraşmaya ve bir veri kümesindeki her satırı nasıl tanımladığınızı düşünmeye zorlayacaktır.
+-   @sec-joins bölümünde iki veya daha fazla veri çerçevesini birleştirmeye yönelik araçları öğrenerek bu kısmı tamamlayacaksınız.
+    Birleştirmeleri (joins) öğrenirken anahtar (key) kavramıyla tanışacak ve bir veri kümesindeki her satırı nasıl tanımladığınızı düşünmeye başlayacaksınız.
