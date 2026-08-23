@@ -90,7 +90,7 @@ Hizalamayı iyileştiriyorsa fazladan boşluk eklemek sorun değildir.
 Örneğin, `mutate()` içinde birden fazla değişken oluşturuyorsanız, tüm `=`'ların hizalanması için boşluk eklemek isteyebilirsiniz.[^workflow-style-1]
 Bu, kodu göz gezdirerek okumayı kolaylaştırır.
 
-[^workflow-style-1]: `dep_time`, `HMM` veya `HHMM` formatında olduğundan, saati almak için tam sayı bölmesini (`%/%`), dakikayı almak için ise kalanı (modulo olarak da bilinir, `%%`) kullanırız.
+[^workflow-style-1]: `dep_time`, `HMM` veya `HHMM` biçiminde olduğundan, saati almak için tam sayı bölmesini (`%/%`), dakikayı almak için ise kalanı (modulo olarak da bilinir, `%%`) kullanırız.
 
 ```{r}
 #| eval: false

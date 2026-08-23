@@ -16,7 +16,7 @@ options(
   pillar.max_footer_lines = 2,
   pillar.min_chars = 15,
   stringr.view_n = 6,
-  # Temporarily deactivate cli output for quarto
+  # Quarto için cli çıktısını geçici olarak devre dışı bırak
   cli.num_colors = 0,
   cli.hyperlink = FALSE,
   pillar.bold = TRUE,
@@ -29,11 +29,11 @@ ggplot2::theme_set(ggplot2::theme_gray(12))
 status <- function(type) {
   status <- switch(
     type,
-    polishing = "should be readable but is currently undergoing final polishing",
-    restructuring = "is undergoing heavy restructuring and may be confusing or incomplete",
-    drafting = "is currently a dumping ground for ideas, and we don't recommend reading it",
-    complete = "is largely complete and just needs final proof reading",
-    stop("Invalid `type`", call. = FALSE)
+    polishing = "okunabilir durumdadır ancak son kez gözden geçirilmektedir",
+    restructuring = "kapsamlı biçimde yeniden düzenlendiği için kafa karıştırıcı veya eksik olabilir",
+    drafting = "henüz taslak aşamasındadır ve şu anda okunmasını önermiyoruz",
+    complete = "büyük ölçüde tamamlanmıştır ve yalnızca son okuma gerektirir",
+    stop("Geçersiz `type`", call. = FALSE)
   )
 
   class <- switch(
@@ -50,11 +50,11 @@ status <- function(type) {
     "::: callout-",
     class,
     " \n",
-    "You are reading the work-in-progress second edition of R for Data Science. ",
-    "This chapter ",
+    "Veri Bilimi için R kitabının geliştirilmekte olan ikinci baskısını okuyorsunuz. ",
+    "Bu bölüm ",
     status,
     ". ",
-    "You can find the complete first edition at <https://r4ds.had.co.nz>.\n",
+    "Birinci baskının tamamını <https://r4ds.had.co.nz> adresinde bulabilirsiniz.\n",
     ":::\n",
     "::::\n"
   ))

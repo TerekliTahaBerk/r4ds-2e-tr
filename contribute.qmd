@@ -1,19 +1,22 @@
-# Contributing {#sec-contributing}
+# Katkıda bulunma {#sec-contributing}
 
-This book has been developed in the open, and it wouldn't be nearly as good without your contributions.
-There are a number of ways you can help make the book even better:
+Bu kitap açık biçimde geliştirildi ve katkılarınız olmasaydı bugünkü niteliğine ulaşamazdı.
+Kitabı daha da iyi hâle getirmeye birkaç yolla yardımcı olabilirsiniz:
 
--   If you don't understand something, please [let me know](mailto:h.wickham@gmail.com).
-    Your feedback on what is confusing or hard to understand is valuable.
+-   Bir noktayı anlamadıysanız veya Türkçe anlatımı belirsiz bulduysanız [bir sorun kaydı açın](https://github.com/TerekliTahaBerk/r4ds-2e-tr/issues/new).
+    Kafa karıştıran ya da anlaşılması güç yerler hakkındaki geri bildiriminiz değerlidir.
 
--   If you spot a typo, feel free to edit the underlying page and send a pull request.
-    If you've never done this before, the process is very easy:
+-   Bir yazım veya çeviri hatası fark ederseniz ilgili kaynak sayfayı düzenleyip pull request gönderebilirsiniz.
+    Bunu daha önce yapmadıysanız süreç oldukça basittir:
 
-    -   Click the edit this page on the sidebar.
+    -   Kenar çubuğundaki **Bu sayfayı düzenle** bağlantısına tıklayın.
 
-    -   Make the changes using GitHub's in-page editor and save.
+    -   GitHub'ın sayfa içi düzenleyicisinde değişikliklerinizi yapıp kaydedin.
 
-    -   Submit a pull request and include a brief description of your changes.
-        "Fixing typos" is perfectly adequate.
+    -   Bir pull request gönderin ve değişikliklerinizi kısaca açıklayın.
+        “Yazım hatalarını düzelttim” demeniz yeterlidir.
 
-    -   If you make significant changes, include the phrase "I assign the copyright of this contribution to Hadley Wickham" - I need this so I can publish the printed book.
+    -   Önemli değişiklikler yaptıysanız şu ifadeyi ekleyin: “I assign the copyright of this contribution to Hadley Wickham”.
+        Basılı kitabın telif süreci için bu beyan gereklidir.
+
+Güvenlik açığı veya Davranış Kuralları ihlali gibi kamuya açık paylaşılmaması gereken konuları [terekli@tahaberk.com](mailto:terekli@tahaberk.com) adresine bildirin.

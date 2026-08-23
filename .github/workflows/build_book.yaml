@@ -1,16 +1,16 @@
-name: Build and Deploy Quarto Book
+name: Quarto kitabını oluştur ve yayımla
 
 on:
   push:
-    branches: 
+    branches:
       - main
-      - translate-tr
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
@@ -20,60 +20,40 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Depoyu al
         uses: actions/checkout@v4
 
-      - name: Set up Quarto
+      - name: Quarto'yu kur
         uses: quarto-dev/quarto-actions/setup@v2
 
-      - name: Install R
+      - name: R'ı kur
         uses: r-lib/actions/setup-r@v2
         with:
-          use-public-rspm: true 
+          use-public-rspm: true
 
-      - name: Install R Dependencies
+      - name: R bağımlılıklarını kur
         uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          packages: |
-            any::tidyverse
-            any::knitr
-            any::rmarkdown
-            any::arrow
-            any::babynames
-            any::curl
-            any::duckdb
-            any::gapminder
-            any::ggrepel
-            any::ggridges
-            any::ggthemes
-            any::hexbin
-            any::janitor
-            any::Lahman
-            any::leaflet
-            any::maps
-            any::nycflights13
-            any::openxlsx
-            any::palmerpenguins
-            any::repurrrsive
-            any::tidymodels
-            any::writexl
 
-      - name: Render Quarto Project
-        run: |
-          quarto render
+      - name: Quarto projesini işle
+        run: quarto render
 
-      - name: Upload Artifact
+      - name: Yayın çıktısını yükle
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
           path: _book/
 
   deploy:
+    if: github.event_name != 'pull_request'
     needs: build
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to GitHub Pages
+      - name: GitHub Pages'a yayımla
         id: deployment
         uses: actions/deploy-pages@v4

@@ -574,7 +574,7 @@ Ardından verilerinizde neyin yanlış gittiğini bulmak ve temel sorunu düzelt
 ## Özet
 
 Bu bölümde düzenli veri hakkında bilgi edindiniz: değişkenleri sütunlarda, gözlemleri satırlarda olan veri.
-Düzenli veri, tidyverse'de çalışmayı kolaylaştırır; çünkü çoğu fonksiyon tarafından anlaşılan tutarlı bir yapıdır; ana zorluk, veriyi hangi yapıda alırsanız alın, onu düzenli bir formata dönüştürmektir.
+Düzenli veri, tidyverse'de çalışmayı kolaylaştırır; çünkü çoğu fonksiyon tarafından anlaşılan tutarlı bir yapıdır; ana zorluk, veriyi hangi yapıda alırsanız alın, onu düzenli bir biçime dönüştürmektir.
 Bu amaçla, size pek çok düzensiz veri kümesini düzenlemenizi sağlayan `pivot_longer()` ve `pivot_wider()` hakkında bilgi edindiniz.
 Burada sunduğumuz örnekler `vignette("pivot", package = "tidyr")` belgesinden seçilmiştir. Bu bölümün çözemediği bir sorunla karşılaşırsanız söz konusu vinyet, bakmanız gereken iyi bir sonraki kaynaktır.
 

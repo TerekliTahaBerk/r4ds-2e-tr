@@ -1,32 +1,49 @@
 Package: r4ds
-Title: R for data science.
+Title: Veri Bilimi için R (2e) Türkçe Çevirisi
 Version: 0.1
 Authors@R: c(
-    person("Hadley", "Wickham", , "hadley@rstudio.com", role = c("aut", "cre")),
+    person("Hadley", "Wickham", , "hadley@rstudio.com", role = "aut"),
     person("Mine", "\u00C7etinkaya-Rundel", , "mine@rstudio.com", role = "aut"),
-    person("Garrett", "Grolemund", , "garrett@rstudio.com", role = "aut")
+    person("Garrett", "Grolemund", , "garrett@rstudio.com", role = "aut"),
+    person("Taha Berk", "Terekli", , "terekli@tahaberk.com", role = c("trl", "cre")),
+    person("Zeynep", "K\u00F6se", role = "trl")
   )
-URL: https://github.com/hadley/r4ds
+Description: Hadley Wickham, Mine Çetinkaya-Rundel ve Garrett Grolemund
+    tarafından yazılan Veri Bilimi için R kitabının ikinci baskısının Türkçe
+    çevirisi ve yerelleştirmesi.
+URL: https://www.tahaberk.com/r4ds-2e-tr/,
+    https://github.com/TerekliTahaBerk/r4ds-2e-tr
+BugReports: https://github.com/TerekliTahaBerk/r4ds-2e-tr/issues
 Depends: 
     R (>= 3.1.0)
 Imports:
     arrow,
     babynames,
+    cli,
     curl (>= 5.0.0),
     duckdb,
+    DBI,
+    dbplyr,
     gapminder,
     ggrepel,
     ggridges,
     ggthemes,
+    googlesheets4,
     hexbin,
     janitor,
+    jsonlite,
     Lahman,
     leaflet,
     maps,
     nycflights13,
     openxlsx,
+    patchwork,
     palmerpenguins,
+    RColorBrewer,
     repurrrsive (>= 1.1.0),
+    readxl,
+    rvest,
+    scales,
     tidymodels,
     tidyverse (>= 2.0.0),
     writexl
@@ -34,7 +51,9 @@ Suggests:
     downlit,
     jpeg,
     knitr,
+    rmarkdown,
     sessioninfo
 Remotes: tidyverse/dplyr
 Encoding: UTF-8
+Language: tr
 License: CC NC ND 3.0

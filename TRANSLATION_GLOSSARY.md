@@ -34,6 +34,7 @@ Bu dosya, bölümler arasında tutarlı teknik dil kullanmak için tutulan çevi
 | embracing | sarmalama | `functions.qmd` | Tidy evaluation bağlamındaki `{{{ }}}` tekniği; ilk kullanımda İngilizcesi verilir. |
 | functional programming | fonksiyonel programlama | `iteration.qmd` | Fonksiyonları girdi olarak alan fonksiyonlar bağlamında. |
 | iteration | iterasyon | `program.qmd` | Tekrarlanan işlemlerin farklı girdilere uygulanması. |
+| import / data import | içe aktarma / veri içe aktarma | `data-import.qmd` | Veri bilimi iş akışında dış kaynaktan R'a veri alma; “aktarım” yalnızca sistemler arası transfer bağlamında kullanılır. |
 | join | birleştirme | `joins.qmd` | `*_join()` fonksiyon adları çevrilmez; equi/non-equi için “eşitlik/eşitsizlik birleştirmesi” kullanılır. |
 | key / primary key / foreign key | anahtar / birincil anahtar / yabancı anahtar | `joins.qmd` | Birden çok değişkenli anahtar için “bileşik anahtar”, yapay kimlik için “vekil anahtar” kullanılır. |
 | legend | gösterge | `data-visualize.qmd` | İlk kullanımda İngilizcesi parantez içinde verilir. |
@@ -55,6 +56,7 @@ Bu dosya, bölümler arasında tutarlı teknik dil kullanmak için tutulan çevi
 | render | işlemek | `quarto.qmd` | RStudio düğmesi/komutu olarak “Render” korunur; eylem metin içinde “işlemek”tir. |
 | reprex / reproducible example | `reprex` / yeniden üretilebilir örnek | `data-import.qmd` | İlk kullanımda Türkçe açıklamasıyla birlikte verilir. |
 | relative / absolute path | göreli / mutlak yol | `workflow-scripts.qmd` | “Göreceli yol” yerine kısa teknik karşılık kullanılır. |
+| rolling join | kayan birleştirme | `joins.qmd` | İlk kullanımda İngilizcesi parantez içinde verilir; `closest()` fonksiyon adı korunur. |
 | scaling | ölçekleme | `data-visualize.qmd` | ggplot2'nin estetik değerleri değişken düzeylerine atama süreci. |
 | scale | ölçek | `communication.qmd` | Fonksiyon adları (`scale_*()`) ve argüman adları çevrilmez. |
 | selector / CSS selector | seçici / CSS seçicisi | `webscraping.qmd` | HTML öğelerini bulmaya yönelik CSS örüntüsü. |

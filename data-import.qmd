@@ -1,4 +1,4 @@
-# Veri aktarımı {#sec-data-import}
+# Veri içe aktarma {#sec-data-import}
 
 ```{r}
 #| echo: false
@@ -512,7 +512,7 @@ tribble(
 
 Bu bölümde, `read_csv()` ile CSV dosyalarını nasıl yükleyeceğinizi ve `tibble()` ile `tribble()` ile kendi veri girişinizi nasıl yapacağınızı öğrendiniz.
 CSV dosyalarının nasıl çalıştığını, karşılaşabileceğiniz bazı sorunları ve bunların nasıl aşılacağını öğrendiniz.
-Bu kitapta veri aktarımına birkaç kez daha döneceğiz: Excel ve Google E-Tablolar'dan @sec-import-spreadsheets, veritabanlarından veri yüklemeyi göstereceğimiz @sec-import-databases, parquet dosyalarından @sec-arrow, JSON'dan @sec-rectangling ve web sitelerinden @sec-scraping.
+Bu kitapta veri içe aktarmaya birkaç kez daha döneceğiz: Excel ve Google E-Tablolar'dan @sec-import-spreadsheets, veritabanlarından veri yüklemeyi göstereceğimiz @sec-import-databases, Parquet dosyalarından @sec-arrow, JSON'dan @sec-rectangling ve web sitelerinden @sec-scraping.
 
 Kitabın bu bölümünün neredeyse sonuna geldik; ama ele almamız gereken önemli bir son konu daha var: nasıl yardım alınır.
 Bu yüzden bir sonraki bölümde yardım arayabileceğiniz iyi kaynakları, yararlı yanıt alma olasılığınızı artıracak yeniden üretilebilir bir örneği (`reprex`) nasıl oluşturacağınızı ve R dünyasını takip etmeye yönelik bazı genel önerileri öğreneceksiniz.

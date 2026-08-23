@@ -56,7 +56,7 @@ Etiketleri `labs()` fonksiyonuyla eklersiniz.
 #|   "Motor büyüdükçe yakıt verimliliği genellikle düşer"dir. Alt
 #|   başlığı "İki koltuklu araçlar (spor otomobiller), hafif oldukları
 #|   için bu eğilimin dışındadır" ve alt yazısı "Veri kaynağı:
-#|   fueleconomy.gov"dur.
+#|   fueleconomy.gov sitesidir.
 ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_point(aes(color = class)) +
   geom_smooth(se = FALSE) +
@@ -437,7 +437,7 @@ presidential |>
 `breaks` argümanı için, bu argüman için bir estetik eşleme yapamadığımızdan, `start` değişkenini `presidential$start` ile bir vektör olarak çıkardığımıza dikkat edin.
 Ayrıca tarih ve tarih-saat ölçeklerinde kesme noktalarıyla etiketlerin biraz farklı belirtildiğine dikkat edin:
 
--   `date_labels`, `parse_datetime()` ile aynı biçimde bir format belirtimi alır.
+-   `date_labels`, `parse_datetime()` ile aynı sözdizimini kullanan bir biçim belirtimi alır.
 
 -   `date_breaks` (burada gösterilmemiştir), "2 days" veya "1 month" gibi bir dize alır.
 
@@ -885,8 +885,8 @@ Başlık ve altyazı metninin biçimi için yerleşimini değiştirmek üzere ku
 ```{r}
 #| fig-alt: |
 #|   Araçların otoyol yakıt verimliliğine karşı motor hacminin,
-#|   drive'a göre renklendirilmiş bir saçılım grafiği. Grafiğin başlığı
-#|   'Larger engine sizes tend to have lower fuel economy'dir ve
+#|   çekiş sistemine göre renklendirilmiş bir saçılım grafiği. Grafiğin başlığı
+#|   "Motor büyüdükçe yakıt verimliliği genellikle düşer"dir ve
 #|   altyazı, verinin kaynağı olan fueleconomy.gov'a işaret eder.
 #|   Alt yazı ve başlık sola hizalanmıştır, gösterge siyah
 #|   kenarlıkla grafiğin içindedir.
@@ -982,7 +982,7 @@ Patchwork, grafik için ayırdığınız alanı bu oranlara göre böler ve bile
 #|   grafik bunların altına yayılıyor. Birleştirilmiş grafiğin başlığı
 #|   "Farklı tahrik sistemlerine sahip araçlarda şehir içi ve otoyol
 #|   yakıt verimliliği", alt yazısı ise "Kaynak:
-#|   https://fueleconomy.gov"dur. İlk iki grafik yan yana kutu
+#|   https://fueleconomy.gov sitesidir. İlk iki grafik yan yana kutu
 #|   grafikleridir. 3. ve 4. grafikler yoğunluk grafikleridir. Beşinci
 #|   grafik ise panellere ayrılmış bir saçılım
 #|   grafiğidir. Bu grafiklerin her biri tahrik türüne göre

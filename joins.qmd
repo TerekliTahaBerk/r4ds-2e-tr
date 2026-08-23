@@ -690,7 +690,7 @@ Eşitsizlik birleştirmesi pek açıklayıcı bir terim değildir; çünkü birl
 
 -   **Çapraz birleştirmeler** her satır çiftini eşleştirir.
 -   **Eşitsizlik birleştirmeleri** `==` yerine `<`, `<=`, `>` ve `>=` kullanır.
--   **Yuvarlanan birleştirmeler** eşitsizlik birleştirmelerine benzer ancak yalnızca en yakın eşleşmeyi bulur.
+-   **Kayan birleştirmeler (rolling join)** eşitsizlik birleştirmelerine benzer ancak yalnızca en yakın eşleşmeyi bulur.
 -   **Örtüşme birleştirmeleri**, aralıklarla çalışmak için tasarlanmış özel bir eşitsizlik birleştirmesi türüdür.
 
 Bunların her biri aşağıdaki bölümlerde daha ayrıntılı açıklanmaktadır.
@@ -748,10 +748,10 @@ df <- tibble(id = 1:4, name = c("John", "Simon", "Tracy", "Max"))
 df |> inner_join(df, join_by(id < id))
 ```
 
-### Yuvarlanan birleştirmeler
+### Kayan birleştirmeler
 
-Yuvarlanan birleştirmeler, eşitsizliği sağlayan *her* satır yerine yalnızca en yakın satırı aldığınız özel bir eşitsizlik birleştirmesi türüdür (@fig-join-closest).
-`closest()` ekleyerek herhangi bir eşitsizlik birleştirmesini yuvarlanan birleştirmeye dönüştürebilirsiniz.
+Kayan birleştirmeler, eşitsizliği sağlayan *her* satır yerine yalnızca en yakın satırı aldığınız özel bir eşitsizlik birleştirmesi türüdür (@fig-join-closest).
+`closest()` ekleyerek herhangi bir eşitsizlik birleştirmesini kayan birleştirmeye (rolling join) dönüştürebilirsiniz.
 Örneğin `join_by(closest(x <= y))`, x'ten büyük veya ona eşit en küçük `y` ile; `join_by(closest(x > y))` ise `x`ten küçük en büyük `y` ile eşleşir.
 
 ```{r}
@@ -759,16 +759,16 @@ Yuvarlanan birleştirmeler, eşitsizliği sağlayan *her* satır yerine yalnızc
 #| echo: false
 #| out-width: ~
 #| fig-cap: |
-#|   Yuvarlanan birleştirme büyük veya eşit eşitsizlik birleştirmesine benzer
+#|   Kayan birleştirme büyük veya eşit eşitsizlik birleştirmesine benzer
 #|   ancak yalnızca ilk değerle eşleşir.
 #| fig-alt: |
-#|   Yuvarlanan birleştirme, eşitsizlik birleştirmesinin alt kümesidir. Bazı
+#|   Kayan birleştirme, eşitsizlik birleştirmesinin alt kümesidir. Bazı
 #|   eşleşmeler "en yakın" olmadıkları için kullanılmadıklarını belirtmek üzere
 #|   gri renkle gösterilir.
 knitr::include_graphics("diagrams/join/closest.png", dpi = 270)
 ```
 
-Yuvarlanan birleştirmeler, tam olarak hizalanmayan iki tarih tablonuz olduğunda ve örneğin 1. tabloda 2. tablodaki belirli bir tarihten önce (ya da sonra) gelen en yakın tarihi bulmak istediğinizde özellikle yararlıdır.
+Kayan birleştirmeler, tam olarak hizalanmayan iki tarih tablonuz olduğunda ve örneğin 1. tabloda 2. tablodaki belirli bir tarihten önce (ya da sonra) gelen en yakın tarihi bulmak istediğinizde özellikle yararlıdır.
 
 Örneğin ofisinizin parti planlama komisyonundan sorumlu olduğunuzu düşünün.
 Şirketiniz oldukça cimri olduğundan ayrı partiler yerine her çeyrekte yalnızca bir parti düzenliyorsunuz.
@@ -794,7 +794,7 @@ employees
 ```
 
 Her çalışan için doğum gününden önceki (veya doğum günündeki) son parti tarihini bulmak istiyoruz.
-Bunu yuvarlanan birleştirmeyle ifade edebiliriz:
+Bunu kayan birleştirmeyle ifade edebiliriz:
 
 ```{r}
 employees |> 

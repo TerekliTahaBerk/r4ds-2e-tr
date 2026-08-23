@@ -1,7 +1,7 @@
 # Hoş geldiniz {.unnumbered}
 
 Bu web sitesi, **“Veri Bilimi için R”** kitabının ikinci baskısının Türkçe çevirisidir.
-Bu kitapta R ile veri bilimi yapmayı öğreneceksiniz: Verilerinizi R'a aktarmayı, en kullanışlı yapıya getirmeyi, dönüştürmeyi ve görselleştirmeyi öğreneceksiniz.
+Bu kitapta R ile veri bilimi yapmayı öğreneceksiniz: Verilerinizi R'a içe aktarmayı, en kullanışlı yapıya getirmeyi, dönüştürmeyi ve görselleştirmeyi öğreneceksiniz.
 
 Bu kitapta, veri bilimi için gerekli becerileri uygulamalı olarak öğreneceksiniz.
 Bir kimyager nasıl deney tüplerini temizlemeyi ve laboratuvarı malzemelerle donatmayı öğrenirse, siz de verileri temizlemeyi, grafikler çizmeyi ve daha pek çok şeyi öğreneceksiniz.
@@ -27,7 +27,7 @@ Başka bir dil konuşuyorsanız, kitabın birinci baskısının ücretsiz olarak
 
 Kitaptaki alıştırmalar için önerilen çözümlere <https://mine-cetinkaya-rundel.github.io/r4ds-solutions> adresinden ulaşabilirsiniz.
 
-R4DS'in [Katılımcı Davranış Kuralları](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html) uyguladığını lütfen unutmayın.
+R4DS Türkçe çeviri projesinin [Katılımcı Davranış Kuralları](https://github.com/TerekliTahaBerk/r4ds-2e-tr/blob/main/CODE_OF_CONDUCT.md) uyguladığını lütfen unutmayın.
 Bu kitaba katkıda bulunarak bu kurallara uymayı kabul etmiş olursunuz.
 
 ---

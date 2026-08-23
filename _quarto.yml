@@ -16,17 +16,17 @@ book:
 
   cover-image: cover.jpg
   favicon: cover.jpg
-  site-url: https://tahaberk.com/r4ds-2e-tr/
+  site-url: https://www.tahaberk.com/r4ds-2e-tr/
   repo-url: https://github.com/TerekliTahaBerk/r4ds-2e-tr/
-  repo-branch: translate-tr
+  repo-branch: main
   repo-actions: [edit, issue]
 
   other-links:
-    - text: "Orijinal (English)"
+    - text: "Orijinal (İngilizce)"
       href: https://r4ds.hadley.nz/
       icon: mortarboard
     - text: "Çeviri (Türkçe)"
-      href: https://tahaberk.com/r4ds-2e-tr/
+      href: https://www.tahaberk.com/r4ds-2e-tr/
       icon: translate
 
   chapters:
@@ -50,7 +50,7 @@ book:
           file: data-tidy.qmd
         - text: "İş Akışı: Scriptler"
           file: workflow-scripts.qmd
-        - text: "Veri Aktarımı"
+        - text: "Veri İçe Aktarma"
           file: data-import.qmd
         - text: "İş Akışı: Yardım Almak"
           file: workflow-help.qmd
@@ -109,7 +109,7 @@ book:
       chapters:
         - text: "Quarto"
           file: quarto.qmd
-        - text: "Quarto Formatları"
+        - text: "Quarto Biçimleri"
           file: quarto-formats.qmd
 
 format:
@@ -118,7 +118,7 @@ format:
       - cosmo
       - r4ds.scss
     code-link: true
-    author-meta: "Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund"
+    author-meta: "Hadley Wickham, Mine Çetinkaya-Rundel ve Garrett Grolemund"
     include-in-header: "plausible.html"
     callout-appearance: simple
 

@@ -13,7 +13,7 @@ contribs_all <- tibble(
 contribs_old <- read_csv("contributors.csv", col_types = list())
 contribs_new <- contribs_all %>% anti_join(contribs_old)
 
-# Get info for new contributors
+# Yeni katkıda bulunanların bilgilerini al
 needed_json <- map(
   contribs_new$login,
   ~ gh::gh("/users/:username", username = .x)

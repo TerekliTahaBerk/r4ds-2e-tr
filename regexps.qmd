@@ -48,7 +48,7 @@ str_view(fruit, "berry")
 ```
 
 Harf ve sayılar birebir eşleşir ve **değişmez karakterler** olarak adlandırılır.
-`.`, `+`, `*`, `[`, `]` ve `?` gibi çoğu noktalama işaretinin özel anlamları vardır[^regexps-2] ve bunlara **üst karakterler** (metacharacters) denir. Örneğin `.` herhangi bir karakterle[^regexps-3] eşleşir; dolayısıyla `"a."`, "a" harfinin ardından başka bir karakter gelen her karakter dizisiyle eşleşir:
+`.`, `+`, `*`, `[`, `]` ve `?` gibi çoğu noktalama işaretinin özel anlamları vardır[^regexps-2] ve bunlara **metakarakterler** (metacharacters) denir. Örneğin `.` herhangi bir karakterle[^regexps-3] eşleşir; dolayısıyla `"a."`, "a" harfinin ardından başka bir karakter gelen her karakter dizisiyle eşleşir:
 
 [^regexps-2]: Bu özel anlamlardan nasıl kaçacağınızı @sec-regexp-escaping bölümünde öğreneceksiniz.
 
@@ -279,7 +279,7 @@ Eşleşme başarısız olursa, `separate_wider_delim()` ve `separate_wider_posit
 ## Kalıp ayrıntıları
 
 Kalıp dilinin temellerini ve bunu bazı stringr ve tidyr fonksiyonlarıyla nasıl kullanacağınızı öğrendiğinize göre ayrıntılara inme zamanı.
-Önce normalde özel olarak yorumlanacak üst karakterlerle değişmez biçimde eşleşmenizi sağlayan **kaçışla** başlayacağız.
+Önce normalde özel olarak yorumlanacak metakarakterlerle değişmez biçimde eşleşmenizi sağlayan **kaçışla** başlayacağız.
 Ardından karakter dizisinin başlangıcı veya sonuyla eşleşmenizi sağlayan **sabitleyicileri** öğreneceksiniz.
 Sonra bir kümedeki herhangi bir karakterle eşleşmeye yarayan **karakter sınıflarını** ve kısayollarını ayrıntılandıracağız.
 Bir kalıbın kaç kez eşleşebileceğini belirleyen **niceleyicilerin** son ayrıntılarını göreceksiniz.
@@ -291,7 +291,7 @@ Amaçlarını her zaman sezgisel biçimde anlatmasalar da daha sonra ayrıntıl�
 
 ### Kaçış {#sec-regexp-escaping}
 
-Değişmez bir `.` ile eşleşmek için düzenli ifadeye üst karakteri[^regexps-6] değişmez olarak eşleştirmesini söyleyen bir **kaçışa** ihtiyacınız vardır.
+Değişmez bir `.` ile eşleşmek için düzenli ifadeye metakarakteri[^regexps-6] değişmez olarak eşleştirmesini söyleyen bir **kaçışa** ihtiyacınız vardır.
 Karakter dizileri gibi regex'ler de kaçış için ters eğik çizgi kullanır.
 Dolayısıyla `.` ile eşleşmek için `\.` regex'i gerekir. Ne yazık ki bu durum bir sorun yaratır.
 Düzenli ifadeleri karakter dizileriyle temsil ederiz ve `\` karakter dizilerinde de kaçış simgesi olarak kullanılır.
@@ -783,7 +783,7 @@ pattern <- str_c("\\b(", str_flatten(cols, "|"), ")\\b")
 str_view(sentences, pattern)
 ```
 
-Bu örnekte `cols` yalnızca rakam ve harf içerdiğinden üst karakterler konusunda kaygılanmanız gerekmez.
+Bu örnekte `cols` yalnızca rakam ve harf içerdiğinden metakarakterler konusunda kaygılanmanız gerekmez.
 Ancak genel olarak mevcut karakter dizilerinden kalıp oluşturduğunuzda değişmez biçimde eşleşmelerini sağlamak için bunları `str_escape()` işleminden geçirmek akıllıca olur.
 
 ### Alıştırmalar

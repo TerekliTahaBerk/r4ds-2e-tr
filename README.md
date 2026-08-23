@@ -1,66 +1,37 @@
-# R for Data Science
+# Veri Bilimi için R (2e) — Türkçe
 
 <!-- badges: start -->
 
-[![Render and deploy Book to Netlify](https://github.com/hadley/r4ds/actions/workflows/build_book.yaml/badge.svg)](https://github.com/hadley/r4ds/actions/workflows/build_book.yaml)
+[![Quarto kitabını oluştur ve GitHub Pages'a dağıt](https://github.com/TerekliTahaBerk/r4ds-2e-tr/actions/workflows/build_book.yaml/badge.svg)](https://github.com/TerekliTahaBerk/r4ds-2e-tr/actions/workflows/build_book.yaml)
 
 <!-- badges: end -->
 
-This repository contains the source of [R for Data Science](http://r4ds.hadley.nz) book.
-The book is built using [Quarto](https://quarto.org/).
+Bu depo, Hadley Wickham, Mine Çetinkaya-Rundel ve Garrett Grolemund tarafından yazılan [*R for Data Science* (2e)](https://r4ds.hadley.nz/) kitabının Türkçe çevirisini içerir. Yayımlanan Türkçe kitabı [www.tahaberk.com/r4ds-2e-tr](https://www.tahaberk.com/r4ds-2e-tr/) adresinde okuyabilirsiniz.
 
-## Images
+Çeviri, İngilizce kaynak deponun `e7a2b797b6bff53602a6e1d2fbe6d0a0a2c01a17` commit'i esas alınarak hazırlanmıştır. Kitap [Quarto](https://quarto.org/) ile oluşturulur.
 
-### Omnigraffle drawings
+## Yerel olarak oluşturma
 
--   Font: 12pt Guardian Sans Condensed / Ubuntu mono
+Kitabı oluşturmak için güncel bir Quarto kurulumu, R ve `DESCRIPTION` dosyasında listelenen R paketleri gerekir. Bağımlılıkları kurduktan sonra depo kökünde şu komutu çalıştırın:
 
--   Export as 300 dpi png.
-
--   Website font is 18 px = 13.5 pt, so scale dpi to match font sizes: 270 = 300 \* 12 / 13.5.
-    (I also verified this empirically by screenshotting.)
-
-    ``` r
-    #| echo: FALSE
-    #| out.width: NULL
-    knitr::include_graphics("diagrams/transform.png", dpi = 270)
-    ```
-
-### Screenshots
-
--   Make sure you're using a light theme.
-    For small interface elements (eg. toolbars), zoom in twice.
-
--   Screenshot with Cmd + Shift + 4.
-
--   Don't need to set dpi:
-
-    ``` r
-    #| echo: FALSE
-    #| out.width: NULL
-    knitr::include_graphics("screenshots/rstudio-wg.png")
-    ```
-
-### O'Reilly
-
-To generate book for O'Reilly, build the book then:
-
-```{r}
-# pak::pak("hadley/htmlbook")
-htmlbook::convert_book()
-
-html <- list.files("oreilly", pattern = "[.]html$", full.names = TRUE)
-file.copy(html, "../r-for-data-science-2e/", overwrite = TRUE)
-
-pngs <- list.files("oreilly", pattern = "[.]png$", full.names = TRUE, recursive = TRUE)
-dest <- gsub("oreilly", "../r-for-data-science-2e/", pngs)
-fs::dir_create(unique(dirname(dest)))
-file.copy(pngs, dest, overwrite = TRUE)
+``` sh
+quarto render
 ```
 
-Then commit and push to atlas.
+Oluşturulan site `_book/` dizinine yazılır. GitHub Actions iş akışı, `main` dalına gönderilen değişiklikleri otomatik olarak oluşturup GitHub Pages'a dağıtır.
 
-## Code of Conduct
+## Çeviri ilkeleri
 
-Please note that r4ds uses a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
-By contributing to this book, you agree to abide by its terms.
+Teknik terim tercihleri [TRANSLATION_GLOSSARY.md](TRANSLATION_GLOSSARY.md) dosyasında tutulur. Fonksiyon, paket, değişken, veri kümesi, Quarto seçeneği ve çapraz başvuru kimlikleri çevrilmez; okuyucuya gösterilen metinler, şekil açıklamaları ve alternatif metinler Türkçeleştirilir.
+
+## Görseller ve kod örnekleri
+
+Çeviri, kitabın özgün görsellerini, ekran görüntülerini, grafiklerini ve kod örneklerini mümkün olduğunca değiştirmeden korur. Bu öğeler İngilizce kalabilir; okuyucuya yönelik şekil açıklamaları, alternatif metinler ve çevreleyen anlatım Türkçeleştirilir.
+
+## Katkıda bulunma
+
+Yazım hataları, teknik sorunlar ve çeviri önerileri için [katkı yönergelerini](contribute.qmd) izleyebilirsiniz. Bu projeye katkıda bulunan herkesin [Davranış Kuralları'na](CODE_OF_CONDUCT.md) uyması beklenir.
+
+## Lisans
+
+Kitabın içeriği, depodaki [LICENSE](LICENSE) dosyasında belirtilen Creative Commons BY-NC-ND 3.0 lisansı kapsamındadır.
